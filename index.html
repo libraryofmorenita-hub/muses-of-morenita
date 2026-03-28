@@ -247,7 +247,18 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 .fit-star.on{color:var(--si);}
 .fit-star:hover{color:var(--sil);}
 
-/* ── FILES ── */
+/* ── PASSWORD GATE ── */
+.pw-overlay{position:fixed;inset:0;z-index:800;background:rgba(28,23,20,.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;}
+.pw-overlay.open{display:flex;}
+.pw-card{background:white;border-radius:var(--rl);padding:2rem;width:340px;border:0.5px solid var(--bd);}
+.pw-logo{font-family:var(--fd);font-size:18px;font-weight:300;color:var(--ink);margin-bottom:.3rem;}
+.pw-logo em{font-style:italic;color:var(--si);}
+.pw-hint{font-size:11px;color:var(--muted);margin-bottom:1.4rem;}
+.pw-inp{width:100%;padding:9px 11px;font-size:14px;border:0.5px solid var(--bd);border-radius:7px;background:var(--ivory);color:var(--ink);font-family:var(--fb);letter-spacing:.15em;outline:none;}
+.pw-inp:focus{border-color:var(--sil);}
+.pw-btn{width:100%;padding:10px;background:var(--ink);color:var(--ivory);border:none;border-radius:7px;font-size:13px;cursor:pointer;margin-top:.8rem;}
+.pw-err{font-size:11px;color:var(--si);margin-top:.5rem;text-align:center;min-height:16px;}
+
 .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;}
 .fcard{background:white;border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s;}
 .fcard:hover{border-color:var(--sil);transform:translateY(-1px);}
@@ -323,16 +334,16 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 <body>
 
 <nav class="nav">
-  <div class="logo" onclick="go('port')"><div class="logo-dot"></div>Muses of <em>Morenita</em></div>
+  <div class="logo" onclick="logoClick()"><div class="logo-dot"></div>Muses of <em>Morenita</em></div>
   <div class="ntabs">
     <button class="ntab on" id="nt-port" onclick="go('port')">Portfolio</button>
     <button class="ntab" id="nt-contact" onclick="go('contact')">Contact</button>
-    <button class="ntab" id="nt-db" onclick="go('db')">Studio</button>
+    <button class="ntab" id="nt-db" onclick="requirePw('db')" style="display:none">Studio</button>
   </div>
   <div class="nav-r">
     <span class="nstatus" id="nstat">Portfolio</span>
     <div class="save-indicator saved" id="save-ind"><div class="save-dot"></div><span id="save-text">All saved</span></div>
-    <button class="lock-badge" onclick="go('db')">Enter Studio &#8599;</button>
+    <button class="lock-badge" id="lock-badge" onclick="requirePw('db')" style="display:none">Enter Studio &#8599;</button>
   </div>
 </nav>
 
@@ -347,7 +358,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
       <p class="port-bio" id="p-bio">I build systems that breathe.</p>
       <div class="tags" id="p-tags"></div>
     </div>
-    <div class="avatar" id="p-avatar" onclick="go('db');view('portfolio')" title="Edit portfolio">Y</div>
+    <div class="avatar" id="p-avatar" onclick="requirePw('db');pendingView='portfolio'" title="Edit portfolio">Y</div>
   </div>
   <div class="sec"><span class="sec-lbl">Selected Work</span><div class="sec-rule"></div><span class="sec-ct" id="p-work-ct"></span></div>
   <div class="wgrid" id="p-work-grid"></div>
@@ -435,6 +446,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
     <div class="sbsec">
       <button class="sbitem" onclick="go('port')">&#8594; View Portfolio</button>
       <button class="sbitem" onclick="go('contact')">&#9993; Contact Page</button>
+      <button class="sbitem" style="color:var(--faint)" onclick="lockStudio()">&#128274; Lock Studio</button>
     </div>
     <div class="sbgoal">
       <div class="sglbl">Monthly Goal</div>
@@ -679,6 +691,17 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
   <div class="macts"><button class="mcancel" onclick="closeModal('file')">Cancel</button><button class="msubmit" onclick="addFile()">Add &rarr;</button></div>
 </div></div>
 
+<!-- PASSWORD GATE -->
+<div class="pw-overlay" id="pw-overlay">
+  <div class="pw-card">
+    <div class="pw-logo">Muses of <em>Morenita</em></div>
+    <p class="pw-hint">Studio access only.</p>
+    <input class="pw-inp" id="pw-inp" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="pw-btn" onclick="checkPw()">Enter &rarr;</button>
+    <p class="pw-err" id="pw-err"></p>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -797,6 +820,7 @@ const STATUS_PILL = {Research:'pr',Applied:'pa',Interview:'pi',Offer:'po',Reject
 // NAV
 // ══════════════════════════════════════════════════
 function go(p) {
+  if (p === 'db' && !isUnlocked()) { requirePw('db'); return; }
   document.querySelectorAll('.panel').forEach(x => x.classList.remove('on'));
   document.getElementById('panel-' + p).classList.add('on');
   document.querySelectorAll('.ntab').forEach(x => x.classList.remove('on'));
@@ -1333,6 +1357,90 @@ function toast(m) {
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+// ══════════════════════════════════════════════════
+// PASSWORD GATE
+// ══════════════════════════════════════════════════
+// 🔑 SET YOUR PASSWORD HERE — change 'morenita' to anything you want
+const STUDIO_PW = 'morenita';
+const PW_KEY    = 'muses-studio-auth';
+
+let pendingView  = null;
+let logoClicks   = 0;
+let logoTimer    = null;
+
+function isUnlocked() {
+  return sessionStorage.getItem(PW_KEY) === '1';
+}
+
+function unlockStudio() {
+  sessionStorage.setItem(PW_KEY, '1');
+  // Show studio tab and lock badge
+  document.getElementById('nt-db').style.display = '';
+  document.getElementById('lock-badge').style.display = '';
+}
+
+function lockStudio() {
+  sessionStorage.removeItem(PW_KEY);
+  document.getElementById('nt-db').style.display = 'none';
+  document.getElementById('lock-badge').style.display = 'none';
+  go('port');
+  toast('Studio locked');
+}
+
+function requirePw(dest) {
+  if (isUnlocked()) {
+    go(dest);
+    if (pendingView) { view(pendingView); pendingView = null; }
+    return;
+  }
+  document.getElementById('pw-overlay').classList.add('open');
+  document.getElementById('pw-inp').value = '';
+  document.getElementById('pw-err').textContent = '';
+  setTimeout(() => document.getElementById('pw-inp').focus(), 100);
+  // remember where we were trying to go
+  pendingView = pendingView || null;
+  document.getElementById('pw-overlay')._dest = dest;
+}
+
+function checkPw() {
+  const val = document.getElementById('pw-inp').value;
+  if (val === STUDIO_PW) {
+    unlockStudio();
+    document.getElementById('pw-overlay').classList.remove('open');
+    const dest = document.getElementById('pw-overlay')._dest || 'db';
+    go(dest);
+    if (pendingView) { view(pendingView); pendingView = null; }
+  } else {
+    document.getElementById('pw-err').textContent = 'Incorrect password.';
+    document.getElementById('pw-inp').value = '';
+    document.getElementById('pw-inp').focus();
+  }
+}
+
+// Secret entry: triple-click the logo
+function logoClick() {
+  if (isUnlocked()) { go('port'); return; }
+  logoClicks++;
+  clearTimeout(logoTimer);
+  logoTimer = setTimeout(() => { logoClicks = 0; }, 600);
+  if (logoClicks >= 3) {
+    logoClicks = 0;
+    requirePw('db');
+  } else {
+    go('port');
+  }
+}
+
+// Close password overlay on background click
+document.getElementById('pw-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('pw-overlay')) {
+    document.getElementById('pw-overlay').classList.remove('open');
+  }
+});
+
+// Check session on load — if already unlocked this session, show studio nav
+if (isUnlocked()) unlockStudio();
 
 // ══════════════════════════════════════════════════
 // INIT
