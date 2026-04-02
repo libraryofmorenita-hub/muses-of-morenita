@@ -1,10 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="google-site-verification" content="BpEMipg3VPXrgu4SGRzQiFAAWscBAYZoamCuJImj6o8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Muses of Morenita</title>
+<title>Muses of Morenita · Amelia Arabe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --ink:#1C1714;--charcoal:#2E2520;--muted:#7A6F68;--faint:#B0A89F;
@@ -13,330 +15,527 @@
   --sa:#4A5E48;--sal:#8FA68D;--sap:#EBF0EA;
   --go:#A07830;--gop:#F5EDD4;
   --bd:rgba(28,23,20,0.10);--bdm:rgba(28,23,20,0.18);
-  --fd:Georgia,'Times New Roman',serif;
-  --fb:system-ui,-apple-system,sans-serif;
-  --r:8px;--rl:12px;
+  --fd:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --fb:'Figtree',system-ui,-apple-system,sans-serif;
+  --r:10px;--rl:10px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13px;line-height:1.5;min-height:100vh;}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--iv3);border-radius:2px}
 
 /* NAV */
-.nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:50px;border-bottom:0.5px solid var(--bd);background:rgba(250,247,242,.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;}
-.logo{font-family:var(--fd);font-size:17px;font-weight:400;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:7px;}
-.logo em{font-style:italic;color:var(--si);}
-.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--si);opacity:.65;}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:50px;border-bottom:0.5px solid var(–bd);background:rgba(250,247,242,.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;}
+.logo{font-family:var(–fd);font-size:17px;font-weight:400;color:var(–ink);cursor:pointer;display:flex;align-items:center;gap:7px;}
+.logo em{font-style:italic;color:var(–si);}
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(–si);opacity:.65;}
 .ntabs{display:flex;gap:2px;}
-.ntab{font-size:12px;color:var(--muted);padding:4px 12px;border-radius:20px;border:none;background:transparent;cursor:pointer;transition:all .15s;}
-.ntab:hover{color:var(--ink);background:var(--iv2);}
-.ntab.on{color:var(--ink);background:var(--iv2);font-weight:500;}
+.ntab{font-size:12px;color:var(–muted);padding:4px 12px;border-radius:20px;border:none;background:transparent;cursor:pointer;transition:all .15s;}
+.ntab:hover{color:var(–ink);background:var(–iv2);}
+.ntab.on{color:var(–ink);background:var(–iv2);font-weight:500;}
 .nav-r{display:flex;align-items:center;gap:10px;}
-.nstatus{font-size:10px;color:var(--muted);}
-.save-indicator{font-size:10px;color:var(--faint);display:flex;align-items:center;gap:4px;}
-.save-indicator.saving{color:var(--go);}
-.save-indicator.saved{color:var(--sa);}
+.nstatus{font-size:10px;color:var(–muted);}
+.save-indicator{font-size:10px;color:var(–faint);display:flex;align-items:center;gap:4px;}
+.save-indicator.saving{color:var(–go);}
+.save-indicator.saved{color:var(–sa);}
 .save-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
-.lock-badge{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--sa);border:0.5px solid var(--sal);padding:3px 10px;border-radius:20px;background:var(--sap);cursor:pointer;}
+.lock-badge{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(–sa);border:0.5px solid var(–sal);padding:3px 10px;border-radius:20px;background:var(–sap);cursor:pointer;}
 
 /* PANELS */
 .panel{display:none;min-height:calc(100vh - 50px);}.panel.on{display:block;}
 
 /* ════ PORTFOLIO ════ */
 .port{max-width:840px;margin:0 auto;padding:0 1.5rem 4rem;}
-.port-hero{padding:4rem 0 2.5rem;border-bottom:0.5px solid var(--bd);display:grid;grid-template-columns:1fr auto;gap:1.5rem;align-items:end;}
-.eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem;display:flex;align-items:center;gap:8px;}
-.eyebrow::before{content:'';width:20px;height:0.5px;background:var(--sil);}
-.port-name{font-family:var(--fd);font-size:52px;font-weight:300;line-height:1.0;margin-bottom:.4rem;}
-.port-name em{font-style:italic;color:var(--si);}
-.port-subtitle{font-family:var(--fd);font-size:18px;font-weight:300;font-style:italic;color:var(--muted);margin-bottom:1.2rem;}
-.port-bio{font-size:14px;font-weight:300;line-height:1.8;color:var(--charcoal);max-width:450px;margin-bottom:1.4rem;}
+.port-hero{padding:4rem 0 2.5rem;border-bottom:0.5px solid var(–bd);display:grid;grid-template-columns:1fr auto;gap:1.5rem;align-items:end;}
+.eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(–muted);margin-bottom:.9rem;display:flex;align-items:center;gap:8px;}
+.eyebrow::before{content:’’;width:20px;height:0.5px;background:var(–sil);}
+.port-name{font-family:var(–fd);font-size:52px;font-weight:300;line-height:1.0;margin-bottom:.4rem;}
+.port-name em{font-style:italic;color:var(–si);}
+.port-subtitle{font-family:var(–fd);font-size:18px;font-weight:300;font-style:italic;color:var(–muted);margin-bottom:1.2rem;}
+.port-bio{font-size:14px;font-weight:300;line-height:1.8;color:var(–charcoal);max-width:450px;margin-bottom:1.4rem;}
 .tags{display:flex;gap:5px;flex-wrap:wrap;}
-.tag{font-size:10px;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:0.5px solid var(--bd);color:var(--muted);}
-.tag.s{border-color:var(--sil);color:var(--si);background:var(--sip);}
-.tag.g{border-color:var(--sal);color:var(--sa);background:var(--sap);}
-.tag.o{border-color:var(--go);color:var(--go);background:var(--gop);}
-.avatar{width:96px;height:96px;border-radius:50%;background:var(--iv2);border:0.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:34px;font-style:italic;color:var(--sil);cursor:pointer;transition:border-color .2s;}
-.avatar:hover{border-color:var(--sil);}
+.tag{font-size:10px;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:0.5px solid var(–bd);color:var(–muted);}
+.tag.s{border-color:var(–sil);color:var(–si);background:var(–sip);}
+.tag.g{border-color:var(–sal);color:var(–sa);background:var(–sap);}
+.tag.o{border-color:var(–go);color:var(–go);background:var(–gop);}
+.avatar{width:96px;height:96px;border-radius:50%;background:var(–iv2);border:0.5px solid var(–bd);display:flex;align-items:center;justify-content:center;font-family:var(–fd);font-size:34px;font-style:italic;color:var(–sil);cursor:pointer;transition:border-color .2s;}
+.avatar:hover{border-color:var(–sil);}
 .sec{display:flex;align-items:center;gap:1rem;padding:2rem 0 .9rem;}
-.sec-lbl{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
-.sec-rule{flex:1;height:0.5px;background:var(--bd);}
-.sec-ct{font-size:10px;color:var(--faint);}
+.sec-lbl{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(–muted);white-space:nowrap;}
+.sec-rule{flex:1;height:0.5px;background:var(–bd);}
+.sec-ct{font-size:10px;color:var(–faint);}
 .wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;}
-.wcard{border:0.5px solid var(--bd);border-radius:var(--rl);background:white;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .2s;}
-.wcard:hover{border-color:var(--sil);transform:translateY(-2px);}
-.wthumb{height:105px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:26px;font-style:italic;color:var(--sil);border-bottom:0.5px solid var(--bd);}
-.wt1{background:linear-gradient(135deg,var(--iv2),#E0D5CC);}
+.wcard{border:0.5px solid var(–bd);border-radius:var(–rl);background:white;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .2s;}
+.wcard:hover{border-color:var(–sil);transform:translateY(-2px);}
+.wthumb{height:105px;display:flex;align-items:center;justify-content:center;font-family:var(–fd);font-size:26px;font-style:italic;color:var(–sil);border-bottom:0.5px solid var(–bd);}
+.wt1{background:linear-gradient(135deg,var(–iv2),#E0D5CC);}
 .wt2{background:linear-gradient(135deg,#EDE0D4,#D4B8A8);}
 .wt3{background:linear-gradient(135deg,#DDE8DC,#C0D4BE);}
 .wt4{background:linear-gradient(135deg,#DDD8E8,#BFB8D4);}
 .wbody{padding:9px 11px 11px;}
-.wtitle{font-family:var(--fd);font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px;}
-.wmeta{font-size:11px;color:var(--muted);}
-.wtag{display:inline-block;margin-top:4px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:var(--iv2);color:var(--muted);}
+.wtitle{font-family:var(–fd);font-size:13px;font-weight:500;color:var(–ink);margin-bottom:2px;}
+.wmeta{font-size:11px;color:var(–muted);}
+.wtag{display:inline-block;margin-top:4px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:var(–iv2);color:var(–muted);}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.pcard{border:0.5px solid var(--bd);border-radius:var(--rl);background:white;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .2s;}
-.pcard:hover{border-color:var(--sil);transform:translateY(-2px);}
+.pcard{border:0.5px solid var(–bd);border-radius:var(–rl);background:white;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .2s;}
+.pcard:hover{border-color:var(–sil);transform:translateY(-2px);}
 .pcanvas{height:175px;display:flex;align-items:flex-end;padding:10px;}
 .pw{background:linear-gradient(145deg,#C4875A,#7A4A30,#3D2518);}
 .ps{background:linear-gradient(145deg,#7B9E87,#4A6B55,#243528);}
 .pe{background:linear-gradient(145deg,#8B7B5A,#5A4A30,#2A2018);}
 .pd{background:linear-gradient(145deg,#9B7BAA,#5C4A70,#2A2035);}
-.pprice{font-size:11px;background:rgba(250,247,242,.9);color:var(--ink);padding:2px 8px;border-radius:4px;}
-.psold{background:rgba(28,23,20,.75);color:var(--ivory);}
+.pprice{font-size:11px;background:rgba(250,247,242,.9);color:var(–ink);padding:2px 8px;border-radius:4px;}
+.psold{background:rgba(28,23,20,.75);color:var(–ivory);}
 .pbody{padding:11px 13px 13px;}
-.pname{font-family:var(--fd);font-size:16px;font-style:italic;color:var(--ink);margin-bottom:2px;}
-.pdet{font-size:11px;color:var(--muted);margin-bottom:5px;}
-.pcta{font-size:11px;color:var(--si);border-bottom:0.5px solid var(--sil);padding-bottom:1px;cursor:pointer;}
-.cstrip{margin-top:2.5rem;padding:1.8rem 0;border-top:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
-.ccta{font-family:var(--fd);font-size:20px;font-style:italic;font-weight:300;color:var(--muted);}
-.ccta em{color:var(--si);}
+.pname{font-family:var(–fd);font-size:16px;font-style:italic;color:var(–ink);margin-bottom:2px;}
+.pdet{font-size:11px;color:var(–muted);margin-bottom:5px;}
+.pcta{font-size:11px;color:var(–si);border-bottom:0.5px solid var(–sil);padding-bottom:1px;cursor:pointer;}
+.cstrip{margin-top:2.5rem;padding:1.8rem 0;border-top:0.5px solid var(–bd);display:flex;align-items:center;justify-content:space-between;}
+.ccta{font-family:var(–fd);font-size:20px;font-style:italic;font-weight:300;color:var(–muted);}
+.ccta em{color:var(–si);}
 .clinks{display:flex;gap:7px;}
-.clink{font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border-radius:5px;cursor:pointer;border:0.5px solid var(--bd);color:var(--muted);background:transparent;transition:all .15s;}
-.clink:hover{border-color:var(--sil);color:var(--si);background:var(--sip);}
-.clink.pri{background:var(--ink);color:var(--ivory);border-color:var(--ink);}
+.clink{font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border-radius:5px;cursor:pointer;border:0.5px solid var(–bd);color:var(–muted);background:transparent;transition:all .15s;}
+.clink:hover{border-color:var(–sil);color:var(–si);background:var(–sip);}
+.clink.pri{background:var(–ink);color:var(–ivory);border-color:var(–ink);}
 
-/* ════ DASHBOARD ════ */
+/* ── COMPANY RESEARCH DASHBOARD ─────────────── */
+.co-dash-bg{position:fixed;inset:0;z-index:600;background:rgba(28,23,20,.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .22s;}
+.co-dash-bg.on{opacity:1;pointer-events:all;}
+.co-dash{background:var(–ivory);border-radius:10px;width:min(780px,100%);max-height:92vh;display:flex;flex-direction:column;transform:scale(.97) translateY(12px);transition:transform .25s cubic-bezier(.34,1.2,.64,1);overflow:hidden;}
+.co-dash-bg.on .co-dash{transform:scale(1) translateY(0);}
+.co-dash-head{padding:1.25rem 1.5rem 1rem;border-bottom:0.5px solid var(–bd);display:flex;align-items:flex-start;gap:1rem;flex-shrink:0;background:white;}
+.co-dash-eyebrow{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(–si);margin-bottom:.2rem;}
+.co-dash-name{font-family:var(–fd);font-size:22px;font-style:italic;font-weight:400;color:var(–ink);line-height:1.1;}
+.co-dash-role{font-size:11px;color:var(–muted);margin-top:2px;}
+.co-dash-close{width:30px;height:30px;border-radius:50%;border:0.5px solid var(–bd);background:transparent;cursor:pointer;font-size:15px;color:var(–muted);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.co-dash-close:hover{background:var(–iv2);color:var(–ink);}
+.cd-status-sel{font-size:10px;padding:4px 10px;border-radius:10px;border:0.5px solid var(–bd);background:var(–iv2);color:var(–muted);cursor:pointer;font-family:var(–fb);}
+.co-tabs{display:flex;border-bottom:0.5px solid var(–bd);background:white;flex-shrink:0;overflow-x:auto;}
+.co-tab{font-size:11px;letter-spacing:.04em;padding:.65rem 1.1rem;border:none;background:transparent;cursor:pointer;color:var(–muted);border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+.co-tab.on{color:var(–si);border-bottom-color:var(–si);font-weight:500;}
+.co-tab:hover:not(.on){color:var(–ink);}
+.co-dash-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.co-tab-panel{display:none;padding:1.25rem 1.5rem 2rem;}
+.co-tab-panel.on{display:block;}
+.co-section{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:0.5px solid var(–bd);}
+.co-section:last-child{border-bottom:none;padding-bottom:0;}
+.co-sec-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(–muted);margin-bottom:.65rem;}
+.co-field{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;}
+.co-field-row{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.65rem;}
+.co-lbl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(–faint);}
+.co-inp{padding:.45rem .65rem;border:0.5px solid var(–bd);border-radius:10px;background:white;font-family:var(–fb);font-size:12px;color:var(–ink);outline:none;transition:border-color .15s;width:100%;}
+.co-inp:focus{border-color:var(–sil);}
+.co-ta{width:100%;padding:.65rem .85rem;border:0.5px solid var(–bd);border-radius:10px;background:white;font-family:var(–fb);font-size:12px;color:var(–ink);outline:none;resize:vertical;min-height:90px;line-height:1.7;transition:border-color .15s;}
+.co-ta:focus{border-color:var(–sil);}
+.co-link-btn{padding:.45rem .75rem;border-radius:10px;border:0.5px solid var(–bd);background:transparent;font-size:11px;color:var(–muted);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;}
+.co-link-btn:hover{border-color:var(–sil);color:var(–si);}
+.co-fit-dots{display:flex;gap:4px;}
+.co-fit-dot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(–bd);cursor:pointer;transition:all .15s;}
+.co-fit-dot.on{background:var(–si);border-color:var(–si);}
+.co-add-btn{font-size:10px;padding:4px 12px;border-radius:10px;border:0.5px solid var(–sil);color:var(–si);background:var(–sip);cursor:pointer;}
+.co-contact-row{background:white;border:0.5px solid var(–bd);border-radius:10px;padding:.75rem;margin-bottom:.5rem;display:grid;grid-template-columns:1fr 1fr auto;gap:.5rem;align-items:center;}
+.co-contact-inp{border:none;border-bottom:0.5px solid var(–bd);background:transparent;font-size:12px;font-family:var(–fb);color:var(–ink);outline:none;padding:.2rem 0;width:100%;}
+.co-contact-rm{border:none;background:transparent;color:var(–faint);cursor:pointer;font-size:16px;padding:0 .2rem;}
+.co-contact-rm:hover{color:var(–si);}
+.co-del-btn{flex:1;padding:.6rem;border-radius:10px;border:0.5px solid var(–bd);background:transparent;font-size:11px;color:var(–muted);cursor:pointer;transition:all .15s;}
+.co-del-btn:hover{border-color:var(–si);color:var(–si);}
+.co-save-btn{flex:2;padding:.6rem;border-radius:10px;border:none;background:var(–ink);font-size:12px;color:var(–ivory);cursor:pointer;font-weight:500;transition:background .15s;}
+.co-save-btn:hover{background:var(–charcoal);}
+
+/* ── MOBILE ──────────────────────────────────── */
+@media(max-width:768px){
+/* Nav */
+.nav{padding:0 1rem;flex-wrap:wrap;height:auto;min-height:50px;gap:.3rem;}
+.ntabs{gap:1px;flex-wrap:wrap;}
+.ntab{font-size:11px;padding:3px 9px;}
+.nav-r{gap:6px;}
+
+/* Portfolio */
+.port{padding:0 1rem 3rem;}
+.port-hero{grid-template-columns:1fr;padding:2rem 0 1.5rem;gap:1rem;}
+.port-name{font-size:36px;}
+.port-subtitle{font-size:15px;}
+.avatar{width:64px;height:64px;font-size:24px;}
+.wgrid{grid-template-columns:1fr 1fr;gap:.6rem;}
+.pgrid{grid-template-columns:1fr;}
+.cstrip{flex-direction:column;gap:.75rem;text-align:center;}
+.clinks{justify-content:center;flex-wrap:wrap;}
+
+/* Dashboard */
+.dbwrap{grid-template-columns:1fr;}
+.sidebar{position:fixed;left:-220px;width:220px;height:calc(100vh - 50px);top:50px;z-index:200;transition:left .25s;box-shadow:4px 0 24px rgba(28,23,20,.08);}
+.sidebar.open{left:0;}
+.main{padding:0;}
+
+/* Hamburger */
+.mob-menu-btn{display:flex;}
+
+/* Job tracker table */
+.tracker-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.jtbl{min-width:540px;}
+
+/* Contact page */
+.port div[style*=“grid-template-columns:1fr 1fr”]{display:flex;flex-direction:column;gap:1.5rem;}
+
+/* Company dashboard */
+.co-dash{max-height:100vh;border-radius:10px 10px 0 0;margin:0;width:100%;align-self:flex-end;}
+.co-dash-bg{align-items:flex-end;padding:0;}
+.co-field-row{grid-template-columns:1fr;}
+.co-contact-row{grid-template-columns:1fr auto;}
+
+/* Project modal */
+.proj-modal{width:100%;}
+}
+
+@media(max-width:480px){
+.port-name{font-size:28px;}
+.wgrid{grid-template-columns:1fr;}
+.ntabs{display:none;}
+}
+
+.proj-modal-bg{position:fixed;inset:0;z-index:500;background:rgba(28,23,20,.55);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;padding-bottom:0;opacity:0;pointer-events:none;transition:opacity .22s;}
+.proj-modal-bg.on{opacity:1;pointer-events:all;}
+.proj-modal{background:var(–ivory);border-radius:10px 10px 0 0;width:min(680px,100%);max-height:92vh;overflow-y:auto;transform:translateY(40px);transition:transform .28s cubic-bezier(.34,1.2,.64,1);display:flex;flex-direction:column;}
+.proj-modal-bg.on .proj-modal{transform:translateY(0);}
+.proj-modal.expanded{border-radius:10px;max-height:92vh;margin:4vh auto;}
+.pm-handle{width:36px;height:4px;border-radius:2px;background:var(–iv3);margin:10px auto 0;flex-shrink:0;cursor:pointer;}
+.pm-head{padding:1.4rem 1.75rem 1rem;border-bottom:0.5px solid var(–bd);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
+.pm-thumb{width:56px;height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.pm-title{font-family:var(–fd);font-size:20px;font-weight:400;font-style:italic;color:var(–ink);line-height:1.2;margin-bottom:3px;}
+.pm-meta{font-size:11px;color:var(–muted);}
+.pm-tag{font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:10px;background:var(–sip);color:var(–si);display:inline-block;margin-top:4px;}
+.pm-close{width:28px;height:28px;border-radius:50%;border:0.5px solid var(–bd);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(–muted);flex-shrink:0;transition:all .15s;}
+.pm-close:hover{background:var(–iv2);color:var(–ink);}
+.pm-body{padding:1.4rem 1.75rem;flex:1;}
+.pm-desc{font-size:13px;color:var(–charcoal);line-height:1.85;margin-bottom:1rem;}
+.pm-result{background:var(–sip);border-radius:10px;padding:.85rem 1rem;margin-bottom:.75rem;}
+.pm-result-lbl{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(–si);margin-bottom:.3rem;}
+.pm-result-val{font-family:var(–fd);font-size:15px;font-style:italic;color:var(–ink);}
+.pm-stack{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem;}
+.pm-chip{font-size:10px;padding:3px 10px;border-radius:10px;border:0.5px solid var(–bd);color:var(–muted);}
+.pm-actions{display:flex;gap:.6rem;padding:1rem 1.75rem;border-top:0.5px solid var(–bd);flex-shrink:0;}
+.pm-btn{font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:7px 16px;border-radius:10px;cursor:pointer;border:0.5px solid var(–bd);color:var(–muted);background:transparent;transition:all .15s;flex:1;text-align:center;}
+.pm-btn:hover{border-color:var(–sil);color:var(–si);}
+.pm-btn.pri{background:var(–ink);color:var(–ivory);border-color:var(–ink);}
+.pm-expand{font-size:10px;text-align:center;padding:.5rem;color:var(–muted);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;}
+.pm-expand:hover{color:var(–si);}
+
+/* ── IMPACT IMPROVEMENTS ────────────────────── */
+/* Scroll reveal animation */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.reveal{animation:fadeUp .5s ease both;}
+.reveal-d1{animation-delay:.08s}.reveal-d2{animation-delay:.16s}.reveal-d3{animation-delay:.24s}
+
+/* Hover ring on work cards */
+.wcard{transition:border-color .2s,transform .2s,box-shadow .2s;}
+.wcard:hover{border-color:var(–sil);transform:translateY(-3px);box-shadow:0 8px 28px rgba(139,74,47,.1);}
+
+/* Section dividers with sienna rule */
+.sec-rule{background:linear-gradient(to right,var(–sil),transparent);}
+
+/* Hero name larger impact */
+.port-name{font-family:var(–fd);font-size:58px;font-weight:300;line-height:1.0;margin-bottom:.4rem;letter-spacing:-.01em;}
+
+/* Subtle gradient on hero area */
+.port-hero{background:linear-gradient(180deg,rgba(139,74,47,.03) 0%,transparent 100%);}
+
+/* Painting card hover */
+.pcard{transition:border-color .2s,transform .2s,box-shadow .2s;}
+.pcard:hover{border-color:var(–sil);transform:translateY(-3px);box-shadow:0 8px 28px rgba(139,74,47,.1);}
+
+/* Contact strip more prominent */
+.cstrip{border-top:0.5px solid var(–bd);background:linear-gradient(180deg,transparent,rgba(139,74,47,.03));}
+
+/* Nav refined */
+.nav{border-bottom:0.5px solid rgba(28,23,20,.07);}
+
 .dbwrap{display:grid;grid-template-columns:200px 1fr;min-height:calc(100vh - 50px);}
-.sidebar{border-right:0.5px solid var(--bd);background:white;padding:1.2rem 0;position:sticky;top:50px;height:calc(100vh - 50px);overflow-y:auto;}
+.sidebar{border-right:0.5px solid var(–bd);background:white;padding:1.2rem 0;position:sticky;top:50px;height:calc(100vh - 50px);overflow-y:auto;}
 .sbsec{padding:0 .8rem .8rem;}
-.sbh{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:5px;padding:0 5px;}
-.sbitem{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:12px;color:var(--charcoal);border:none;background:transparent;width:100%;text-align:left;transition:background .12s;}
-.sbitem:hover{background:var(--iv2);}
-.sbitem.on{background:var(--sip);color:var(--si);}
-.sbdiv{height:0.5px;background:var(--bd);margin:6px .8rem;}
-.sbgoal{margin:.8rem .8rem 0;padding:10px 12px;background:var(--iv2);border-radius:var(--r);border:0.5px solid var(--bd);}
-.sglbl{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:3px;}
-.sgamt{font-family:var(--fd);font-size:20px;font-weight:500;color:var(--ink);}
-.sgamt em{font-style:italic;color:var(--si);font-size:12px;}
-.sgbar{margin-top:6px;height:3px;background:var(--iv3);border-radius:2px;overflow:hidden;}
-.sgfill{height:100%;background:var(--si);border-radius:2px;transition:width .5s;}
-.sgsub{font-size:10px;color:var(--muted);margin-top:4px;}
-.main{padding:1.8rem 2.2rem;background:var(--ivory);overflow:hidden;}
+.sbh{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(–faint);margin-bottom:5px;padding:0 5px;}
+.sbitem{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:12px;color:var(–charcoal);border:none;background:transparent;width:100%;text-align:left;transition:background .12s;}
+.sbitem:hover{background:var(–iv2);}
+.sbitem.on{background:var(–sip);color:var(–si);}
+.sbdiv{height:0.5px;background:var(–bd);margin:6px .8rem;}
+.sbgoal{margin:.8rem .8rem 0;padding:10px 12px;background:var(–iv2);border-radius:var(–r);border:0.5px solid var(–bd);}
+.sglbl{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(–faint);margin-bottom:3px;}
+.sgamt{font-family:var(–fd);font-size:20px;font-weight:500;color:var(–ink);}
+.sgamt em{font-style:italic;color:var(–si);font-size:12px;}
+.sgbar{margin-top:6px;height:3px;background:var(–iv3);border-radius:2px;overflow:hidden;}
+.sgfill{height:100%;background:var(–si);border-radius:2px;transition:width .5s;}
+.sgsub{font-size:10px;color:var(–muted);margin-top:4px;}
+.main{padding:1.8rem 2.2rem;background:var(–ivory);overflow:hidden;}
 .mhead{margin-bottom:1.4rem;display:flex;align-items:flex-start;justify-content:space-between;}
-.mtitle{font-family:var(--fd);font-size:28px;font-weight:300;color:var(--ink);}
-.mtitle em{font-style:italic;color:var(--si);}
-.msub{font-size:12px;color:var(--muted);margin-top:2px;}
+.mtitle{font-family:var(–fd);font-size:28px;font-weight:300;color:var(–ink);}
+.mtitle em{font-style:italic;color:var(–si);}
+.msub{font-size:12px;color:var(–muted);margin-top:2px;}
 .view{display:none;}.view.on{display:block;}
 
 /* ── PORTFOLIO EDITOR ── */
-.edit-section{background:white;border:0.5px solid var(--bd);border-radius:var(--rl);margin-bottom:1rem;overflow:hidden;}
-.edit-head{padding:10px 16px;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:var(--ivory);}
-.edit-head-title{font-size:11px;font-weight:500;color:var(--ink);}
-.edit-head-hint{font-size:10px;color:var(--faint);}
+.edit-section{background:white;border:0.5px solid var(–bd);border-radius:var(–rl);margin-bottom:1rem;overflow:hidden;}
+.edit-head{padding:10px 16px;border-bottom:0.5px solid var(–bd);display:flex;align-items:center;justify-content:space-between;background:var(–ivory);}
+.edit-head-title{font-size:11px;font-weight:500;color:var(–ink);}
+.edit-head-hint{font-size:10px;color:var(–faint);}
 .edit-body{padding:14px 16px;}
 .edit-row{margin-bottom:10px;display:flex;align-items:flex-start;gap:10px;}
 .edit-row:last-child{margin-bottom:0;}
-.edit-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);width:100px;flex-shrink:0;padding-top:8px;}
-.edit-input{flex:1;padding:7px 9px;font-size:13px;border:0.5px solid var(--bd);border-radius:6px;background:var(--ivory);color:var(--ink);font-family:var(--fb);transition:border-color .15s;}
-.edit-input:focus{outline:none;border-color:var(--sil);}
-.edit-textarea{flex:1;padding:7px 9px;font-size:13px;border:0.5px solid var(--bd);border-radius:6px;background:var(--ivory);color:var(--ink);font-family:var(--fb);resize:vertical;min-height:70px;}
-.edit-textarea:focus{outline:none;border-color:var(--sil);}
-.save-bar{padding:10px 16px;border-top:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:var(--ivory);}
-.save-bar-hint{font-size:10px;color:var(--faint);}
-.save-btn{font-size:11px;padding:5px 14px;background:var(--ink);color:var(--ivory);border:none;border-radius:5px;cursor:pointer;}
-.preview-btn{font-size:11px;padding:5px 12px;border:0.5px solid var(--bd);border-radius:5px;color:var(--muted);background:transparent;cursor:pointer;}
-.preview-btn:hover{border-color:var(--sil);color:var(--si);}
-.wei-row{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:0.5px solid var(--bd);}
+.edit-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(–muted);width:100px;flex-shrink:0;padding-top:8px;}
+.edit-input{flex:1;padding:7px 9px;font-size:13px;border:0.5px solid var(–bd);border-radius:6px;background:var(–ivory);color:var(–ink);font-family:var(–fb);transition:border-color .15s;}
+.edit-input:focus{outline:none;border-color:var(–sil);}
+.edit-textarea{flex:1;padding:7px 9px;font-size:13px;border:0.5px solid var(–bd);border-radius:6px;background:var(–ivory);color:var(–ink);font-family:var(–fb);resize:vertical;min-height:70px;}
+.edit-textarea:focus{outline:none;border-color:var(–sil);}
+.save-bar{padding:10px 16px;border-top:0.5px solid var(–bd);display:flex;align-items:center;justify-content:space-between;background:var(–ivory);}
+.save-bar-hint{font-size:10px;color:var(–faint);}
+.save-btn{font-size:11px;padding:5px 14px;background:var(–ink);color:var(–ivory);border:none;border-radius:5px;cursor:pointer;}
+.preview-btn{font-size:11px;padding:5px 12px;border:0.5px solid var(–bd);border-radius:5px;color:var(–muted);background:transparent;cursor:pointer;}
+.preview-btn:hover{border-color:var(–sil);color:var(–si);}
+.wei-row{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:0.5px solid var(–bd);}
 .wei-row:last-child{border-bottom:none;}
-.wei-inp{padding:5px 8px;font-size:12px;border:0.5px solid var(--bd);border-radius:5px;background:var(--ivory);color:var(--ink);font-family:var(--fb);flex:1;}
-.wei-inp:focus{outline:none;border-color:var(--sil);}
-.wei-del{font-size:16px;color:var(--faint);cursor:pointer;border:none;background:transparent;flex-shrink:0;padding:0 4px;}
-.wei-del:hover{color:var(--si);}
-.add-row-btn{width:100%;margin-top:8px;padding:6px;font-size:11px;color:var(--si);border:0.5px dashed var(--sil);background:transparent;border-radius:5px;cursor:pointer;}
-.add-row-btn:hover{background:var(--sip);}
+.wei-inp{padding:5px 8px;font-size:12px;border:0.5px solid var(–bd);border-radius:5px;background:var(–ivory);color:var(–ink);font-family:var(–fb);flex:1;}
+.wei-inp:focus{outline:none;border-color:var(–sil);}
+.wei-del{font-size:16px;color:var(–faint);cursor:pointer;border:none;background:transparent;flex-shrink:0;padding:0 4px;}
+.wei-del:hover{color:var(–si);}
+.add-row-btn{width:100%;margin-top:8px;padding:6px;font-size:11px;color:var(–si);border:0.5px dashed var(–sil);background:transparent;border-radius:5px;cursor:pointer;}
+.add-row-btn:hover{background:var(–sip);}
 .paint-swatch{width:26px;height:26px;border-radius:4px;flex-shrink:0;}
 
 /* ── INCOME ── */
 .mrow{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:1.4rem;}
-.met{background:white;border:0.5px solid var(--bd);border-radius:var(--rl);padding:12px 14px;}
-.mlbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-.mval{font-family:var(--fd);font-size:22px;font-weight:500;color:var(--ink);}
-.mval.si{color:var(--si);}.mval.sa{color:var(--sa);}.mval.go{color:var(--go);}
-.mnote{font-size:10px;color:var(--faint);margin-top:2px;}
+.met{background:white;border:0.5px solid var(–bd);border-radius:var(–rl);padding:12px 14px;}
+.mlbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(–muted);margin-bottom:5px;}
+.mval{font-family:var(–fd);font-size:22px;font-weight:500;color:var(–ink);}
+.mval.si{color:var(–si);}.mval.sa{color:var(–sa);}.mval.go{color:var(–go);}
+.mnote{font-size:10px;color:var(–faint);margin-top:2px;}
 .sgrid2{display:grid;grid-template-columns:1.8fr 1fr;gap:.9rem;}
-.card{background:white;border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;}
-.ch{padding:10px 14px;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
-.ct{font-size:12px;font-weight:500;color:var(--ink);}
-.ca{font-size:11px;color:var(--si);cursor:pointer;border:none;background:transparent;}
-.si-row{padding:10px 14px;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;gap:10px;}
+.card{background:white;border:0.5px solid var(–bd);border-radius:var(–rl);overflow:hidden;}
+.ch{padding:10px 14px;border-bottom:0.5px solid var(–bd);display:flex;align-items:center;justify-content:space-between;}
+.ct{font-size:12px;font-weight:500;color:var(–ink);}
+.ca{font-size:11px;color:var(–si);cursor:pointer;border:none;background:transparent;}
+.si-row{padding:10px 14px;border-bottom:0.5px solid var(–bd);display:flex;align-items:center;gap:10px;}
 .si-row:last-child{border-bottom:none;}
 .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.d1{background:var(--ink);}.d2{background:var(--si);}.d3{background:var(--go);}.d4{background:var(--sa);}
-.sname{flex:1;font-size:12px;color:var(--charcoal);}
-.sstatus{font-size:10px;color:var(--muted);}
-.samt{font-family:var(--fd);font-size:13px;font-weight:500;color:var(--ink);min-width:55px;text-align:right;}
-.samt.faint{color:var(--faint);font-style:italic;}
-.msrow{padding:9px 14px;border-bottom:0.5px solid var(--bd);display:flex;align-items:flex-start;gap:9px;cursor:pointer;}
+.d1{background:var(–ink);}.d2{background:var(–si);}.d3{background:var(–go);}.d4{background:var(–sa);}
+.sname{flex:1;font-size:12px;color:var(–charcoal);}
+.sstatus{font-size:10px;color:var(–muted);}
+.samt{font-family:var(–fd);font-size:13px;font-weight:500;color:var(–ink);min-width:55px;text-align:right;}
+.samt.faint{color:var(–faint);font-style:italic;}
+.msrow{padding:9px 14px;border-bottom:0.5px solid var(–bd);display:flex;align-items:flex-start;gap:9px;cursor:pointer;}
 .msrow:last-child{border-bottom:none;}
-.msck{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:8px;transition:all .15s;}
-.msck:hover{border-color:var(--sal);}
-.msck.done{background:var(--sa);border-color:var(--sa);color:white;}
-.mstxt{font-size:12px;color:var(--charcoal);line-height:1.4;}
-.mstxt.done{color:var(--faint);text-decoration:line-through;}
-.msdt{font-size:10px;color:var(--faint);margin-top:1px;}
+.msck{width:15px;height:15px;border-radius:50%;border:1.5px solid var(–bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:8px;transition:all .15s;}
+.msck:hover{border-color:var(–sal);}
+.msck.done{background:var(–sa);border-color:var(–sa);color:white;}
+.mstxt{font-size:12px;color:var(–charcoal);line-height:1.4;}
+.mstxt.done{color:var(–faint);text-decoration:line-through;}
+.msdt{font-size:10px;color:var(–faint);margin-top:1px;}
 
 /* ════ JOB TRACKER ════ */
 .tracker-wrap{position:relative;overflow:hidden;}
 .tbar{display:flex;gap:5px;margin-bottom:1rem;align-items:center;flex-wrap:wrap;}
-.fp{font-size:11px;padding:4px 11px;border-radius:20px;border:0.5px solid var(--bd);color:var(--muted);background:transparent;cursor:pointer;transition:all .12s;}
-.fp.on{background:var(--ink);color:var(--ivory);border-color:var(--ink);}
-.fp:hover:not(.on){background:var(--iv2);}
-.addbtn{margin-left:auto;font-size:11px;padding:5px 12px;border-radius:5px;border:0.5px solid var(--sil);color:var(--si);background:var(--sip);cursor:pointer;transition:all .12s;}
-.addbtn:hover{background:var(--sil);color:white;}
+.fp{font-size:11px;padding:4px 11px;border-radius:20px;border:0.5px solid var(–bd);color:var(–muted);background:transparent;cursor:pointer;transition:all .12s;}
+.fp.on{background:var(–ink);color:var(–ivory);border-color:var(–ink);}
+.fp:hover:not(.on){background:var(–iv2);}
+.addbtn{margin-left:auto;font-size:11px;padding:5px 12px;border-radius:5px;border:0.5px solid var(–sil);color:var(–si);background:var(–sip);cursor:pointer;transition:all .12s;}
+.addbtn:hover{background:var(–sil);color:white;}
 
-.jtbl{width:100%;border-collapse:collapse;background:white;border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;font-size:12px;table-layout:fixed;}
-.jtbl th{text-align:left;padding:9px 12px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:var(--ivory);border-bottom:0.5px solid var(--bd);font-weight:400;}
-.jtbl td{padding:0;border-bottom:0.5px solid var(--bd);color:var(--charcoal);vertical-align:middle;}
+.jtbl{width:100%;border-collapse:collapse;background:white;border:0.5px solid var(–bd);border-radius:var(–rl);overflow:hidden;font-size:12px;table-layout:fixed;}
+.jtbl th{text-align:left;padding:9px 12px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(–muted);background:var(–ivory);border-bottom:0.5px solid var(–bd);font-weight:400;}
+.jtbl td{padding:0;border-bottom:0.5px solid var(–bd);color:var(–charcoal);vertical-align:middle;}
 .jtbl tr:last-child td{border-bottom:none;}
 .jtbl tr:hover td{background:rgba(245,237,232,0.4);}
-.jtbl tr.open-row td{background:var(--sip);}
+.jtbl tr.open-row td{background:var(–sip);}
 
 /* Inline cell editing */
 .jcell{padding:9px 12px;display:block;width:100%;min-height:38px;}
-.jeditable{padding:9px 12px;width:100%;border:none;background:transparent;font-size:12px;color:var(--charcoal);font-family:var(--fb);cursor:text;}
-.jeditable:focus{outline:none;background:var(--iv2);border-radius:4px;}
+.jeditable{padding:9px 12px;width:100%;border:none;background:transparent;font-size:12px;color:var(–charcoal);font-family:var(–fb);cursor:text;}
+.jeditable:focus{outline:none;background:var(–iv2);border-radius:4px;}
 
-.coname{font-weight:500;color:var(--ink);font-size:12px;display:block;}
-.corole{font-size:10px;color:var(--muted);margin-top:1px;display:block;}
+.coname{font-weight:500;color:var(–ink);font-size:12px;display:block;}
+.corole{font-size:10px;color:var(–muted);margin-top:1px;display:block;}
 .pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;}
-.pr{background:var(--iv2);color:var(--muted);border:0.5px solid var(--bd);}
-.pa{background:var(--gop);color:var(--go);border:0.5px solid #DFC07A;}
-.pi{background:var(--sap);color:var(--sa);border:0.5px solid var(--sal);}
-.po{background:var(--sip);color:var(--si);border:0.5px solid var(--sil);}
-.prej{background:var(--iv3);color:var(--faint);border:0.5px solid var(--iv3);}
+.pr{background:var(–iv2);color:var(–muted);border:0.5px solid var(–bd);}
+.pa{background:var(–gop);color:var(–go);border:0.5px solid #DFC07A;}
+.pi{background:var(–sap);color:var(–sa);border:0.5px solid var(–sal);}
+.po{background:var(–sip);color:var(–si);border:0.5px solid var(–sil);}
+.prej{background:var(–iv3);color:var(–faint);border:0.5px solid var(–iv3);}
 .tp{font-size:9px;padding:2px 6px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;}
-.t1p{background:var(--ink);color:var(--ivory);}
-.t2p{background:var(--sa);color:white;}
-.t3p{background:var(--iv3);color:var(--muted);}
+.t1p{background:var(–ink);color:var(–ivory);}
+.t2p{background:var(–sa);color:white;}
+.t3p{background:var(–iv3);color:var(–muted);}
 .fdots{display:flex;gap:3px;align-items:center;}
-.fd{width:7px;height:7px;border-radius:50%;background:var(--iv3);cursor:pointer;transition:background .12s;}
-.fd:hover{background:var(--sil);}
-.fd.on{background:var(--si);}
-.days-ago{font-size:10px;color:var(--faint);}
-.days-warn{color:var(--go);}
-.days-old{color:var(--si);}
-.status-sel{font-size:11px;border:0.5px solid var(--bd);border-radius:4px;background:transparent;padding:3px 6px;color:var(--charcoal);cursor:pointer;width:100%;}
+.fd{width:7px;height:7px;border-radius:50%;background:var(–iv3);cursor:pointer;transition:background .12s;}
+.fd:hover{background:var(–sil);}
+.fd.on{background:var(–si);}
+.days-ago{font-size:10px;color:var(–faint);}
+.days-warn{color:var(–go);}
+.days-old{color:var(–si);}
+.status-sel{font-size:11px;border:0.5px solid var(–bd);border-radius:4px;background:transparent;padding:3px 6px;color:var(–charcoal);cursor:pointer;width:100%;}
 
 /* ── SLIDE-OUT DETAIL PANEL ── */
-.detail-panel{position:fixed;top:50px;right:0;bottom:0;width:380px;background:white;border-left:0.5px solid var(--bdm);z-index:90;transform:translateX(100%);transition:transform .25s ease;overflow-y:auto;display:flex;flex-direction:column;}
+.detail-panel{position:fixed;top:50px;right:0;bottom:0;width:380px;background:white;border-left:0.5px solid var(–bdm);z-index:90;transform:translateX(100%);transition:transform .25s ease;overflow-y:auto;display:flex;flex-direction:column;}
 .detail-panel.open{transform:translateX(0);}
-.detail-header{padding:16px 18px;border-bottom:0.5px solid var(--bd);display:flex;align-items:flex-start;justify-content:space-between;background:var(--ivory);position:sticky;top:0;z-index:1;}
-.detail-co{font-family:var(--fd);font-size:20px;font-weight:400;color:var(--ink);}
-.detail-co em{font-style:italic;color:var(--si);}
-.detail-close{font-size:18px;color:var(--faint);border:none;background:transparent;cursor:pointer;padding:0 4px;line-height:1;}
-.detail-close:hover{color:var(--ink);}
+.detail-header{padding:16px 18px;border-bottom:0.5px solid var(–bd);display:flex;align-items:flex-start;justify-content:space-between;background:var(–ivory);position:sticky;top:0;z-index:1;}
+.detail-co{font-family:var(–fd);font-size:20px;font-weight:400;color:var(–ink);}
+.detail-co em{font-style:italic;color:var(–si);}
+.detail-close{font-size:18px;color:var(–faint);border:none;background:transparent;cursor:pointer;padding:0 4px;line-height:1;}
+.detail-close:hover{color:var(–ink);}
 .detail-body{padding:16px 18px;flex:1;}
 .detail-section{margin-bottom:1.4rem;}
-.detail-section-title{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;}
+.detail-section-title{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(–faint);margin-bottom:8px;}
 .detail-field{margin-bottom:10px;}
 .detail-field:last-child{margin-bottom:0;}
-.dflbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;display:block;}
-.dfinp{width:100%;padding:7px 9px;font-size:12px;border:0.5px solid var(--bd);border-radius:6px;background:var(--ivory);color:var(--ink);font-family:var(--fb);}
-.dfinp:focus{outline:none;border-color:var(--sil);}
-.dfta{width:100%;padding:7px 9px;font-size:12px;border:0.5px solid var(--bd);border-radius:6px;background:var(--ivory);color:var(--ink);font-family:var(--fb);resize:vertical;min-height:80px;}
-.dfta:focus{outline:none;border-color:var(--sil);}
-.dfsel{width:100%;padding:7px 9px;font-size:12px;border:0.5px solid var(--bd);border-radius:6px;background:var(--ivory);color:var(--ink);}
+.dflbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(–muted);margin-bottom:3px;display:block;}
+.dfinp{width:100%;padding:7px 9px;font-size:12px;border:0.5px solid var(–bd);border-radius:6px;background:var(–ivory);color:var(–ink);font-family:var(–fb);}
+.dfinp:focus{outline:none;border-color:var(–sil);}
+.dfta{width:100%;padding:7px 9px;font-size:12px;border:0.5px solid var(–bd);border-radius:6px;background:var(–ivory);color:var(–ink);font-family:var(–fb);resize:vertical;min-height:80px;}
+.dfta:focus{outline:none;border-color:var(–sil);}
+.dfsel{width:100%;padding:7px 9px;font-size:12px;border:0.5px solid var(–bd);border-radius:6px;background:var(–ivory);color:var(–ink);}
 .df2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.detail-url-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--si);border:0.5px solid var(--sil);padding:4px 10px;border-radius:5px;background:var(--sip);cursor:pointer;margin-top:6px;}
-.detail-url-btn:hover{background:var(--sil);color:white;}
-.detail-save-bar{padding:12px 18px;border-top:0.5px solid var(--bd);background:var(--ivory);position:sticky;bottom:0;display:flex;gap:8px;justify-content:space-between;align-items:center;}
-.detail-save-btn{padding:7px 18px;background:var(--ink);color:var(--ivory);border:none;border-radius:5px;cursor:pointer;font-size:12px;}
-.detail-del-btn{padding:6px 12px;background:transparent;color:var(--faint);border:0.5px solid var(--bd);border-radius:5px;cursor:pointer;font-size:11px;}
-.detail-del-btn:hover{color:var(--si);border-color:var(--sil);}
+.detail-url-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(–si);border:0.5px solid var(–sil);padding:4px 10px;border-radius:5px;background:var(–sip);cursor:pointer;margin-top:6px;}
+.detail-url-btn:hover{background:var(–sil);color:white;}
+.detail-save-bar{padding:12px 18px;border-top:0.5px solid var(–bd);background:var(–ivory);position:sticky;bottom:0;display:flex;gap:8px;justify-content:space-between;align-items:center;}
+.detail-save-btn{padding:7px 18px;background:var(–ink);color:var(–ivory);border:none;border-radius:5px;cursor:pointer;font-size:12px;}
+.detail-del-btn{padding:6px 12px;background:transparent;color:var(–faint);border:0.5px solid var(–bd);border-radius:5px;cursor:pointer;font-size:11px;}
+.detail-del-btn:hover{color:var(–si);border-color:var(–sil);}
 .fit-editor{display:flex;gap:4px;align-items:center;}
-.fit-star{font-size:16px;cursor:pointer;color:var(--iv3);transition:color .12s;line-height:1;}
-.fit-star.on{color:var(--si);}
-.fit-star:hover{color:var(--sil);}
+.fit-star{font-size:16px;cursor:pointer;color:var(–iv3);transition:color .12s;line-height:1;}
+.fit-star.on{color:var(–si);}
+.fit-star:hover{color:var(–sil);}
 
 /* ── PASSWORD GATE ── */
 .pw-overlay{position:fixed;inset:0;z-index:800;background:rgba(28,23,20,.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;}
 .pw-overlay.open{display:flex;}
-.pw-card{background:white;border-radius:var(--rl);padding:2rem;width:340px;border:0.5px solid var(--bd);}
-.pw-logo{font-family:var(--fd);font-size:18px;font-weight:300;color:var(--ink);margin-bottom:.3rem;}
-.pw-logo em{font-style:italic;color:var(--si);}
-.pw-hint{font-size:11px;color:var(--muted);margin-bottom:1.4rem;}
-.pw-inp{width:100%;padding:9px 11px;font-size:14px;border:0.5px solid var(--bd);border-radius:7px;background:var(--ivory);color:var(--ink);font-family:var(--fb);letter-spacing:.15em;outline:none;}
-.pw-inp:focus{border-color:var(--sil);}
-.pw-btn{width:100%;padding:10px;background:var(--ink);color:var(--ivory);border:none;border-radius:7px;font-size:13px;cursor:pointer;margin-top:.8rem;}
-.pw-err{font-size:11px;color:var(--si);margin-top:.5rem;text-align:center;min-height:16px;}
+.pw-card{background:white;border-radius:var(–rl);padding:2rem;width:340px;border:0.5px solid var(–bd);}
+.pw-logo{font-family:var(–fd);font-size:18px;font-weight:300;color:var(–ink);margin-bottom:.3rem;}
+.pw-logo em{font-style:italic;color:var(–si);}
+.pw-hint{font-size:11px;color:var(–muted);margin-bottom:1.4rem;}
+.pw-inp{width:100%;padding:9px 11px;font-size:14px;border:0.5px solid var(–bd);border-radius:7px;background:var(–ivory);color:var(–ink);font-family:var(–fb);letter-spacing:.15em;outline:none;}
+.pw-inp:focus{border-color:var(–sil);}
+.pw-btn{width:100%;padding:10px;background:var(–ink);color:var(–ivory);border:none;border-radius:7px;font-size:13px;cursor:pointer;margin-top:.8rem;}
+.pw-err{font-size:11px;color:var(–si);margin-top:.5rem;text-align:center;min-height:16px;}
 
 .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;}
-.fcard{background:white;border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s;}
-.fcard:hover{border-color:var(--sil);transform:translateY(-1px);}
-.fthumb{height:80px;display:flex;align-items:center;justify-content:center;font-size:24px;border-bottom:0.5px solid var(--bd);}
-.ft-r{background:linear-gradient(135deg,var(--sip),#F0DDD5);}
-.ft-c{background:linear-gradient(135deg,var(--sap),#D8E5D7);}
-.ft-n{background:var(--iv2);}
+.fcard{background:white;border:0.5px solid var(–bd);border-radius:var(–rl);overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s;}
+.fcard:hover{border-color:var(–sil);transform:translateY(-1px);}
+.fthumb{height:80px;display:flex;align-items:center;justify-content:center;font-size:24px;border-bottom:0.5px solid var(–bd);}
+.ft-r{background:linear-gradient(135deg,var(–sip),#F0DDD5);}
+.ft-c{background:linear-gradient(135deg,var(–sap),#D8E5D7);}
+.ft-n{background:var(–iv2);}
 .fbody{padding:9px 11px;}
-.fname{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:2px;}
-.fmeta{font-size:10px;color:var(--muted);}
+.fname{font-size:12px;font-weight:500;color:var(–ink);margin-bottom:2px;}
+.fmeta{font-size:10px;color:var(–muted);}
 .fbtns{display:flex;gap:5px;margin-top:7px;}
-.fbtn{font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer;border:0.5px solid var(--bd);color:var(--muted);background:transparent;transition:all .12s;}
-.fbtn:hover{border-color:var(--sil);color:var(--si);}
-.fbtn.p{background:var(--ink);color:var(--ivory);border-color:var(--ink);}
+.fbtn{font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer;border:0.5px solid var(–bd);color:var(–muted);background:transparent;transition:all .12s;}
+.fbtn:hover{border-color:var(–sil);color:var(–si);}
+.fbtn.p{background:var(–ink);color:var(–ivory);border-color:var(–ink);}
+
+/* ── LIBRARY EDITOR ── */
+.lib-article-card{background:white;border:0.5px solid var(–bd);border-radius:var(–rl);overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;}
+.lib-article-card:hover{border-color:var(–sil);transform:translateY(-2px);}
+.lac-cover{height:90px;background:var(–iv2);border-bottom:0.5px solid var(–bd);display:flex;align-items:flex-end;padding:8px;}
+.lac-cat{font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:rgba(28,23,20,.55);color:rgba(250,247,242,.85);}
+.lac-body{padding:10px 12px 12px;}
+.lac-title{font-family:var(–fd);font-size:14px;font-weight:400;color:var(–ink);line-height:1.3;margin-bottom:4px;}
+.lac-meta{font-size:10px;color:var(–muted);}
+.lac-status{display:inline-block;font-size:9px;padding:2px 7px;border-radius:3px;margin-top:4px;}
+.lac-draft{background:var(–iv2);color:var(–muted);}
+.lac-published{background:var(–sap);color:var(–sa);}
+
+/* ── SERVICES ── */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-bottom:2.5rem;}
+.svc-card{border:0.5px solid var(–bd);border-radius:10px;background:white;padding:1.25rem;transition:border-color .2s,transform .2s,box-shadow .2s;display:flex;flex-direction:column;gap:.5rem;}
+.svc-card:hover{border-color:var(–sil);transform:translateY(-2px);box-shadow:0 6px 24px rgba(139,74,47,.08);}
+.svc-icon{font-size:18px;color:var(–si);line-height:1;}
+.svc-title{font-family:var(–fd);font-size:15px;font-weight:400;color:var(–ink);line-height:1.2;}
+.svc-desc{font-size:11px;color:var(–muted);line-height:1.75;flex:1;}
+.svc-tag{font-size:10px;letter-spacing:.06em;color:var(–si);border-top:0.5px solid var(–bd);padding-top:.5rem;margin-top:.25rem;}
+@media(max-width:768px){.svc-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.svc-grid{grid-template-columns:1fr;}}
+.strat-goal{display:flex;align-items:center;gap:.5rem;padding:.35rem 0;border-bottom:0.5px solid var(–bd);}
+.strat-goal:last-child{border-bottom:none;}
+.strat-goal-text{flex:1;font-size:12px;color:var(–charcoal);}
+.strat-rm{border:none;background:transparent;color:var(–faint);cursor:pointer;font-size:14px;}
+.strat-rm:hover{color:var(–si);}
+.pipe-row{display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:0.5px solid var(–bd);}
+.pipe-row:last-child{border-bottom:none;}
+.pipe-name{flex:1;font-size:12px;font-weight:500;color:var(–ink);}
+.pipe-status{font-size:10px;padding:2px 8px;border-radius:3px;}
+.ps-prospect{background:var(–iv2);color:var(–muted);}
+.ps-active{background:var(–gop);color:var(–go);}
+.ps-closed{background:var(–sap);color:var(–sa);}
+
+/* ── INSPIRATION ── */
+.insp-photo{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;background:var(–iv2);}
+.insp-photo img{width:100%;height:100%;object-fit:cover;transition:transform .2s;}
+.insp-photo:hover img{transform:scale(1.04);}
+.insp-photo-rm{position:absolute;top:4px;right:4px;background:rgba(28,23,20,.6);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;}
+.insp-photo:hover .insp-photo-rm{opacity:1;}
+.journal-entry{background:white;border:0.5px solid var(–bd);border-radius:var(–rl);padding:1rem 1.2rem;margin-bottom:.75rem;}
+.je-date{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(–si);margin-bottom:.4rem;}
+.je-text{font-family:var(–fd);font-size:14px;font-weight:300;line-height:1.85;color:var(–charcoal);width:100%;border:none;outline:none;resize:vertical;min-height:60px;background:transparent;}
+.je-actions{display:flex;justify-content:flex-end;margin-top:.5rem;}
 
 /* ── WRITER ── */
 .wrlayout{display:grid;grid-template-columns:1fr 220px;gap:1.2rem;}
-.wrbar{display:flex;gap:4px;margin-bottom:.8rem;padding-bottom:.8rem;border-bottom:0.5px solid var(--bd);align-items:center;flex-wrap:wrap;}
-.wrtool{width:28px;height:26px;border:0.5px solid var(--bd);border-radius:4px;font-size:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:white;color:var(--charcoal);font-family:var(--fd);}
-.wrtool:hover{background:var(--iv2);}
-.wrsep{width:0.5px;height:18px;background:var(--bd);margin:0 2px;}
-.psel{font-size:11px;padding:4px 8px;border:0.5px solid var(--bd);border-radius:5px;background:white;color:var(--charcoal);cursor:pointer;margin-left:auto;}
-.svbtn{font-size:11px;padding:5px 12px;border-radius:5px;border:0.5px solid var(--sal);color:var(--sa);background:var(--sap);cursor:pointer;}
-.wdoc{background:white;border:0.5px solid var(--bd);border-radius:var(--rl);padding:1.8rem 2rem;}
-.wmag .wt{font-family:var(--fd);font-size:36px;font-weight:300;font-style:italic;line-height:1.05;border:none;outline:none;width:100%;color:var(--ink);background:transparent;padding:.3rem 0;resize:none;border-bottom:0.5px solid var(--bd);margin-bottom:.3rem;}
-.wmag .ws{font-family:var(--fd);font-size:15px;font-weight:300;font-style:italic;border:none;outline:none;width:100%;color:var(--muted);background:transparent;padding:.2rem 0;resize:none;border-bottom:0.5px solid var(--bd);margin-bottom:1.2rem;}
-.wmag .wb{font-family:var(--fd);font-size:15px;font-weight:300;line-height:1.85;border:none;outline:none;width:100%;color:var(--charcoal);background:transparent;resize:none;min-height:280px;column-count:2;column-gap:1.8rem;}
-.wnews .wt{font-family:var(--fd);font-size:30px;font-weight:600;line-height:1.0;text-transform:uppercase;letter-spacing:-.01em;border:none;outline:none;width:100%;color:var(--ink);background:transparent;padding:.3rem 0;resize:none;border-top:3px solid var(--ink);border-bottom:0.5px solid var(--bd);margin-bottom:.3rem;}
-.wnews .ws{font-size:12px;font-style:italic;border:none;outline:none;width:100%;color:var(--muted);background:transparent;padding:.2rem 0;resize:none;border-bottom:0.5px solid var(--bd);margin-bottom:1.2rem;}
-.wnews .wb{font-family:var(--fd);font-size:13px;font-weight:300;line-height:1.7;border:none;outline:none;width:100%;color:var(--charcoal);background:transparent;resize:none;min-height:280px;column-count:3;column-gap:1.2rem;}
-.wstd .wt{font-family:var(--fd);font-size:30px;font-weight:400;border:none;outline:none;width:100%;color:var(--ink);background:transparent;padding:.3rem 0;resize:none;border-bottom:0.5px solid var(--bd);margin-bottom:.3rem;}
-.wstd .ws{font-size:12px;border:none;outline:none;width:100%;color:var(--muted);background:transparent;padding:.2rem 0;resize:none;border-bottom:0.5px solid var(--bd);margin-bottom:1.2rem;}
-.wstd .wb{font-size:13px;font-weight:300;line-height:1.85;border:none;outline:none;width:100%;color:var(--charcoal);background:transparent;resize:none;min-height:280px;}
-.wct{font-size:10px;color:var(--faint);margin-top:.8rem;text-align:right;}
-.wscard{background:white;border:0.5px solid var(--bd);border-radius:var(--rl);margin-bottom:.8rem;overflow:hidden;}
-.wsch{padding:9px 12px;border-bottom:0.5px solid var(--bd);font-size:11px;font-weight:500;color:var(--ink);}
+.wrbar{display:flex;gap:4px;margin-bottom:.8rem;padding-bottom:.8rem;border-bottom:0.5px solid var(–bd);align-items:center;flex-wrap:wrap;}
+.wrtool{width:28px;height:26px;border:0.5px solid var(–bd);border-radius:4px;font-size:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:white;color:var(–charcoal);font-family:var(–fd);}
+.wrtool:hover{background:var(–iv2);}
+.wrsep{width:0.5px;height:18px;background:var(–bd);margin:0 2px;}
+.psel{font-size:11px;padding:4px 8px;border:0.5px solid var(–bd);border-radius:5px;background:white;color:var(–charcoal);cursor:pointer;margin-left:auto;}
+.svbtn{font-size:11px;padding:5px 12px;border-radius:5px;border:0.5px solid var(–sal);color:var(–sa);background:var(–sap);cursor:pointer;}
+.wdoc{background:white;border:0.5px solid var(–bd);border-radius:var(–rl);padding:1.8rem 2rem;}
+.wmag .wt{font-family:var(–fd);font-size:36px;font-weight:300;font-style:italic;line-height:1.05;border:none;outline:none;width:100%;color:var(–ink);background:transparent;padding:.3rem 0;resize:none;border-bottom:0.5px solid var(–bd);margin-bottom:.3rem;}
+.wmag .ws{font-family:var(–fd);font-size:15px;font-weight:300;font-style:italic;border:none;outline:none;width:100%;color:var(–muted);background:transparent;padding:.2rem 0;resize:none;border-bottom:0.5px solid var(–bd);margin-bottom:1.2rem;}
+.wmag .wb{font-family:var(–fd);font-size:15px;font-weight:300;line-height:1.85;border:none;outline:none;width:100%;color:var(–charcoal);background:transparent;resize:none;min-height:280px;column-count:2;column-gap:1.8rem;}
+.wnews .wt{font-family:var(–fd);font-size:30px;font-weight:600;line-height:1.0;text-transform:uppercase;letter-spacing:-.01em;border:none;outline:none;width:100%;color:var(–ink);background:transparent;padding:.3rem 0;resize:none;border-top:3px solid var(–ink);border-bottom:0.5px solid var(–bd);margin-bottom:.3rem;}
+.wnews .ws{font-size:12px;font-style:italic;border:none;outline:none;width:100%;color:var(–muted);background:transparent;padding:.2rem 0;resize:none;border-bottom:0.5px solid var(–bd);margin-bottom:1.2rem;}
+.wnews .wb{font-family:var(–fd);font-size:13px;font-weight:300;line-height:1.7;border:none;outline:none;width:100%;color:var(–charcoal);background:transparent;resize:none;min-height:280px;column-count:3;column-gap:1.2rem;}
+.wstd .wt{font-family:var(–fd);font-size:30px;font-weight:400;border:none;outline:none;width:100%;color:var(–ink);background:transparent;padding:.3rem 0;resize:none;border-bottom:0.5px solid var(–bd);margin-bottom:.3rem;}
+.wstd .ws{font-size:12px;border:none;outline:none;width:100%;color:var(–muted);background:transparent;padding:.2rem 0;resize:none;border-bottom:0.5px solid var(–bd);margin-bottom:1.2rem;}
+.wstd .wb{font-size:13px;font-weight:300;line-height:1.85;border:none;outline:none;width:100%;color:var(–charcoal);background:transparent;resize:none;min-height:280px;}
+.wct{font-size:10px;color:var(–faint);margin-top:.8rem;text-align:right;}
+.wscard{background:white;border:0.5px solid var(–bd);border-radius:var(–rl);margin-bottom:.8rem;overflow:hidden;}
+.wsch{padding:9px 12px;border-bottom:0.5px solid var(–bd);font-size:11px;font-weight:500;color:var(–ink);}
 .wscb{padding:10px 12px;}
 .wsrow{margin-bottom:8px;}.wsrow:last-child{margin-bottom:0;}
-.wslbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
-.wssel{width:100%;font-size:12px;padding:5px 7px;border:0.5px solid var(--bd);border-radius:5px;background:var(--ivory);color:var(--ink);}
-.wspub{width:100%;padding:7px;margin-top:4px;background:var(--ink);color:var(--ivory);border:none;border-radius:5px;font-size:12px;cursor:pointer;}
-.draftrow{padding:9px 12px;border-bottom:0.5px solid var(--bd);cursor:pointer;}
+.wslbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(–muted);margin-bottom:3px;}
+.wssel{width:100%;font-size:12px;padding:5px 7px;border:0.5px solid var(–bd);border-radius:5px;background:var(–ivory);color:var(–ink);}
+.wspub{width:100%;padding:7px;margin-top:4px;background:var(–ink);color:var(–ivory);border:none;border-radius:5px;font-size:12px;cursor:pointer;}
+.draftrow{padding:9px 12px;border-bottom:0.5px solid var(–bd);cursor:pointer;}
 .draftrow:last-child{border-bottom:none;}
-.draftrow:hover{background:var(--ivory);}
-.drn{font-size:12px;color:var(--charcoal);}
-.drm{font-size:10px;color:var(--muted);margin-top:1px;}
+.draftrow:hover{background:var(–ivory);}
+.drn{font-size:12px;color:var(–charcoal);}
+.drm{font-size:10px;color:var(–muted);margin-top:1px;}
 
 /* ── CONTACT ── */
-.cf-inp{width:100%;padding:9px 11px;font-size:13px;border:0.5px solid var(--bd);border-radius:7px;background:var(--ivory);color:var(--ink);font-family:var(--fb);outline:none;}
-.cf-inp:focus{border-color:var(--sil);}
+.cf-inp{width:100%;padding:9px 11px;font-size:13px;border:0.5px solid var(–bd);border-radius:7px;background:var(–ivory);color:var(–ink);font-family:var(–fb);outline:none;}
+.cf-inp:focus{border-color:var(–sil);}
 
 /* ── MODAL ── */
 .ov{display:none;position:fixed;inset:0;z-index:500;background:rgba(28,23,20,.5);align-items:center;justify-content:center;}
 .ov.open{display:flex;}
-.modal{background:white;border-radius:var(--rl);padding:1.8rem;width:460px;max-width:90vw;border:0.5px solid var(--bd);}
-.modtitle{font-family:var(--fd);font-size:22px;font-weight:400;color:var(--ink);margin-bottom:1.2rem;}
-.modtitle em{font-style:italic;color:var(--si);}
+.modal{background:white;border-radius:var(–rl);padding:1.8rem;width:460px;max-width:90vw;border:0.5px solid var(–bd);}
+.modtitle{font-family:var(–fd);font-size:22px;font-weight:400;color:var(–ink);margin-bottom:1.2rem;}
+.modtitle em{font-style:italic;color:var(–si);}
 .frow{margin-bottom:.8rem;}
-.flbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;display:block;}
-.finp{width:100%;padding:7px 9px;font-size:13px;border:0.5px solid var(--bd);border-radius:6px;background:var(--ivory);color:var(--ink);font-family:var(--fb);}
-.finp:focus{outline:none;border-color:var(--sil);}
-.fsel{width:100%;padding:7px 9px;font-size:13px;border:0.5px solid var(--bd);border-radius:6px;background:var(--ivory);color:var(--ink);}
+.flbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(–muted);margin-bottom:4px;display:block;}
+.finp{width:100%;padding:7px 9px;font-size:13px;border:0.5px solid var(–bd);border-radius:6px;background:var(–ivory);color:var(–ink);font-family:var(–fb);}
+.finp:focus{outline:none;border-color:var(–sil);}
+.fsel{width:100%;padding:7px 9px;font-size:13px;border:0.5px solid var(–bd);border-radius:6px;background:var(–ivory);color:var(–ink);}
 .fg2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
 .macts{display:flex;gap:8px;justify-content:flex-end;margin-top:1.2rem;}
-.mcancel{padding:6px 14px;border:0.5px solid var(--bd);border-radius:5px;color:var(--muted);background:transparent;cursor:pointer;font-size:12px;}
-.msubmit{padding:6px 14px;background:var(--ink);color:var(--ivory);border:none;border-radius:5px;cursor:pointer;font-size:12px;}
+.mcancel{padding:6px 14px;border:0.5px solid var(–bd);border-radius:5px;color:var(–muted);background:transparent;cursor:pointer;font-size:12px;}
+.msubmit{padding:6px 14px;background:var(–ink);color:var(–ivory);border:none;border-radius:5px;cursor:pointer;font-size:12px;}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;background:var(--ink);color:var(--ivory);font-size:12px;padding:9px 16px;border-radius:6px;opacity:0;transform:translateY(6px);transition:all .22s;pointer-events:none;}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;background:var(–ink);color:var(–ivory);font-size:12px;padding:9px 16px;border-radius:6px;opacity:0;transform:translateY(6px);transition:all .22s;pointer-events:none;}
 .toast.on{opacity:1;transform:translateY(0);}
 </style>
+
 </head>
 <body>
 
 <nav class="nav">
   <div class="logo" onclick="logoClick()"><div class="logo-dot"></div>Muses of <em>Morenita</em></div>
-  <div class="ntabs">
+  <div class="ntabs" id="ntabs">
     <button class="ntab on" id="nt-port" onclick="go('port')">Portfolio</button>
     <button class="ntab" id="nt-contact" onclick="go('contact')">Contact</button>
     <button class="ntab" id="nt-db" onclick="requirePw('db')" style="display:none">Studio</button>
@@ -345,10 +544,16 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
     <span class="nstatus" id="nstat">Portfolio</span>
     <div class="save-indicator saved" id="save-ind"><div class="save-dot"></div><span id="save-text">All saved</span></div>
     <button class="lock-badge" id="lock-badge" onclick="requirePw('db')" style="display:none">Enter Studio &#8599;</button>
+    <button id="mob-menu-btn" onclick="toggleMobileSidebar()" style="display:none;border:none;background:transparent;cursor:pointer;padding:4px;flex-direction:column;gap:3.5px;margin-left:6px">
+      <span style="width:17px;height:1.5px;background:var(--ink);display:block;border-radius:1px"></span>
+      <span style="width:17px;height:1.5px;background:var(--ink);display:block;border-radius:1px"></span>
+      <span style="width:17px;height:1.5px;background:var(--ink);display:block;border-radius:1px"></span>
+    </button>
   </div>
 </nav>
 
 <!-- ══ PORTFOLIO ══ -->
+
 <div class="panel on" id="panel-port">
 <div class="port">
   <div class="port-hero">
@@ -365,6 +570,49 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
   <div class="wgrid" id="p-work-grid"></div>
   <div class="sec"><span class="sec-lbl">Original Oil Paintings</span><div class="sec-rule"></div><span class="sec-ct">Available for purchase</span></div>
   <div class="pgrid" id="p-paint-grid"></div>
+
+  <!-- SERVICES -->
+
+  <div class="sec"><span class="sec-lbl">Services</span><div class="sec-rule"></div><span class="sec-ct">Available for select projects</span></div>
+  <div class="svc-grid">
+    <div class="svc-card">
+      <div class="svc-icon">◎</div>
+      <div class="svc-title">Web Design &amp; Development</div>
+      <div class="svc-desc">Custom websites, portfolio studios, and digital homes built with taste and technical precision. From concept to deployed product.</div>
+      <div class="svc-tag">From $2,500</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">◇</div>
+      <div class="svc-title">Brand Systems</div>
+      <div class="svc-desc">Visual identity, typography, color language, and the full design system that makes a brand feel like itself across every surface.</div>
+      <div class="svc-tag">From $1,800</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">⬡</div>
+      <div class="svc-title">Internal Tools &amp; Team Systems</div>
+      <div class="svc-desc">Operational infrastructure for creative companies and small teams. The pipelines, dashboards, and tooling that let people do their best work.</div>
+      <div class="svc-tag">From $3,000</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">△</div>
+      <div class="svc-title">MVP Builds</div>
+      <div class="svc-desc">For early-stage founders who need a working product. Architecture, build, and deployment — scoped, priced, and delivered.</div>
+      <div class="svc-tag">From $5,000</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">✦</div>
+      <div class="svc-title">Technical Advisory</div>
+      <div class="svc-desc">Architecture reviews, first-hire strategy, vendor decisions, and product scoping for founders who need a senior technical voice.</div>
+      <div class="svc-tag">$250 / hour</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">◈</div>
+      <div class="svc-title">Product Development Coordination</div>
+      <div class="svc-desc">For fashion and beauty brands without a full PD team. Briefs, vendor coordination, timelines, and documentation — held together.</div>
+      <div class="svc-tag">From $2,000 / month</div>
+    </div>
+  </div>
+
   <div class="cstrip">
     <p class="ccta">Let&#8217;s build something <em>meaningful</em> together.</p>
     <div class="clinks">
@@ -377,6 +625,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 </div>
 
 <!-- ══ CONTACT ══ -->
+
 <div class="panel" id="panel-contact">
 <div class="port">
   <div class="port-hero" style="grid-template-columns:1fr;padding-bottom:2rem">
@@ -432,16 +681,19 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 </div>
 
 <!-- ══ DASHBOARD ══ -->
+
 <div class="panel" id="panel-db">
 <div class="dbwrap">
   <aside class="sidebar">
     <div class="sbsec">
       <div class="sbh">Studio</div>
       <button class="sbitem on" id="sbi-portfolio" onclick="view('portfolio')">&#9633; Edit Portfolio</button>
+      <button class="sbitem" id="sbi-strategy" onclick="view('strategy')">&#9651; Artist Strategy</button>
       <button class="sbitem" id="sbi-income" onclick="view('income')">&#9672; Income Map</button>
       <button class="sbitem" id="sbi-tracker" onclick="view('tracker')">&#8862; Job Tracker</button>
+      <button class="sbitem" id="sbi-inspiration" onclick="view('inspiration')">&#9680; Inspiration</button>
       <button class="sbitem" id="sbi-files" onclick="view('files')">&#8863; Files &amp; Docs</button>
-      <button class="sbitem" id="sbi-writer" onclick="view('writer')">&#10022; Writer</button>
+      <button class="sbitem" id="sbi-writer" onclick="view('writer')">&#9998; Writer</button>
     </div>
     <div class="sbdiv"></div>
     <div class="sbsec">
@@ -459,215 +711,466 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 
   <main class="main" id="main-content">
 
-    <!-- PORTFOLIO EDITOR -->
-    <div class="view on" id="v-portfolio">
-      <div class="mhead">
-        <div><h2 class="mtitle">Edit <em>Portfolio</em></h2><p class="msub">Changes reflect live &mdash; auto-saved to browser storage</p></div>
-        <button class="preview-btn" onclick="go('port')">View live &rarr;</button>
-      </div>
-      <div class="edit-section">
-        <div class="edit-head"><span class="edit-head-title">Hero &amp; Bio</span><span class="edit-head-hint">Updates portfolio instantly as you type</span></div>
-        <div class="edit-body">
-          <div class="edit-row"><span class="edit-label">First name</span><input class="edit-input" id="e-fn" oninput="syncHero();save()"></div>
-          <div class="edit-row"><span class="edit-label">Last name</span><input class="edit-input" id="e-ln" oninput="syncHero();save()"></div>
-          <div class="edit-row"><span class="edit-label">Subtitle</span><input class="edit-input" id="e-sub" oninput="syncHero();save()"></div>
-          <div class="edit-row"><span class="edit-label">Bio</span><textarea class="edit-textarea" id="e-bio" oninput="syncHero();save()"></textarea></div>
-          <div class="edit-row"><span class="edit-label">Tags</span><input class="edit-input" id="e-tags" placeholder="Comma-separated" oninput="syncTags();save()"></div>
-          <div class="edit-row"><span class="edit-label">Avatar letter</span><input class="edit-input" id="e-av" maxlength="2" oninput="syncHero();save()"></div>
-        </div>
-        <div class="save-bar"><span class="save-bar-hint">Auto-saves to localStorage</span><button class="save-btn" onclick="save();toast('Saved')">Save now</button></div>
-      </div>
-      <div class="edit-section">
-        <div class="edit-head"><span class="edit-head-title">Contact Links</span></div>
-        <div class="edit-body">
-          <div class="edit-row"><span class="edit-label">LinkedIn</span><input class="edit-input" id="e-li" placeholder="linkedin.com/in/yourname" oninput="syncLinks();save()"></div>
-          <div class="edit-row"><span class="edit-label">GitHub</span><input class="edit-input" id="e-gh" placeholder="github.com/yourname" oninput="syncLinks();save()"></div>
-          <div class="edit-row"><span class="edit-label">Email</span><input class="edit-input" id="e-em" placeholder="you@example.com" oninput="syncLinks();save()"></div>
-        </div>
-        <div class="save-bar"><span></span><button class="save-btn" onclick="save();toast('Saved')">Save now</button></div>
-      </div>
-      <div class="edit-section">
-        <div class="edit-head"><span class="edit-head-title">Work Projects</span><span class="edit-head-hint">Title &middot; Description &middot; Category</span></div>
-        <div class="edit-body"><div id="work-editor"></div><button class="add-row-btn" onclick="addWork()">+ Add project</button></div>
-        <div class="save-bar"><span></span><button class="save-btn" onclick="saveWorks()">Save &amp; refresh</button></div>
-      </div>
-      <div class="edit-section">
-        <div class="edit-head"><span class="edit-head-title">Paintings</span><span class="edit-head-hint">Title &middot; Details &middot; Price &middot; Status</span></div>
-        <div class="edit-body"><div id="paint-editor"></div><button class="add-row-btn" onclick="addPainting()">+ Add painting</button></div>
-        <div class="save-bar"><span></span><button class="save-btn" onclick="savePaintings()">Save &amp; refresh</button></div>
-      </div>
+```
+<!-- PORTFOLIO EDITOR -->
+<div class="view on" id="v-portfolio">
+  <div class="mhead">
+    <div><h2 class="mtitle">Edit <em>Portfolio</em></h2><p class="msub">Changes reflect live &mdash; auto-saved to browser storage</p></div>
+    <button class="preview-btn" onclick="go('port')">View live &rarr;</button>
+  </div>
+  <div class="edit-section">
+    <div class="edit-head"><span class="edit-head-title">Hero &amp; Bio</span><span class="edit-head-hint">Updates portfolio instantly as you type</span></div>
+    <div class="edit-body">
+      <div class="edit-row"><span class="edit-label">First name</span><input class="edit-input" id="e-fn" oninput="syncHero();save()"></div>
+      <div class="edit-row"><span class="edit-label">Last name</span><input class="edit-input" id="e-ln" oninput="syncHero();save()"></div>
+      <div class="edit-row"><span class="edit-label">Subtitle</span><input class="edit-input" id="e-sub" oninput="syncHero();save()"></div>
+      <div class="edit-row"><span class="edit-label">Bio</span><textarea class="edit-textarea" id="e-bio" oninput="syncHero();save()"></textarea></div>
+      <div class="edit-row"><span class="edit-label">Tags</span><input class="edit-input" id="e-tags" placeholder="Comma-separated" oninput="syncTags();save()"></div>
+      <div class="edit-row"><span class="edit-label">Avatar letter</span><input class="edit-input" id="e-av" maxlength="2" oninput="syncHero();save()"></div>
     </div>
+    <div class="save-bar"><span class="save-bar-hint">Auto-saves to localStorage</span><button class="save-btn" onclick="save();toast('Saved')">Save now</button></div>
+  </div>
+  <div class="edit-section">
+    <div class="edit-head"><span class="edit-head-title">Contact Links</span></div>
+    <div class="edit-body">
+      <div class="edit-row"><span class="edit-label">LinkedIn</span><input class="edit-input" id="e-li" placeholder="linkedin.com/in/yourname" oninput="syncLinks();save()"></div>
+      <div class="edit-row"><span class="edit-label">GitHub</span><input class="edit-input" id="e-gh" placeholder="github.com/yourname" oninput="syncLinks();save()"></div>
+      <div class="edit-row"><span class="edit-label">Email</span><input class="edit-input" id="e-em" placeholder="you@example.com" oninput="syncLinks();save()"></div>
+    </div>
+    <div class="save-bar"><span></span><button class="save-btn" onclick="save();toast('Saved')">Save now</button></div>
+  </div>
+  <div class="edit-section">
+    <div class="edit-head"><span class="edit-head-title">Work Projects</span><span class="edit-head-hint">Title &middot; Description &middot; Category</span></div>
+    <div class="edit-body"><div id="work-editor"></div><button class="add-row-btn" onclick="addWork()">+ Add project</button></div>
+    <div class="save-bar"><span></span><button class="save-btn" onclick="saveWorks()">Save &amp; refresh</button></div>
+  </div>
+  <div class="edit-section">
+    <div class="edit-head"><span class="edit-head-title">Paintings</span><span class="edit-head-hint">Title &middot; Details &middot; Price &middot; Status</span></div>
+    <div class="edit-body"><div id="paint-editor"></div><button class="add-row-btn" onclick="addPainting()">+ Add painting</button></div>
+    <div class="save-bar"><span></span><button class="save-btn" onclick="savePaintings()">Save &amp; refresh</button></div>
+  </div>
+</div>
 
-    <!-- INCOME -->
-    <div class="view" id="v-income">
-      <div class="mhead"><div><h2 class="mtitle">Income <em>Map</em></h2><p class="msub">All streams toward six-figure months</p></div></div>
-      <div class="mrow">
-        <div class="met"><div class="mlbl">Total Monthly</div><div class="mval si">$0</div><div class="mnote">3 streams active</div></div>
-        <div class="met"><div class="mlbl">Anchor Salary</div><div class="mval">$0</div><div class="mnote">Target: $150&ndash;180k/yr</div></div>
-        <div class="met"><div class="mlbl">Consulting</div><div class="mval sa">$0</div><div class="mnote">1 prospect in talks</div></div>
-        <div class="met"><div class="mlbl">Art Sales</div><div class="mval go">$0</div><div class="mnote" id="inc-art-note">paintings listed</div></div>
+<!-- INCOME -->
+<div class="view" id="v-income">
+  <div class="mhead"><div><h2 class="mtitle">Income <em>Map</em></h2><p class="msub">All streams toward six-figure months</p></div></div>
+  <div class="mrow">
+    <div class="met"><div class="mlbl">Total Monthly</div><div class="mval si">$0</div><div class="mnote">3 streams active</div></div>
+    <div class="met"><div class="mlbl">Anchor Salary</div><div class="mval">$0</div><div class="mnote">Target: $150&ndash;180k/yr</div></div>
+    <div class="met"><div class="mlbl">Consulting</div><div class="mval sa">$0</div><div class="mnote">1 prospect in talks</div></div>
+    <div class="met"><div class="mlbl">Art Sales</div><div class="mval go">$0</div><div class="mnote" id="inc-art-note">paintings listed</div></div>
+  </div>
+  <div class="sgrid2">
+    <div class="card">
+      <div class="ch"><span class="ct">Income Streams</span></div>
+      <div class="si-row"><div class="sdot d1"></div><div style="flex:1"><div class="sname">Big Tech Anchor Role</div><div class="sstatus">Apple &middot; Google &middot; Microsoft &middot; NVIDIA</div></div><div class="samt">$0/mo</div></div>
+      <div class="si-row"><div class="sdot d2"></div><div style="flex:1"><div class="sname">Technical Advisory</div><div class="sstatus">1 prospect &middot; seed-stage founder</div></div><div class="samt">$0/mo</div></div>
+      <div class="si-row"><div class="sdot d3"></div><div style="flex:1"><div class="sname">Oil Painting Sales</div><div class="sstatus" id="paint-stream-ct">4 listed &middot; 1 sold</div></div><div class="samt">$0/mo</div></div>
+      <div class="si-row"><div class="sdot d4"></div><div style="flex:1"><div class="sname">Content &amp; Platform IP</div><div class="sstatus">Muses of Morenita &middot; Library of Morenita</div></div><div class="samt faint">building</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct">Milestones</span></div>
+      <div class="msrow" onclick="toggleMs(this)"><div class="msck done">&#10003;</div><div><div class="mstxt done">Define target company list</div><div class="msdt">Complete &middot; Mar 2026</div></div></div>
+      <div class="msrow" onclick="toggleMs(this)"><div class="msck done">&#10003;</div><div><div class="mstxt done">Build portfolio site</div><div class="msdt">Complete &middot; Mar 2026</div></div></div>
+      <div class="msrow" onclick="toggleMs(this)"><div class="msck"></div><div><div class="mstxt">Land first consulting client</div><div class="msdt">Target: Apr&ndash;May 2026</div></div></div>
+      <div class="msrow" onclick="toggleMs(this)"><div class="msck"></div><div><div class="mstxt">Submit 5 Tier 1 applications</div><div class="msdt">Target: Apr 2026</div></div></div>
+      <div class="msrow" onclick="toggleMs(this)"><div class="msck"></div><div><div class="mstxt">$10k / month total income</div><div class="msdt">Target: Q3 2026</div></div></div>
+      <div class="msrow" onclick="toggleMs(this)"><div class="msck"></div><div><div class="mstxt">First anchor role offer</div><div class="msdt">Target: Jun&ndash;Aug 2026</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOB TRACKER -->
+<div class="view" id="v-tracker">
+  <div class="mhead">
+    <div><h2 class="mtitle">Job <em>Tracker</em></h2><p class="msub">Click any row to open details &middot; click cells to edit inline</p></div>
+  </div>
+  <div class="tbar">
+    <button class="fp on" onclick="filt('all',this)">All <span id="ct-all"></span></button>
+    <button class="fp" onclick="filt('Research',this)">Research <span id="ct-research"></span></button>
+    <button class="fp" onclick="filt('Applied',this)">Applied <span id="ct-applied"></span></button>
+    <button class="fp" onclick="filt('Interview',this)">Interview <span id="ct-interview"></span></button>
+    <button class="fp" onclick="filt('Offer',this)">Offer <span id="ct-offer"></span></button>
+    <button class="addbtn" onclick="openModal('job')">+ Add Application</button>
+  </div>
+  <div class="tracker-wrap">
+    <table class="jtbl">
+      <colgroup>
+        <col style="width:195px">
+        <col style="width:50px">
+        <col style="width:110px">
+        <col style="width:80px">
+        <col style="width:90px">
+        <col>
+        <col style="width:28px">
+      </colgroup>
+      <thead><tr>
+        <th>Company / Role</th>
+        <th>Tier</th>
+        <th>Status</th>
+        <th>Fit</th>
+        <th>Applied</th>
+        <th>Notes</th>
+        <th></th>
+      </tr></thead>
+      <tbody id="jbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FILES -->
+<div class="view" id="v-files">
+  <div class="mhead">
+    <div><h2 class="mtitle">Files <em>&amp;</em> Docs</h2><p class="msub">Resumes &middot; Cover letters &middot; Templates</p></div>
+    <button class="addbtn" onclick="openModal('file')">+ Add Document</button>
+  </div>
+  <div class="fgrid" id="fgrid"></div>
+</div>
+
+<!-- WRITER -->
+<div class="view" id="v-writer">
+  <div class="mhead"><div><h2 class="mtitle">Studio <em>Writer</em></h2><p class="msub">Magazine &middot; Newspaper &middot; Standard &mdash; auto-saves to browser</p></div></div>
+  <div class="wrlayout">
+    <div>
+      <div class="wrbar">
+        <button class="wrtool"><b>B</b></button><button class="wrtool"><i>I</i></button><button class="wrtool" style="text-decoration:underline">U</button>
+        <div class="wrsep"></div>
+        <button class="wrtool" style="font-size:9px">H1</button><button class="wrtool" style="font-size:9px">H2</button>
+        <button class="wrtool" style="font-style:italic;font-family:var(--fd)">"</button>
+        <select class="psel" id="psel" onchange="applyP(this.value);save()">
+          <option value="mag">Magazine</option>
+          <option value="news">Newspaper</option>
+          <option value="std">Standard</option>
+        </select>
+        <button class="svbtn" onclick="saveWriter();toast('Draft saved')">Save draft</button>
       </div>
-      <div class="sgrid2">
-        <div class="card">
-          <div class="ch"><span class="ct">Income Streams</span></div>
-          <div class="si-row"><div class="sdot d1"></div><div style="flex:1"><div class="sname">Big Tech Anchor Role</div><div class="sstatus">Apple &middot; Google &middot; Microsoft &middot; NVIDIA</div></div><div class="samt">$0/mo</div></div>
-          <div class="si-row"><div class="sdot d2"></div><div style="flex:1"><div class="sname">Technical Advisory</div><div class="sstatus">1 prospect &middot; seed-stage founder</div></div><div class="samt">$0/mo</div></div>
-          <div class="si-row"><div class="sdot d3"></div><div style="flex:1"><div class="sname">Oil Painting Sales</div><div class="sstatus" id="paint-stream-ct">4 listed &middot; 1 sold</div></div><div class="samt">$0/mo</div></div>
-          <div class="si-row"><div class="sdot d4"></div><div style="flex:1"><div class="sname">Content &amp; Platform IP</div><div class="sstatus">Muses of Morenita &middot; Library of Morenita</div></div><div class="samt faint">building</div></div>
+      <div class="wdoc"><div class="wmag" id="wdoc">
+        <textarea class="wt" id="wt" placeholder="Article title&hellip;" rows="2" oninput="saveWriter()"></textarea>
+        <textarea class="ws" id="ws" placeholder="Subtitle&hellip;" rows="1" oninput="saveWriter()"></textarea>
+        <textarea class="wb" id="wb" placeholder="Begin writing&hellip;" oninput="wc();saveWriter()"></textarea>
+      </div><div class="wct"><span id="wct">0</span> words &middot; <span id="wstatus">Draft</span></div></div>
+    </div>
+    <div>
+      <div class="wscard"><div class="wsch">Settings</div><div class="wscb">
+        <div class="wsrow"><div class="wslbl">Status</div><select class="wssel" id="w-status" onchange="saveWriter()"><option>Draft</option><option>Review</option><option>Published</option></select></div>
+        <div class="wsrow"><div class="wslbl">Category</div><select class="wssel" id="w-cat" onchange="saveWriter()"><option>Technology</option><option>Culture</option><option>Fashion</option><option>Art</option><option>Leadership</option><option>Essay</option></select></div>
+        <div class="wsrow"><div class="wslbl">Publish to Portfolio</div><select class="wssel" id="w-pub" onchange="saveWriter()"><option>No</option><option>Yes &mdash; public</option><option>Yes &mdash; unlisted</option></select></div>
+        <button class="wspub" onclick="saveWriter();toast('Published')">Publish &rarr;</button>
+      </div></div>
+      <div class="wscard"><div class="wsch">Saved Drafts</div><div id="drafts-list"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIBRARY EDITOR -->
+<div class="view" id="v-library">
+  <div class="mhead">
+    <div><h2 class="mtitle">Library <em>Editor</em></h2><p class="msub">Write &middot; publish &middot; sync to Crown HQ &mdash; articles tagged here appear on your public campaign site</p></div>
+    <button class="addbtn" onclick="newLibraryArticle()">+ New Article</button>
+  </div>
+  <div id="lib-article-editor" style="display:none;padding:0 0 2rem">
+    <div style="display:grid;grid-template-columns:1fr 200px;gap:1rem;align-items:start">
+      <div>
+        <div style="margin-bottom:.75rem">
+          <input id="lib-title" class="edit-input" placeholder="Article title&hellip;" style="font-family:var(--fd);font-size:22px;font-weight:300;width:100%">
         </div>
-        <div class="card">
-          <div class="ch"><span class="ct">Milestones</span></div>
-          <div class="msrow" onclick="toggleMs(this)"><div class="msck done">&#10003;</div><div><div class="mstxt done">Define target company list</div><div class="msdt">Complete &middot; Mar 2026</div></div></div>
-          <div class="msrow" onclick="toggleMs(this)"><div class="msck done">&#10003;</div><div><div class="mstxt done">Build portfolio site</div><div class="msdt">Complete &middot; Mar 2026</div></div></div>
-          <div class="msrow" onclick="toggleMs(this)"><div class="msck"></div><div><div class="mstxt">Land first consulting client</div><div class="msdt">Target: Apr&ndash;May 2026</div></div></div>
-          <div class="msrow" onclick="toggleMs(this)"><div class="msck"></div><div><div class="mstxt">Submit 5 Tier 1 applications</div><div class="msdt">Target: Apr 2026</div></div></div>
-          <div class="msrow" onclick="toggleMs(this)"><div class="msck"></div><div><div class="mstxt">$10k / month total income</div><div class="msdt">Target: Q3 2026</div></div></div>
-          <div class="msrow" onclick="toggleMs(this)"><div class="msck"></div><div><div class="mstxt">First anchor role offer</div><div class="msdt">Target: Jun&ndash;Aug 2026</div></div></div>
+        <div style="margin-bottom:.75rem">
+          <input id="lib-sub" class="edit-input" placeholder="Subtitle or deck&hellip;" style="font-style:italic;color:var(--muted)">
         </div>
-      </div>
-    </div>
-
-    <!-- JOB TRACKER -->
-    <div class="view" id="v-tracker">
-      <div class="mhead">
-        <div><h2 class="mtitle">Job <em>Tracker</em></h2><p class="msub">Click any row to open details &middot; click cells to edit inline</p></div>
-      </div>
-      <div class="tbar">
-        <button class="fp on" onclick="filt('all',this)">All <span id="ct-all"></span></button>
-        <button class="fp" onclick="filt('Research',this)">Research <span id="ct-research"></span></button>
-        <button class="fp" onclick="filt('Applied',this)">Applied <span id="ct-applied"></span></button>
-        <button class="fp" onclick="filt('Interview',this)">Interview <span id="ct-interview"></span></button>
-        <button class="fp" onclick="filt('Offer',this)">Offer <span id="ct-offer"></span></button>
-        <button class="addbtn" onclick="openModal('job')">+ Add Application</button>
-      </div>
-      <div class="tracker-wrap">
-        <table class="jtbl">
-          <colgroup>
-            <col style="width:195px">
-            <col style="width:50px">
-            <col style="width:110px">
-            <col style="width:80px">
-            <col style="width:90px">
-            <col>
-            <col style="width:28px">
-          </colgroup>
-          <thead><tr>
-            <th>Company / Role</th>
-            <th>Tier</th>
-            <th>Status</th>
-            <th>Fit</th>
-            <th>Applied</th>
-            <th>Notes</th>
-            <th></th>
-          </tr></thead>
-          <tbody id="jbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- FILES -->
-    <div class="view" id="v-files">
-      <div class="mhead">
-        <div><h2 class="mtitle">Files <em>&amp;</em> Docs</h2><p class="msub">Resumes &middot; Cover letters &middot; Templates</p></div>
-        <button class="addbtn" onclick="openModal('file')">+ Add Document</button>
-      </div>
-      <div class="fgrid" id="fgrid"></div>
-    </div>
-
-    <!-- WRITER -->
-    <div class="view" id="v-writer">
-      <div class="mhead"><div><h2 class="mtitle">Studio <em>Writer</em></h2><p class="msub">Magazine &middot; Newspaper &middot; Standard &mdash; auto-saves to browser</p></div></div>
-      <div class="wrlayout">
-        <div>
-          <div class="wrbar">
-            <button class="wrtool"><b>B</b></button><button class="wrtool"><i>I</i></button><button class="wrtool" style="text-decoration:underline">U</button>
-            <div class="wrsep"></div>
-            <button class="wrtool" style="font-size:9px">H1</button><button class="wrtool" style="font-size:9px">H2</button>
-            <button class="wrtool" style="font-style:italic;font-family:var(--fd)">"</button>
-            <select class="psel" id="psel" onchange="applyP(this.value);save()">
-              <option value="mag">Magazine</option>
-              <option value="news">Newspaper</option>
-              <option value="std">Standard</option>
-            </select>
-            <button class="svbtn" onclick="saveWriter();toast('Draft saved')">Save draft</button>
+        <div class="edit-section">
+          <div class="edit-head">
+            <span class="edit-head-title">Article Body</span>
+            <div style="display:flex;gap:5px">
+              <button class="wrtool" onclick="libFmt('bold')"><b>B</b></button>
+              <button class="wrtool" onclick="libFmt('italic')"><i>I</i></button>
+              <button class="wrtool" onclick="libFmt('quote')" style="font-family:var(--fd);font-style:italic">&ldquo;</button>
+              <button class="wrtool" onclick="libFmt('h2')" style="font-size:9px">H2</button>
+            </div>
           </div>
-          <div class="wdoc"><div class="wmag" id="wdoc">
-            <textarea class="wt" id="wt" placeholder="Article title&hellip;" rows="2" oninput="saveWriter()"></textarea>
-            <textarea class="ws" id="ws" placeholder="Subtitle&hellip;" rows="1" oninput="saveWriter()"></textarea>
-            <textarea class="wb" id="wb" placeholder="Begin writing&hellip;" oninput="wc();saveWriter()"></textarea>
-          </div><div class="wct"><span id="wct">0</span> words &middot; <span id="wstatus">Draft</span></div></div>
+          <textarea id="lib-body" class="edit-textarea" style="min-height:320px;font-family:var(--fd);font-size:14px;line-height:1.9;resize:vertical" placeholder="Begin writing&hellip;&#10;&#10;Tip: Use **word** for bold, *word* for italic, > for pull quotes."></textarea>
         </div>
-        <div>
-          <div class="wscard"><div class="wsch">Settings</div><div class="wscb">
-            <div class="wsrow"><div class="wslbl">Status</div><select class="wssel" id="w-status" onchange="saveWriter()"><option>Draft</option><option>Review</option><option>Published</option></select></div>
-            <div class="wsrow"><div class="wslbl">Category</div><select class="wssel" id="w-cat" onchange="saveWriter()"><option>Technology</option><option>Culture</option><option>Fashion</option><option>Art</option><option>Leadership</option><option>Essay</option></select></div>
-            <div class="wsrow"><div class="wslbl">Publish to Portfolio</div><select class="wssel" id="w-pub" onchange="saveWriter()"><option>No</option><option>Yes &mdash; public</option><option>Yes &mdash; unlisted</option></select></div>
-            <button class="wspub" onclick="saveWriter();toast('Published')">Publish &rarr;</button>
-          </div></div>
-          <div class="wscard"><div class="wsch">Saved Drafts</div><div id="drafts-list"></div></div>
+      </div>
+      <div>
+        <div class="edit-section">
+          <div class="edit-head"><span class="edit-head-title">Settings</span></div>
+          <div class="edit-body" style="display:flex;flex-direction:column;gap:.75rem">
+            <div>
+              <div class="edit-label" style="width:auto;margin-bottom:3px">Category</div>
+              <select class="edit-input" id="lib-cat" style="width:100%">
+                <option value="technology">Technology</option>
+                <option value="culture">Culture</option>
+                <option value="fashion">Fashion</option>
+                <option value="art">Art &amp; Oil Painting</option>
+                <option value="leadership">Leadership</option>
+                <option value="essay">Personal Essay</option>
+                <option value="morenita">Library of Morenita</option>
+                <option value="energy">Clean Energy</option>
+                <option value="solarpunk">Solarpunk</option>
+              </select>
+            </div>
+            <div>
+              <div class="edit-label" style="width:auto;margin-bottom:3px">Tags <span style="color:var(--faint)">(comma-separated)</span></div>
+              <input id="lib-tags" class="edit-input" placeholder="engineering, cello, fashion&hellip;" style="width:100%">
+            </div>
+            <div>
+              <div class="edit-label" style="width:auto;margin-bottom:3px">Status</div>
+              <select class="edit-input" id="lib-status" style="width:100%">
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            </div>
+            <div>
+              <div class="edit-label" style="width:auto;margin-bottom:3px">Show in Job Tracker</div>
+              <select class="edit-input" id="lib-show-tracker" style="width:100%">
+                <option value="no">No</option>
+                <option value="yes">Yes &mdash; as writing sample</option>
+              </select>
+            </div>
+            <button class="save-btn" onclick="saveLibraryArticle()" style="width:100%">Save &rarr;</button>
+            <button class="preview-btn" onclick="closeLibraryEditor()" style="width:100%">&larr; Back to list</button>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+  <div id="lib-article-list">
+    <div id="lib-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem"></div>
+  </div>
+</div>
+
+<!-- ARTIST STRATEGY -->
+<div class="view" id="v-strategy">
+  <div class="mhead">
+    <div><h2 class="mtitle">Artist <em>Strategy</em></h2><p class="msub">Positioning &middot; consulting pipeline &middot; creative goals &middot; revenue map</p></div>
+  </div>
+  <div style="padding:0 0 3rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem" id="strategy-body">
+
+    <!-- Positioning -->
+    <div class="edit-section" style="grid-column:1/-1">
+      <div class="edit-head"><span class="edit-head-title">My Positioning Statement</span><span class="edit-head-hint">The one sentence you say when someone asks what you do</span></div>
+      <div class="edit-body">
+        <textarea class="edit-textarea" id="s-positioning" style="min-height:80px;font-family:var(--fd);font-size:15px;font-style:italic" placeholder="I am a senior software engineer and co-founder building at the intersection of sustainable technology, culture, and craft&hellip;" oninput="saveStrategy()"></textarea>
+      </div>
+    </div>
+
+    <!-- Creative goals -->
+    <div class="edit-section">
+      <div class="edit-head"><span class="edit-head-title">Creative Goals</span><span class="edit-head-hint">This year</span></div>
+      <div class="edit-body">
+        <div id="s-goals-list" style="margin-bottom:.5rem"></div>
+        <div style="display:flex;gap:.5rem">
+          <input id="s-goal-inp" class="edit-input" placeholder="Add a creative goal&hellip;" style="flex:1" onkeydown="if(event.key==='Enter')addStratGoal()">
+          <button class="save-btn" onclick="addStratGoal()" style="padding:6px 12px">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consulting pipeline -->
+    <div class="edit-section">
+      <div class="edit-head"><span class="edit-head-title">Consulting Pipeline</span><span class="edit-head-hint">Technical advisory prospects</span></div>
+      <div class="edit-body">
+        <div id="s-pipeline-list" style="margin-bottom:.5rem"></div>
+        <button class="add-row-btn" onclick="addConsultingLead()">+ Add prospect</button>
+      </div>
+    </div>
+
+    <!-- Narrative arcs -->
+    <div class="edit-section">
+      <div class="edit-head"><span class="edit-head-title">Narrative Arcs</span><span class="edit-head-hint">The stories you&rsquo;re building publicly</span></div>
+      <div class="edit-body">
+        <textarea class="edit-textarea" id="s-narrative" style="min-height:120px" placeholder="The renaissance woman arc&#10;The engineer-artist arc&#10;The community infrastructure arc&#10;The pageant-as-platform arc&hellip;" oninput="saveStrategy()"></textarea>
+      </div>
+    </div>
+
+    <!-- Press targets -->
+    <div class="edit-section">
+      <div class="edit-head"><span class="edit-head-title">Press &amp; Platform Targets</span><span class="edit-head-hint">Publications, podcasts, stages you want</span></div>
+      <div class="edit-body">
+        <textarea class="edit-textarea" id="s-press" style="min-height:120px" placeholder="Wired &mdash; sustainable tech angle&#10;Fast Company &mdash; engineer-artist profile&#10;Miss California USA press&#10;Substack growth targets&hellip;" oninput="saveStrategy()"></textarea>
+      </div>
+    </div>
+
+    <!-- Revenue strategy -->
+    <div class="edit-section" style="grid-column:1/-1">
+      <div class="edit-head"><span class="edit-head-title">Revenue Strategy Notes</span><span class="edit-head-hint">How the streams connect and build</span></div>
+      <div class="edit-body">
+        <textarea class="edit-textarea" id="s-revenue" style="min-height:100px" placeholder="Anchor role anchors stability. Consulting amplifies credibility. Art sales prove the brand. Content compounds everything&hellip;" oninput="saveStrategy()"></textarea>
+      </div>
+      <div class="save-bar"><span></span><button class="save-btn" onclick="saveStrategy();toast('Strategy saved')">Save all</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- INSPIRATION SPACE -->
+<div class="view" id="v-inspiration">
+  <div class="mhead">
+    <div><h2 class="mtitle">Inspiration <em>Space</em></h2><p class="msub">Photos &middot; journal &middot; references &middot; your private creative archive</p></div>
+    <div style="display:flex;gap:.5rem">
+      <label class="addbtn" style="cursor:pointer">+ Add Photo<input type="file" accept="image/*" multiple style="display:none" onchange="addInspirationPhotos(event)"></label>
+      <button class="addbtn" onclick="addJournalEntry()" style="background:var(--sip);color:var(--si);border-color:var(--sil)">+ Journal Entry</button>
+    </div>
+  </div>
+
+  <!-- Mood board / photo grid -->
+  <div style="padding:0 0 1rem">
+    <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem">Visual Archive</div>
+    <div id="insp-photo-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1.5rem"></div>
+  </div>
+
+  <!-- Journal -->
+  <div>
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
+      <span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)">Journal</span>
+      <div style="flex:1;height:0.5px;background:var(--bd)"></div>
+    </div>
+    <div id="insp-journal-list"></div>
+  </div>
+
+  <!-- Lightbox -->
+  <div id="insp-lightbox" onclick="this.style.display='none'" style="display:none;position:fixed;inset:0;z-index:600;background:rgba(28,23,20,.92);display:none;align-items:center;justify-content:center;cursor:pointer">
+    <img id="insp-lb-img" style="max-width:90vw;max-height:90vh;border-radius:8px;object-fit:contain">
+  </div>
+</div>
+```
 
   </main>
 </div>
 </div>
 
-<!-- DETAIL PANEL -->
-<div class="detail-panel" id="detail-panel">
-  <div class="detail-header">
-    <div>
-      <div class="detail-co" id="dp-co">Company</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:2px" id="dp-role">Role</div>
-    </div>
-    <button class="detail-close" onclick="closeDetail()">&times;</button>
-  </div>
-  <div class="detail-body">
-    <div class="detail-section">
-      <div class="detail-section-title">Application</div>
-      <div class="df2">
-        <div class="detail-field"><label class="dflbl">Tier</label><select class="dfsel" id="dp-tier" onchange="saveDetail()"><option value="T1">T1 &mdash; Big Tech</option><option value="T2">T2 &mdash; Mission</option><option value="T3">T3 &mdash; Fashion/Textile</option></select></div>
-        <div class="detail-field"><label class="dflbl">Status</label><select class="dfsel" id="dp-status" onchange="saveDetail()"><option>Research</option><option>Applied</option><option>Interview</option><option>Offer</option><option>Rejected</option></select></div>
+<!-- COMPANY RESEARCH DASHBOARD -->
+
+<div class="co-dash-bg" id="co-dash-bg">
+  <div class="co-dash" id="co-dash">
+    <!-- Header -->
+    <div class="co-dash-head">
+      <div style="flex:1;min-width:0">
+        <div class="co-dash-eyebrow" id="cd-eyebrow">Company Dashboard</div>
+        <div class="co-dash-name" id="cd-name">Company</div>
+        <div class="co-dash-role" id="cd-role">Role</div>
       </div>
-      <div class="df2">
-        <div class="detail-field"><label class="dflbl">Applied date</label><input class="dfinp" id="dp-date" type="date" onchange="saveDetail()"></div>
-        <div class="detail-field"><label class="dflbl">Fit</label>
-          <div class="fit-editor" id="dp-fit-editor"></div>
+      <div style="display:flex;gap:.5rem;align-items:center;flex-shrink:0">
+        <select class="cd-status-sel" id="cd-status" onchange="saveDash()">
+          <option>Research</option><option>Applied</option><option>Interview</option><option>Offer</option><option>Rejected</option>
+        </select>
+        <button class="co-dash-close" onclick="closeDash()">&times;</button>
+      </div>
+    </div>
+
+```
+<!-- Tab bar -->
+<div class="co-tabs">
+  <button class="co-tab on" id="ctab-overview" onclick="switchDashTab('overview')">Overview</button>
+  <button class="co-tab" id="ctab-contacts" onclick="switchDashTab('contacts')">Contacts</button>
+  <button class="co-tab" id="ctab-brainstorm" onclick="switchDashTab('brainstorm')">Brainstorm</button>
+  <button class="co-tab" id="ctab-application" onclick="switchDashTab('application')">Application</button>
+</div>
+
+<!-- Tab content -->
+<div class="co-dash-body">
+
+  <!-- OVERVIEW TAB -->
+  <div class="co-tab-panel on" id="ctpanel-overview">
+    <div class="co-section">
+      <div class="co-sec-lbl">Role Details</div>
+      <div class="co-field-row">
+        <div class="co-field"><label class="co-lbl">Company</label><input class="co-inp" id="cd-co-inp" oninput="saveDash()"></div>
+        <div class="co-field"><label class="co-lbl">Role Title</label><input class="co-inp" id="cd-role-inp" oninput="saveDash()"></div>
+      </div>
+      <div class="co-field-row">
+        <div class="co-field"><label class="co-lbl">Tier</label>
+          <select class="co-inp" id="cd-tier" onchange="saveDash()">
+            <option value="T1">T1 — Big Tech</option>
+            <option value="T2">T2 — Mission / Fashion</option>
+            <option value="T3">T3 — Startup / Textile</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="co-field"><label class="co-lbl">Est. Salary Range</label><input class="co-inp" id="cd-salary" placeholder="e.g. $110,000–$135,000" oninput="saveDash()"></div>
+      </div>
+      <div class="co-field"><label class="co-lbl">Job Posting URL</label>
+        <div style="display:flex;gap:.4rem">
+          <input class="co-inp" id="cd-url" placeholder="https://..." oninput="saveDash()" style="flex:1">
+          <button class="co-link-btn" onclick="openDashUrl()">Open ↗</button>
         </div>
       </div>
     </div>
-    <div class="detail-section">
-      <div class="detail-section-title">Role Details</div>
-      <div class="detail-field"><label class="dflbl">Company</label><input class="dfinp" id="dp-co-inp" oninput="saveDetail()"></div>
-      <div class="detail-field"><label class="dflbl">Role title</label><input class="dfinp" id="dp-role-inp" oninput="saveDetail()"></div>
-      <div class="detail-field"><label class="dflbl">Job URL</label>
-        <input class="dfinp" id="dp-url" placeholder="https://..." oninput="saveDetail()" style="margin-bottom:4px">
-        <button class="detail-url-btn" onclick="openJobUrl()">Open posting &#8599;</button>
+    <div class="co-section">
+      <div class="co-sec-lbl">Fit Assessment</div>
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.65rem">
+        <div class="co-fit-dots" id="cd-fit-dots"></div>
+        <span style="font-size:11px;color:var(--muted)" id="cd-fit-label"></span>
+      </div>
+      <div class="co-field"><label class="co-lbl">Why this company</label>
+        <textarea class="co-ta" id="cd-why" placeholder="What draws you to this specific company and role?" oninput="saveDash()" rows="3"></textarea>
       </div>
     </div>
-    <div class="detail-section">
-      <div class="detail-section-title">Recruiter / Contact</div>
-      <div class="df2">
-        <div class="detail-field"><label class="dflbl">Name</label><input class="dfinp" id="dp-contact" placeholder="Recruiter name" oninput="saveDetail()"></div>
-        <div class="detail-field"><label class="dflbl">Email / LinkedIn</label><input class="dfinp" id="dp-contact-info" placeholder="email or /in/..." oninput="saveDetail()"></div>
-      </div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-title">Notes &amp; Next Steps</div>
-      <div class="detail-field"><label class="dflbl">Notes</label><textarea class="dfta" id="dp-notes" placeholder="Interview prep, impressions, next steps, salary info&hellip;" oninput="saveDetail()"></textarea></div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-title">Linked Documents</div>
-      <div id="dp-files-list" style="font-size:11px;color:var(--muted)">No files linked yet.</div>
+    <div class="co-section">
+      <div class="co-sec-lbl">Quick Notes</div>
+      <textarea class="co-ta" id="cd-notes" placeholder="First impressions · red flags · timing · comp notes · anything urgent&hellip;" oninput="saveDash()" rows="4"></textarea>
     </div>
   </div>
-  <div class="detail-save-bar">
-    <button class="detail-del-btn" onclick="deleteCurrentJob()">Delete application</button>
-    <button class="detail-save-btn" onclick="saveDetail();toast('Saved');closeDetail()">Done</button>
+
+  <!-- CONTACTS TAB -->
+  <div class="co-tab-panel" id="ctpanel-contacts">
+    <div class="co-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+        <div class="co-sec-lbl" style="margin-bottom:0">Key Contacts</div>
+        <button class="co-add-btn" onclick="addDashContact()">+ Add Contact</button>
+      </div>
+      <div id="cd-contacts-list"></div>
+    </div>
+    <div class="co-section">
+      <div class="co-sec-lbl">Research Notes</div>
+      <textarea class="co-ta" id="cd-contacts-research" placeholder="LinkedIn research · mutual connections · who to reach out to first · email templates · follow-up timing&hellip;" oninput="saveDash()" rows="8"></textarea>
+    </div>
+  </div>
+
+  <!-- BRAINSTORM TAB -->
+  <div class="co-tab-panel" id="ctpanel-brainstorm">
+    <div class="co-section">
+      <div class="co-sec-lbl">Brainstorm Space</div>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:.75rem">Your private creative space. Use this to draft cover letter angles, think through interview answers, map your unique value proposition, or write anything that helps you get this role.</p>
+      <textarea class="co-ta" id="cd-brainstorm" placeholder="What makes you the right person for this specific role at this specific company?&#10;&#10;What stories will you tell?&#10;&#10;What questions will you ask?&#10;&#10;What's your angle..." oninput="saveDash()" style="min-height:320px;font-family:var(--fd);font-size:13.5px;line-height:1.9"></textarea>
+    </div>
+    <div class="co-section">
+      <div class="co-sec-lbl">Cover Letter Draft</div>
+      <textarea class="co-ta" id="cd-cover" placeholder="Draft your cover letter here..." oninput="saveDash()" rows="10" style="font-family:var(--fd);font-size:13px;line-height:1.85"></textarea>
+    </div>
+  </div>
+
+  <!-- APPLICATION TAB -->
+  <div class="co-tab-panel" id="ctpanel-application">
+    <div class="co-section">
+      <div class="co-sec-lbl">Application Status</div>
+      <div class="co-field-row">
+        <div class="co-field"><label class="co-lbl">Applied Date</label><input class="co-inp" id="cd-date" type="date" onchange="saveDash()"></div>
+        <div class="co-field"><label class="co-lbl">Follow-up Date</label><input class="co-inp" id="cd-followup" type="date" onchange="saveDash()"></div>
+      </div>
+      <div class="co-field"><label class="co-lbl">Application Notes</label>
+        <textarea class="co-ta" id="cd-app-notes" placeholder="Where you applied · what version of resume · any special instructions · referral info&hellip;" oninput="saveDash()" rows="4"></textarea>
+      </div>
+    </div>
+    <div class="co-section">
+      <div class="co-sec-lbl">Interview Prep</div>
+      <textarea class="co-ta" id="cd-interview" placeholder="Expected questions · your prepared answers · stories to tell · questions to ask them&hellip;" oninput="saveDash()" rows="8" style="font-family:var(--fd);font-size:13px;line-height:1.85"></textarea>
+    </div>
+    <div class="co-section">
+      <div style="display:flex;gap:.5rem">
+        <button class="co-del-btn" onclick="deleteCurrentJob()">Delete</button>
+        <button class="co-save-btn" onclick="saveDash();toast('Saved ✓');closeDash()">Save &amp; Close</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+```
+
   </div>
 </div>
 
 <!-- MODALS -->
+
 <div class="ov" id="m-job"><div class="modal">
   <div class="modtitle">Add <em>Application</em></div>
   <div class="fg2">
@@ -693,6 +1196,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 </div></div>
 
 <!-- PASSWORD GATE -->
+
 <div class="pw-overlay" id="pw-overlay">
   <div class="pw-card">
     <div class="pw-logo">Muses of <em>Morenita</em></div>
@@ -700,6 +1204,27 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
     <input class="pw-inp" id="pw-inp" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" onkeydown="if(event.key==='Enter')checkPw()">
     <button class="pw-btn" onclick="checkPw()">Enter &rarr;</button>
     <p class="pw-err" id="pw-err"></p>
+  </div>
+</div>
+
+<!-- PROJECT PEEK MODAL -->
+
+<div class="proj-modal-bg" id="proj-modal-bg" onclick="closeProjModal(event)">
+  <div class="proj-modal" id="proj-modal">
+    <div class="pm-handle" onclick="toggleExpandModal()"></div>
+    <div class="pm-head">
+      <div style="display:flex;gap:.85rem;align-items:flex-start;flex:1;min-width:0">
+        <div class="pm-thumb" id="pm-thumb"></div>
+        <div style="flex:1;min-width:0">
+          <div class="pm-title" id="pm-title"></div>
+          <div class="pm-meta" id="pm-meta"></div>
+          <span class="pm-tag" id="pm-tag"></span>
+        </div>
+      </div>
+      <button class="pm-close" onclick="closeProjModal(null)">&times;</button>
+    </div>
+    <div class="pm-body" id="pm-body"></div>
+    <div class="pm-actions" id="pm-actions"></div>
   </div>
 </div>
 
@@ -714,18 +1239,20 @@ const SK = 'muses-morenita-v1';
 // DEFAULT DATA
 const DEFAULTS = {
   profile: {
-    first_name:'Your', last_name:'Name',
-    subtitle:'Software Engineer \u00b7 Co-founder \u00b7 Artist \u00b7 Cellist',
-    bio:'I build systems that breathe. A senior software engineer and co-founder at the intersection of technology, culture, and craft \u2014 creating tools for a greener, more human-centered world.',
-    tags:['Engineering','Sustainable Tech','Fashion Tech','Oil Painting','Cello','Leadership'],
-    avatar_init:'Y', linkedin:'', github:'', email:''
+    first_name:'Amelia', last_name:'Arabe',
+    subtitle:'Computer & Electrical Engineer · Co-founder · Artist · Cellist',
+    bio:'I am a homeschooled student turned computer and electrical engineer, and a creative tech entrepreneur building at the intersection of sustainable innovation, fashion, and journalism. I offer skills in website design, full-stack development, brand systems, and digital infrastructure for creative businesses — and I bring to all of it a belief that technology should be as intentional as the work it supports.',
+    tags:['Engineering','Sustainable Tech','Fashion Tech','Oil Painting','Cello','Miss Temecula Valley USA 2026'],
+    avatar_init:'AA', linkedin:'https://linkedin.com/in/ameliaarabe', github:'https://github.com/libraryofmorenita-hub', email:'missameliava@gmail.com'
   },
   works:[
-    {id:uid(),title:'Co-founder \u00b7 Your Startup',meta:'Architecture \u00b7 Full-stack',category:'Tech'},
-    {id:uid(),title:'Technical Writing & Research',meta:'Essays \u00b7 Strategy \u00b7 Docs',category:'Writing'},
-    {id:uid(),title:'Library of Morenita',meta:'Platform Design \u00b7 Web Dev',category:'Product'},
-    {id:uid(),title:'Community Infrastructure',meta:'Leadership \u00b7 Systems \u00b7 Culture',category:'Leadership'},
-    {id:uid(),title:'Fashion Tech Consulting',meta:'Advisory \u00b7 Tech Strategy',category:'Consulting'},
+    {id:uid(),title:'Ballmecca',meta:'Co-founder · Full-stack · Product Architecture',category:'Tech'},
+    {id:uid(),title:'Crown HQ',meta:'Campaign OS · Supabase · Role-based Dashboards',category:'Product'},
+    {id:uid(),title:'Voice Activated Hospital Bed',meta:'Embedded Systems · Arduino · Medical Hardware',category:'Tech'},
+    {id:uid(),title:'SLF Terminator',meta:'Autonomous Rover · CAD · Raspberry Pi',category:'Tech'},
+    {id:uid(),title:'NeuroSect',meta:'Speculative Systems Research · fMRI · AI Decoding',category:'Writing'},
+    {id:uid(),title:'Library of Morenita',meta:'Portfolio Studio · Single-file App · Published',category:'Product'},
+    {id:uid(),title:'Zoccia Swimwear',meta:'Product Development · Vendor Coordination · Fashion',category:'Consulting'},
   ],
   paintings:[
     {id:uid(),name:'Warm Study No. 1',details:'Oil on canvas \u00b7 18\u00d724 in \u00b7 2025',price:'$480',status:'Available',cls:'pw'},
@@ -734,18 +1261,19 @@ const DEFAULTS = {
     {id:uid(),name:'Dusk Composition',details:'Oil on panel \u00b7 20\u00d724 in \u00b7 2026',price:'$850',status:'Available',cls:'pd'},
   ],
   jobs:[
-    {id:uid(),company:'Apple',role:'Senior Software Engineer',tier:'T1',status:'Research',fit:5,notes:'Special Projects \u2014 sustainability angle',applied_date:'',url:'',contact:'',contact_info:''},
-    {id:uid(),company:'Google',role:'Software Engineer L4',tier:'T1',status:'Research',fit:5,notes:'YouTube or Google Arts & Culture',applied_date:'',url:'',contact:'',contact_info:''},
-    {id:uid(),company:'Microsoft',role:'Senior SWE',tier:'T1',status:'Research',fit:4,notes:'Azure sustainability \u00b7 Forbes #1 2025',applied_date:'',url:'',contact:'',contact_info:''},
-    {id:uid(),company:'NVIDIA',role:'SWE \u2014 AI Platform',tier:'T1',status:'Research',fit:4,notes:'AI infrastructure \u00b7 highest comp in sector',applied_date:'',url:'',contact:'',contact_info:''},
-    {id:uid(),company:'LVMH / Tiffany & Co.',role:'SWE \u2014 Digital Product',tier:'T2',status:'Research',fit:5,notes:'Aura Blockchain + green IT \u00b7 mission match',applied_date:'',url:'',contact:'',contact_info:''},
-    {id:uid(),company:'Lululemon',role:'Staff SWE \u2014 Enterprise Automation',tier:'T2',status:'Research',fit:4,notes:'Heavy hiring \u00b7 remote eligible',applied_date:'',url:'',contact:'',contact_info:''},
-    {id:uid(),company:'Nike',role:'Platform Engineer',tier:'T2',status:'Research',fit:4,notes:'Sustainable tech mandate \u00b7 digital community',applied_date:'',url:'',contact:'',contact_info:''},
-    {id:uid(),company:'Reformation',role:'Tech Lead',tier:'T2',status:'Research',fit:5,notes:'Sustainable womens fashion \u00b7 LA HQ',applied_date:'',url:'https://www.thereformation.com/pages/careers',contact:'',contact_info:''},
-    {id:uid(),company:'Bolt Threads',role:'Software Engineer',tier:'T3',status:'Research',fit:4,notes:'Biotech sustainable fabrics \u00b7 equity play',applied_date:'',url:'',contact:'',contact_info:''},
-    {id:uid(),company:'BeProduct',role:'SWE / Technical Advisor',tier:'T3',status:'Research',fit:4,notes:'Cloud-native PLM for fashion \u00b7 B2B SaaS',applied_date:'',url:'',contact:'',contact_info:''},
-    {id:uid(),company:'Autone',role:'Founding Engineer',tier:'T3',status:'Research',fit:3,notes:'YC + General Catalyst backed \u00b7 AI sustainable retail',applied_date:'',url:'',contact:'',contact_info:''},
-    {id:uid(),company:'Circ',role:'Engineering / Advisory',tier:'T3',status:'Research',fit:3,notes:'Textile recycling tech \u00b7 circular fashion',applied_date:'',url:'',contact:'',contact_info:''},
+    {id:uid(),company:'Motorola Solutions',role:'Embedded Software Engineer — Web Interface Developer',tier:'T1',status:'Research',fit:5,notes:'LA hybrid · Embedded systems · Public safety tech · Best technical fit on current list · $110-135k range',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'Blue Origin',role:'Avionics / Embedded Software Engineer I — Early Career',tier:'T1',status:'Research',fit:5,notes:'LA onsite · Avionics embedded systems · Early career entry point · Extraordinary trajectory · $95-115k + equity',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'Substack',role:'Mobile Software Engineer — Enterprise',tier:'T1',status:'Research',fit:4,notes:'NYC hybrid · You are already a Substack creator @musesofmorenita — unique differentiator · $140-165k range',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'RōZ',role:'Product Development Coordinator',tier:'T2',status:'Applied',fit:5,notes:'LA hybrid · Clean beauty · Email sent with expanded role pitch · Wavy hair personal connection · Hair in South Asian culture angle',applied_date:'2026-04-02',url:'',contact:'',contact_info:'applications@rozbeauty.com',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'Apple',role:'Senior Software Engineer',tier:'T1',status:'Research',fit:5,notes:'Special Projects — sustainability angle',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'Google',role:'Software Engineer L4',tier:'T1',status:'Research',fit:5,notes:'YouTube or Google Arts & Culture',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'Microsoft',role:'Senior SWE',tier:'T1',status:'Research',fit:4,notes:'Azure sustainability · Forbes #1 2025',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'NVIDIA',role:'SWE — AI Platform',tier:'T1',status:'Research',fit:4,notes:'AI infrastructure · highest comp in sector',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'LVMH / Tiffany & Co.',role:'SWE — Digital Product',tier:'T2',status:'Research',fit:5,notes:'Aura Blockchain + green IT · mission match',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'Reformation',role:'Tech Lead',tier:'T2',status:'Research',fit:5,notes:'Sustainable womens fashion · LA HQ',applied_date:'',url:'https://www.thereformation.com/pages/careers',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'Lululemon',role:'Staff SWE — Enterprise Automation',tier:'T2',status:'Research',fit:4,notes:'Heavy hiring · remote eligible',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'Bolt Threads',role:'Software Engineer',tier:'T3',status:'Research',fit:4,notes:'Biotech sustainable fabrics · equity play',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
+    {id:uid(),company:'BeProduct',role:'SWE / Technical Advisor',tier:'T3',status:'Research',fit:4,notes:'Cloud-native PLM for fashion · B2B SaaS',applied_date:'',url:'',contact:'',contact_info:'',brainstorm:'',contacts_research:''},
   ],
   files:[
     {id:uid(),name:'Master Resume',type:'Resume',target_co:'General',updated:'Mar 2026'},
@@ -755,7 +1283,10 @@ const DEFAULTS = {
     {id:uid(),name:'Consulting Pitch',type:'Other',target_co:'\u2014',updated:'\u2014'},
   ],
   drafts:[],
-  writer:{ title:'', subtitle:'', body:'', preset:'mag', category:'Technology', status:'Draft', publish:'No' }
+  writer:{ title:'', subtitle:'', body:'', preset:'mag', category:'Technology', status:'Draft', publish:'No' },
+  library:[],
+  strategy:{ positioning:'', narrative:'', press:'', revenue:'', goals:[], pipeline:[] },
+  inspiration:{ photos:[], journal:[] }
 };
 
 function uid() { return Math.random().toString(36).slice(2,10); }
@@ -776,14 +1307,26 @@ if (!D.jobs)    D.jobs    = DEFAULTS.jobs;
 if (!D.files)   D.files   = DEFAULTS.files;
 if (!D.drafts)  D.drafts  = DEFAULTS.drafts;
 if (!D.writer)  D.writer  = DEFAULTS.writer;
+if (!D.library) D.library = [];
+if (!D.strategy) D.strategy = DEFAULTS.strategy;
+if (!D.inspiration) D.inspiration = DEFAULTS.inspiration;
 
-// Ensure all jobs have new fields
+// Ensure all jobs have all fields
 D.jobs.forEach(j => {
-  if (!j.applied_date) j.applied_date = '';
-  if (!j.url)          j.url = '';
-  if (!j.contact)      j.contact = '';
-  if (!j.contact_info) j.contact_info = '';
-  if (!j.id)           j.id = uid();
+  if (!j.id)                j.id = uid();
+  if (!j.applied_date)      j.applied_date = '';
+  if (!j.url)               j.url = '';
+  if (!j.contact)           j.contact = '';
+  if (!j.contact_info)      j.contact_info = '';
+  if (!j.contacts)          j.contacts = [];
+  if (!j.brainstorm)        j.brainstorm = '';
+  if (!j.cover)             j.cover = '';
+  if (!j.why)               j.why = '';
+  if (!j.salary)            j.salary = '';
+  if (!j.followup)          j.followup = '';
+  if (!j.app_notes)         j.app_notes = '';
+  if (!j.interview)         j.interview = '';
+  if (!j.contacts_research) j.contacts_research = '';
 });
 
 // ══════════════════════════════════════════════════
@@ -811,8 +1354,8 @@ function setSaveState(s) {
 // ══════════════════════════════════════════════════
 // MAPS
 // ══════════════════════════════════════════════════
-const THUMB_ICON  = {Tech:'\u2617',Writing:'\u2726',Product:'\u25CB',Leadership:'\u266A',Consulting:'\u25C7',Art:'\u25B3'};
-const THUMB_CLASS = {Tech:'wt1',Writing:'wt2',Product:'wt3',Leadership:'wt4',Consulting:'wt1',Art:'wt2'};
+const THUMB_ICON  = {Tech:'⬡',Writing:'✦',Product:'◎',Leadership:'♪',Consulting:'◇',Art:'△'};
+const THUMB_CLASS = {Tech:'wt1',Writing:'wt4',Product:'wt3',Leadership:'wt2',Consulting:'wt2',Art:'wt2'};
 const PAINT_SWATCHES = {pw:'linear-gradient(145deg,#C4875A,#7A4A30)',ps:'linear-gradient(145deg,#7B9E87,#4A6B55)',pe:'linear-gradient(145deg,#8B7B5A,#5A4A30)',pd:'linear-gradient(145deg,#9B7BAA,#5C4A70)'};
 const TAG_COLORS = ['s','g','o','','s','g','o'];
 const STATUS_PILL = {Research:'pr',Applied:'pa',Interview:'pi',Offer:'po',Rejected:'prej'};
@@ -833,16 +1376,22 @@ function go(p) {
 }
 
 function view(v) {
-  const views = ['portfolio','income','tracker','files','writer'];
+  const views = ['portfolio','income','tracker','files','writer','strategy','inspiration'];
   views.forEach(x => {
-    document.getElementById('v-'+x).classList.toggle('on', x===v);
+    const el = document.getElementById('v-'+x);
+    if (el) el.classList.toggle('on', x===v);
     const b = document.getElementById('sbi-'+x);
     if (b) b.classList.toggle('on', x===v);
   });
-  if (v === 'tracker') { renderJobs(); updateFilterCounts(); }
-  if (v === 'files')   renderFiles();
-  if (v === 'portfolio') { renderWorkEditor(); renderPaintEditor(); }
-  if (v === 'writer')  loadWriter();
+  if (v === 'tracker')     { renderJobs(); updateFilterCounts(); }
+  if (v === 'files')       renderFiles();
+  if (v === 'portfolio')   { renderWorkEditor(); renderPaintEditor(); }
+  if (v === 'writer')      loadWriter();
+  if (v === 'strategy')    loadStrategy();
+  if (v === 'inspiration') renderInspiration();
+  // Close mobile sidebar after nav
+  const sb = document.querySelector('.sidebar');
+  if (sb && window.innerWidth <= 768) sb.classList.remove('open');
 }
 
 // ══════════════════════════════════════════════════
@@ -916,18 +1465,124 @@ function renderWorkEditor() {
     </div>`).join('');
 }
 
+// ── PROJECT DATA (rich descriptions for modal) ────────────────
+const PROJECT_DETAIL = {
+  'Ballmecca':{
+    desc:'Co-founded and built the Ballmecca app from the ground up — a coaching marketplace connecting niche sports coaches with athletes outside their city. Led product architecture, full-stack development, and internal operations. The platform enables coaches to run their entire business from their phone.',
+    result:'End-to-end product build · Full-stack web + mobile architecture',
+    stack:['React Native','Node.js','Supabase','Product Strategy','Operations'],
+    link:'https://ballmecca.com'
+  },
+  'Crown HQ':{
+    desc:'Built a full campaign operating system for a Miss California USA 2026 competition. Includes team role dashboards, sponsor pipeline, finance tracking with PDF invoice generation, fitness and wellness planning, a weekly meal plan system, and a content publishing pipeline linked to a public campaign site.',
+    result:'15+ integrated panels · Role-based access · Supabase-backed · Deployed on GitHub Pages',
+    stack:['Vanilla JS','Supabase','HTML/CSS','System Design','localStorage'],
+    link:''
+  },
+  'Voice Activated Hospital Bed':{
+    desc:'Designed and built a voice-activated hospital bed control system for quadriplegic patients, commissioned by Volunteers for Medical Engineering and client Dr. Mauricio Lizama. The system achieved 100% command recognition in low-noise conditions. Built with Arduino, EasyVR3 voice recognition chip, relay board, CAD-modeled 1:2 scale bed prototype, and custom 3D-printed enclosures.',
+    result:'100% command recognition (low noise) · 90% trigger word accuracy · Presented April 2025',
+    stack:['Arduino','EasyVR3 VR Chip','CAD / SolidWorks','Relay Systems','Hardware Fabrication'],
+    link:''
+  },
+  'SLF Terminator':{
+    desc:'Designed and built an autonomous rover to combat the Spotted Lanternfly invasion threatening US agriculture. The rover integrates a CAD-designed peppermint-lure bug trap, a programmable insecticide sprayer, motion sensors for autonomous navigation, and remote camera control via Raspberry Pi. Deployed on Loyola Maryland\'s accredited Evergreen Arboretum.',
+    result:'Functional autonomous rover prototype · Deployed in real arboretum environment',
+    stack:['Raspberry Pi','CAD / 3D Printing','Motion Sensors','Embedded Systems','Arduino'],
+    link:''
+  },
+  'NeuroSect':{
+    desc:'Co-authored a speculative multimodal medical imaging systems paper proposing a technically grounded architecture for a precognitive neural decoding system inspired by Minority Report. The paper integrates fMRI, EEG, MEG, and PPG imaging with AI decoding pipelines and quantum probability processing across three simultaneous subjects. Submitted to ECE187 Biomedical Imaging at UC San Diego.',
+    result:'Full systems architecture · 30 peer-reviewed citations · Illustrated with original digital art',
+    stack:['fMRI / BOLD Signal','EEG / MEG','AI Decoding','Bayesian Consensus','Quantum Probability'],
+    link:''
+  },
+  'Zoccia Swimwear':{
+    desc:'Co-developed the Zoccia Swimwear line from concept through vendor sourcing, sampling, and production. Led product development coordination, creative direction, and digital presence. Applied the same systems-thinking approach from engineering to fashion product development.',
+    result:'Full product cycle from concept to production',
+    stack:['Product Development','Vendor Coordination','Creative Direction','Fashion Tech'],
+    link:''
+  },
+  'Library of Morenita':{
+    desc:'Designed and built a personal portfolio and career studio as a single-file HTML application. Features a password-gated studio with job tracker, income map, library editor, artist strategy panel, inspiration space, and a publishing system that syncs articles to the Crown HQ campaign site.',
+    result:'Full-featured single-file app · localStorage persistence · Live on GitHub Pages',
+    stack:['HTML/CSS/JS','System Design','UX Design','localStorage','Publishing'],
+    link:'https://libraryofmorenita-hub.github.io/muses-of-morenita'
+  }
+};
+
 function renderWork() {
   document.getElementById('p-work-ct').textContent = D.works.length + ' projects';
-  document.getElementById('p-work-grid').innerHTML = D.works.map(w => `
-    <div class="wcard">
+  document.getElementById('p-work-grid').innerHTML = D.works.map((w,i) => {
+    const detail = PROJECT_DETAIL[w.title] || {};
+    return `<div class="wcard reveal reveal-d${(i%3)+1}" onclick="openProjModal(${i})" style="cursor:pointer">
       <div class="wthumb ${THUMB_CLASS[w.category]||'wt1'}">${THUMB_ICON[w.category]||'\u25C7'}</div>
-      <div class="wbody"><div class="wtitle">${esc(w.title)}</div><div class="wmeta">${esc(w.meta||'')}</div><span class="wtag">${esc(w.category||'')}</span></div>
-    </div>`).join('') +
-    `<div class="wcard" onclick="go('db');view('portfolio')" style="border-style:dashed;opacity:.5">
-      <div class="wthumb" style="background:transparent;font-size:20px;color:var(--faint)">\uFF0B</div>
-      <div class="wbody"><div class="wtitle" style="color:var(--faint)">Add project</div></div>
+      <div class="wbody">
+        <div class="wtitle">${esc(w.title)}</div>
+        <div class="wmeta">${esc(w.meta||'')}</div>
+        <span class="wtag">${esc(w.category||'')}</span>
+        ${detail.result ? `<div style="font-size:10px;color:var(--si);margin-top:4px;line-height:1.4">${esc(detail.result.split('·')[0].trim())}</div>` : ''}
+      </div>
     </div>`;
+  }).join('') +
+  `<div class="wcard" onclick="go('db');view('portfolio')" style="border-style:dashed;opacity:.5;cursor:pointer">
+    <div class="wthumb" style="background:transparent;font-size:20px;color:var(--faint)">\uFF0B</div>
+    <div class="wbody"><div class="wtitle" style="color:var(--faint)">Add project</div></div>
+  </div>`;
 }
+
+// ── PROJECT PEEK MODAL ────────────────────────────────────────
+let _modalExpanded = false;
+let _currentProjIdx = null;
+
+function openProjModal(i) {
+  const w = D.works[i];
+  if (!w) return;
+  _currentProjIdx = i;
+  _modalExpanded = false;
+  const detail = PROJECT_DETAIL[w.title] || {};
+  const thumbCls = THUMB_CLASS[w.category] || 'wt1';
+  const thumbIco = THUMB_ICON[w.category] || '◇';
+
+  // Populate modal
+  const thumb = document.getElementById('pm-thumb');
+  thumb.className = 'pm-thumb ' + thumbCls;
+  thumb.textContent = thumbIco;
+
+  document.getElementById('pm-title').textContent = w.title;
+  document.getElementById('pm-meta').textContent = w.meta || '';
+  document.getElementById('pm-tag').textContent = w.category || '';
+
+  document.getElementById('pm-body').innerHTML = `
+    ${detail.desc ? `<p class="pm-desc">${detail.desc}</p>` : '<p class="pm-desc" style="color:var(--faint);font-style:italic">Add a description for this project in the Studio editor.</p>'}
+    ${detail.result ? `<div class="pm-result"><div class="pm-result-lbl">Key Result</div><div class="pm-result-val">${detail.result}</div></div>` : ''}
+    ${detail.stack && detail.stack.length ? `<div class="pm-stack">${detail.stack.map(s => `<span class="pm-chip">${s}</span>`).join('')}</div>` : ''}
+  `;
+
+  const actions = document.getElementById('pm-actions');
+  actions.innerHTML =
+    `<button class="pm-btn" onclick="go('db');view('portfolio');closeProjModal(null)">Edit in Studio</button>` +
+    (detail.link ? `<button class="pm-btn pri" onclick="window.open('${detail.link}','_blank')">View live →</button>` : '');
+
+  document.getElementById('pm-expand') && (document.getElementById('pm-expand').style.display = 'none');
+
+  const bg = document.getElementById('proj-modal-bg');
+  const modal = document.getElementById('proj-modal');
+  modal.classList.remove('expanded');
+  bg.classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProjModal(e) {
+  if (e && e.target !== document.getElementById('proj-modal-bg')) return;
+  document.getElementById('proj-modal-bg').classList.remove('on');
+  document.body.style.overflow = '';
+  _currentProjIdx = null;
+  _modalExpanded = false;
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeProjModal(null); });
 
 function addWork() {
   D.works.push({id:uid(),title:'New Project',meta:'Description',category:'Tech'});
@@ -1050,15 +1705,9 @@ function updateJob(id, field, value) {
   if (j) { j[field] = value; save(); }
   // Update detail panel header if open
   if (activeJobId === id) {
-    if (field === 'company') document.getElementById('dp-co').textContent = value;
-    if (field === 'role')    document.getElementById('dp-role').textContent = value;
+    if (field === 'company') { document.getElementById('cd-name').textContent = value; }
+    if (field === 'role')    { document.getElementById('cd-role').textContent = value; }
   }
-}
-
-function setFit(id, val) {
-  const j = D.jobs.find(x => x.id === id);
-  if (j) { j.fit = val; save(); renderJobs(); }
-  if (activeJobId === id) renderFitEditor(val);
 }
 
 function filt(f, el) {
@@ -1096,69 +1745,190 @@ function deleteJob(id) {
 }
 
 function deleteCurrentJob() {
-  if (activeJobId) deleteJob(activeJobId);
+  if (activeJobId) { deleteJob(activeJobId); closeDash(); }
 }
 
-// ── DETAIL PANEL ──────────────────────────────────
+// ── COMPANY RESEARCH DASHBOARD ─────────────────────────────
+let _dashJobId = null;
+let _dashTab = 'overview';
+
 function openDetail(id) {
   const j = D.jobs.find(x => x.id === id);
   if (!j) return;
+  _dashJobId = id;
   activeJobId = id;
-  document.getElementById('dp-co').textContent = j.company;
-  document.getElementById('dp-role').textContent = j.role || '';
-  document.getElementById('dp-co-inp').value      = j.company;
-  document.getElementById('dp-role-inp').value    = j.role || '';
-  document.getElementById('dp-tier').value        = j.tier || 'T1';
-  document.getElementById('dp-status').value      = j.status || 'Research';
-  document.getElementById('dp-date').value        = j.applied_date || '';
-  document.getElementById('dp-notes').value       = j.notes || '';
-  document.getElementById('dp-url').value         = j.url || '';
-  document.getElementById('dp-contact').value     = j.contact || '';
-  document.getElementById('dp-contact-info').value= j.contact_info || '';
-  renderFitEditor(j.fit || 3);
-  // Linked docs
-  const linked = D.files.filter(f => f.target_co && j.company.toLowerCase().includes(f.target_co.toLowerCase()));
-  document.getElementById('dp-files-list').innerHTML = linked.length
-    ? linked.map(f => '<div style="font-size:11px;color:var(--charcoal);padding:4px 0;border-bottom:0.5px solid var(--bd)">' + esc(f.name) + ' <span style="color:var(--faint)">\u00b7 '+f.type+'</span></div>').join('')
-    : '<div style="font-size:11px;color:var(--faint)">No files matched to this company yet.</div>';
-  document.getElementById('detail-panel').classList.add('open');
-  renderJobs(); // highlight open row
-}
+  // Ensure new fields exist
+  if (!j.contacts) j.contacts = [];
+  if (!j.brainstorm) j.brainstorm = '';
+  if (!j.cover) j.cover = '';
+  if (!j.why) j.why = '';
+  if (!j.salary) j.salary = '';
+  if (!j.followup) j.followup = '';
+  if (!j.app_notes) j.app_notes = '';
+  if (!j.interview) j.interview = '';
+  if (!j.contacts_research) j.contacts_research = '';
 
-function renderFitEditor(fit) {
-  document.getElementById('dp-fit-editor').innerHTML = [1,2,3,4,5].map(d =>
-    '<span class="fit-star '+(d<=fit?'on':'')+'" onclick="setFit(\''+activeJobId+'\','+d+')" title="'+d+'/5">&#9679;</span>'
-  ).join('');
-}
-
-function saveDetail() {
-  const j = D.jobs.find(x => x.id === activeJobId);
-  if (!j) return;
-  j.company      = document.getElementById('dp-co-inp').value;
-  j.role         = document.getElementById('dp-role-inp').value;
-  j.tier         = document.getElementById('dp-tier').value;
-  j.status       = document.getElementById('dp-status').value;
-  j.applied_date = document.getElementById('dp-date').value;
-  j.notes        = document.getElementById('dp-notes').value;
-  j.url          = document.getElementById('dp-url').value;
-  j.contact      = document.getElementById('dp-contact').value;
-  j.contact_info = document.getElementById('dp-contact-info').value;
-  document.getElementById('dp-co').textContent   = j.company;
-  document.getElementById('dp-role').textContent = j.role;
-  save(); renderJobs(); updateFilterCounts();
-}
-
-function closeDetail() {
-  document.getElementById('detail-panel').classList.remove('open');
-  activeJobId = null;
+  document.getElementById('cd-eyebrow').textContent = (j.tier||'') + ' · ' + (j.status||'Research');
+  document.getElementById('cd-name').textContent = j.company;
+  document.getElementById('cd-role').textContent = j.role || '';
+  document.getElementById('cd-status').value = j.status || 'Research';
+  document.getElementById('cd-co-inp').value    = j.company || '';
+  document.getElementById('cd-role-inp').value  = j.role || '';
+  document.getElementById('cd-tier').value      = j.tier || 'T1';
+  document.getElementById('cd-salary').value    = j.salary || '';
+  document.getElementById('cd-url').value       = j.url || '';
+  document.getElementById('cd-why').value       = j.why || '';
+  document.getElementById('cd-notes').value     = j.notes || '';
+  document.getElementById('cd-contacts-research').value = j.contacts_research || '';
+  document.getElementById('cd-brainstorm').value = j.brainstorm || '';
+  document.getElementById('cd-cover').value      = j.cover || '';
+  document.getElementById('cd-date').value      = j.applied_date || '';
+  document.getElementById('cd-followup').value  = j.followup || '';
+  document.getElementById('cd-app-notes').value = j.app_notes || '';
+  document.getElementById('cd-interview').value = j.interview || '';
+  renderDashFit(j.fit || 3);
+  renderDashContacts();
+  switchDashTab('overview');
+  document.getElementById('co-dash-bg').classList.add('on');
+  document.body.style.overflow = 'hidden';
   renderJobs();
 }
 
-function openJobUrl() {
-  const url = document.getElementById('dp-url').value.trim();
-  if (!url) { toast('No URL saved'); return; }
+function closeDash() {
+  document.getElementById('co-dash-bg').classList.remove('on');
+  document.body.style.overflow = '';
+  activeJobId = null;
+  _dashJobId = null;
+  renderJobs();
+}
+
+function closeDetail() { closeDash(); }
+
+function switchDashTab(tab) {
+  _dashTab = tab;
+  document.querySelectorAll('.co-tab').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.co-tab-panel').forEach(p => p.classList.remove('on'));
+  const btn = document.getElementById('ctab-' + tab);
+  const panel = document.getElementById('ctpanel-' + tab);
+  if (btn) btn.classList.add('on');
+  if (panel) panel.classList.add('on');
+}
+
+function saveDash() {
+  const j = D.jobs.find(x => x.id === _dashJobId);
+  if (!j) return;
+  j.company          = document.getElementById('cd-co-inp').value;
+  j.role             = document.getElementById('cd-role-inp').value;
+  j.tier             = document.getElementById('cd-tier').value;
+  j.salary           = document.getElementById('cd-salary').value;
+  j.url              = document.getElementById('cd-url').value;
+  j.why              = document.getElementById('cd-why').value;
+  j.notes            = document.getElementById('cd-notes').value;
+  j.status           = document.getElementById('cd-status').value;
+  j.contacts_research= document.getElementById('cd-contacts-research').value;
+  j.brainstorm       = document.getElementById('cd-brainstorm').value;
+  j.cover            = document.getElementById('cd-cover').value;
+  j.applied_date     = document.getElementById('cd-date').value;
+  j.followup         = document.getElementById('cd-followup').value;
+  j.app_notes        = document.getElementById('cd-app-notes').value;
+  j.interview        = document.getElementById('cd-interview').value;
+  document.getElementById('cd-name').textContent = j.company;
+  document.getElementById('cd-role').textContent = j.role;
+  document.getElementById('cd-eyebrow').textContent = j.tier + ' · ' + j.status;
+  save();
+}
+
+function saveDetail() { saveDash(); }
+
+function renderDashFit(val) {
+  const container = document.getElementById('cd-fit-dots');
+  if (!container) return;
+  const labels = ['','Not a fit','Possible','Good fit','Strong fit','Perfect fit'];
+  container.innerHTML = [1,2,3,4,5].map(d =>
+    `<div class="co-fit-dot${d<=val?' on':''}" onclick="setDashFit(${d})" title="${labels[d]}"></div>`
+  ).join('');
+  const lbl = document.getElementById('cd-fit-label');
+  if (lbl) lbl.textContent = labels[val] || '';
+}
+
+function renderFitEditor(fit) { renderDashFit(fit); }
+
+function setDashFit(val) {
+  const j = D.jobs.find(x => x.id === _dashJobId);
+  if (j) { j.fit = val; save(); }
+  renderDashFit(val);
+  renderJobs();
+}
+
+function setFit(id, val) {
+  const j = D.jobs.find(x => x.id === id);
+  if (j) { j.fit = val; save(); renderJobs(); }
+  if (_dashJobId === id) renderDashFit(val);
+}
+
+function openDashUrl() {
+  const url = (document.getElementById('cd-url').value || '').trim();
+  if (!url) { toast('No URL saved yet'); return; }
   window.open(url.startsWith('http') ? url : 'https://' + url, '_blank');
 }
+
+function openJobUrl() { openDashUrl(); }
+
+function renderDashContacts() {
+  const j = D.jobs.find(x => x.id === _dashJobId);
+  if (!j) return;
+  if (!j.contacts) j.contacts = [];
+  const list = document.getElementById('cd-contacts-list');
+  if (!list) return;
+  if (!j.contacts.length) {
+    list.innerHTML = '<div style="font-size:11px;color:var(--faint);padding:.5rem 0;font-style:italic">No contacts added. Add a recruiter, hiring manager, or connection.</div>';
+    return;
+  }
+  list.innerHTML = j.contacts.map((c,i) =>
+    `<div class="co-contact-row">
+      <input class="co-contact-inp" value="${esc(c.name||'')}" placeholder="Name / Role" oninput="updateDashContact(${i},'name',this.value)">
+      <input class="co-contact-inp" value="${esc(c.info||'')}" placeholder="Email or LinkedIn" oninput="updateDashContact(${i},'info',this.value)">
+      <button class="co-contact-rm" onclick="removeDashContact(${i})">&times;</button>
+    </div>`
+  ).join('');
+}
+
+function addDashContact() {
+  const j = D.jobs.find(x => x.id === _dashJobId);
+  if (!j) return;
+  if (!j.contacts) j.contacts = [];
+  j.contacts.push({name:'',info:''});
+  save(); renderDashContacts();
+}
+
+function updateDashContact(i, field, val) {
+  const j = D.jobs.find(x => x.id === _dashJobId);
+  if (j && j.contacts && j.contacts[i]) { j.contacts[i][field] = val; save(); }
+}
+
+function removeDashContact(i) {
+  const j = D.jobs.find(x => x.id === _dashJobId);
+  if (j && j.contacts) { j.contacts.splice(i,1); save(); renderDashContacts(); }
+}
+
+// Close dashboard on outside click
+document.addEventListener('DOMContentLoaded', function() {
+  const bg = document.getElementById('co-dash-bg');
+  if (bg) bg.addEventListener('click', function(e) { if (e.target === this) closeDash(); });
+});
+
+// Mobile sidebar toggle
+function toggleMobileSidebar() {
+  const sb = document.querySelector('.sidebar');
+  if (sb) sb.classList.toggle('open');
+}
+
+function checkMobile() {
+  const btn = document.getElementById('mob-menu-btn');
+  if (btn) btn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+}
+window.addEventListener('resize', checkMobile);
+setTimeout(checkMobile, 100);
 
 // ══════════════════════════════════════════════════
 // FILES
@@ -1457,6 +2227,346 @@ renderFiles();
 
 // Wire writer save button to save-as-draft
 document.querySelector('.svbtn').onclick = saveWriterAsDraft;
+
+// ══════════════════════════════════════════════════
+// LIBRARY EDITOR
+// Articles stored in D.library[], synced to chq-po
+// in localStorage so Crown HQ dashboard reads them
+// ══════════════════════════════════════════════════
+const LIB_CAT_COLORS = {
+  technology:'var(--go)',culture:'var(--sa)',fashion:'var(--si)',
+  art:'var(--si)',leadership:'var(--sa)',essay:'var(--muted)',
+  morenita:'var(--si)',energy:'var(--sa)',solarpunk:'var(--go)'
+};
+const LIB_CAT_BG = {
+  technology:'linear-gradient(135deg,#F5EDD4,#E8D8A0)',
+  culture:'linear-gradient(135deg,#EBF0EA,#C8DCC6)',
+  fashion:'linear-gradient(135deg,#F5EDE8,#DDBBA8)',
+  art:'linear-gradient(135deg,#F0E8DC,#D4B890)',
+  leadership:'linear-gradient(135deg,#EBF0EA,#B8D0B4)',
+  essay:'linear-gradient(135deg,#F0EBE3,#DDD0C0)',
+  morenita:'linear-gradient(135deg,#F5EDE8,#C4875A)',
+  energy:'linear-gradient(135deg,#EBF0EA,#7B9E87)',
+  solarpunk:'linear-gradient(135deg,#FBF5E6,#C9A84C)'
+};
+
+let editingArticleIdx = null;
+
+function renderLibraryList() {
+  const articles = D.library || [];
+  document.getElementById('lib-article-editor').style.display = 'none';
+  document.getElementById('lib-article-list').style.display = 'block';
+  const grid = document.getElementById('lib-grid');
+  if (!articles.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--faint);font-family:var(--fd);font-size:18px;font-style:italic">No articles yet. Write your first one.</div>';
+    return;
+  }
+  grid.innerHTML = articles.map((a,i) => `
+    <div class="lib-article-card" onclick="editLibraryArticle(${i})">
+      <div class="lac-cover" style="background:${LIB_CAT_BG[a.cat]||'var(--iv2)'}">
+        <span class="lac-cat">${esc(a.cat||'essay')}</span>
+      </div>
+      <div class="lac-body">
+        <div class="lac-title">${esc(a.title||'Untitled')}</div>
+        <div class="lac-meta">${a.date||''} ${a.tags?'· '+a.tags:''}</div>
+        <span class="lac-status ${a.status==='published'?'lac-published':'lac-draft'}">${a.status==='published'?'Published':'Draft'}</span>
+        ${a.showInTracker==='yes'?'<span class="lac-status" style="background:var(--gop);color:var(--go);margin-left:4px">In Tracker</span>':''}
+      </div>
+    </div>`).join('') +
+    `<div class="lib-article-card" onclick="newLibraryArticle()" style="border-style:dashed;opacity:.5">
+      <div class="lac-cover" style="background:transparent;align-items:center;justify-content:center">
+        <span style="font-size:24px;color:var(--faint)">+</span>
+      </div>
+      <div class="lac-body"><div class="lac-title" style="color:var(--faint)">New article</div></div>
+    </div>`;
+}
+
+function newLibraryArticle() {
+  editingArticleIdx = null;
+  document.getElementById('lib-title').value = '';
+  document.getElementById('lib-sub').value = '';
+  document.getElementById('lib-body').value = '';
+  document.getElementById('lib-cat').value = 'essay';
+  document.getElementById('lib-tags').value = '';
+  document.getElementById('lib-status').value = 'draft';
+  document.getElementById('lib-show-tracker').value = 'no';
+  document.getElementById('lib-article-list').style.display = 'none';
+  document.getElementById('lib-article-editor').style.display = 'block';
+  document.getElementById('lib-title').focus();
+}
+
+function editLibraryArticle(i) {
+  editingArticleIdx = i;
+  const a = (D.library||[])[i];
+  if (!a) return;
+  document.getElementById('lib-title').value = a.title || '';
+  document.getElementById('lib-sub').value = a.subtitle || '';
+  document.getElementById('lib-body').value = a.body || '';
+  document.getElementById('lib-cat').value = a.cat || 'essay';
+  document.getElementById('lib-tags').value = a.tags || '';
+  document.getElementById('lib-status').value = a.status || 'draft';
+  document.getElementById('lib-show-tracker').value = a.showInTracker || 'no';
+  document.getElementById('lib-article-list').style.display = 'none';
+  document.getElementById('lib-article-editor').style.display = 'block';
+  document.getElementById('lib-title').focus();
+}
+
+function closeLibraryEditor() {
+  editingArticleIdx = null;
+  document.getElementById('lib-article-editor').style.display = 'none';
+  document.getElementById('lib-article-list').style.display = 'block';
+  renderLibraryList();
+}
+
+function saveLibraryArticle() {
+  const title = document.getElementById('lib-title').value.trim();
+  if (!title) { toast('Title required'); return; }
+  if (!D.library) D.library = [];
+  const article = {
+    id:          editingArticleIdx !== null ? (D.library[editingArticleIdx]?.id || Date.now()) : Date.now(),
+    title,
+    subtitle:    document.getElementById('lib-sub').value.trim(),
+    body:        document.getElementById('lib-body').value.trim(),
+    cat:         document.getElementById('lib-cat').value,
+    tags:        document.getElementById('lib-tags').value.trim(),
+    status:      document.getElementById('lib-status').value,
+    showInTracker: document.getElementById('lib-show-tracker').value,
+    date:        new Date().toISOString().slice(0,10),
+    updatedAt:   new Date().toISOString()
+  };
+  if (editingArticleIdx !== null) {
+    D.library[editingArticleIdx] = article;
+  } else {
+    D.library.unshift(article);
+  }
+  save();
+  // Sync to Crown HQ localStorage key so dashboard can read it
+  syncLibraryToCrownHQ();
+  toast(article.status === 'published' ? 'Published ✓' : 'Draft saved ✓');
+  closeLibraryEditor();
+}
+
+function libFmt(type) {
+  const ta = document.getElementById('lib-body');
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const sel = ta.value.slice(start, end);
+  const map = { bold:`**${sel}**`, italic:`*${sel}*`, quote:`\n> ${sel}\n`, h2:`\n## ${sel}\n` };
+  const replacement = map[type] || sel;
+  ta.value = ta.value.slice(0,start) + replacement + ta.value.slice(end);
+  ta.focus();
+}
+
+function syncLibraryToCrownHQ() {
+  // Write to the same key Crown HQ app.js uses for library posts
+  // so articles marked showInTracker appear in job tracker as writing samples
+  try {
+    const articles = (D.library || []).filter(a => a.status === 'published');
+    const existing = JSON.parse(localStorage.getItem('chq-po') || '[]');
+    // Merge — articles from Studio have source:'studio'
+    const merged = existing.filter(p => p.source !== 'studio');
+    articles.forEach(a => {
+      merged.push({
+        id:     'studio-' + a.id,
+        title:  a.title,
+        tag:    a.tags || a.cat,
+        cat:    a.cat,
+        date:   a.date,
+        status: 'published',
+        cover:  '',
+        body:   a.body,
+        source: 'studio',
+        showInTracker: a.showInTracker
+      });
+    });
+    localStorage.setItem('chq-po', JSON.stringify(merged));
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════
+// ARTIST STRATEGY
+// ══════════════════════════════════════════════════
+function loadStrategy() {
+  const s = D.strategy || {};
+  const el = id => document.getElementById(id);
+  if (el('s-positioning')) el('s-positioning').value = s.positioning || '';
+  if (el('s-narrative'))   el('s-narrative').value   = s.narrative   || '';
+  if (el('s-press'))       el('s-press').value       = s.press       || '';
+  if (el('s-revenue'))     el('s-revenue').value     = s.revenue     || '';
+  renderStratGoals();
+  renderPipeline();
+}
+
+function saveStrategy() {
+  if (!D.strategy) D.strategy = {};
+  const el = id => { const e = document.getElementById(id); return e ? e.value : ''; };
+  D.strategy.positioning = el('s-positioning');
+  D.strategy.narrative   = el('s-narrative');
+  D.strategy.press       = el('s-press');
+  D.strategy.revenue     = el('s-revenue');
+  if (!D.strategy.goals)    D.strategy.goals    = [];
+  if (!D.strategy.pipeline) D.strategy.pipeline = [];
+  save();
+}
+
+function renderStratGoals() {
+  const goals = (D.strategy && D.strategy.goals) || [];
+  const el = document.getElementById('s-goals-list');
+  if (!el) return;
+  el.innerHTML = goals.map((g,i) => `
+    <div class="strat-goal">
+      <span class="strat-goal-text">${esc(g)}</span>
+      <button class="strat-rm" onclick="removeStratGoal(${i})">&times;</button>
+    </div>`).join('') || '<div style="font-size:11px;color:var(--faint);padding:.3rem 0">No goals yet.</div>';
+}
+
+function addStratGoal() {
+  const inp = document.getElementById('s-goal-inp');
+  const val = inp.value.trim();
+  if (!val) return;
+  if (!D.strategy) D.strategy = {};
+  if (!D.strategy.goals) D.strategy.goals = [];
+  D.strategy.goals.push(val);
+  inp.value = '';
+  save(); renderStratGoals();
+}
+
+function removeStratGoal(i) {
+  D.strategy.goals.splice(i,1);
+  save(); renderStratGoals();
+}
+
+function renderPipeline() {
+  const pipe = (D.strategy && D.strategy.pipeline) || [];
+  const el = document.getElementById('s-pipeline-list');
+  if (!el) return;
+  const statuses = ['prospect','active','closed'];
+  el.innerHTML = pipe.map((p,i) => `
+    <div class="pipe-row">
+      <div class="pipe-name">${esc(p.name)}</div>
+      <select class="pipe-status ps-${p.status||'prospect'}" onchange="updatePipeStatus(${i},this.value)" style="border:0.5px solid var(--bd);border-radius:4px;font-size:10px;padding:2px 6px;cursor:pointer">
+        ${statuses.map(s => `<option value="${s}"${p.status===s?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+      </select>
+      <span style="font-size:10px;color:var(--muted)">${esc(p.retainer||'')}</span>
+      <button class="strat-rm" onclick="removePipeLine(${i})">&times;</button>
+    </div>`).join('') || '<div style="font-size:11px;color:var(--faint);padding:.3rem 0">No prospects yet.</div>';
+}
+
+function addConsultingLead() {
+  const name = prompt('Company / Founder name:');
+  if (!name) return;
+  const retainer = prompt('Retainer range (e.g. $2,000–4,000/mo):', '') || '';
+  if (!D.strategy) D.strategy = {};
+  if (!D.strategy.pipeline) D.strategy.pipeline = [];
+  D.strategy.pipeline.push({ name, retainer, status:'prospect' });
+  save(); renderPipeline();
+}
+
+function updatePipeStatus(i, status) {
+  D.strategy.pipeline[i].status = status;
+  save(); renderPipeline();
+}
+
+function removePipeLine(i) {
+  D.strategy.pipeline.splice(i,1);
+  save(); renderPipeline();
+}
+
+// ══════════════════════════════════════════════════
+// INSPIRATION SPACE
+// ══════════════════════════════════════════════════
+function renderInspiration() {
+  renderInspPhotos();
+  renderJournal();
+}
+
+function renderInspPhotos() {
+  const photos = (D.inspiration && D.inspiration.photos) || [];
+  const grid = document.getElementById('insp-photo-grid');
+  if (!grid) return;
+  if (!photos.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--faint);font-family:var(--fd);font-style:italic;font-size:15px">Add photos to your visual archive</div>';
+    return;
+  }
+  grid.innerHTML = photos.map((p,i) => `
+    <div class="insp-photo" onclick="openInspLightbox('${p.src}')">
+      <img src="${p.src}" alt="${esc(p.caption||'')}">
+      <button class="insp-photo-rm" onclick="event.stopPropagation();removeInspPhoto(${i})">&times;</button>
+    </div>`).join('');
+}
+
+function addInspirationPhotos(e) {
+  const files = Array.from(e.target.files);
+  if (!D.inspiration) D.inspiration = {};
+  if (!D.inspiration.photos) D.inspiration.photos = [];
+  let loaded = 0;
+  files.forEach(file => {
+    if (file.size > 3*1024*1024) { toast('Photo too large (max 3MB)'); return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      D.inspiration.photos.push({ src: ev.target.result, caption: file.name, addedAt: new Date().toISOString() });
+      loaded++;
+      if (loaded === files.length) { save(); renderInspPhotos(); toast(loaded + ' photo' + (loaded>1?'s':'') + ' added'); }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeInspPhoto(i) {
+  D.inspiration.photos.splice(i,1);
+  save(); renderInspPhotos();
+}
+
+function openInspLightbox(src) {
+  const lb = document.getElementById('insp-lightbox');
+  document.getElementById('insp-lb-img').src = src;
+  lb.style.display = 'flex';
+}
+
+function renderJournal() {
+  const entries = (D.inspiration && D.inspiration.journal) || [];
+  const list = document.getElementById('insp-journal-list');
+  if (!list) return;
+  if (!entries.length) {
+    list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--faint);font-family:var(--fd);font-style:italic;font-size:15px">Your first entry is waiting.</div>';
+    return;
+  }
+  list.innerHTML = entries.map((e,i) => `
+    <div class="journal-entry">
+      <div class="je-date">${e.date || ''}</div>
+      <textarea class="je-text" rows="3" onblur="saveJournalEntry(${i},this.value)">${esc(e.text||'')}</textarea>
+
+```
+  <div class="je-actions">
+    <button onclick="removeJournalEntry(${i})" style="border:none;background:transparent;font-size:11px;color:var(--faint);cursor:pointer">Remove</button>
+  </div>
+</div>`).join('');
+```
+
+}
+
+function addJournalEntry() {
+if (!D.inspiration) D.inspiration = {};
+if (!D.inspiration.journal) D.inspiration.journal = [];
+D.inspiration.journal.unshift({
+id: Date.now(),
+text: ‘’,
+date: new Date().toLocaleDateString(‘en-US’,{weekday:‘long’,month:‘long’,day:‘numeric’,year:‘numeric’})
+});
+save(); renderJournal();
+setTimeout(() => { const ta = document.querySelector(’.je-text’); if (ta) ta.focus(); }, 80);
+}
+
+function saveJournalEntry(i, text) {
+if (!D.inspiration || !D.inspiration.journal) return;
+D.inspiration.journal[i].text = text;
+save();
+}
+
+function removeJournalEntry(i) {
+D.inspiration.journal.splice(i,1);
+save(); renderJournal();
+}
 </script>
+
 </body>
 </html>
