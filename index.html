@@ -189,7 +189,9 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 @media(max-width:480px){
   .port-name{font-size:28px;}
   .wgrid{grid-template-columns:1fr;}
-  .ntabs{display:none;}
+  .ntabs{gap:1px;}
+  .ntab{font-size:10px;padding:2px 7px;}
+  .mob-contact-btn{display:flex;}
 }
 
 .proj-modal-bg{position:fixed;inset:0;z-index:500;background:rgba(28,23,20,.55);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;padding-bottom:0;opacity:0;pointer-events:none;transition:opacity .22s;}
@@ -716,11 +718,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
     <span class="nstatus" id="nstat">Portfolio</span>
     <div class="save-indicator saved" id="save-ind"><div class="save-dot"></div><span id="save-text">All saved</span></div>
     <button class="lock-badge" id="lock-badge" onclick="requirePw('db')" style="display:none">Enter Studio &#8599;</button>
-    <button id="mob-menu-btn" onclick="toggleMobileSidebar()" style="display:none;border:none;background:transparent;cursor:pointer;padding:4px;flex-direction:column;gap:3.5px;margin-left:6px">
-      <span style="width:17px;height:1.5px;background:var(--ink);display:block;border-radius:1px"></span>
-      <span style="width:17px;height:1.5px;background:var(--ink);display:block;border-radius:1px"></span>
-      <span style="width:17px;height:1.5px;background:var(--ink);display:block;border-radius:1px"></span>
-    </button>
+    <button id="mob-contact-btn" onclick="go('contact')" style="display:none;border:0.5px solid var(--bd);background:transparent;cursor:pointer;padding:3px 10px;border-radius:20px;font-size:11px;font-family:var(--fb);color:var(--ink);letter-spacing:.02em">Contact</button>
   </div>
 </nav>
 
@@ -3294,21 +3292,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!Array.isArray(D.clients))   D.clients   = [];
         if (!Array.isArray(D.library))   D.library   = [];
         // Re-render everything with cloud data
-        if (typeof renderAll === 'function') renderAll();
-        else {
-          if (typeof syncHero === 'function') syncHero();
-          if (typeof syncTags === 'function') syncTags();
-          if (typeof syncLinks === 'function') syncLinks();
-          if (typeof syncContactLinks === 'function') syncContactLinks();
-          if (typeof renderWork === 'function') renderWork();
-          if (typeof renderPaintings === 'function') renderPaintings();
-          if (typeof renderJobs === 'function') renderJobs();
-          if (typeof renderFiles === 'function') renderFiles();
-          if (typeof renderClients === 'function') renderClients();
-          if (typeof renderLibrary === 'function') renderLibrary();
-          if (typeof loadStrategy === 'function') loadStrategy();
-          if (typeof renderJournal === 'function') renderJournal();
+        // Re-render display from D.profile directly — do NOT call syncHero()
+        // which reads from studio editor inputs (empty when studio not yet opened)
+        const p = D.profile;
+        if (p) {
+          const fn = p.first_name || '', ln = p.last_name || '';
+          const pName = document.getElementById('p-name');
+          if (pName) pName.innerHTML = esc(fn) + ' <em>' + esc(ln) + '</em>';
+          const pSub = document.getElementById('p-subtitle');
+          if (pSub) pSub.textContent = p.subtitle || '';
+          const pBio = document.getElementById('p-bio');
+          if (pBio) pBio.textContent = p.bio || '';
         }
+        if (typeof syncTags === 'function') syncTags();
+        if (typeof syncLinks === 'function') syncLinks();
+        if (typeof syncContactLinks === 'function') syncContactLinks();
+        if (typeof renderWork === 'function') renderWork();
+        if (typeof renderPaintings === 'function') renderPaintings();
+        if (typeof renderJobs === 'function') renderJobs();
+        if (typeof renderFiles === 'function') renderFiles();
+        if (typeof renderClients === 'function') renderClients();
+        if (typeof renderLibrary === 'function') renderLibrary();
+        if (typeof loadStrategy === 'function') loadStrategy();
+        if (typeof renderJournal === 'function') renderJournal();
         // Also persist to localStorage
         try { localStorage.setItem(SK, JSON.stringify(D)); } catch {}
       }
@@ -3605,8 +3611,8 @@ function toggleMobileSidebar() {
 }
 
 function checkMobile() {
-  const btn = document.getElementById('mob-menu-btn');
-  if (btn) btn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+  const btn = document.getElementById('mob-contact-btn');
+  if (btn) btn.style.display = window.innerWidth <= 480 ? 'flex' : 'none';
 }
 window.addEventListener('resize', checkMobile);
 setTimeout(checkMobile, 100);
