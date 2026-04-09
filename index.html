@@ -1793,13 +1793,14 @@ D.jobs.forEach(j => {
 // PERSIST
 // ══════════════════════════════════════════════════
 let saveTimer;
+let sbSyncReady = false; // guard: don't write to Supabase until initial cloud load is done
 function save() {
   clearTimeout(saveTimer);
   setSaveState('saving');
   saveTimer = setTimeout(async () => {
     const payload = JSON.stringify(D);
     try { localStorage.setItem(SK, payload); } catch {}
-    await sbSave(D);
+    if (sbSyncReady) await sbSave(D);
     setSaveState('saved');
     setTimeout(() => setSaveState(''), 2000);
   }, 600);
@@ -3319,6 +3320,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try { localStorage.setItem(SK, JSON.stringify(D)); } catch {}
       }
     } catch(e) { console.warn('Supabase sync failed:', e); }
+    sbSyncReady = true; // allow saves to Supabase now that we have authoritative cloud state
   })();
   const bg = document.getElementById('cl-dash-bg');
   if (bg) bg.addEventListener('click', e => { if (e.target === bg) closeClientDash(); });
