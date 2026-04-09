@@ -640,15 +640,40 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 .cl-stat-val{font-family:var(--fd);font-size:22px;font-weight:300;color:var(--ink);line-height:1;}
 .cl-stat-val.si{color:var(--si);}
 .cl-stat-lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:.3rem;}
-.cl-filters{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap;}
+.cl-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:.5rem;flex-wrap:wrap;}
+.cl-view-toggle{display:flex;gap:2px;background:var(--iv2);border-radius:8px;padding:2px;}
+.cl-vbtn{font-size:10px;padding:4px 12px;border-radius:6px;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;font-family:var(--fb);}
+.cl-vbtn.on{background:white;color:var(--ink);box-shadow:0 1px 3px rgba(28,23,20,.08);}
 .cl-fp{font-size:10px;padding:4px 12px;border-radius:10px;border:0.5px solid var(--bd);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
 .cl-fp.on{background:var(--ink);color:var(--ivory);border-color:var(--ink);}
 .cl-fp:hover:not(.on){background:var(--iv2);color:var(--ink);}
+/* Kanban board */
+.kb-board{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.65rem;align-items:start;overflow-x:auto;padding-bottom:.5rem;}
+.kb-col{background:var(--iv2);border-radius:10px;min-height:120px;display:flex;flex-direction:column;}
+.kb-col-head{padding:.6rem .75rem .5rem;border-bottom:0.5px solid var(--bd);}
+.kb-col-lbl{font-size:9px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;}
+.kb-col-ct{font-size:10px;color:var(--muted);margin-left:.3rem;}
+.kb-cards{padding:.5rem .5rem .75rem;display:flex;flex-direction:column;gap:.45rem;min-height:60px;}
+.kb-card{background:white;border:0.5px solid var(--bd);border-radius:8px;padding:.65rem .75rem;cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s;position:relative;}
+.kb-card:hover{border-color:var(--sil);transform:translateY(-1px);box-shadow:0 3px 10px rgba(28,23,20,.07);}
+.kb-card.dragging{opacity:.4;transform:scale(.97);}
+.kb-col.drag-over .kb-cards{background:rgba(139,74,47,.05);border-radius:6px;}
+.kb-card-name{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kb-card-svc{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kb-card-val{font-size:10px;color:var(--si);font-weight:500;margin-top:4px;}
+.kb-card-next{font-size:9px;color:var(--faint);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kb-empty{font-size:10px;color:var(--faint);font-style:italic;text-align:center;padding:.75rem .5rem;font-family:var(--fd);}
+/* Mobile: stack kanban cols or switch to table */
 .cl-dash-bg{position:fixed;inset:0;z-index:600;background:rgba(28,23,20,.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .22s;}
 .cl-dash-bg.on{opacity:1;pointer-events:all;}
 .cl-dash{background:var(--ivory);border-radius:10px;width:min(780px,100%);max-height:92vh;display:flex;flex-direction:column;transform:scale(.97) translateY(12px);transition:transform .25s cubic-bezier(.34,1.2,.64,1);overflow:hidden;}
 .cl-dash-bg.on .cl-dash{transform:scale(1) translateY(0);}
-@media(max-width:768px){.cl-stats-row{grid-template-columns:1fr 1fr;}.cl-dash{max-height:100vh;border-radius:10px 10px 0 0;align-self:flex-end;}.cl-dash-bg{align-items:flex-end;padding:0;}}
+@media(max-width:768px){
+  .cl-stats-row{grid-template-columns:1fr 1fr;}
+  .cl-dash{max-height:100vh;border-radius:10px 10px 0 0;align-self:flex-end;}
+  .cl-dash-bg{align-items:flex-end;padding:0;}
+  .kb-board{grid-template-columns:repeat(6,minmax(160px,1fr));}
+}
 
 /* ── INSPIRATION ── */
 .insp-photo{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;background:var(--iv2);}
@@ -1152,19 +1177,28 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
         <div class="cl-stat"><div class="cl-stat-val" id="cl-stat-total">0</div><div class="cl-stat-lbl">Total Clients</div></div>
       </div>
 
-      <!-- Filter tabs -->
-      <div class="cl-filters">
-        <button class="cl-fp on" onclick="filtClients('all',this)">All</button>
-        <button class="cl-fp" onclick="filtClients('Discovery',this)">Discovery</button>
-        <button class="cl-fp" onclick="filtClients('Proposal',this)">Proposal</button>
-        <button class="cl-fp" onclick="filtClients('Active',this)">Active</button>
-        <button class="cl-fp" onclick="filtClients('Review',this)">Review</button>
-        <button class="cl-fp" onclick="filtClients('Complete',this)">Complete</button>
-        <button class="cl-fp" onclick="filtClients('Paused',this)">Paused</button>
+      <!-- Toolbar: view toggle + filters -->
+      <div class="cl-toolbar">
+        <div class="cl-view-toggle">
+          <button class="cl-vbtn on" id="vbtn-kanban" onclick="setClientView('kanban')">&#9645; Board</button>
+          <button class="cl-vbtn" id="vbtn-table" onclick="setClientView('table')">&#9776; List</button>
+        </div>
+        <div id="cl-table-filters" style="display:none;gap:.4rem;flex-wrap:wrap">
+          <button class="cl-fp on" onclick="filtClients('all',this)">All</button>
+          <button class="cl-fp" onclick="filtClients('Discovery',this)">Discovery</button>
+          <button class="cl-fp" onclick="filtClients('Proposal',this)">Proposal</button>
+          <button class="cl-fp" onclick="filtClients('Active',this)">Active</button>
+          <button class="cl-fp" onclick="filtClients('Review',this)">Review</button>
+          <button class="cl-fp" onclick="filtClients('Complete',this)">Complete</button>
+          <button class="cl-fp" onclick="filtClients('Paused',this)">Paused</button>
+        </div>
       </div>
 
-      <!-- Client list -->
-      <div id="cl-list"></div>
+      <!-- Kanban board -->
+      <div id="cl-kanban" class="kb-board"></div>
+
+      <!-- Table list (hidden by default) -->
+      <div id="cl-list" style="display:none"></div>
     </div>
 
     <!-- CLIENT DASHBOARD MODAL -->
@@ -1892,7 +1926,7 @@ function view(v) {
   if (v === 'projects')    renderProjList();
   if (v === 'paintings')   renderPaintList();
   if (v === 'tracker')     { renderJobs(); updateFilterCounts(); }
-  if (v === 'clients')     { renderClients(); updateClientStats(); }
+  if (v === 'clients')     { setClientView(clViewMode); updateClientStats(); }
   if (v === 'files')       renderFiles();
   if (v === 'strategy')    loadStrategy();
   if (v === 'inspiration') renderInspiration();
@@ -3085,15 +3119,65 @@ var CLIENT_STATUS_COLOR = {
   Review:'#5A6A8A', Complete:'#7A6F68', Paused:'#B0A89F'
 };
 
+const KB_STAGES = ['Discovery','Proposal','Active','Review','Complete','Paused'];
+
+let clViewMode = 'kanban'; // 'kanban' | 'table'
+let _dragClientId = null;
+
+function setClientView(mode) {
+  clViewMode = mode;
+  const kanban = document.getElementById('cl-kanban');
+  const list   = document.getElementById('cl-list');
+  const filters = document.getElementById('cl-table-filters');
+  document.getElementById('vbtn-kanban').classList.toggle('on', mode === 'kanban');
+  document.getElementById('vbtn-table').classList.toggle('on', mode === 'table');
+  if (kanban) kanban.style.display = mode === 'kanban' ? 'grid' : 'none';
+  if (list)   list.style.display   = mode === 'table'  ? 'block' : 'none';
+  if (filters) filters.style.display = mode === 'table' ? 'flex' : 'none';
+  renderClients();
+}
+
 function renderClients() {
+  if (clViewMode === 'kanban') { renderKanban(); return; }
+  renderTable();
+}
+
+function renderKanban() {
+  const board = document.getElementById('cl-kanban');
+  if (!board) return;
+  board.innerHTML = KB_STAGES.map(stage => {
+    const col = CLIENT_STATUS_COLOR[stage] || 'var(--muted)';
+    const cards = (D.clients || []).filter(c => (c.status || 'Discovery') === stage);
+    return `<div class="kb-col" data-stage="${stage}"
+        ondragover="kbDragOver(event,this)" ondrop="kbDrop(event,this)" ondragleave="kbDragLeave(this)">
+      <div class="kb-col-head">
+        <span class="kb-col-lbl" style="color:${col}">${stage}</span>
+        <span class="kb-col-ct">${cards.length}</span>
+      </div>
+      <div class="kb-cards">
+        ${cards.length ? cards.map(c => `
+          <div class="kb-card" draggable="true"
+            onclick="openClientDash('${c.id}')"
+            ondragstart="kbDragStart(event,'${c.id}')"
+            ondragend="kbDragEnd(event)">
+            <div class="kb-card-name">${esc(c.name)}</div>
+            <div class="kb-card-svc">${esc(c.service||'')}</div>
+            ${c.value ? `<div class="kb-card-val">${esc(c.value)}</div>` : ''}
+            ${c.next_action ? `<div class="kb-card-next">↳ ${esc(c.next_action)}</div>` : ''}
+          </div>`).join('') : `<div class="kb-empty">—</div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTable() {
   const list = document.getElementById('cl-list');
   if (!list) return;
   const rows = curClientFilt === 'all'
     ? D.clients
     : D.clients.filter(c => c.status === curClientFilt);
   if (!rows.length) {
-    list.innerHTML = `<div style="padding:2rem 0;text-align:center;color:var(--faint);font-size:13px;font-style:italic;font-family:var(--fd)">
-      No clients yet. Add your first one.</div>`;
+    list.innerHTML = `<div style="padding:2rem 0;text-align:center;color:var(--faint);font-size:13px;font-style:italic;font-family:var(--fd)">No clients yet. Add your first one.</div>`;
     return;
   }
   list.innerHTML = `<table class="jtbl" style="width:100%;border-collapse:collapse">
@@ -3124,6 +3208,38 @@ function renderClients() {
   </table>`;
 }
 
+// ── KANBAN DRAG & DROP ────────────────────────────
+function kbDragStart(e, id) {
+  _dragClientId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => { const el = e.target; if (el) el.classList.add('dragging'); }, 0);
+}
+function kbDragEnd(e) {
+  e.target.classList.remove('dragging');
+  document.querySelectorAll('.kb-col').forEach(c => c.classList.remove('drag-over'));
+}
+function kbDragOver(e, col) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.kb-col').forEach(c => c.classList.remove('drag-over'));
+  col.classList.add('drag-over');
+}
+function kbDragLeave(col) { col.classList.remove('drag-over'); }
+function kbDrop(e, col) {
+  e.preventDefault();
+  col.classList.remove('drag-over');
+  const stage = col.dataset.stage;
+  const c = D.clients.find(x => x.id === _dragClientId);
+  if (c && c.status !== stage) {
+    c.status = stage;
+    save();
+    renderKanban();
+    updateClientStats();
+    toast(esc(c.name) + ' → ' + stage);
+  }
+  _dragClientId = null;
+}
+
 function updateClientStats() {
   const clients = D.clients || [];
   const active = clients.filter(c => c.status === 'Active').length;
@@ -3150,7 +3266,7 @@ function filtClients(f, el) {
   curClientFilt = f;
   document.querySelectorAll('.cl-fp').forEach(b => b.classList.remove('on'));
   el.classList.add('on');
-  renderClients();
+  if (clViewMode === 'table') renderTable();
 }
 
 function openClientModal() { openModal('client'); }
