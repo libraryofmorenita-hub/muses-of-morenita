@@ -191,7 +191,6 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
   .wgrid{grid-template-columns:1fr;}
   .ntabs{gap:1px;}
   .ntab{font-size:10px;padding:2px 7px;}
-  .mob-contact-btn{display:flex;}
 }
 
 .proj-modal-bg{position:fixed;inset:0;z-index:500;background:rgba(28,23,20,.55);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;padding-bottom:0;opacity:0;pointer-events:none;transition:opacity .22s;}
@@ -718,7 +717,6 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
     <span class="nstatus" id="nstat">Portfolio</span>
     <div class="save-indicator saved" id="save-ind"><div class="save-dot"></div><span id="save-text">All saved</span></div>
     <button class="lock-badge" id="lock-badge" onclick="requirePw('db')" style="display:none">Enter Studio &#8599;</button>
-    <button id="mob-contact-btn" onclick="go('contact')" style="display:none;border:0.5px solid var(--bd);background:transparent;cursor:pointer;padding:3px 10px;border-radius:20px;font-size:11px;font-family:var(--fb);color:var(--ink);letter-spacing:.02em">Contact</button>
   </div>
 </nav>
 
@@ -3612,12 +3610,6 @@ function toggleMobileSidebar() {
   if (sb) sb.classList.toggle('open');
 }
 
-function checkMobile() {
-  const btn = document.getElementById('mob-contact-btn');
-  if (btn) btn.style.display = window.innerWidth <= 480 ? 'flex' : 'none';
-}
-window.addEventListener('resize', checkMobile);
-setTimeout(checkMobile, 100);
 
 // ══════════════════════════════════════════════════
 // FILES
