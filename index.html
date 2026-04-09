@@ -193,6 +193,20 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
   .ntab{font-size:10px;padding:2px 7px;}
 }
 
+/* ── DOCUMENTS / PDF ─────────────────────────────── */
+.doc-gen-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;border:0.5px solid var(--sil);background:var(--sip);color:var(--si);font-size:11px;cursor:pointer;transition:all .15s;font-family:var(--fb);}
+.doc-gen-btn:hover{background:var(--si);color:white;}
+.doc-gen-btn:disabled{opacity:.45;cursor:default;}
+.doc-print-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;border:0.5px solid var(--ink);background:var(--ink);color:var(--ivory);font-size:11px;cursor:pointer;font-family:var(--fb);transition:background .15s;}
+.doc-print-btn:hover{background:var(--charcoal);}
+.doc-preview{border:0.5px solid var(--bd);border-radius:8px;background:white;padding:1.5rem 2rem;margin:.75rem 0;font-size:12px;line-height:1.75;color:var(--ink);display:none;max-height:420px;overflow-y:auto;}
+.doc-preview.on{display:block;}
+.doc-actions{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.doc-loading{font-size:11px;color:var(--muted);font-style:italic;display:none;margin-left:2px;}
+.doc-loading.on{display:inline;}
+.doc-sep{border:none;border-top:0.5px solid var(--bd);margin:1.25rem 0;}
+@media print{body>*:not(#doc-print-area){display:none!important;}#doc-print-area{display:block!important;}}
+
 .proj-modal-bg{position:fixed;inset:0;z-index:500;background:rgba(28,23,20,.55);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;padding-bottom:0;opacity:0;pointer-events:none;transition:opacity .22s;}
 .proj-modal-bg.on{opacity:1;pointer-events:all;}
 .proj-modal{background:var(--ivory);border-radius:10px 10px 0 0;width:min(680px,100%);max-height:92vh;overflow-y:auto;transform:translateY(40px);transition:transform .28s cubic-bezier(.34,1.2,.64,1);display:flex;flex-direction:column;}
@@ -1178,6 +1192,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
           <button class="co-tab" id="cltab-contacts" onclick="switchClientTab('contacts')">Contacts</button>
           <button class="co-tab" id="cltab-finance" onclick="switchClientTab('finance')">Finance</button>
           <button class="co-tab" id="cltab-notes" onclick="switchClientTab('notes')">Notes</button>
+          <button class="co-tab" id="cltab-docs" onclick="switchClientTab('docs')">Documents</button>
         </div>
 
         <div class="co-dash-body">
@@ -1316,6 +1331,35 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
               <div style="display:flex;gap:.5rem">
                 <button class="co-del-btn" onclick="deleteCurrentClient()">Delete Client</button>
                 <button class="co-save-btn" onclick="saveClient();toast('Saved ✓');closeClientDash()">Save &amp; Close</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- DOCUMENTS -->
+          <div class="co-tab-panel" id="clpanel-docs">
+            <div class="co-section">
+              <div class="co-sec-lbl" style="margin-bottom:.75rem">Invoice</div>
+              <div class="doc-actions">
+                <button class="doc-gen-btn" id="btn-gen-invoice" onclick="generateDoc('invoice')">✦ Generate Invoice</button>
+                <span class="doc-loading" id="load-invoice">Generating…</span>
+              </div>
+              <div class="doc-preview" id="prev-invoice"></div>
+              <div class="doc-actions" id="act-invoice" style="display:none">
+                <button class="doc-print-btn" onclick="printDoc('invoice')">⎙ Print as PDF</button>
+                <button class="doc-gen-btn" onclick="generateDoc('invoice')" style="background:transparent;border-color:var(--bd);color:var(--muted)">Regenerate</button>
+              </div>
+            </div>
+            <hr class="doc-sep">
+            <div class="co-section">
+              <div class="co-sec-lbl" style="margin-bottom:.75rem">Contract</div>
+              <div class="doc-actions">
+                <button class="doc-gen-btn" id="btn-gen-contract" onclick="generateDoc('contract')">✦ Generate Contract</button>
+                <span class="doc-loading" id="load-contract">Generating…</span>
+              </div>
+              <div class="doc-preview" id="prev-contract"></div>
+              <div class="doc-actions" id="act-contract" style="display:none">
+                <button class="doc-print-btn" onclick="printDoc('contract')">⎙ Print as PDF</button>
+                <button class="doc-gen-btn" onclick="generateDoc('contract')" style="background:transparent;border-color:var(--bd);color:var(--muted)">Regenerate</button>
               </div>
             </div>
           </div>
@@ -3180,6 +3224,15 @@ function openClientDash(id) {
   document.getElementById('cld-brainstorm').value     = c.brainstorm||'';
   document.getElementById('cld-notes').value          = c.notes||'';
   renderClientContacts();
+  // Restore previously generated documents
+  ['invoice','contract'].forEach(type => {
+    const prev = document.getElementById('prev-' + type);
+    const act  = document.getElementById('act-' + type);
+    if (!prev) return;
+    const saved = c.generated_docs && c.generated_docs[type];
+    if (saved) { prev.innerHTML = saved; prev.classList.add('on'); if (act) act.style.display = 'flex'; }
+    else        { prev.innerHTML = '';    prev.classList.remove('on'); if (act) act.style.display = 'none'; }
+  });
   switchClientTab('overview');
   document.getElementById('cl-dash-bg').classList.add('on');
   document.body.style.overflow = 'hidden';
@@ -3270,6 +3323,116 @@ function updateClientContact(i, field, val) {
 function removeClientContact(i) {
   const c = D.clients.find(x => x.id === activeClientId);
   if (c && c.contacts) { c.contacts.splice(i,1); save(); renderClientContacts(); }
+}
+
+// ── DOCUMENT GENERATION ──────────────────────────────
+async function callClaude(messages) {
+  let key = localStorage.getItem('claude-api-key');
+  if (!key) {
+    key = window.prompt('Enter your Claude API key to enable AI document generation.\n(Stored locally in your browser only — never sent to any server.)');
+    if (!key) return null;
+    key = key.trim();
+    localStorage.setItem('claude-api-key', key);
+  }
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+      'anthropic-dangerous-allow-browser': 'true'
+    },
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 2048, messages })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    if (res.status === 401) { localStorage.removeItem('claude-api-key'); }
+    throw new Error(err.error?.message || 'API error ' + res.status);
+  }
+  const data = await res.json();
+  return data.content[0].text;
+}
+
+async function generateDoc(type) {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c) return;
+  const btn  = document.getElementById('btn-gen-' + type);
+  const load = document.getElementById('load-' + type);
+  const prev = document.getElementById('prev-' + type);
+  const act  = document.getElementById('act-' + type);
+  btn.disabled = true;
+  load.classList.add('on');
+  prev.classList.remove('on');
+  if (act) act.style.display = 'none';
+  try {
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const invoiceNum = 'INV-' + Date.now().toString().slice(-6);
+    let userPrompt;
+    if (type === 'invoice') {
+      userPrompt = `Generate a clean, professional HTML invoice fragment (no html/body tags — inner content only, inline styles only) for this freelance engagement:
+
+PROVIDER: Amelia Arabe · muses of morenita · missameliava@gmail.com
+CLIENT: ${c.name}
+CONTACT: ${c.contact || '—'}
+SERVICE: ${c.service || '—'}
+INVOICE #: ${invoiceNum}
+DATE: ${today}
+CONTRACT VALUE: ${c.value || 'TBD'}
+PAYMENT STRUCTURE: ${c.payment_type || '—'}
+AMOUNT RECEIVED: ${c.received || '$0'}
+AMOUNT DUE: ${c.remaining || c.value || 'TBD'}
+DELIVERABLES: ${c.deliverables || c.scope || '—'}
+FINANCE NOTES: ${c.finance_notes || ''}
+EXTRA NOTES (clean up and use as context): ${c.notes || ''}
+
+Create a professional invoice with: header with provider name/contact, invoice number and date, bill-to section, services rendered table with clear line items from the deliverables, payment summary (total / received / balance due), and payment instructions. Use inline styles only. Color palette: #1C1714 text, #8B4A2F for headers/accents, #FAF7F2 background for header band. Return ONLY the HTML fragment, no markdown.`;
+    } else {
+      userPrompt = `Generate a clean, professional HTML freelance service contract fragment (no html/body tags — inner content only, inline styles only) for this engagement:
+
+PROVIDER: Amelia Arabe · muses of morenita · missameliava@gmail.com
+CLIENT: ${c.name}
+CONTACT: ${c.contact || '—'}
+SERVICE: ${c.service || '—'}
+DATE: ${today}
+CONTRACT VALUE: ${c.value || 'TBD'}
+PAYMENT STRUCTURE: ${c.payment_type || '—'}
+START DATE: ${c.start || 'TBD'}
+END DATE: ${c.end || 'TBD'}
+PROJECT SCOPE: ${c.scope || '—'}
+DELIVERABLES: ${c.deliverables || '—'}
+OUT OF SCOPE: ${c.oos || '—'}
+INTERNAL/EXTRA NOTES (clean up and incorporate professionally): ${c.internal || ''} ${c.notes || ''}
+
+Include sections: parties & recitals, project scope, deliverables, timeline, payment terms, revision policy (2 rounds included), IP clause (transfers on full payment), termination clause (7-day written notice), limitation of liability, and signature blocks for both parties. Use inline styles only. Color palette: #1C1714 text, #8B4A2F for section headers/accents, #FAF7F2 for header band. Return ONLY the HTML fragment, no markdown.`;
+    }
+    const html = await callClaude([{role:'user', content: userPrompt}]);
+    if (!html) { btn.disabled = false; load.classList.remove('on'); return; }
+    // Strip any accidental markdown code fences
+    const clean = html.replace(/^```(?:html)?\n?/,'').replace(/\n?```$/,'').trim();
+    prev.innerHTML = clean;
+    prev.classList.add('on');
+    if (act) act.style.display = 'flex';
+    if (!c.generated_docs) c.generated_docs = {};
+    c.generated_docs[type] = clean;
+    save();
+    toast((type === 'invoice' ? 'Invoice' : 'Contract') + ' generated');
+  } catch(e) {
+    toast('Generation failed: ' + e.message);
+    console.error(e);
+  }
+  btn.disabled = false;
+  load.classList.remove('on');
+}
+
+function printDoc(type) {
+  const prev = document.getElementById('prev-' + type);
+  if (!prev || !prev.innerHTML.trim()) { toast('Generate the document first'); return; }
+  const area = document.getElementById('doc-print-area');
+  area.innerHTML = `<div style="max-width:680px;margin:0 auto;padding:2rem 0;font-family:Georgia,'Times New Roman',serif;color:#1C1714">${prev.innerHTML}</div>`;
+  area.style.display = 'block';
+  window.print();
+  area.style.display = 'none';
+  area.innerHTML = '';
 }
 
 // Close on outside click
@@ -4168,5 +4331,6 @@ function removeJournalEntry(i) {
   save(); renderJournal();
 }
 </script>
+<div id="doc-print-area" style="display:none;padding:3rem 2.5rem;font-family:Georgia,serif;font-size:13px;line-height:1.8;color:#1C1714;max-width:720px;margin:0 auto"></div>
 </body>
 </html>
