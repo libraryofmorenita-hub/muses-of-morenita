@@ -245,8 +245,8 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 .cv-hide-on-tech{display:list-item;}.cv-hide-on-tech.hidden{display:none!important;}
 @media(max-width:768px){.cv-page{padding:2rem 1.5rem;}.cv-skills{grid-template-columns:1fr 1fr;}.cv-2col{grid-template-columns:1fr;}.cv-role-head{flex-wrap:wrap;}.cv-meta{text-align:left;}}
 @media print{
-  body>*:not(#cv-print-wrap){display:none!important;}
-  #cv-print-wrap{display:block!important;}
+  body>*:not(#panel-resume):not(#doc-print-area){display:none!important;}
+  #panel-resume{display:block!important;}
   #cv-print-wrap .cv-toolbar{display:none!important;}
   #cv-print-wrap .cv-page{border:none;border-radius:0;padding:1.5rem 2rem;box-shadow:none;}
   #cv-print-wrap .cv-name{font-size:36px;}
@@ -255,9 +255,9 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
   #cv-print-wrap .cv-sec-title{border-bottom-color:#000!important;color:#000!important;}
   #cv-print-wrap .cv-role ul li::before{color:#000!important;}
   #cv-print-wrap .cv-contact a{color:#000!important;}
+  #doc-print-area{display:block!important;}
   * {-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 }
-@media print{body>*:not(#doc-print-area):not(#cv-print-wrap){display:none!important;}#doc-print-area{display:block!important;}}
 
 .proj-modal-bg{position:fixed;inset:0;z-index:500;background:rgba(28,23,20,.55);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;padding-bottom:0;opacity:0;pointer-events:none;transition:opacity .22s;}
 .proj-modal-bg.on{opacity:1;pointer-events:all;}
