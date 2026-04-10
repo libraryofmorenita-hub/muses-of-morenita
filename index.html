@@ -247,8 +247,10 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 @media print{
   body>*:not(#panel-resume):not(#doc-print-area){display:none!important;}
   #panel-resume{display:block!important;}
+  body,#panel-resume,#cv-print-wrap,.cv{background:white!important;}
+  #cv-print-wrap .cv{padding:0!important;margin:0!important;}
   #cv-print-wrap .cv-toolbar{display:none!important;}
-  #cv-print-wrap .cv-page{border:none;border-radius:0;padding:1.5rem 2rem;box-shadow:none;}
+  #cv-print-wrap .cv-page{background:white!important;border:none;border-radius:0;padding:1.5rem 2rem;box-shadow:none;}
   #cv-print-wrap .cv-name{font-size:36px;}
   #cv-print-wrap .cv-co,.cv-sec-title,.cv-name em{color:#000!important;}
   #cv-print-wrap .cv-head{border-bottom-color:#000!important;}
