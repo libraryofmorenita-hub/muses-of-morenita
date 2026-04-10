@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amelia Arabe — Resume</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brown:  #5c3320;
+    --gold:   #e3a235;
+    --tan:    #f0ebe0;
+    --cream:  #f7f3ec;
+    --muted:  #9a8070;
+    --text:   #2c1a0e;
+    --border: #ddd4c4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #ede8df;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  /* ── TOOLBAR ─────────────────────────────────── */
+  .toolbar {
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .btn {
+    padding: 8px 20px;
+    border-radius: 4px;
+    border: none;
+    background: var(--brown);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .btn:hover { opacity: 0.85; }
+
+  /* ── PAGE ────────────────────────────────────── */
+  .page {
+    width: 100%;
+    max-width: 860px;
+    background: white;
+    padding: 52px 56px;
+  }
+
+  /* ── HEADER ──────────────────────────────────── */
+  .resume-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1.5px solid var(--brown);
+  }
+  .resume-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 400;
+    color: var(--brown);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .resume-header h1 em {
+    font-style: italic;
+    font-weight: 300;
+  }
+  .resume-header .subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .contact-line {
+    font-size: 12px;
+    color: var(--text);
+    font-weight: 300;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .contact-line a {
+    color: var(--brown);
+    text-decoration: none;
+  }
+  .contact-line span { color: var(--muted); }
+
+  /* ── SECTION ─────────────────────────────────── */
+  .section { margin-bottom: 28px; }
+  .section-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--brown);
+    font-weight: 500;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--brown);
+    margin-bottom: 14px;
+  }
+
+  /* ── SUMMARY ─────────────────────────────────── */
+  .summary {
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--text);
+    font-weight: 300;
+  }
+
+  /* ── SKILLS GRID ─────────────────────────────── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .skill-col .skill-label {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+  .skill-col ul { list-style: none; }
+  .skill-col ul li {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text);
+    font-weight: 300;
+  }
+
+  /* ── ROLE BLOCK ──────────────────────────────── */
+  .role { margin-bottom: 16px; }
+  .role-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+    gap: 12px;
+  }
+  .role-left { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .role-company {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--brown);
+  }
+  .role-title {
+    font-size: 12px;
+    color: var(--text);
+    font-weight: 400;
+  }
+  .role-meta {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 300;
+    white-space: nowrap;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .role ul { list-style: none; padding-left: 14px; }
+  .role ul li {
+    font-size: 12px;
+    line-height: 1.75;
+    color: var(--text);
+    font-weight: 300;
+    position: relative;
+    padding-left: 10px;
+  }
+  .role ul li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── TWO COLUMN LAYOUT ───────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  /* ── EDUCATION ───────────────────────────────── */
+  .edu-block { margin-bottom: 8px; }
+  .edu-school {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--brown);
+  }
+  .edu-degree {
+    font-size: 12px;
+    color: var(--text);
+    font-weight: 400;
+    margin-bottom: 2px;
+  }
+  .edu-detail {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  /* ── TOGGLES ─────────────────────────────────── */
+  .fashion-only { display: none; }
+  .fashion-only.visible { display: block; }
+  .tech-only { display: none; }
+  .tech-only.visible { display: block; }
+  .hide-on-tech { display: list-item; }
+  .hide-on-tech.hidden { display: none; }
+  .btn-toggle { background: transparent; border: 1px solid var(--brown); color: var(--brown); }
+  .btn-toggle.active { background: var(--brown); color: white; }
+
+  /* ── PRINT ───────────────────────────────────── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: white; padding: 0; }
+    .toolbar { display: none; }
+    .page {
+      padding: 36px 44px;
+      box-shadow: none;
+      max-width: 100%;
+    }
+    /* Override site colors to black on white for clean print */
+    :root {
+      --brown:  #000000;
+      --gold:   #000000;
+      --muted:  #555555;
+      --text:   #000000;
+      --border: #cccccc;
+    }
+    .resume-header h1 { color: #000; font-size: 38px; }
+    .resume-header { border-bottom-color: #000; border-bottom-width: 1px; }
+    .section-title { color: #000; border-bottom-color: #000; }
+    .role-company { color: #000; }
+    .edu-school { color: #000; }
+    .contact-line a { color: #000; }
+    .role ul li::before { color: #000; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button class="btn btn-toggle" id="techToggle" onclick="toggleTech()">+ Tech</button>
+  <button class="btn btn-toggle" id="fashionToggle" onclick="toggleFashion()">+ Fashion & Sustainable Tech</button>
+  <button class="btn" onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="resume-header">
+    <h1>Amelia <em>Arabe</em></h1>
+    <div class="subtitle">Computer & Electrical Design Engineer &nbsp;·&nbsp; Embedded Systems &nbsp;·&nbsp; Hardware-Software Integration</div>
+    <div class="contact-line">
+      <span>Temecula, CA</span>
+      <span>(951) 809-5841</span>
+      <a href="mailto:amelia.viktoria.arabe@gmail.com">amelia.viktoria.arabe@gmail.com</a>
+      <a href="https://linkedin.com/in/ameliaarabe">linkedin.com/in/ameliaarabe</a>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="section">
+    <div class="section-title">Summary</div>
+    <p class="summary">
+      Computer and Electrical Design Engineer with a foundation in embedded systems, hardware-software integration, digital logic, and microprocessor architecture. I build systems that work at the seam of hardware and software — from autonomous rovers and voice-controlled medical devices to scalable full-stack platforms and brand-driven digital products. My strength is cross-disciplinary systems thinking: I can hold the technical, the human, and the strategic in the same frame, and move between them without losing precision. Equally fluent in firmware and front-end, embedded C and product strategy, circuit analysis and creative direction. Driven by technology that is sustainable, purposeful, and made for people.
+    </p>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="section">
+    <div class="section-title">Technical Skills</div>
+    <div class="skills-grid">
+      <div class="skill-col">
+        <div class="skill-label">Hardware & Embedded</div>
+        <ul>
+          <li>FPGA Design (Xilinx / Altera)</li>
+          <li>Digital Logic & Circuit Design</li>
+          <li>Microprocessor & Embedded Systems</li>
+          <li>Linear Circuit Analysis</li>
+          <li>Hardware-Software Integration</li>
+          <li>Autonomous Systems Design</li>
+          <li>Biometric & Sensor Integration</li>
+        </ul>
+      </div>
+      <div class="skill-col">
+        <div class="skill-label">Software & Systems</div>
+        <ul>
+          <li>C / C++ / Python</li>
+          <li>JavaScript / GraphQL</li>
+          <li>Firebase / Supabase</li>
+          <li>REST APIs / Full Stack Architecture</li>
+          <li>Voice Recognition Systems</li>
+          <li>Object-Oriented & System Design</li>
+          <li>Quantum Computing (fundamentals)</li>
+        </ul>
+      </div>
+      <div class="skill-col">
+        <div class="skill-label">Design & Tools</div>
+        <ul>
+          <li>HTML / CSS / Figma / Framer</li>
+          <li>Adobe Suite — Illustrator, InDesign, PS</li>
+          <li>UI/UX Prototyping & Design Systems</li>
+          <li>Technical Documentation</li>
+          <li>Canva / Web Design / Branding</li>
+          <li>English (Fluent) · Tagalog (Fluent)</li>
+          <li>German (Intermediate)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENGINEERING PROJECTS -->
+  <div class="section">
+    <div class="section-title">Engineering Projects</div>
+
+    <div class="role">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Voice Activated Hospital Bed</span>
+          <span class="role-title">Systems Design & Project Lead · Volunteers for Medical Engineering</span>
+        </div>
+        <div class="role-meta">Baltimore, MD · 2025</div>
+      </div>
+      <ul>
+        <li>Led a 4-person team as Systems Designer and Project Manager to build a low-cost, voice-controlled hospital bed for quadriplegic patients — combining real-time voice recognition, biometric monitoring, and safety-critical command validation into a single embedded system.</li>
+        <li>Took the project from schematic to functional prototype, delivering a clinically validated system through Volunteers for Medical Engineering.</li>
+      </ul>
+    </div>
+
+    <div class="role">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">SLF Terminator Rover</span>
+          <span class="role-title">Autonomous Systems Engineering · Loyola Arboretum</span>
+        </div>
+        <div class="role-meta">Baltimore, MD · 2024</div>
+      </div>
+      <ul>
+        <li>Built an autonomous rover as part of a team to combat invasive Spotted Lantern Flies — integrating motor control, sensor arrays, and embedded decision logic for real-time detection, path navigation, and insect attraction in live outdoor environments.</li>
+        <li>Completed field testing at the Loyola Arboretum with accurate path following, obstacle avoidance, and confirmed insect attraction — validating the full system end-to-end.</li>
+      </ul>
+    </div>
+
+    <div class="role">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Crown HQ</span>
+          <span class="role-title">Personal Platform OS · Miss Temecula Valley USA 2026</span>
+        </div>
+        <div class="role-meta">2026</div>
+      </div>
+      <ul>
+        <li>Built a 17-panel personal campaign OS to manage platform strategy, milestone tracking, and state-level pageant operations — treating a personal goal as a product engineering problem.</li>
+        <li>Supports 4 team members across a Kanban board, project management, file sharing, built-in advocacy quiz, messaging, and a live campaign page — all backed by Supabase with real-time sync.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <div class="section">
+    <div class="section-title">Professional Experience</div>
+
+    <div class="role">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Ballmecca</span>
+          <span class="role-title">Software Engineer Intern → Senior Software Engineer & Co-Founder</span>
+        </div>
+        <div class="role-meta">Los Angeles, CA · 2024 – Present</div>
+      </div>
+      <ul>
+        <li>Started as a Software Engineer & UI/UX Intern — built reusable front-end architecture that contributed to a ~50% reduction in UI bugs, integrated APIs that cut feature delivery time by ~30%, and ran market research to keep prototypes grounded in real user needs.</li>
+        <li>Grew into Co-Founder; architected a scalable Firebase backend with cross-platform integration that improved system performance by ~40%.</li>
+        <li>Built a responsive component library and design system that reduced development time by ~25% and continues to power the full product roadmap.</li>
+      </ul>
+    </div>
+
+    <div class="role">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Morenita Design</span>
+          <span class="role-title">Founder & Software Engineer</span>
+        </div>
+        <div class="role-meta">Temecula, CA · 2025 – Present</div>
+      </div>
+      <ul>
+        <li>Run an independent software and systems studio building custom web applications, internal tooling, and technical documentation for 4 active clients across health & wellness, entertainment, photography & film, and e-commerce — 7 clients served to date.</li>
+        <li>Architect and ship full-stack applications end-to-end — owning system design, database architecture, front-end, client integration, and delivery independently.</li>
+        <li class="hide-on-tech">Produce user manuals for multiple Hyundai vehicle models, applying UI/UX and documentation standards that improve readability for tens of thousands of end users.</li>
+      </ul>
+    </div>
+
+    <div class="role tech-only" id="print-alliance-block">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Print Alliance</span>
+          <span class="role-title">Graphic Designer & Technical Editor</span>
+        </div>
+        <div class="role-meta">San Diego, CA · 2024 – Present</div>
+      </div>
+      <ul>
+        <li>Create and refine technical documentation for Hyundai and other automotive brands across 50+ publications — applying UI/UX and branding standards that improve readability for 10,000+ end users.</li>
+        <li>Reduce support tickets by 200+ per quarter through clearer documentation structure and standardized formatting across vehicle model lines.</li>
+      </ul>
+    </div>
+
+    <div class="role fashion-only" id="lucky-brides-block">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Lucky Brides</span>
+          <span class="role-title">Chief Marketing Officer & Stylist</span>
+        </div>
+        <div class="role-meta">Riverside, CA · 2025 – Present</div>
+      </div>
+      <ul>
+        <li>Consistently close ~$5,000 in weekly styling sales as the studio's primary stylist, driving revenue for this early-stage bridal startup.</li>
+        <li>Shape the brand from the ground up — leading marketing strategy, creative direction, and visual identity while directing photography and content production.</li>
+      </ul>
+    </div>
+
+    <div class="role fashion-only" id="zoccia-block">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Zoccia</span>
+          <span class="role-title">Swimwear Designer & Creative Director</span>
+        </div>
+        <div class="role-meta">Remote · 2020 – 2022</div>
+      </div>
+      <ul>
+        <li>Co-led creative direction for a 35-piece inclusive swimwear collection on a 5-person team — conducting audience research and translating customer insight directly into design decisions.</li>
+        <li>Supported manufacturing oversight and production coordination to bring 5,000+ units to market while maintaining supply chain quality standards.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- EDUCATION + LEADERSHIP -->
+  <div class="two-col">
+    <div>
+      <div class="section">
+        <div class="section-title">Education</div>
+        <div class="edu-block">
+          <div class="edu-school">Loyola University Maryland</div>
+          <div class="edu-degree">B.S. Computer Engineering · Class of 2025</div>
+          <div class="edu-detail">Baltimore, MD</div>
+          <div class="edu-detail" style="margin-top:4px">
+            FPGA Design · VLSI Design · Digital Logic · Computer Architecture · Microprocessing Systems · Linear Circuit Analysis · Biomedical Imaging & Sensing · Electromagnetics · Quantum Computing · Object-Oriented Design · Experimental Methods
+          </div>
+          <div class="edu-detail" style="margin-top:8px; font-style:italic; color:var(--brown)">Campus Leadership</div>
+          <div class="edu-detail" style="margin-top:4px">
+            <strong style="font-weight:500">Society of Women Engineers — President</strong> (Sep 2023 – May 2025) · Organized workshops, networking sessions, and STEM outreach expanding participation among underrepresented groups; managed student leadership team for mentorship and professional development.
+          </div>
+          <div class="edu-detail" style="margin-top:6px">
+            <strong style="font-weight:500">BSA Fashion Show — Scene Leader, 25th Annual</strong> (2023 – 2024) · Directed choreography, lighting, sound, and media production for 20 models within a 100-model production.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section">
+        <div class="section-title">Leadership & Community</div>
+        <div class="role">
+          <div class="role-header">
+            <div class="role-left"><span class="role-company">Miss Temecula Valley USA 2026</span></div>
+            <div class="role-meta">2026</div>
+          </div>
+          <ul>
+            <li>Competing for Miss California USA 2026. Platform: sustainable technology, green energy access, and community infrastructure.</li>
+          </ul>
+        </div>
+        <div class="role" style="margin-top:10px">
+          <div class="role-header">
+            <div class="role-left">
+              <span class="role-company">Miss Philippines USA</span>
+              <span class="role-title">Top Model Award</span>
+            </div>
+            <div class="role-meta">Los Angeles, CA · 2025</div>
+          </div>
+          <ul>
+            <li>Won Top Model Award — voted by photographers for best runway walk and best to work with on set. Selected as Bontika Swim ambassador for sustainable fashion advocacy.</li>
+          </ul>
+        </div>
+        <div class="role" style="margin-top:10px">
+          <div class="role-header">
+            <div class="role-left">
+              <span class="role-company">Temecula Valley Youth Orchestra</span>
+              <span class="role-title">Lead Double Bassist</span>
+            </div>
+            <div class="role-meta">Temecula, CA · 2018 – 2021</div>
+          </div>
+          <ul>
+            <li>Served as Lead Double Bassist — an achievement that earned a performance seat alongside the adult Temecula Valley Orchestra ensemble, one of the few youth members selected to do so.</li>
+          </ul>
+        </div>
+        <div class="role" style="margin-top:10px">
+          <div class="role-header">
+            <div class="role-left">
+              <span class="role-company">Cadenza String Orchestra</span>
+              <span class="role-title">Cellist & Double Bassist</span>
+            </div>
+            <div class="role-meta">2017 – 2019</div>
+          </div>
+          <ul>
+            <li>Performed cello and double bass; the orchestra took 1st place at the 2019 Summa Cum Laude International Youth Music Festival in Vienna, Austria.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function toggleFashion() {
+    const btn = document.getElementById('fashionToggle');
+    const blocks = document.querySelectorAll('.fashion-only');
+    const isActive = btn.classList.toggle('active');
+    blocks.forEach(b => b.classList.toggle('visible', isActive));
+  }
+
+  function toggleTech() {
+    const btn = document.getElementById('techToggle');
+    const blocks = document.querySelectorAll('.tech-only');
+    const hideItems = document.querySelectorAll('.hide-on-tech');
+    const isActive = btn.classList.toggle('active');
+    blocks.forEach(b => b.classList.toggle('visible', isActive));
+    hideItems.forEach(b => b.classList.toggle('hidden', isActive));
+  }
+
+  window.addEventListener('beforeprint', () => {
+    document.documentElement.style.setProperty('--brown', '#000000');
+    document.documentElement.style.setProperty('--gold',  '#000000');
+    document.documentElement.style.setProperty('--muted', '#555555');
+  });
+  window.addEventListener('afterprint', () => {
+    document.documentElement.style.setProperty('--brown', '#5c3320');
+    document.documentElement.style.setProperty('--gold',  '#e3a235');
+    document.documentElement.style.setProperty('--muted', '#9a8070');
+  });
+</script>
+
+</body>
+</html>
