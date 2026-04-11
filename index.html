@@ -241,8 +241,6 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 .cv-edu-deg{font-size:12px;color:var(--charcoal);font-weight:400;margin-bottom:2px;}
 .cv-edu-det{font-size:11px;color:var(--muted);font-weight:300;line-height:1.7;}
 .cv-fashion-only{display:none;}.cv-fashion-only.vis{display:block;}
-.cv-tech-only{display:none;}.cv-tech-only.vis{display:block;}
-.cv-hide-on-tech{display:list-item;}.cv-hide-on-tech.hidden{display:none!important;}
 @media(max-width:768px){.cv-page{padding:2rem 1.5rem;}.cv-skills{grid-template-columns:1fr 1fr;}.cv-2col{grid-template-columns:1fr;}.cv-role-head{flex-wrap:wrap;}.cv-meta{text-align:left;}}
 @media print{
   body>*:not(#panel-resume):not(#doc-print-area){display:none!important;}
@@ -952,8 +950,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 <div id="cv-print-wrap">
 <div class="cv">
   <div class="cv-toolbar">
-    <button class="cv-btn tog" id="cv-tech-btn" onclick="cvToggleTech()">+ Tech</button>
-    <button class="cv-btn tog" id="cv-fashion-btn" onclick="cvToggleFashion()">+ Fashion &amp; Sustainable Tech</button>
+    <button class="cv-btn tog" id="cv-fashion-btn" onclick="cvToggleFashion()">+ Fashion</button>
     <button class="cv-btn pri" onclick="cvPrint()">⎙ Print / Save PDF</button>
   </div>
   <div class="cv-page">
@@ -1096,21 +1093,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
         <ul>
           <li>Run an independent software and systems studio building custom web applications, internal tooling, and technical documentation for 4 active clients across health &amp; wellness, entertainment, photography &amp; film, and e-commerce — 7 clients served to date.</li>
           <li>Architect and ship full-stack applications end-to-end — owning system design, database architecture, front-end, client integration, and delivery independently.</li>
-          <li class="cv-hide-on-tech">Produce user manuals for multiple Hyundai vehicle models, applying UI/UX and documentation standards that improve readability for tens of thousands of end users.</li>
-        </ul>
-      </div>
-
-      <div class="cv-role cv-tech-only" id="cv-print-alliance">
-        <div class="cv-role-head">
-          <div class="cv-role-l">
-            <span class="cv-co">Print Alliance</span>
-            <span class="cv-title">Graphic Designer &amp; Technical Editor</span>
-          </div>
-          <div class="cv-meta">San Diego, CA · 2024 – Present</div>
-        </div>
-        <ul>
-          <li>Create and refine technical documentation for Hyundai and other automotive brands across 50+ publications — applying UI/UX and branding standards that improve readability for 10,000+ end users.</li>
-          <li>Reduce support tickets by 200+ per quarter through clearer documentation structure and standardized formatting across vehicle model lines.</li>
+          <li>Produce user manuals for multiple Hyundai vehicle models, applying UI/UX and documentation standards that improve readability for tens of thousands of end users.</li>
         </ul>
       </div>
 
@@ -1150,7 +1133,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
           <div class="cv-sec-title">Education</div>
           <div style="margin-bottom:.5rem">
             <div class="cv-edu-school">Loyola University Maryland</div>
-            <div class="cv-edu-deg">B.S. Computer Engineering · Class of 2025</div>
+            <div class="cv-edu-deg">B.S. Computer Engineering &amp; Electrical Engineering · Class of 2025</div>
             <div class="cv-edu-det">Baltimore, MD</div>
             <div class="cv-edu-det" style="margin-top:4px">FPGA Design · VLSI Design · Digital Logic · Computer Architecture · Microprocessing Systems · Linear Circuit Analysis · Biomedical Imaging &amp; Sensing · Electromagnetics · Quantum Computing · Object-Oriented Design · Experimental Methods</div>
             <div class="cv-edu-det" style="margin-top:8px;font-style:italic;color:var(--si)">Campus Leadership</div>
@@ -3872,12 +3855,6 @@ function cvToggleFashion() {
   const btn = document.getElementById('cv-fashion-btn');
   const on = btn.classList.toggle('on');
   document.querySelectorAll('#panel-resume .cv-fashion-only').forEach(el => el.classList.toggle('vis', on));
-}
-function cvToggleTech() {
-  const btn = document.getElementById('cv-tech-btn');
-  const on = btn.classList.toggle('on');
-  document.querySelectorAll('#panel-resume .cv-tech-only').forEach(el => el.classList.toggle('vis', on));
-  document.querySelectorAll('#panel-resume .cv-hide-on-tech').forEach(el => el.classList.toggle('hidden', on));
 }
 function cvPrint() {
   const docArea = document.getElementById('doc-print-area');
