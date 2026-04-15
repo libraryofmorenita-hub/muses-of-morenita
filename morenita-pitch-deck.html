@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morenita Collective — Pitch Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brown:  #5c3320;
+    --brown2: #3d1f0f;
+    --gold:   #e3a235;
+    --gold2:  #c4841a;
+    --cream:  #f5f0e8;
+    --muted:  #9a8070;
+    --text:   #2c1a0e;
+    --dark:   #1a0e08;
+    --white:  #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0e0a06;
+    font-family: 'Jost', sans-serif;
+    color: var(--cream);
+  }
+
+  /* ── NAVIGATION ── */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 48px;
+    background: rgba(10,6,2,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(227,162,53,0.15);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .nav-slides {
+    display: flex;
+    gap: 6px;
+  }
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(227,162,53,0.3);
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .nav-dot.active { background: var(--gold); }
+  .nav-counter {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── SLIDES CONTAINER ── */
+  .deck {
+    padding-top: 56px;
+  }
+
+  /* ── SLIDE BASE ── */
+  .slide {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .slide.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── SLIDE THEMES ── */
+  .slide-dark   { background: var(--dark); }
+  .slide-brown  { background: var(--brown2); }
+  .slide-cream  { background: var(--cream); color: var(--text); }
+  .slide-white  { background: var(--white); color: var(--text); }
+  .slide-split  { background: var(--dark); }
+
+  /* ── DECORATIVE GRAIN OVERLAY ── */
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── GOLD ACCENT LINE ── */
+  .gold-line {
+    width: 48px;
+    height: 2px;
+    background: var(--gold);
+    margin-bottom: 24px;
+  }
+  .gold-line-center {
+    width: 48px; height: 2px;
+    background: var(--gold);
+    margin: 0 auto 24px;
+  }
+
+  /* ── SLIDE INNER ── */
+  .slide-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 80px 64px;
+  }
+
+  /* ── EYEBROW ── */
+  .eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .eyebrow-dark { color: var(--muted); }
+
+  /* ── HEADINGS ── */
+  .display {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 6vw, 88px);
+    font-weight: 400;
+    line-height: 0.95;
+    color: var(--white);
+    margin-bottom: 32px;
+  }
+  .display em { font-style: italic; color: var(--gold); }
+  .display-dark { color: var(--text); }
+  .display-dark em { color: var(--brown); }
+
+  .h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+  .h2-dark { color: var(--text); }
+  .h2 em { font-style: italic; color: var(--gold); }
+
+  .h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .h3-dark { color: var(--brown); }
+
+  /* ── BODY ── */
+  .body {
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.85;
+    color: rgba(245,240,232,0.8);
+    max-width: 640px;
+  }
+  .body-dark { color: rgba(44,26,14,0.8); }
+  .body-wide { max-width: 820px; }
+
+  /* ── TWO-COL GRID ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* ── IMAGE PLACEHOLDER ── */
+  .img-zone {
+    border: 1px dashed rgba(227,162,53,0.35);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: rgba(227,162,53,0.5);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: rgba(227,162,53,0.04);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .img-zone:hover {
+    border-color: rgba(227,162,53,0.6);
+    background: rgba(227,162,53,0.07);
+  }
+  .img-zone svg { opacity: 0.4; }
+  .img-zone-dark {
+    border-color: rgba(92,51,32,0.35);
+    color: rgba(92,51,32,0.5);
+    background: rgba(92,51,32,0.04);
+  }
+
+  /* ── STAT CARDS ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 48px;
+  }
+  .stat-card {
+    background: rgba(227,162,53,0.08);
+    border: 1px solid rgba(227,162,53,0.15);
+    padding: 32px 28px;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── DIVISION CARDS ── */
+  .div-card {
+    border-top: 2px solid var(--gold);
+    padding-top: 24px;
+  }
+  .div-card-dark {
+    border-top: 2px solid var(--brown);
+  }
+
+  /* ── PRODUCT FEATURE ── */
+  .product-feature {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 70vh;
+  }
+  .product-content {
+    padding: 80px 64px 80px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+  .product-image {
+    position: relative;
+  }
+
+  /* ── FUNDING TABLE ── */
+  .fund-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(227,162,53,0.12);
+    align-items: center;
+  }
+  .fund-row:first-child {
+    border-top: 1px solid rgba(227,162,53,0.12);
+  }
+  .fund-label {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(245,240,232,0.85);
+  }
+  .fund-role {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .fund-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--gold);
+    text-align: right;
+  }
+  .fund-note {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    margin-top: 2px;
+  }
+  .fund-total {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 24px 0 0;
+    align-items: center;
+  }
+  .fund-total-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--white);
+  }
+  .fund-total-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px;
+    font-weight: 400;
+    color: var(--gold);
+    text-align: right;
+    grid-column: 2 / 4;
+  }
+
+  /* ── TIMELINE DOTS ── */
+  .timeline {
+    display: flex;
+    gap: 0;
+    margin-top: 40px;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 12px; left: 12px; right: 12px;
+    height: 1px;
+    background: rgba(227,162,53,0.2);
+    z-index: 0;
+  }
+  .timeline-item {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+  .timeline-dot {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    background: var(--dark);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .timeline-dot.filled { background: var(--gold); }
+  .timeline-dot-inner {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .timeline-label {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .timeline-text {
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(245,240,232,0.7);
+    line-height: 1.6;
+    padding-right: 16px;
+  }
+
+  /* ── COVER DECORATIVE ── */
+  .cover-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .cover-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(227,162,53,0.08);
+  }
+  .cover-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(16px, 2vw, 22px);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(227,162,53,0.7);
+    margin-bottom: 48px;
+    max-width: 600px;
+  }
+  .cover-meta {
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(154,128,112,0.7);
+    margin-top: 48px;
+  }
+
+  /* ── PROBLEM STAT ── */
+  .problem-big {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(80px, 10vw, 140px);
+    font-weight: 300;
+    color: rgba(227,162,53,0.12);
+    line-height: 1;
+    position: absolute;
+    top: 40px;
+    right: 64px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── PILL TAG ── */
+  .pill {
+    display: inline-block;
+    padding: 4px 14px;
+    border: 1px solid rgba(227,162,53,0.3);
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .pill-dark {
+    border-color: rgba(92,51,32,0.3);
+    color: var(--brown);
+  }
+
+  /* ── PRINT / EXPORT ── */
+  .toolbar {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 200;
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: 1px solid rgba(227,162,53,0.4);
+    background: rgba(10,6,2,0.9);
+    color: var(--gold);
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+  }
+  .btn:hover {
+    background: var(--gold);
+    color: var(--dark);
+  }
+
+  @media print {
+    .nav, .toolbar { display: none; }
+    .slide { min-height: 100vh; page-break-after: always; opacity: 1 !important; transform: none !important; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Morenita Collective</div>
+  <div class="nav-slides" id="navDots"></div>
+  <div class="nav-counter" id="navCounter">01 / 12</div>
+</nav>
+
+<div class="deck" id="deck">
+
+  <!-- ══ SLIDE 01 — COVER ══ -->
+  <section class="slide slide-dark" data-slide="1">
+    <div class="cover-bg">
+      <div class="cover-circle" style="width:700px;height:700px;top:-200px;right:-200px;"></div>
+      <div class="cover-circle" style="width:400px;height:400px;bottom:-100px;left:-100px;opacity:0.5;"></div>
+      <div class="cover-circle" style="width:200px;height:200px;top:50%;left:30%;opacity:0.3;"></div>
+    </div>
+    <div class="slide-inner" style="position:relative;z-index:2;">
+      <div class="eyebrow">Investor Presentation · 2026</div>
+      <div class="display">Morenita<br><em>Collective</em></div>
+      <div class="cover-tagline">Beautiful technology. Net zero infrastructure. Built for everyone.</div>
+      <div class="gold-line"></div>
+      <div class="body">A creative technology company operating at the intersection of hardware, education, clean energy, and community infrastructure — founded and led by Amelia Arabe, Computer & Electrical Design Engineer, Miss Temecula Valley USA 2026.</div>
+      <div class="cover-meta">Amelia Arabe · Founder & CEO · amelia.viktoria.arabe@gmail.com</div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 02 — THE PROBLEM ══ -->
+  <section class="slide slide-dark" data-slide="2">
+    <div class="slide-inner">
+      <div class="problem-big">3B+</div>
+      <div class="eyebrow">The Problem</div>
+      <div class="h2">The communities that<br>most need good technology<br><em>are the last to receive it.</em></div>
+      <div class="body body-wide" style="margin-top:32px;">
+        Over 3 billion people globally lack meaningful access to quality education, clean energy, and the tools that build prosperity. The mainstream technology industry builds for the already-connected. The gap compounds with every product cycle.<br><br>
+        At the same time, the tools that do exist are fragmented — the platform that teaches doesn't manufacture, the manufacturer doesn't generate its own energy, the energy company doesn't serve the community around it. Nothing closes the loop.<br><br>
+        <span style="color:var(--gold);font-style:italic;">Morenita Collective closes the loop.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 03 — THE VISION ══ -->
+  <section class="slide slide-cream" data-slide="3">
+    <div class="slide-inner">
+      <div class="eyebrow eyebrow-dark">The Vision</div>
+      <div class="h2 h2-dark">A vertically integrated<br>technology company that<br><em style="color:var(--brown);">generates, builds, teaches,<br>and gives back.</em></div>
+      <div class="body body-dark body-wide" style="margin-top:32px;">
+        Morenita Collective is three companies operating as one closed system. The studio generates revenue. The platform educates and distributes. The campus manufactures, powers, and anchors communities. Every division feeds the next. Nothing is wasted.
+      </div>
+      <div class="three-col" style="margin-top:48px;">
+        <div class="div-card div-card-dark">
+          <div class="h3 h3-dark">Morenita Design</div>
+          <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Creative Technology Studio</div>
+          <div class="body body-dark" style="font-size:13px;">Client work funds the Collective. Web apps, brand systems, internal tooling. The engine.</div>
+        </div>
+        <div class="div-card div-card-dark">
+          <div class="h3 h3-dark">Library of Morenita</div>
+          <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Education + Hardware</div>
+          <div class="body body-dark" style="font-size:13px;">Live platform. Courses, majors, residencies. Hardware: Digibook + MAXINE. The product.</div>
+        </div>
+        <div class="div-card div-card-dark">
+          <div class="h3 h3-dark">House of Morenita</div>
+          <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Campus Infrastructure</div>
+          <div class="body body-dark" style="font-size:13px;">Clean energy, data centers, net zero manufacturing. Self-powered. Replicable. The foundation.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 04 — LIBRARY OF MORENITA ══ -->
+  <section class="slide slide-dark" data-slide="4">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div>
+          <div class="eyebrow">Library of Morenita</div>
+          <div class="h2">Education as<br>a <em>living system.</em></div>
+          <div class="body" style="margin-top:24px;">The platform is already built and live. It operates on a freemium model — free to read, free first course, paid per course or per full academic major. Residencies and internships for designers who want to learn to create in communication with the earth. Content is dynamic, personalized, and magazine-inspired — designed to make learning feel like wonder, not obligation.</div>
+          <div class="stat-grid" style="margin-top:40px;">
+            <div class="stat-card">
+              <div class="stat-num">Live</div>
+              <div class="stat-label">Platform Status</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">Free</div>
+              <div class="stat-label">To Read & Explore</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">Paid</div>
+              <div class="stat-label">Courses & Majors</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="img-zone" style="height:420px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Add platform screenshot
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 05 — DIGIBOOK ══ -->
+  <section class="slide slide-brown" data-slide="5">
+    <div class="product-feature">
+      <div class="product-content">
+        <div class="pill">Hardware · In Development</div>
+        <div class="eyebrow">Library of Morenita</div>
+        <div class="display" style="font-size:clamp(40px,5vw,68px);margin-bottom:24px;">The<br><em>Digibook</em></div>
+        <div class="body" style="margin-bottom:32px;">A physical book with 30 paper-like screens powered by a projector in the spine. Your personalized weekly magazine — curated around art, science, nature, and creativity — appears on the pages. Write and sketch with a custom stylus. Everything saves to the Library of Morenita platform automatically.</div>
+        <div class="body">Solar-powered case. Recycled components. Low-energy architecture. Designed to feel slow and analog while fully connected to a digital world. In a time when everything is designed to move fast, the Digibook is designed to do the opposite.</div>
+        <div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div>
+            <div class="h3" style="font-size:20px;margin-bottom:4px;">Net Zero</div>
+            <div style="font-size:12px;color:var(--muted);">Solar case · recycled materials · low-energy architecture</div>
+          </div>
+          <div>
+            <div class="h3" style="font-size:20px;margin-bottom:4px;">Platform Connected</div>
+            <div style="font-size:12px;color:var(--muted);">Syncs to Library of Morenita · personalized content</div>
+          </div>
+          <div>
+            <div class="h3" style="font-size:20px;margin-bottom:4px;">30 Pages</div>
+            <div style="font-size:12px;color:var(--muted);">Projected paper-like screens in a physical book form</div>
+          </div>
+          <div>
+            <div class="h3" style="font-size:20px;margin-bottom:4px;">Custom Stylus</div>
+            <div style="font-size:12px;color:var(--muted);">Write and sketch · saves to platform automatically</div>
+          </div>
+        </div>
+      </div>
+      <div class="product-image">
+        <div class="img-zone" style="height:100%;min-height:480px;border-radius:0;border-left:1px dashed rgba(227,162,53,0.25);border-top:none;border-right:none;border-bottom:none;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+          </svg>
+          Add Digibook sketch or render
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 06 — MAXINE ══ -->
+  <section class="slide slide-dark" data-slide="6">
+    <div class="product-feature">
+      <div class="product-image" style="order:-1;">
+        <div class="img-zone" style="height:100%;min-height:480px;border-radius:0;border-right:1px dashed rgba(227,162,53,0.25);border-top:none;border-left:none;border-bottom:none;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+          </svg>
+          Add MAXINE prototype image
+        </div>
+      </div>
+      <div class="product-content">
+        <div class="pill">Hardware · Prototyped</div>
+        <div class="eyebrow">Library of Morenita</div>
+        <div class="display" style="font-size:clamp(40px,5vw,68px);margin-bottom:24px;"><em>MAXINE</em></div>
+        <div class="body" style="margin-bottom:32px;">A healthcare recovery companion device that assists nurses and caretakers by streamlining patient tracking, medication administration, and bookkeeping across multiple patients simultaneously.</div>
+        <div class="body">Nurse burnout is one of the leading crises in healthcare globally. The administrative burden — not the clinical work — is the primary driver. MAXINE removes it. One device. Many patients. Every nurse who uses it gets their time back.</div>
+        <div style="margin-top:40px;">
+          <div style="padding:20px 0;border-top:1px solid rgba(227,162,53,0.15);">
+            <div class="h3" style="font-size:18px;margin-bottom:4px;">Patient Tracking</div>
+            <div style="font-size:12px;color:var(--muted);">Real-time status across multiple patients simultaneously</div>
+          </div>
+          <div style="padding:20px 0;border-top:1px solid rgba(227,162,53,0.15);">
+            <div class="h3" style="font-size:18px;margin-bottom:4px;">Medication Administration</div>
+            <div style="font-size:12px;color:var(--muted);">Streamlined logging, alerts, and admin tools</div>
+          </div>
+          <div style="padding:20px 0;border-top:1px solid rgba(227,162,53,0.15);">
+            <div class="h3" style="font-size:18px;margin-bottom:4px;">Bookkeeping</div>
+            <div style="font-size:12px;color:var(--muted);">Documentation and records — handled automatically</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 07 — HOUSE OF MORENITA ══ -->
+  <section class="slide slide-cream" data-slide="7">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div>
+          <div class="eyebrow eyebrow-dark">House of Morenita</div>
+          <div class="h2 h2-dark">The campus that<br><em style="color:var(--brown);">powers everything.</em></div>
+          <div class="body body-dark" style="margin-top:24px;">A self-powered campus housing clean energy generation, data centers, and net zero print and clothing manufacturing — all in one place. Beautiful enough that being there feels like the mission. Designed to be replicable so each new campus anchors the community around it with energy, jobs, education, and beauty.</div>
+          <div style="margin-top:40px;display:flex;flex-direction:column;gap:16px;">
+            <div class="div-card div-card-dark" style="padding:20px;">
+              <div class="h3 h3-dark" style="font-size:18px;margin-bottom:4px;">Clean Energy</div>
+              <div class="body body-dark" style="font-size:13px;">Wind and solar generation powering all facilities and data centers. Surplus shared with surrounding community.</div>
+            </div>
+            <div class="div-card div-card-dark" style="padding:20px;">
+              <div class="h3 h3-dark" style="font-size:18px;margin-bottom:4px;">Net Zero Manufacturing</div>
+              <div class="body body-dark" style="font-size:13px;">Print and clothing manufacturing with minimal energy footprint. Children's magazines, dynamic reading materials, and Digibook production.</div>
+            </div>
+            <div class="div-card div-card-dark" style="padding:20px;">
+              <div class="h3 h3-dark" style="font-size:18px;margin-bottom:4px;">Replicable Model</div>
+              <div class="body body-dark" style="font-size:13px;">First campus proves the blueprint. Each subsequent campus serves its neighborhood. Modular. Community-anchoring.</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="img-zone img-zone-dark" style="height:520px;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Add campus concept or sketch
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 08 — TRACTION ══ -->
+  <section class="slide slide-dark" data-slide="8">
+    <div class="slide-inner">
+      <div class="eyebrow">Traction</div>
+      <div class="h2">Already <em>moving.</em></div>
+      <div class="three-col" style="margin-top:48px;">
+        <div>
+          <div class="stat-num" style="font-size:64px;">7</div>
+          <div class="stat-label" style="margin-bottom:16px;">Clients Served</div>
+          <div class="body" style="font-size:13px;">Hyundai, YK Entertainment, Patient X Holistic Health, California Dancewear, Grupo RPM, ETA Trans Inc — active clients across 5 industries.</div>
+        </div>
+        <div>
+          <div class="stat-num" style="font-size:64px;">Live</div>
+          <div class="stat-label" style="margin-bottom:16px;">Platform Status</div>
+          <div class="body" style="font-size:13px;">Library of Morenita platform fully coded and launched. Education content, course architecture, and freemium model live and accessible.</div>
+        </div>
+        <div>
+          <div class="stat-num" style="font-size:64px;">2</div>
+          <div class="stat-label" style="margin-bottom:16px;">Hardware Products</div>
+          <div class="body" style="font-size:13px;">MAXINE prototyped. Digibook sketched and technology pathway mapped. Prototype funding in progress.</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot filled"><div class="timeline-dot-inner"></div></div>
+          <div class="timeline-label">2025</div>
+          <div class="timeline-text">Morenita Design launched. First 7 clients. Platform built and live.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot filled"><div class="timeline-dot-inner"></div></div>
+          <div class="timeline-label">Early 2026</div>
+          <div class="timeline-text">MAXINE prototyped. Crown HQ built. Miss Temecula Valley USA 2026.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"><div class="timeline-dot-inner" style="background:transparent;"></div></div>
+          <div class="timeline-label">Mid 2026</div>
+          <div class="timeline-text">Digibook first prototype. Team hired. Hardware research begins.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"><div class="timeline-dot-inner" style="background:transparent;"></div></div>
+          <div class="timeline-label">2027</div>
+          <div class="timeline-text">House of Morenita first campus site selected and designed.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 09 — THE FOUNDER ══ -->
+  <section class="slide slide-brown" data-slide="9">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div>
+          <div class="eyebrow">The Founder</div>
+          <div class="display" style="font-size:clamp(40px,5vw,64px);margin-bottom:16px;">Amelia<br><em>Arabe</em></div>
+          <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:32px;">Computer & Electrical Design Engineer · Founder & CEO</div>
+          <div class="body" style="margin-bottom:24px;">B.S. Computer Engineering & Electrical Engineering, Loyola University Maryland, Class of 2025. Specializations in FPGA design, embedded systems, VLSI, digital logic, biomedical imaging, and quantum computing.</div>
+          <div class="body" style="margin-bottom:24px;">Co-founder of Ballmecca. Systems designer for a voice-controlled hospital bed for quadriplegic patients. Builder of an autonomous SLF Terminator rover. Author of NeuroSect, a speculative multimodal medical imaging system paper co-authored at UC San Diego.</div>
+          <div class="body">Miss Temecula Valley USA 2026, competing for Miss California USA. Platform: sustainable technology, green energy access, and community infrastructure. Cellist. Oil painter. Actress.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div class="img-zone" style="height:360px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Add founder photo
+          </div>
+          <div style="padding:24px;border:1px solid rgba(227,162,53,0.2);border-radius:4px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:rgba(245,240,232,0.8);line-height:1.6;">"I am building the company I wished existed."</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:12px;letter-spacing:0.1em;text-transform:uppercase;">— Amelia Arabe</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 10 — MARKET ══ -->
+  <section class="slide slide-cream" data-slide="10">
+    <div class="slide-inner">
+      <div class="eyebrow eyebrow-dark">Market Opportunity</div>
+      <div class="h2 h2-dark">Three industries.<br><em style="color:var(--brown);">One closed loop.</em></div>
+      <div class="three-col" style="margin-top:48px;">
+        <div class="div-card div-card-dark">
+          <div class="h3 h3-dark">EdTech</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:var(--brown);line-height:1;margin:12px 0;">$400B+</div>
+          <div class="body body-dark" style="font-size:13px;">Global education technology market. Growing at 13% annually. Library of Morenita targets underserved communities with a beautiful, accessible alternative.</div>
+        </div>
+        <div class="div-card div-card-dark">
+          <div class="h3 h3-dark">Healthcare Tech</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:var(--brown);line-height:1;margin:12px 0;">$660B+</div>
+          <div class="body body-dark" style="font-size:13px;">Healthcare IT market. Nursing shortages and burnout driving demand for administrative efficiency tools. MAXINE addresses the root cause directly.</div>
+        </div>
+        <div class="div-card div-card-dark">
+          <div class="h3 h3-dark">Clean Energy</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:var(--brown);line-height:1;margin:12px 0;">$2T+</div>
+          <div class="body body-dark" style="font-size:13px;">Global clean energy transition market. House of Morenita generates, stores, and distributes renewable energy as the backbone of each campus.</div>
+        </div>
+      </div>
+      <div class="body body-dark" style="margin-top:40px;font-style:italic;border-left:3px solid var(--brown);padding-left:20px;max-width:720px;">No single competitor operates across all three. Morenita Collective is the only company building a vertically integrated system that teaches, manufactures, and powers itself — net zero by design.</div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 11 — THE ASK ══ -->
+  <section class="slide slide-dark" data-slide="11">
+    <div class="slide-inner">
+      <div class="eyebrow">The Ask</div>
+      <div class="h2">Seed Round:<br><em>$500,000</em></div>
+      <div class="body" style="margin-top:16px;margin-bottom:48px;max-width:560px;">18 months of runway to take the Digibook from sketch to working prototype, bring MAXINE to clinical validation, grow the platform, and build the team that makes it all possible.</div>
+
+      <div class="fund-row">
+        <div>
+          <div class="fund-label">Amelia Arabe</div>
+          <div class="fund-role">Founder & CEO · Full Time</div>
+        </div>
+        <div></div>
+        <div>
+          <div class="fund-amount">$200,000</div>
+          <div class="fund-note">Annual salary</div>
+        </div>
+      </div>
+      <div class="fund-row">
+        <div>
+          <div class="fund-label">Graphic Designer</div>
+          <div class="fund-role">Full Time · Brand & Product</div>
+        </div>
+        <div></div>
+        <div>
+          <div class="fund-amount">$150,000</div>
+          <div class="fund-note">Annual salary</div>
+        </div>
+      </div>
+      <div class="fund-row">
+        <div>
+          <div class="fund-label">Hardware Research Intern</div>
+          <div class="fund-role">Digibook + MAXINE Research · $30/hr</div>
+        </div>
+        <div></div>
+        <div>
+          <div class="fund-amount">$62,400</div>
+          <div class="fund-note">Full time · 52 weeks</div>
+        </div>
+      </div>
+      <div class="fund-row">
+        <div>
+          <div class="fund-label">Operations, Equipment & Hardware R&D</div>
+          <div class="fund-role">Prototype materials · tooling · overhead · legal</div>
+        </div>
+        <div></div>
+        <div>
+          <div class="fund-amount">$87,600</div>
+          <div class="fund-note">Buffer · 18 months</div>
+        </div>
+      </div>
+      <div class="fund-total">
+        <div class="fund-total-label">Total Seed Ask</div>
+        <div class="fund-total-amount">$500,000</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 12 — CLOSE ══ -->
+  <section class="slide slide-dark" data-slide="12">
+    <div class="cover-bg">
+      <div class="cover-circle" style="width:600px;height:600px;bottom:-200px;right:-100px;"></div>
+      <div class="cover-circle" style="width:300px;height:300px;top:100px;left:-80px;opacity:0.4;"></div>
+    </div>
+    <div class="slide-inner" style="position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;">
+      <div class="gold-line-center"></div>
+      <div class="eyebrow" style="text-align:center;">Morenita Collective · 2026</div>
+      <div class="display" style="text-align:center;max-width:800px;">This grant funds the<br>first device. The first<br>device funds <em>the rest.</em></div>
+      <div class="body" style="text-align:center;margin-top:32px;max-width:600px;">We are building the infrastructure for a future where technology is beautiful, education is accessible, energy is clean, and no community is left behind. We are looking for partners who believe the same thing.</div>
+      <div style="margin-top:56px;display:flex;gap:48px;align-items:center;justify-content:center;flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Email</div>
+          <div style="font-size:14px;color:var(--gold);">amelia.viktoria.arabe@gmail.com</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">LinkedIn</div>
+          <div style="font-size:14px;color:var(--gold);">linkedin.com/in/ameliaarabe</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Portfolio</div>
+          <div style="font-size:14px;color:var(--gold);">libraryofmorenita-hub.github.io/amelia-arabe</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="btn" onclick="window.print()">Print / PDF</button>
+</div>
+
+<script>
+  // ── NAV DOTS ──
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.getElementById('navDots');
+  const counter = document.getElementById('navCounter');
+
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => {
+      slides[i].scrollIntoView({ behavior: 'smooth' });
+    });
+    dotsContainer.appendChild(dot);
+  });
+
+  // ── INTERSECTION OBSERVER ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        const idx = Array.from(slides).indexOf(entry.target);
+        document.querySelectorAll('.nav-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === idx);
+        });
+        const num = String(idx + 1).padStart(2, '0');
+        const total = String(slides.length).padStart(2, '0');
+        counter.textContent = `${num} / ${total}`;
+      }
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(slide => observer.observe(slide));
+
+  // ── KEYBOARD NAV ──
+  document.addEventListener('keydown', (e) => {
+    const current = Array.from(slides).findIndex(s => s.classList.contains('visible'));
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      const next = slides[Math.min(current + 1, slides.length - 1)];
+      if (next) next.scrollIntoView({ behavior: 'smooth' });
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      const prev = slides[Math.max(current - 1, 0)];
+      if (prev) prev.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+</body>
+</html>
