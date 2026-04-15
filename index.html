@@ -3818,7 +3818,7 @@ DELIVERABLES: ${c.deliverables || '—'}
 OUT OF SCOPE: ${c.oos || '—'}
 INTERNAL/EXTRA NOTES (clean up and incorporate professionally): ${c.internal || ''} ${c.notes || ''}
 
-Include sections: parties & recitals, project scope, deliverables, timeline, payment terms, revision policy (2 rounds included), IP clause (transfers on full payment), termination clause (7-day written notice), limitation of liability, and signature blocks for both parties. Use inline styles only. Color palette: #1C1714 text, #8B4A2F for section headers/accents, #FAF7F2 for header band. Return ONLY the HTML fragment, no markdown.`;
+Include sections: parties & recitals, project scope, deliverables, timeline, payment terms, revision policy (2 rounds included), IP clause (transfers on full payment), credit clause (Client agrees to include a visible "Designed by Morenita Design" credit with a link to muses of morenita in the footer of every page of the delivered website; removal requires written consent from Provider), termination clause (7-day written notice), limitation of liability, and signature blocks for both parties. Use inline styles only. Color palette: #1C1714 text, #8B4A2F for section headers/accents, #FAF7F2 for header band. Return ONLY the HTML fragment, no markdown.`;
     }
     const html = await callClaude([{role:'user', content: userPrompt}]);
     if (!html) { btn.disabled = false; load.classList.remove('on'); return; }
@@ -4258,7 +4258,7 @@ function toggleMs(row) {
 // ══════════════════════════════════════════════════
 // CONTACT
 // ══════════════════════════════════════════════════
-const FORMSPREE_ID = 'YOUR_FORMSPREE_ID';
+const CONTACT_FN = 'https://agekvrkqrwepdoeetpbx.supabase.co/functions/v1/contact';
 
 async function submitContact() {
   const name    = document.getElementById('cf-name').value.trim();
@@ -4273,25 +4273,23 @@ async function submitContact() {
   }
   status.style.color = 'var(--muted)';
   status.textContent = 'Sending\u2026';
-  if (FORMSPREE_ID === 'YOUR_FORMSPREE_ID') {
-    const body = encodeURIComponent('Name: '+name+'\nEmail: '+email+'\nSubject: '+subject+'\n\n'+message);
-    window.location = 'mailto:missameliava@gmail.com?subject='+encodeURIComponent('[Portfolio] '+subject)+'&body='+body;
-    document.getElementById('contact-form').style.display = 'none';
-    document.getElementById('contact-success').style.display = 'block';
-    return;
-  }
   try {
-    const res = await fetch('https://formspree.io/f/'+FORMSPREE_ID, {
-      method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body: JSON.stringify({name,email,subject,message,_replyto:email,_subject:'[Portfolio] '+subject})
+    const res = await fetch(CONTACT_FN, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, subject, message })
     });
     if (res.ok) {
       document.getElementById('contact-form').style.display = 'none';
       document.getElementById('contact-success').style.display = 'block';
     } else {
-      status.style.color='var(--si)'; status.textContent='Something went wrong. Try emailing directly.';
+      status.style.color = 'var(--si)';
+      status.textContent = 'Something went wrong. Try emailing directly.';
     }
-  } catch { status.style.color='var(--si)'; status.textContent='Network error. Try again.'; }
+  } catch {
+    status.style.color = 'var(--si)';
+    status.textContent = 'Network error. Try again.';
+  }
 }
 
 function resetContact() {
