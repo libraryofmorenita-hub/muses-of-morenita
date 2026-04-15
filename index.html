@@ -4276,7 +4276,11 @@ async function submitContact() {
   try {
     const res = await fetch(CONTACT_FN, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY
+      },
       body: JSON.stringify({ name, email, subject, message })
     });
     if (res.ok) {
