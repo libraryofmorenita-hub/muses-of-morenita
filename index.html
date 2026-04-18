@@ -5,6 +5,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Muses of Morenita · Amelia Arabe</title>
+<!-- Content Security Policy: restricts connections to known hosts, blocks framing -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://agekvrkqrwepdoeetpbx.supabase.co https://api.anthropic.com https://fonts.googleapis.com; img-src 'self' data: blob: https:; frame-ancestors 'none'; base-uri 'self';">
+<!-- DOMPurify: sanitizes Claude-generated HTML before rendering to prevent XSS -->
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.3/dist/purify.min.js"></script>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -142,6 +146,48 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 .co-del-btn:hover{border-color:var(--si);color:var(--si);}
 .co-save-btn{flex:2;padding:.6rem;border-radius:10px;border:none;background:var(--ink);font-size:12px;color:var(--ivory);cursor:pointer;font-weight:500;transition:background .15s;}
 .co-save-btn:hover{background:var(--charcoal);}
+
+/* ── CLIENT PORTAL TAB ────────────────────────── */
+/* Portal update entry (Amelia's message → client) */
+.cp-update-row{display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.5rem;}
+.cp-update-date{font-size:10px;color:var(--si);white-space:nowrap;padding-top:2px;min-width:70px;}
+.cp-update-msg{font-size:12px;color:var(--charcoal);flex:1;line-height:1.6;}
+.cp-update-rm{border:none;background:transparent;color:var(--faint);cursor:pointer;font-size:14px;padding:0 .2rem;line-height:1;}
+.cp-update-rm:hover{color:var(--si);}
+/* Milestone row */
+.cp-ms-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem;}
+.cp-ms-check{width:14px;height:14px;border:1.5px solid var(--bd);border-radius:3px;background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--si);transition:all .12s;}
+.cp-ms-check.done{background:var(--si);border-color:var(--si);color:white;}
+.cp-ms-label{font-size:12px;color:var(--charcoal);flex:1;}
+.cp-ms-label.done{text-decoration:line-through;color:var(--faint);}
+.cp-ms-rm{border:none;background:transparent;color:var(--faint);cursor:pointer;font-size:13px;padding:0;line-height:1;}
+.cp-ms-rm:hover{color:var(--si);}
+/* Toggle row */
+.cp-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.55rem 0;border-bottom:0.5px solid var(--bd);}
+.cp-toggle-row:last-child{border-bottom:none;}
+.cp-toggle-lbl{font-size:12px;color:var(--charcoal);}
+.cp-toggle-sub{font-size:10px;color:var(--faint);margin-top:1px;}
+/* Signed contract badge */
+.cp-signed-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:11px;color:var(--go);background:var(--gop);border:0.5px solid #DFC07A;border-radius:20px;padding:3px 10px;}
+/* Revision request rows */
+.cp-rev-row{background:var(--iv2);border-radius:8px;padding:.6rem .8rem;margin-bottom:.5rem;}
+.cp-rev-date{font-size:9px;color:var(--faint);margin-bottom:2px;letter-spacing:.05em;}
+.cp-rev-msg{font-size:12px;color:var(--charcoal);line-height:1.6;}
+.cp-rev-unread{width:6px;height:6px;border-radius:50%;background:var(--si);display:inline-block;margin-right:4px;vertical-align:middle;}
+/* Intake data read-only display */
+.cp-intake-field{margin-bottom:.65rem;}
+.cp-intake-lbl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:2px;}
+.cp-intake-val{font-size:12px;color:var(--charcoal);line-height:1.6;background:var(--iv2);border-radius:6px;padding:.4rem .6rem;}
+/* Publish / invite buttons */
+.cp-publish-btn{padding:.6rem 1.2rem;border-radius:10px;border:none;background:var(--ink);color:var(--ivory);font-size:12px;cursor:pointer;transition:background .15s;}
+.cp-publish-btn:hover{background:var(--charcoal);}
+.cp-publish-btn:disabled{opacity:.5;cursor:default;}
+.cp-invite-btn{padding:.6rem 1.2rem;border-radius:10px;border:0.5px solid var(--sil);color:var(--si);background:var(--sip);font-size:12px;cursor:pointer;transition:all .15s;}
+.cp-invite-btn:hover{background:var(--sil);color:white;}
+.cp-invite-btn:disabled{opacity:.5;cursor:default;}
+.cp-status-line{font-size:11px;color:var(--muted);margin-top:.5rem;min-height:1.4em;}
+.cp-portal-link{font-size:11px;color:var(--si);text-decoration:none;}
+.cp-portal-link:hover{text-decoration:underline;}
 
 /* ── MOBILE ──────────────────────────────────── */
 @media(max-width:768px){
@@ -287,6 +333,15 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 .pm-btn.pri{background:var(--ink);color:var(--ivory);border-color:var(--ink);}
 .pm-expand{font-size:10px;text-align:center;padding:.5rem;color:var(--muted);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;}
 .pm-expand:hover{color:var(--si);}
+.pm-divider{border:none;border-top:0.5px solid var(--bd);margin:1.25rem 0;}
+.pm-section-lbl{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--si);margin-bottom:.6rem;}
+.pm-case-block{margin-bottom:1.1rem;}
+.pm-case-q{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:.3rem;}
+.pm-case-text{font-size:13px;color:var(--charcoal);line-height:1.85;white-space:pre-wrap;}
+.pm-credits-text{font-size:12px;color:var(--muted);line-height:1.75;font-style:italic;}
+.pm-photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem;}
+.pm-photo-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;cursor:pointer;transition:opacity .15s;}
+.pm-photo-grid img:hover{opacity:.85;}
 
 /* ── IMPACT IMPROVEMENTS ────────────────────── */
 /* Scroll reveal animation */
@@ -480,20 +535,6 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 .pw-btn{width:100%;padding:10px;background:var(--ink);color:var(--ivory);border:none;border-radius:7px;font-size:13px;cursor:pointer;margin-top:.8rem;}
 .pw-err{font-size:11px;color:var(--si);margin-top:.5rem;text-align:center;min-height:16px;}
 
-.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;}
-.fcard{background:white;border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s;}
-.fcard:hover{border-color:var(--sil);transform:translateY(-1px);}
-.fthumb{height:80px;display:flex;align-items:center;justify-content:center;font-size:24px;border-bottom:0.5px solid var(--bd);}
-.ft-r{background:linear-gradient(135deg,var(--sip),#F0DDD5);}
-.ft-c{background:linear-gradient(135deg,var(--sap),#D8E5D7);}
-.ft-n{background:var(--iv2);}
-.fbody{padding:9px 11px;}
-.fname{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:2px;}
-.fmeta{font-size:10px;color:var(--muted);}
-.fbtns{display:flex;gap:5px;margin-top:7px;}
-.fbtn{font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer;border:0.5px solid var(--bd);color:var(--muted);background:transparent;transition:all .12s;}
-.fbtn:hover{border-color:var(--sil);color:var(--si);}
-.fbtn.p{background:var(--ink);color:var(--ivory);border-color:var(--ink);}
 
 /* ── BOTTOM SHEETS (paintings + services) ─── */
 .bottom-sheet-bg{position:fixed;inset:0;z-index:500;background:rgba(28,23,20,.5);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s;}
@@ -916,6 +957,8 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
           </select>
         </div>
         <div style="margin-bottom:1.4rem"><label style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px">Message</label><textarea id="cf-message" rows="5" class="cf-inp" style="resize:vertical;min-height:120px" placeholder="Tell me what&#8217;s on your mind&hellip;"></textarea></div>
+        <!-- Honeypot: hidden from real users, bots fill it in — reject if non-empty -->
+        <input type="text" id="cf-honeypot" name="website" style="display:none" tabindex="-1" autocomplete="off">
         <button onclick="submitContact()" style="width:100%;padding:11px;background:var(--ink);color:var(--ivory);border:none;border-radius:7px;font-size:13px;cursor:pointer;letter-spacing:.02em">Send message &rarr;</button>
         <p id="cf-status" style="font-size:11px;margin-top:.6rem;text-align:center;min-height:16px;color:var(--sa)"></p>
       </div>
@@ -1207,7 +1250,6 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
       <button class="sbitem" id="sbi-tracker" onclick="view('tracker')">&#8862; Job Tracker</button>
       <button class="sbitem" id="sbi-clients" onclick="view('clients')">&#9670; Clients</button>
       <button class="sbitem" id="sbi-inspiration" onclick="view('inspiration')">&#9680; Inspiration</button>
-      <button class="sbitem" id="sbi-files" onclick="view('files')">&#8863; Files &amp; Docs</button>
     </div>
     <div class="sbdiv"></div>
     <div class="sbsec">
@@ -1350,14 +1392,6 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
       </div>
     </div>
 
-    <!-- FILES -->
-    <div class="view" id="v-files">
-      <div class="mhead">
-        <div><h2 class="mtitle">Files <em>&amp;</em> Docs</h2><p class="msub">Resumes &middot; Cover letters &middot; Templates</p></div>
-        <button class="addbtn" onclick="openModal('file')">+ Add Document</button>
-      </div>
-      <div class="fgrid" id="fgrid"></div>
-    </div>
 
     <!-- WRITER -->
 
@@ -1528,6 +1562,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
           <button class="co-tab" id="cltab-finance" onclick="switchClientTab('finance')">Finance</button>
           <button class="co-tab" id="cltab-notes" onclick="switchClientTab('notes')">Notes</button>
           <button class="co-tab" id="cltab-docs" onclick="switchClientTab('docs')">Documents</button>
+          <button class="co-tab" id="cltab-portal" onclick="switchClientTab('portal')">⬡ Portal</button>
         </div>
 
         <div class="co-dash-body">
@@ -1672,19 +1707,35 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 
           <!-- DOCUMENTS -->
           <div class="co-tab-panel" id="clpanel-docs">
+            <!-- Deposit Invoice — typically sent at project start (50% upfront) -->
             <div class="co-section">
-              <div class="co-sec-lbl" style="margin-bottom:.75rem">Invoice</div>
+              <div class="co-sec-lbl" style="margin-bottom:.75rem">Deposit Invoice</div>
               <div class="doc-actions">
-                <button class="doc-gen-btn" id="btn-gen-invoice" onclick="generateDoc('invoice')">✦ Generate Invoice</button>
-                <span class="doc-loading" id="load-invoice">Generating…</span>
+                <button class="doc-gen-btn" id="btn-gen-invoice_deposit" onclick="generateDoc('invoice_deposit')">✦ Generate Deposit Invoice</button>
+                <span class="doc-loading" id="load-invoice_deposit">Generating…</span>
               </div>
-              <div class="doc-preview" id="prev-invoice"></div>
-              <div class="doc-actions" id="act-invoice" style="display:none">
-                <button class="doc-print-btn" onclick="printDoc('invoice')">⎙ Print as PDF</button>
-                <button class="doc-gen-btn" onclick="generateDoc('invoice')" style="background:transparent;border-color:var(--bd);color:var(--muted)">Regenerate</button>
+              <div class="doc-preview" id="prev-invoice_deposit"></div>
+              <div class="doc-actions" id="act-invoice_deposit" style="display:none">
+                <button class="doc-print-btn" onclick="printDoc('invoice_deposit')">⎙ Print as PDF</button>
+                <button class="doc-gen-btn" onclick="generateDoc('invoice_deposit')" style="background:transparent;border-color:var(--bd);color:var(--muted)">Regenerate</button>
               </div>
             </div>
             <hr class="doc-sep">
+            <!-- Final Invoice — sent on project completion (remaining balance) -->
+            <div class="co-section">
+              <div class="co-sec-lbl" style="margin-bottom:.75rem">Final Invoice</div>
+              <div class="doc-actions">
+                <button class="doc-gen-btn" id="btn-gen-invoice_final" onclick="generateDoc('invoice_final')">✦ Generate Final Invoice</button>
+                <span class="doc-loading" id="load-invoice_final">Generating…</span>
+              </div>
+              <div class="doc-preview" id="prev-invoice_final"></div>
+              <div class="doc-actions" id="act-invoice_final" style="display:none">
+                <button class="doc-print-btn" onclick="printDoc('invoice_final')">⎙ Print as PDF</button>
+                <button class="doc-gen-btn" onclick="generateDoc('invoice_final')" style="background:transparent;border-color:var(--bd);color:var(--muted)">Regenerate</button>
+              </div>
+            </div>
+            <hr class="doc-sep">
+            <!-- Contract -->
             <div class="co-section">
               <div class="co-sec-lbl" style="margin-bottom:.75rem">Contract</div>
               <div class="doc-actions">
@@ -1697,6 +1748,95 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
                 <button class="doc-gen-btn" onclick="generateDoc('contract')" style="background:transparent;border-color:var(--bd);color:var(--muted)">Regenerate</button>
               </div>
             </div>
+          </div>
+
+          <!-- PORTAL — manage what clients see at portal.html -->
+          <div class="co-tab-panel" id="clpanel-portal">
+
+            <!-- Client email (required for magic link auth) -->
+            <div class="co-section">
+              <div class="co-sec-lbl">Client Email</div>
+              <div class="co-field">
+                <label class="co-lbl">Email address — used to send the portal invite link</label>
+                <input class="co-inp" id="cld-email" type="email" placeholder="client@example.com" oninput="saveClient()">
+              </div>
+            </div>
+
+            <!-- Portal updates — messages from Amelia that clients see -->
+            <div class="co-section">
+              <div class="co-sec-lbl">Updates for Client</div>
+              <div id="cp-updates-list" style="margin-bottom:.75rem"></div>
+              <div style="display:flex;gap:.5rem">
+                <input class="co-inp" id="cp-update-input" placeholder="Write an update for your client…" style="flex:1" onkeydown="if(event.key==='Enter'){addPortalUpdate();event.preventDefault();}">
+                <button class="co-add-btn" onclick="addPortalUpdate()">+ Add</button>
+              </div>
+            </div>
+
+            <!-- Milestones — project progress checklist visible to client -->
+            <div class="co-section">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
+                <div class="co-sec-lbl" style="margin-bottom:0">Milestones</div>
+                <button class="co-add-btn" onclick="addMilestone()">+ Add</button>
+              </div>
+              <div id="cp-milestones-list" style="margin-bottom:.5rem"></div>
+              <input class="co-inp" id="cp-ms-input" placeholder="e.g. Wireframes delivered · Design approved · Build complete" style="font-size:11px" onkeydown="if(event.key==='Enter'){addMilestone();event.preventDefault();}">
+            </div>
+
+            <!-- Document publish toggles -->
+            <div class="co-section">
+              <div class="co-sec-lbl">Publish Documents</div>
+              <div class="cp-toggle-row">
+                <div><div class="cp-toggle-lbl">Deposit Invoice</div><div class="cp-toggle-sub">Shows invoice in client portal</div></div>
+                <input type="checkbox" id="cp-show-inv-deposit" onchange="saveClient()">
+              </div>
+              <div class="cp-toggle-row">
+                <div><div class="cp-toggle-lbl">Final Invoice</div><div class="cp-toggle-sub">Shows final invoice in client portal</div></div>
+                <input type="checkbox" id="cp-show-inv-final" onchange="saveClient()">
+              </div>
+              <div class="cp-toggle-row">
+                <div><div class="cp-toggle-lbl">Contract</div><div class="cp-toggle-sub">Client can read &amp; e-sign from portal</div></div>
+                <input type="checkbox" id="cp-show-contract" onchange="saveClient()">
+              </div>
+            </div>
+
+            <!-- Signed contract status (read-only, populated when client signs) -->
+            <div class="co-section" id="cp-signed-section" style="display:none">
+              <div class="co-sec-lbl">Contract Signature</div>
+              <div id="cp-signed-status"></div>
+              <button class="doc-print-btn" style="margin-top:.6rem" onclick="printSignedContract()">⎙ Print Signed Contract</button>
+            </div>
+
+            <!-- Client intake data (read-only — filled in by client from portal) -->
+            <div class="co-section" id="cp-intake-section" style="display:none">
+              <div class="co-sec-lbl">Client Intake (submitted by client)</div>
+              <div id="cp-intake-display"></div>
+            </div>
+
+            <!-- Revision requests (submitted by client from portal) -->
+            <div class="co-section" id="cp-revisions-section" style="display:none">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
+                <div class="co-sec-lbl" style="margin-bottom:0">Revision Requests</div>
+                <button class="co-add-btn" onclick="markAllRevisionsRead()">Mark all read</button>
+              </div>
+              <div id="cp-revisions-list"></div>
+            </div>
+
+            <!-- Last viewed timestamp -->
+            <div class="co-section">
+              <div class="co-sec-lbl">Portal Activity</div>
+              <div id="cp-last-seen" style="font-size:12px;color:var(--muted)">Not yet visited</div>
+              <a class="cp-portal-link" href="" id="cp-portal-link" target="_blank" rel="noopener noreferrer">Open portal ↗</a>
+            </div>
+
+            <!-- Publish & Invite actions -->
+            <div class="co-section">
+              <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+                <button class="cp-publish-btn" onclick="publishToPortal(false)">Publish to Portal</button>
+                <button class="cp-invite-btn" onclick="publishToPortal(true)">Send Portal Invite</button>
+              </div>
+              <div class="cp-status-line" id="cp-publish-status"></div>
+            </div>
+
           </div>
 
         </div>
@@ -1910,15 +2050,6 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
   <div class="macts"><button class="mcancel" onclick="closeModal('job')">Cancel</button><button class="msubmit" onclick="addJob()">Add &rarr;</button></div>
 </div></div>
 
-<div class="ov" id="m-file"><div class="modal">
-  <div class="modtitle">Add <em>Document</em></div>
-  <div class="frow"><label class="flbl">Document name</label><input class="finp" id="fi-name" placeholder="e.g. Apple SWE Resume &mdash; Tailored"></div>
-  <div class="fg2">
-    <div class="frow"><label class="flbl">Type</label><select class="fsel" id="fi-type"><option>Resume</option><option>Cover Letter</option><option>Template</option><option>Other</option></select></div>
-    <div class="frow"><label class="flbl">Target company</label><input class="finp" id="fi-co" placeholder="e.g. Google"></div>
-  </div>
-  <div class="macts"><button class="mcancel" onclick="closeModal('file')">Cancel</button><button class="msubmit" onclick="addFile()">Add &rarr;</button></div>
-</div></div>
 
 <!-- CROP MODAL -->
 <div class="crop-modal-bg" id="crop-modal-bg">
@@ -2065,6 +2196,15 @@ async function sbSave(data) {
     });
   } catch(e) { console.warn('Supabase save failed:', e); }
 }
+
+// ══════════════════════════════════════════════════
+// PORTAL CONSTANTS
+// PORTAL_ADMIN_TOKEN must match the ADMIN_TOKEN secret set in the
+// portal-sync Edge Function (Supabase Dashboard → Edge Functions → Secrets).
+// Replace the placeholder below with your actual secret before deploying.
+const PORTAL_ADMIN_TOKEN = '_TGZBrNw-sqdt_2';
+const PORTAL_SYNC_FN     = SB_URL + '/functions/v1/portal-sync';
+const PORTAL_URL         = 'https://libraryofmorenita-hub.github.io/amelia-arabe/portal.html';
 
 // ══════════════════════════════════════════════════
 // DEFAULT DATA
@@ -2228,7 +2368,6 @@ function view(v) {
   if (v === 'paintings')   renderPaintList();
   if (v === 'tracker')     { renderJobs(); updateFilterCounts(); }
   if (v === 'clients')     { setClientView(clViewMode); updateClientStats(); }
-  if (v === 'files')       renderFiles();
   if (v === 'strategy')    loadStrategy();
   if (v === 'inspiration') renderInspiration();
   const sb = document.querySelector('.sidebar');
@@ -2843,23 +2982,62 @@ function openProjModal(i) {
   document.getElementById('pm-meta').textContent  = w.meta || '';
   document.getElementById('pm-tag').textContent   = w.category || '';
 
+  // All user-authored fields escaped with esc() before injection into innerHTML
+  const hasCase = detail.caseProblem || detail.caseProcess || detail.caseOutcome;
+  const hasPhotos = detail.photos && detail.photos.length;
   document.getElementById('pm-body').innerHTML = `
     ${detail.desc
-      ? `<p class="pm-desc">${detail.desc}</p>`
+      ? `<p class="pm-desc">${esc(detail.desc)}</p>`
       : `<p class="pm-desc" style="color:var(--faint);font-style:italic">No description added yet.</p>`}
 
     ${detail.result
-      ? `<div class="pm-result"><div class="pm-result-lbl">Key Result</div><div class="pm-result-val">${detail.result}</div></div>`
+      ? `<div class="pm-result"><div class="pm-result-lbl">Key Result</div><div class="pm-result-val">${esc(detail.result)}</div></div>`
       : ''}
 
     ${detail.stack && detail.stack.length
-      ? `<div class="pm-stack">${detail.stack.map(s=>`<span class="pm-chip">${s}</span>`).join('')}</div>`
+      ? `<div class="pm-stack">${detail.stack.map(s=>`<span class="pm-chip">${esc(s)}</span>`).join('')}</div>`
       : ''}
+
+    ${hasPhotos ? `
+      <hr class="pm-divider">
+      <div class="pm-section-lbl">Photos &amp; Media</div>
+      <div class="pm-photo-grid">
+        ${detail.photos.map((src,i) => `<img src="${src}" alt="Project photo ${i+1}" onclick="openPhotoLightbox('${esc(w.id)}',${i})" loading="lazy">`).join('')}
+      </div>` : ''}
+
+    ${hasCase ? `
+      <hr class="pm-divider">
+      <div class="pm-section-lbl">Case Study</div>
+      ${detail.caseProblem ? `<div class="pm-case-block"><div class="pm-case-q">The Problem</div><div class="pm-case-text">${esc(detail.caseProblem)}</div></div>` : ''}
+      ${detail.caseProcess ? `<div class="pm-case-block"><div class="pm-case-q">The Process</div><div class="pm-case-text">${esc(detail.caseProcess)}</div></div>` : ''}
+      ${detail.caseOutcome ? `<div class="pm-case-block"><div class="pm-case-q">The Outcome</div><div class="pm-case-text">${esc(detail.caseOutcome)}</div></div>` : ''}
+    ` : ''}
+
+    ${detail.credits ? `
+      <hr class="pm-divider">
+      <div class="pm-section-lbl">Collaborators &amp; Credits</div>
+      <div class="pm-credits-text">${esc(detail.credits)}</div>
+    ` : ''}
   `;
 
   const actions = document.getElementById('pm-actions');
-  actions.innerHTML =
-    (detail.link ? `<button class="pm-btn pri" onclick="window.open('${detail.link}','_blank')">View live →</button>` : '');
+  if (detail.link) {
+    // Build button via DOM — avoids string interpolation of user URL into onclick attribute
+    const btn = document.createElement('button');
+    btn.className = 'pm-btn pri';
+    btn.textContent = 'View live →';
+    btn.addEventListener('click', () => {
+      // Validate URL scheme before opening — blocks javascript: and data: URIs
+      try {
+        const url = new URL(detail.link.startsWith('http') ? detail.link : 'https://' + detail.link);
+        if (url.protocol === 'https:' || url.protocol === 'http:') window.open(url.href, '_blank', 'noopener,noreferrer');
+      } catch { /* invalid URL, do nothing */ }
+    });
+    actions.innerHTML = '';
+    actions.appendChild(btn);
+  } else {
+    actions.innerHTML = '';
+  }
 
   document.getElementById('proj-modal-bg').classList.add('on');
   document.body.style.overflow = 'hidden';
@@ -3587,7 +3765,17 @@ function addClient() {
     payment_type:'50% upfront · 50% on delivery',
     received:'', remaining:'',
     invoice_sent:'No', contract_signed:'No',
-    finance_notes:'', brainstorm:'', notes:''
+    finance_notes:'', brainstorm:'', notes:'',
+    // Portal fields — managed from the Portal tab in the client dashboard
+    email:'',           // client email for magic link auth
+    portal_notes:[],    // [{date: ISO, message: string}] — Amelia's updates visible to client
+    milestones:[],      // [{label: string, done: boolean}] — project progress checklist
+    portal_show_invoice_deposit: false,
+    portal_show_invoice_final:   false,
+    portal_show_contract:        false,
+    portal_signed_name: '',     // typed name from client's e-signature
+    portal_signed_at:   '',     // ISO timestamp of signing
+    portal_last_seen:   ''      // last time client opened the portal
   };
   D.clients.unshift(c);
   closeModal('client');
@@ -3641,14 +3829,21 @@ function openClientDash(id) {
   document.getElementById('cld-brainstorm').value     = c.brainstorm||'';
   document.getElementById('cld-notes').value          = c.notes||'';
   renderClientContacts();
-  // Restore previously generated documents
-  ['invoice','contract'].forEach(type => {
+  // Restore previously generated documents — now supports invoice_deposit, invoice_final, contract
+  // Re-sanitize on restore as defence-in-depth (stored doc may pre-date DOMPurify)
+  ['invoice_deposit','invoice_final','contract'].forEach(type => {
     const prev = document.getElementById('prev-' + type);
     const act  = document.getElementById('act-' + type);
     if (!prev) return;
     const saved = c.generated_docs && c.generated_docs[type];
-    if (saved) { prev.innerHTML = saved; prev.classList.add('on'); if (act) act.style.display = 'flex'; }
-    else        { prev.innerHTML = '';    prev.classList.remove('on'); if (act) act.style.display = 'none'; }
+    if (saved) {
+      prev.innerHTML = DOMPurify.sanitize(saved, {
+        FORBID_TAGS: ['script','iframe','object','embed','form','input','button','textarea','link','meta'],
+        FORBID_ATTR: ['onclick','onerror','onload','onmouseover','onfocus','onblur','onchange','oninput','onsubmit'],
+        ALLOW_DATA_ATTR: false
+      });
+      prev.classList.add('on'); if (act) act.style.display = 'flex';
+    } else { prev.innerHTML = ''; prev.classList.remove('on'); if (act) act.style.display = 'none'; }
   });
   switchClientTab('overview');
   document.getElementById('cl-dash-bg').classList.add('on');
@@ -3669,6 +3864,8 @@ function switchClientTab(tab) {
   const panel = document.getElementById('clpanel-' + tab);
   if (btn) btn.classList.add('on');
   if (panel) panel.classList.add('on');
+  // When switching to the Portal tab, render its dynamic content from the current client
+  if (tab === 'portal') renderPortalTab();
 }
 
 function saveClient() {
@@ -3698,6 +3895,15 @@ function saveClient() {
   c.finance_notes   = get('cld-finance-notes');
   c.brainstorm      = get('cld-brainstorm');
   c.notes           = get('cld-notes');
+  // Portal fields — saved from Portal tab inputs
+  const emailEl = document.getElementById('cld-email');
+  if (emailEl) c.email = emailEl.value.trim();
+  const showInvDep  = document.getElementById('cp-show-inv-deposit');
+  const showInvFin  = document.getElementById('cp-show-inv-final');
+  const showContract= document.getElementById('cp-show-contract');
+  if (showInvDep)   c.portal_show_invoice_deposit = showInvDep.checked;
+  if (showInvFin)   c.portal_show_invoice_final   = showInvFin.checked;
+  if (showContract) c.portal_show_contract         = showContract.checked;
   // Update header
   document.getElementById('cld-name').textContent    = c.name;
   document.getElementById('cld-service').textContent = c.service;
@@ -3744,12 +3950,13 @@ function removeClientContact(i) {
 
 // ── DOCUMENT GENERATION ──────────────────────────────
 async function callClaude(messages) {
-  let key = localStorage.getItem('claude-api-key');
+  // sessionStorage — key is cleared when the tab closes, reducing exposure window vs localStorage
+  let key = sessionStorage.getItem('claude-api-key');
   if (!key) {
-    key = window.prompt('Enter your Claude API key to enable AI document generation.\n(Stored locally in your browser only — never sent to any server.)');
+    key = window.prompt('Enter your Claude API key to enable AI document generation.\n(Stored in session only — cleared when you close this tab. Never sent to any server except Anthropic.)');
     if (!key) return null;
     key = key.trim();
-    localStorage.setItem('claude-api-key', key);
+    sessionStorage.setItem('claude-api-key', key);
   }
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -3763,7 +3970,7 @@ async function callClaude(messages) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    if (res.status === 401) { localStorage.removeItem('claude-api-key'); }
+    if (res.status === 401) { sessionStorage.removeItem('claude-api-key'); }
     throw new Error(err.error?.message || 'API error ' + res.status);
   }
   const data = await res.json();
@@ -3785,25 +3992,45 @@ async function generateDoc(type) {
     const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
     const invoiceNum = 'INV-' + Date.now().toString().slice(-6);
     let userPrompt;
-    if (type === 'invoice') {
-      userPrompt = `Generate a clean, professional HTML invoice fragment (no html/body tags — inner content only, inline styles only) for this freelance engagement:
+    if (type === 'invoice_deposit') {
+      // ── DEPOSIT INVOICE — 50% upfront / amount due now ──
+      userPrompt = `Generate a clean, professional HTML deposit invoice fragment (no html/body tags — inner content only, inline styles only) for this freelance engagement:
 
 PROVIDER: Amelia Arabe · muses of morenita · missameliava@gmail.com
 CLIENT: ${c.name}
 CONTACT: ${c.contact || '—'}
 SERVICE: ${c.service || '—'}
-INVOICE #: ${invoiceNum}
+INVOICE #: DEP-${invoiceNum}
 DATE: ${today}
 CONTRACT VALUE: ${c.value || 'TBD'}
 PAYMENT STRUCTURE: ${c.payment_type || '—'}
-AMOUNT RECEIVED: ${c.received || '$0'}
-AMOUNT DUE: ${c.remaining || c.value || 'TBD'}
+DEPOSIT AMOUNT DUE NOW: Approximately 50% of contract value (confirm exact amount from the payment structure above)
 DELIVERABLES: ${c.deliverables || c.scope || '—'}
 FINANCE NOTES: ${c.finance_notes || ''}
 EXTRA NOTES (clean up and use as context): ${c.notes || ''}
 
-Create a professional invoice with: header with provider name/contact, invoice number and date, bill-to section, services rendered table with clear line items from the deliverables, payment summary (total / received / balance due), and payment instructions. Use inline styles only. Color palette: #1C1714 text, #8B4A2F for headers/accents, #FAF7F2 background for header band. Return ONLY the HTML fragment, no markdown.`;
+This is a DEPOSIT invoice — the upfront payment required before work begins. Label it clearly as "Deposit Invoice". Include: header with provider name/contact, invoice number and date, bill-to section, a line item for the deposit (e.g. "Deposit — Web Design Services — 50% upfront"), payment summary showing deposit amount due now and total project value for reference, and payment instructions. Use inline styles only. Color palette: #1C1714 text, #8B4A2F for headers/accents, #FAF7F2 background for header band. Return ONLY the HTML fragment, no markdown.`;
+    } else if (type === 'invoice_final') {
+      // ── FINAL INVOICE — remaining balance / project complete ──
+      userPrompt = `Generate a clean, professional HTML final invoice fragment (no html/body tags — inner content only, inline styles only) for this freelance engagement:
+
+PROVIDER: Amelia Arabe · muses of morenita · missameliava@gmail.com
+CLIENT: ${c.name}
+CONTACT: ${c.contact || '—'}
+SERVICE: ${c.service || '—'}
+INVOICE #: FIN-${invoiceNum}
+DATE: ${today}
+CONTRACT VALUE: ${c.value || 'TBD'}
+PAYMENT STRUCTURE: ${c.payment_type || '—'}
+AMOUNT RECEIVED (deposit paid): ${c.received || '$0'}
+REMAINING BALANCE DUE: ${c.remaining || 'See payment structure above'}
+DELIVERABLES: ${c.deliverables || c.scope || '—'}
+FINANCE NOTES: ${c.finance_notes || ''}
+EXTRA NOTES (clean up and use as context): ${c.notes || ''}
+
+This is a FINAL invoice — the remaining balance due upon project completion. Label it clearly as "Final Invoice". Include: header with provider name/contact, invoice number and date, bill-to section, a services rendered table with line items from deliverables, payment summary showing total contract value / deposit already received / remaining balance now due, and payment instructions. Use inline styles only. Color palette: #1C1714 text, #8B4A2F for headers/accents, #FAF7F2 background for header band. Return ONLY the HTML fragment, no markdown.`;
     } else {
+      // ── CONTRACT ──────────────────────────────────────────
       userPrompt = `Generate a clean, professional HTML freelance service contract fragment (no html/body tags — inner content only, inline styles only) for this engagement:
 
 PROVIDER: Amelia Arabe · muses of morenita · missameliava@gmail.com
@@ -3825,20 +4052,344 @@ Include sections: parties & recitals, project scope, deliverables, timeline, pay
     const html = await callClaude([{role:'user', content: userPrompt}]);
     if (!html) { btn.disabled = false; load.classList.remove('on'); return; }
     // Strip any accidental markdown code fences
-    const clean = html.replace(/^```(?:html)?\n?/,'').replace(/\n?```$/,'').trim();
+    const stripped = html.replace(/^```(?:html)?\n?/,'').replace(/\n?```$/,'').trim();
+    // Sanitize with DOMPurify before rendering — prevents XSS if API response is ever malicious.
+    // Allows rich layout tags and inline styles (needed for invoice/contract formatting)
+    // but strips all script tags, event handlers, and javascript: URIs.
+    const clean = DOMPurify.sanitize(stripped, {
+      FORBID_TAGS: ['script','iframe','object','embed','form','input','button','textarea','link','meta'],
+      FORBID_ATTR: ['onclick','onerror','onload','onmouseover','onfocus','onblur','onchange','oninput','onsubmit'],
+      ALLOW_DATA_ATTR: false
+    });
     prev.innerHTML = clean;
     prev.classList.add('on');
     if (act) act.style.display = 'flex';
     if (!c.generated_docs) c.generated_docs = {};
-    c.generated_docs[type] = clean;
+    c.generated_docs[type] = clean; // store already-sanitized HTML
     save();
-    toast((type === 'invoice' ? 'Invoice' : 'Contract') + ' generated');
+    const typeLabel = type === 'invoice_deposit' ? 'Deposit invoice' : type === 'invoice_final' ? 'Final invoice' : 'Contract';
+    toast(typeLabel + ' generated');
   } catch(e) {
     toast('Generation failed: ' + e.message);
     console.error(e);
   }
   btn.disabled = false;
   load.classList.remove('on');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PORTAL TAB — all functions that power the Portal tab in the client
+// dashboard. Amelia uses these to publish updates, milestones, and
+// docs to the client-facing portal.html page via Supabase.
+// ══════════════════════════════════════════════════════════════════
+
+// ── renderPortalTab ──────────────────────────────────────────────
+// Populates the entire Portal tab with fresh data from the active
+// client object. Called automatically when the Portal tab is opened.
+function renderPortalTab() {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c) return;
+
+  // Email field
+  const emailEl = document.getElementById('cld-email');
+  if (emailEl) emailEl.value = c.email || '';
+
+  // Restore document toggle checkboxes from saved client data
+  const chkDep = document.getElementById('cp-show-inv-deposit');
+  const chkFin = document.getElementById('cp-show-inv-final');
+  const chkCon = document.getElementById('cp-show-contract');
+  if (chkDep) chkDep.checked = !!c.portal_show_invoice_deposit;
+  if (chkFin) chkFin.checked = !!c.portal_show_invoice_final;
+  if (chkCon) chkCon.checked = !!c.portal_show_contract;
+
+  // Portal updates list
+  renderPortalUpdatesList(c);
+
+  // Milestones list — HTML uses id="cp-milestones-list"
+  renderMilestonesList(c);
+
+  // Signed contract status — show section only when client has signed
+  const signedSec = document.getElementById('cp-signed-section');
+  const signedStatus = document.getElementById('cp-signed-status');
+  if (signedSec && signedStatus) {
+    if (c.portal_signed_name && c.portal_signed_at) {
+      const d = new Date(c.portal_signed_at).toLocaleString('en-US',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+      signedStatus.innerHTML = `<span class="cp-signed-badge">✓ Signed by ${esc(c.portal_signed_name)} on ${d}</span>`;
+      signedSec.style.display = '';
+    } else {
+      signedSec.style.display = 'none';
+    }
+  }
+
+  // Intake data — show section only when client has submitted intake
+  const intakeSec = document.getElementById('cp-intake-section');
+  const intakeEl  = document.getElementById('cp-intake-display');
+  if (intakeSec && intakeEl) {
+    const b = c.intake_brand || {};
+    const hasIntake = Object.keys(b).length > 0 || !!c.access_logins;
+    if (hasIntake) {
+      const fields = [
+        ['Brand / Project Name', b.brand_name],
+        ['Current Website', b.current_url],
+        ['Brand Colors', b.colors],
+        ['Fonts', b.fonts],
+        ['Vibe / Tone', b.vibe],
+        ['Target Audience', b.target_audience],
+        ['Sites They Love', b.sites_love],
+        ['Additional Notes', b.notes],
+      ];
+      let html = '<div style="display:grid;gap:6px">';
+      fields.forEach(([lbl, val]) => {
+        if (val) html += `<div class="cp-intake-field"><span class="cp-intake-lbl">${lbl}</span><span class="cp-intake-val">${esc(val)}</span></div>`;
+      });
+      if (c.access_logins) {
+        html += `<div class="cp-intake-field" style="margin-top:4px"><span class="cp-intake-lbl" style="color:#8B4A2F">Technical Access (private)</span><span class="cp-intake-val" style="white-space:pre-wrap">${esc(c.access_logins)}</span></div>`;
+      }
+      html += '</div>';
+      intakeEl.innerHTML = html;
+      intakeSec.style.display = '';
+    } else {
+      intakeSec.style.display = 'none';
+    }
+  }
+
+  // Revision requests — show section only when requests exist
+  const revSec = document.getElementById('cp-revisions-section');
+  const revEl  = document.getElementById('cp-revisions-list');
+  if (revSec && revEl) {
+    const revs = c.revision_requests || [];
+    if (revs.length > 0) {
+      revEl.innerHTML = revs.map((r, i) => `
+        <div class="cp-rev-row${r.read ? '' : ' cp-rev-unread'}">
+          <span class="cp-rev-date">${r.date || ''}</span>
+          <span class="cp-rev-msg">${esc(r.message)}</span>
+          ${!r.read ? `<button class="cp-update-rm" onclick="markRevisionRead(${i})" title="Mark read">✓</button>` : ''}
+        </div>`).join('');
+      revSec.style.display = '';
+    } else {
+      revSec.style.display = 'none';
+    }
+  }
+
+  // Last seen timestamp
+  const lsEl = document.getElementById('cp-last-seen');
+  if (lsEl) {
+    if (c.portal_last_seen) {
+      const d = new Date(c.portal_last_seen).toLocaleString('en-US',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+      lsEl.textContent = 'Last viewed by client: ' + d;
+    } else {
+      lsEl.textContent = 'Client hasn\'t visited yet';
+    }
+  }
+
+  // Portal link — set href and visible text to the client's portal URL
+  const linkEl = document.getElementById('cp-portal-link');
+  if (linkEl) { linkEl.href = PORTAL_URL; linkEl.textContent = PORTAL_URL; }
+}
+
+// ── renderPortalUpdatesList ──────────────────────────────────────
+// Renders the list of published updates inside the Portal tab.
+function renderPortalUpdatesList(c) {
+  const el = document.getElementById('cp-updates-list');
+  if (!el) return;
+  const notes = c.portal_notes || [];
+  if (notes.length === 0) {
+    el.innerHTML = '<span style="color:#999;font-size:12px">No updates published yet</span>';
+    return;
+  }
+  el.innerHTML = notes.map((n, i) => `
+    <div class="cp-update-row">
+      <span class="cp-update-date">${n.date || ''}</span>
+      <span class="cp-update-msg">${esc(n.message)}</span>
+      <button class="cp-update-rm" onclick="removePortalUpdate(${i})" title="Remove">×</button>
+    </div>`).join('');
+}
+
+// ── addPortalUpdate ──────────────────────────────────────────────
+// Appends a new dated message to client.portal_notes and re-renders.
+function addPortalUpdate() {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c) return;
+  const inp = document.getElementById('cp-update-input');
+  const msg = (inp?.value || '').trim();
+  if (!msg) return;
+  if (!Array.isArray(c.portal_notes)) c.portal_notes = [];
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+  c.portal_notes.push({ date, message: msg });
+  inp.value = '';
+  renderPortalUpdatesList(c);
+  save();
+}
+
+// ── removePortalUpdate ───────────────────────────────────────────
+// Removes a portal update by index, re-renders, and saves.
+function removePortalUpdate(i) {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c || !Array.isArray(c.portal_notes)) return;
+  c.portal_notes.splice(i, 1);
+  renderPortalUpdatesList(c);
+  save();
+}
+
+// ── renderMilestonesList ─────────────────────────────────────────
+// Renders the milestone checklist inside the Portal tab.
+function renderMilestonesList(c) {
+  const el = document.getElementById('cp-milestones-list');
+  if (!el) return;
+  const ms = c.milestones || [];
+  if (ms.length === 0) {
+    el.innerHTML = '<span style="color:#999;font-size:12px">No milestones added yet</span>';
+    return;
+  }
+  el.innerHTML = ms.map((m, i) => `
+    <div class="cp-ms-row">
+      <input type="checkbox" class="cp-ms-check${m.done ? ' done' : ''}" ${m.done ? 'checked' : ''}
+        onchange="toggleMilestone(${i})" title="Mark complete">
+      <span class="cp-ms-label${m.done ? ' done' : ''}">${esc(m.label)}</span>
+      <button class="cp-ms-rm" onclick="removeMilestone(${i})" title="Remove">×</button>
+    </div>`).join('');
+}
+
+// ── addMilestone ─────────────────────────────────────────────────
+// Reads the milestone input, appends a new milestone, saves.
+function addMilestone() {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c) return;
+  const inp = document.getElementById('cp-ms-input');
+  const label = (inp?.value || '').trim();
+  if (!label) return;
+  if (!Array.isArray(c.milestones)) c.milestones = [];
+  c.milestones.push({ label, done: false });
+  inp.value = '';
+  renderMilestonesList(c);
+  save();
+}
+
+// ── toggleMilestone ──────────────────────────────────────────────
+// Flips the done boolean on a milestone, re-renders, saves.
+function toggleMilestone(i) {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c || !c.milestones?.[i]) return;
+  c.milestones[i].done = !c.milestones[i].done;
+  renderMilestonesList(c);
+  save();
+}
+
+// ── removeMilestone ──────────────────────────────────────────────
+// Removes a milestone by index, re-renders, saves.
+function removeMilestone(i) {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c || !Array.isArray(c.milestones)) return;
+  c.milestones.splice(i, 1);
+  renderMilestonesList(c);
+  save();
+}
+
+// ── markRevisionRead ─────────────────────────────────────────────
+// Marks a single revision request as read, re-renders.
+function markRevisionRead(i) {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c || !c.revision_requests?.[i]) return;
+  c.revision_requests[i].read = true;
+  renderPortalTab();
+  save();
+}
+
+// ── markAllRevisionsRead ─────────────────────────────────────────
+// Marks all revision requests as read at once (called from portal tab header button).
+function markAllRevisionsRead() {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c || !Array.isArray(c.revision_requests)) return;
+  c.revision_requests.forEach(r => r.read = true);
+  renderPortalTab();
+  save();
+}
+
+// ── printSignedContract ──────────────────────────────────────────
+// Prints the signed contract HTML (stored after client e-signs).
+function printSignedContract() {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c?.portal_signed_html) { toast('No signed contract on file'); return; }
+  const area = document.getElementById('doc-print-area');
+  area.innerHTML = `<div style="max-width:680px;margin:0 auto;padding:2rem 0;font-family:Georgia,'Times New Roman',serif;color:#1C1714">${c.portal_signed_html}</div>`;
+  area.style.display = 'block';
+  window.print();
+  area.style.display = 'none';
+  area.innerHTML = '';
+}
+
+// ── publishToPortal ──────────────────────────────────────────────
+// Gathers all portal data from the active client and POSTs to the
+// Supabase portal-sync Edge Function. If sendInvite=true, Supabase
+// will also generate and email the client a magic link to portal.html.
+// Requires: PORTAL_ADMIN_TOKEN constant (set above Supabase keys)
+async function publishToPortal(sendInvite) {
+  const c = D.clients.find(x => x.id === activeClientId);
+  if (!c) return;
+
+  // Read current email from input (may have been edited without saving)
+  const emailEl = document.getElementById('cld-email');
+  const email = (emailEl?.value || c.email || '').trim();
+  if (!email) { toast('Add client email first'); emailEl?.focus(); return; }
+
+  // Save email back to client object
+  c.email = email;
+  save();
+
+  // Read current document toggle values
+  const showDep = document.getElementById('cp-show-inv-deposit')?.checked || false;
+  const showFin = document.getElementById('cp-show-inv-final')?.checked || false;
+  const showCon = document.getElementById('cp-show-contract')?.checked || false;
+
+  // Build payload — only include doc HTML if the toggle is on and the doc exists
+  const payload = {
+    client_id:            c.id,
+    email,
+    display_name:         c.name || '',
+    service:              c.service || '',
+    status:               c.status || '',
+    updates:              c.portal_notes || [],
+    milestones:           c.milestones || [],
+    show_invoice_deposit: showDep,
+    show_invoice_final:   showFin,
+    show_contract:        showCon,
+    invoice_deposit_html: showDep ? (c.generated_docs?.invoice_deposit || '') : '',
+    invoice_final_html:   showFin ? (c.generated_docs?.invoice_final   || '') : '',
+    contract_html:        showCon ? (c.generated_docs?.contract         || '') : '',
+    deliverables:         c.deliverables || '',
+    send_invite:          !!sendInvite
+  };
+
+  // Update UI — show loading state on buttons
+  const pubBtn = document.querySelector('.cp-publish-btn');
+  const invBtn = document.querySelector('.cp-invite-btn');
+  const statusEl = document.getElementById('cp-publish-status');
+  if (pubBtn) pubBtn.disabled = true;
+  if (invBtn) invBtn.disabled = true;
+  if (statusEl) statusEl.textContent = sendInvite ? 'Sending invite…' : 'Publishing…';
+
+  try {
+    const res = await fetch(PORTAL_SYNC_FN, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-token': PORTAL_ADMIN_TOKEN
+      },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || res.statusText);
+
+    if (statusEl) statusEl.textContent = sendInvite ? '✓ Invite sent to ' + email : '✓ Published successfully';
+    toast(sendInvite ? 'Invite sent to ' + email : 'Portal updated');
+  } catch(e) {
+    if (statusEl) statusEl.textContent = '✗ ' + e.message;
+    toast('Publish failed: ' + e.message);
+    console.error(e);
+  } finally {
+    if (pubBtn) pubBtn.disabled = false;
+    if (invBtn) invBtn.disabled = false;
+  }
 }
 
 function printDoc(type) {
@@ -3901,7 +4452,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof renderWork === 'function') renderWork();
         if (typeof renderPaintings === 'function') renderPaintings();
         if (typeof renderJobs === 'function') renderJobs();
-        if (typeof renderFiles === 'function') renderFiles();
         if (typeof renderClients === 'function') renderClients();
         if (typeof renderLibrary === 'function') renderLibrary();
         if (typeof loadStrategy === 'function') loadStrategy();
@@ -3972,7 +4522,7 @@ function renderJobs() {
       </div></td>
       <td><div class="jcell"><div class="fdots">${dots}</div></div></td>
       <td><div class="jcell">${dateHtml}</div></td>
-      <td><div class="jcell" style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:1px;width:100%">${esc(j.notes||'')}</div></td>
+      <td><div class="jcell" style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(j.notes||'')}</div></td>
       <td><div class="jcell" style="padding:9px 6px"><button onclick="event.stopPropagation();deleteJob('${j.id}')" style="font-size:13px;color:var(--faint);border:none;background:transparent;cursor:pointer;line-height:1">&times;</button></div></td>
     </tr>`;
   }).join('');
@@ -4206,42 +4756,6 @@ function toggleMobileSidebar() {
 // ══════════════════════════════════════════════════
 // FILES
 // ══════════════════════════════════════════════════
-function renderFiles() {
-  const icons = {Resume:'\uD83D\uDCC4','Cover Letter':'\u2709',Other:'\uD83D\uDCCE',Template:'\uD83D\uDCCB'};
-  const cls   = {Resume:'ft-r','Cover Letter':'ft-c',Other:'ft-n',Template:'ft-n'};
-  document.getElementById('fgrid').innerHTML = D.files.map(f => `
-    <div class="fcard">
-      <div class="fthumb ${cls[f.type]||'ft-n'}">${icons[f.type]||'\uD83D\uDCCE'}</div>
-      <div class="fbody">
-        <div class="fname">${esc(f.name)}</div>
-        <div class="fmeta">${f.type} \u00b7 ${esc(f.target_co||'\u2014')} \u00b7 ${f.updated||'\u2014'}</div>
-        <div class="fbtns">
-          <button class="fbtn" onclick="toast('Editor coming in v2')">Edit</button>
-          <button class="fbtn" onclick="toast('PDF export coming in v2')">PDF \u2193</button>
-          <button class="fbtn p" onclick="toast('Link to job in tracker')">Link</button>
-        </div>
-      </div>
-    </div>`).join('') + `
-    <div class="fcard" onclick="openModal('file')" style="border-style:dashed;opacity:.5">
-      <div class="fthumb ft-n"><span style="font-size:20px;color:var(--faint)">\uFF0B</span></div>
-      <div class="fbody"><div class="fname" style="color:var(--faint)">Add document</div></div>
-    </div>`;
-}
-
-function addFile() {
-  const name = document.getElementById('fi-name').value.trim();
-  if (!name) { toast('Enter a document name'); return; }
-  D.files.unshift({
-    id: uid(), name,
-    type:      document.getElementById('fi-type').value,
-    target_co: document.getElementById('fi-co').value || '\u2014',
-    updated:   new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'})
-  });
-  closeModal('file'); renderFiles(); save();
-  document.getElementById('fi-name').value = '';
-  document.getElementById('fi-co').value   = '';
-  toast('Document added');
-}
 
 // ══════════════════════════════════════════════════
 // WRITER
@@ -4263,34 +4777,56 @@ function toggleMs(row) {
 const CONTACT_FN = 'https://agekvrkqrwepdoeetpbx.supabase.co/functions/v1/contact';
 
 async function submitContact() {
+  // Honeypot — bots fill hidden fields, real users don't. Silently drop if set.
+  if (document.getElementById('cf-honeypot').value) {
+    document.getElementById('contact-form').style.display = 'none';
+    document.getElementById('contact-success').style.display = 'block';
+    return;
+  }
+
   const name    = document.getElementById('cf-name').value.trim();
   const email   = document.getElementById('cf-email').value.trim();
   const subject = document.getElementById('cf-subject').value;
   const message = document.getElementById('cf-message').value.trim();
   const status  = document.getElementById('cf-status');
-  if (!name || !email || !message || !subject) {
-    status.style.color = 'var(--si)';
-    status.textContent = 'Please fill in all fields.';
-    return;
-  }
+
+  const err = (msg) => { status.style.color = 'var(--si)'; status.textContent = msg; };
+
+  // Presence checks
+  if (!name || !email || !message || !subject) return err('Please fill in all fields.');
+
+  // Email format — basic RFC-5321 sanity check
+  if (!/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
+
+  // Length limits — prevent oversized payloads
+  if (name.length    > 100)  return err('Name must be under 100 characters.');
+  if (email.length   > 254)  return err('Email address is too long.');
+  if (message.length > 4000) return err('Message must be under 4,000 characters.');
+
+  // Client-side rate limit — 1 submission per 60 s (server enforces its own limit too)
+  const lastSent = parseInt(localStorage.getItem('cf-last-submit') || '0', 10);
+  if (Date.now() - lastSent < 60_000) return err('Please wait a moment before sending another message.');
+
   status.style.color = 'var(--muted)';
   status.textContent = 'Sending\u2026';
   try {
     const res = await fetch(CONTACT_FN, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      // Send only the four expected fields — no extra data
       body: JSON.stringify({ name, email, subject, message })
     });
     if (res.ok) {
+      localStorage.setItem('cf-last-submit', String(Date.now()));
       document.getElementById('contact-form').style.display = 'none';
       document.getElementById('contact-success').style.display = 'block';
+    } else if (res.status === 429) {
+      err('Too many messages — please try again later.');
     } else {
-      status.style.color = 'var(--si)';
-      status.textContent = 'Something went wrong. Try emailing directly.';
+      err('Something went wrong. Try emailing directly.');
     }
   } catch {
-    status.style.color = 'var(--si)';
-    status.textContent = 'Network error. Try again.';
+    err('Network error. Try again.');
   }
 }
 
@@ -4319,8 +4855,15 @@ function toast(m) {
   tt = setTimeout(() => t.classList.remove('on'), 2600);
 }
 
+// HTML-escape for safe innerHTML/attribute injection.
+// Covers both double- and single-quoted attribute contexts (e.g. onclick='...${esc(val)}...').
 function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s||'')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
 }
 
 // ══════════════════════════════════════════════════
@@ -4417,7 +4960,6 @@ renderWork();
 renderPaintings();
 renderJobs();
 updateFilterCounts();
-renderFiles();
 
 // ══════════════════════════════════════════════════
 // LIBRARY EDITOR
