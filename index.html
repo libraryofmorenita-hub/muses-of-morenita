@@ -4372,7 +4372,8 @@ async function publishToPortal(sendInvite) {
     const res = await fetch(PORTAL_SYNC_FN, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + SB_ANON,   // required by Supabase Edge Functions
         'x-admin-token': PORTAL_ADMIN_TOKEN
       },
       body: JSON.stringify(payload)
