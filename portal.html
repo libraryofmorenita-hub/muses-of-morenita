@@ -887,14 +887,36 @@
     // RLS policy: auth.uid() = user_id — so this only returns their row.
     // Also updates last_seen timestamp after a successful read.
     // ══════════════════════════════════════════════════════════════════
-    async function fetchPortalData(userId) {
-      const { data, error } = await sb
+    // ── fetchPortalData ───────────────────────────────────────────────
+    // First tries to find the row by user_id (returning clients).
+    // If not found, falls back to email match (first login after magic link).
+    // On first login: claims the row by writing user_id so future reads work.
+    async function fetchPortalData(userId, userEmail) {
+      // Try by user_id first (fast path for returning clients)
+      let { data, error } = await sb
         .from('client_portals')
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
-
       if (error) throw error;
+
+      // First login: user_id not yet set — find row by email and claim it
+      if (!data && userEmail) {
+        const { data: byEmail, error: emailErr } = await sb
+          .from('client_portals')
+          .select('*')
+          .eq('email', userEmail.toLowerCase().trim())
+          .maybeSingle();
+        if (emailErr) throw emailErr;
+        if (byEmail) {
+          // Claim this row — write user_id so RLS works on all future reads
+          await sb.from('client_portals')
+            .update({ user_id: userId })
+            .eq('email', userEmail.toLowerCase().trim());
+          data = { ...byEmail, user_id: userId };
+        }
+      }
+
       return data;
     }
 
@@ -1308,7 +1330,7 @@
 
         if (session?.user) {
           // Authenticated — fetch and render portal data
-          const row = await fetchPortalData(session.user.id);
+          const row = await fetchPortalData(session.user.id, session.user.email);
           if (!row) {
             // Email not found in client_portals — likely not a client yet
             showState('auth');
@@ -1343,7 +1365,7 @@
     sb.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         try {
-          const row = await fetchPortalData(session.user.id);
+          const row = await fetchPortalData(session.user.id, session.user.email);
           if (row) {
             renderPortal(row);
             showState('portal');
