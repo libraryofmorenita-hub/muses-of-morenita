@@ -4373,7 +4373,7 @@ async function publishToPortal(sendInvite) {
       method: 'POST',
       headers: {
         'Content-Type':  'application/json',
-        'Authorization': 'Bearer ' + SB_ANON,   // required by Supabase Edge Functions
+        'Authorization': 'Bearer ' + SB_KEY,    // required by Supabase Edge Functions
         'x-admin-token': PORTAL_ADMIN_TOKEN
       },
       body: JSON.stringify(payload)
