@@ -881,31 +881,31 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
       <div class="svc-icon">◎</div>
       <div class="svc-title">Websites</div>
       <div class="svc-desc">Personal portfolios to full business sites, built with precision and taste. Mix-and-match add-ons for design, animation, SEO, and more.</div>
-      <div class="svc-tag">From $750 · Tap to see tiers</div>
+      <div class="svc-tag"> Tap to see tiers</div>
     </div>
     <div class="svc-card" onclick="openServiceSheet('design')">
       <div class="svc-icon">◇</div>
       <div class="svc-title">Creative Design</div>
       <div class="svc-desc">Brand identity, custom graphics, illustration, and animation. Build the exact package you need — icons, photography, motion, and more à la carte.</div>
-      <div class="svc-tag">From $800 · Tap to mix &amp; match</div>
+      <div class="svc-tag"> Tap to mix &amp; match</div>
     </div>
     <div class="svc-card" onclick="openServiceSheet('social')">
       <div class="svc-icon">✦</div>
       <div class="svc-title">Social Media Design</div>
       <div class="svc-desc">On-brand templates and monthly content design for feeds, stories, and reels. Delivered ready to post, every week.</div>
-      <div class="svc-tag">From $500 · Tap to see options</div>
+      <div class="svc-tag"> Tap to see options</div>
     </div>
     <div class="svc-card" onclick="openServiceSheet('apps')">
       <div class="svc-icon">⬡</div>
       <div class="svc-title">Platform Builds</div>
       <div class="svc-desc">Internal tools, team dashboards, and full web applications. From scoping to deployment — the infrastructure that lets your team do their best work.</div>
-      <div class="svc-tag">From $3,500 · Tap to see tiers</div>
+      <div class="svc-tag"> Tap to see tiers</div>
     </div>
     <div class="svc-card" onclick="openServiceSheet('advisory')">
       <div class="svc-icon">△</div>
       <div class="svc-title">Technical Advisory</div>
       <div class="svc-desc">Architecture reviews, first-hire strategy, vendor decisions, and product scoping for founders who need a senior technical voice in the room.</div>
-      <div class="svc-tag">$400 / hour · Tap to see options</div>
+      <div class="svc-tag"> Tap to see options</div>
     </div>
     <div class="svc-card" onclick="openServiceSheet('pd')">
       <div class="svc-icon">◈</div>
@@ -2754,7 +2754,7 @@ var SERVICE_DATA = {
     tiers: [
       {
         name: 'Personal / Portfolio Site',
-        price: '$750',
+        price: '',
         features: [
           '3 revisions',
           'Brand board',
@@ -2765,7 +2765,7 @@ var SERVICE_DATA = {
       },
       {
         name: 'Business Site',
-        price: '$2,500',
+        price: '',
         features: [
           '5 revisions',
           'Brand board',
@@ -2777,7 +2777,7 @@ var SERVICE_DATA = {
       },
       {
         name: 'Business Site + Brand System',
-        price: '$3,500',
+        price: '',
         features: [
           'Everything in Business Site',
           'Full brand identity — logo, color palette, typography',
@@ -2791,11 +2791,11 @@ var SERVICE_DATA = {
     addon: {
       label: 'À la carte add-ons',
       items: [
-        { label: 'Graphic design package (icons, custom imagery)', price: '+$800' },
-        { label: 'Animation & motion package',                    price: '+$600' },
-        { label: 'Photography direction session',                 price: '+$400' },
-        { label: 'SEO setup',                                     price: '+$350' },
-        { label: 'Email template set (5)',                        price: '+$350' },
+        { label: 'Graphic design package (icons, custom imagery)', price: '' },
+        { label: 'Animation & motion package',                    price: '' },
+        { label: 'Photography direction session',                 price: '' },
+        { label: 'SEO setup',                                     price: '' },
+        { label: 'Email template set (5)',                        price: '' },
         { label: 'Videography (coming soon)',                     price: 'Inquire' },
       ],
     },
@@ -2805,7 +2805,7 @@ var SERVICE_DATA = {
     tiers: [
       {
         name: 'Brand Refresh',
-        price: '$1,200',
+        price: '',
         features: [
           'Updated color palette + typography',
           'Logo refinement',
@@ -2816,7 +2816,7 @@ var SERVICE_DATA = {
       },
       {
         name: 'Full Brand System',
-        price: '$2,500',
+        price: '',
         features: [
           'Logo suite',
           'Full color palette + typography system',
@@ -2831,10 +2831,10 @@ var SERVICE_DATA = {
     addon: {
       label: 'Mix & match add-ons',
       items: [
-        { label: 'Custom icon set (10 icons)',         price: '+$500' },
-        { label: 'Illustration / custom imagery',      price: '+$600' },
-        { label: 'Animation of brand assets',          price: '+$600' },
-        { label: 'Photography sourcing',               price: '+$400' },
+        { label: 'Custom icon set (10 icons)',         price: '' },
+        { label: 'Illustration / custom imagery',      price: '' },
+        { label: 'Animation of brand assets',          price: '' },
+        { label: 'Photography sourcing',               price: '' },
         { label: 'Videography (coming soon)',          price: 'Inquire' },
       ],
     },
@@ -2844,7 +2844,7 @@ var SERVICE_DATA = {
     tiers: [
       {
         name: 'Template Pack',
-        price: '$500',
+        price: '',
         features: [
           '10 custom on-brand social media templates',
           'Covers feed posts, stories, and reels covers',
@@ -2870,7 +2870,7 @@ var SERVICE_DATA = {
     tiers: [
       {
         name: 'Internal Tool / Dashboard',
-        price: 'From $3,500',
+        price: '',
         features: [
           'Custom internal dashboard or operations tool',
           'Role-based views',
@@ -2880,7 +2880,7 @@ var SERVICE_DATA = {
       },
       {
         name: 'Full Platform Build',
-        price: 'From $8,000',
+        price: 'From $5,000 / month',
         features: [
           'Complete product architecture + build',
           'Frontend + backend, deployed and documented',
@@ -2890,7 +2890,7 @@ var SERVICE_DATA = {
         ],
       },
     ],
-    addon: { label: 'Ongoing retainer after launch', price: 'From $2,000 / mo' },
+    addon: { label: 'Ongoing retainer after launch', price: 'Inquire' },
   },
   advisory: {
     title: 'Technical Advisory',

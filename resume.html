@@ -225,6 +225,12 @@
   .btn-toggle { background: transparent; border: 1px solid var(--brown); color: var(--brown); }
   .btn-toggle.active { background: var(--brown); color: white; }
 
+  /* ── PAGE-BREAK GUARDS (screen + print) ─────── */
+  /* Keeps a section title pinned to the content below it */
+  .section-title { break-after: avoid; }
+  /* Prevents a role or edu block from splitting mid-block */
+  .role, .edu-block { break-inside: avoid; }
+
   /* ── PRINT ───────────────────────────────────── */
   @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -402,7 +408,6 @@
       <ul>
         <li>Run an independent software and systems studio building custom web applications, internal tooling, and technical documentation for 4 active clients across health & wellness, entertainment, photography & film, and e-commerce — 7 clients served to date.</li>
         <li>Architect and ship full-stack applications end-to-end — owning system design, database architecture, front-end, client integration, and delivery independently.</li>
-        <li class="hide-on-tech">Produce user manuals for multiple Hyundai vehicle models, applying UI/UX and documentation standards that improve readability for tens of thousands of end users.</li>
       </ul>
     </div>
 
