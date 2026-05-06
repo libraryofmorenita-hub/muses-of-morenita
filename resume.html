@@ -220,10 +220,39 @@
   }
 
   /* ── TOGGLES ─────────────────────────────────── */
-  .fashion-only { display: none; }
-  .fashion-only.visible { display: block; }
+  .cv-only { display: none; }
+  .cv-only.visible { display: block; }
   .btn-toggle { background: transparent; border: 1px solid var(--brown); color: var(--brown); }
   .btn-toggle.active { background: var(--brown); color: white; }
+
+  /* ── CLIENT LIST (CV mode) ───────────────────── */
+  .client-list { margin-top: 10px; padding-left: 14px; }
+  .client-list-label {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+  .client-entry {
+    font-size: 12px;
+    line-height: 1.75;
+    color: var(--text);
+    font-weight: 300;
+    position: relative;
+    padding-left: 10px;
+    margin-bottom: 1px;
+  }
+  .client-entry::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .client-name { font-weight: 500; color: var(--brown); }
 
   /* ── PAGE-BREAK GUARDS (screen + print) ─────── */
   /* Keeps a section title pinned to the content below it */
@@ -262,7 +291,7 @@
 <body>
 
 <div class="toolbar">
-  <button class="btn btn-toggle" id="fashionToggle" onclick="toggleFashion()">+ Fashion & Sustainable Tech</button>
+  <button class="btn btn-toggle" id="cvToggle" onclick="toggleCV()">+ Full CV</button>
   <button class="btn" onclick="window.print()">Print / Save PDF</button>
 </div>
 
@@ -284,7 +313,7 @@
   <div class="section">
     <div class="section-title">Summary</div>
     <p class="summary">
-      Computer and Electrical Design Engineer with a foundation in embedded systems, hardware-software integration, digital logic, and microprocessor architecture. I build systems that work at the seam of hardware and software — from autonomous rovers and voice-controlled medical devices to scalable full-stack platforms and brand-driven digital products. My strength is cross-disciplinary systems thinking: I can hold the technical, the human, and the strategic in the same frame, and move between them without losing precision. Equally fluent in firmware and front-end, embedded C and product strategy, circuit analysis and creative direction. Driven by technology that is sustainable, purposeful, and made for people.
+      Computer and Electrical Design Engineer with a foundation in embedded systems, hardware-software integration, digital logic, and microprocessor architecture. I build at the seam of hardware and software: autonomous rovers, voice-controlled medical devices, scalable full-stack platforms, and data-driven products. Cross-disciplinary by nature, I hold the technical, the human, and the strategic in the same frame and move between them without losing precision. Curious about intelligent systems and where machine learning meets physical design. Driven by technology that is sustainable, purposeful, and made for people.
     </p>
   </div>
 
@@ -331,6 +360,105 @@
     </div>
   </div>
 
+  <!-- EXPERIENCE -->
+  <div class="section">
+    <div class="section-title">Professional Experience</div>
+
+    <div class="role">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Ballmecca</span>
+          <span class="role-title">Software Engineer Intern → Senior Software Engineer & Co-Founder</span>
+        </div>
+        <div class="role-meta">Los Angeles, CA · 2024 – Present</div>
+      </div>
+      <ul>
+        <li>Started as a Software Engineer & UI/UX Intern — built reusable front-end architecture that contributed to a ~50% reduction in UI bugs, integrated APIs that cut feature delivery time by ~30%, and ran market research to keep prototypes grounded in real user needs.</li>
+        <li>Grew into Co-Founder; architected a scalable Firebase backend with cross-platform integration that improved system performance by ~40%.</li>
+        <li>Built a responsive component library and design system that reduced development time by ~25% and continues to power the full product roadmap.</li>
+      </ul>
+    </div>
+
+    <div class="role">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Morenita Design</span>
+          <span class="role-title">Founder & Software Engineer</span>
+        </div>
+        <div class="role-meta">Temecula, CA · 2025 – Present</div>
+      </div>
+      <ul>
+        <li>Run an independent software and systems studio building custom web applications, internal tooling, and technical documentation for 4 active clients across health & wellness, entertainment, photography & film, and e-commerce — 7 clients served to date.</li>
+        <li>Architect and ship full-stack applications end-to-end — owning system design, database architecture, front-end, client integration, and delivery independently.</li>
+      </ul>
+      <div class="client-list">
+        <div class="client-list-label">Selected Clients</div>
+        <div class="client-entry"><span class="client-name">Kairos</span> — Fertility Tracking & E-Commerce · Built a full-stack fertility tracking application with cycle logging, health analytics, a personalized dashboard, and integrated e-commerce.</div>
+        <div class="client-entry"><span class="client-name">Professor X Spiritual Guidance Academy</span> — Platform & E-Commerce · Designed and built a custom platform for a spiritual coaching practice covering course delivery, session booking, community engagement, and e-commerce.</div>
+        <div class="client-entry"><span class="client-name">YK Entertainment</span> — B2B SaaS · Architected a platform connecting Southern California vendors and event planners with booking, scheduling, and client management tools.</div>
+        <div class="client-entry"><span class="client-name">Grupo RPM Health</span> — Graphic Design · Produced graphic design for PPE product lines including marketing materials, packaging, and brand assets.</div>
+      </div>
+    </div>
+
+    <div class="role cv-only">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Lucky Brides</span>
+          <span class="role-title">Chief Marketing Officer & Stylist</span>
+        </div>
+        <div class="role-meta">Riverside, CA · 2025 – Present</div>
+      </div>
+      <ul>
+        <li>Consistently close ~$5,000 in weekly styling sales as the studio's primary stylist, driving revenue for this early-stage bridal startup.</li>
+        <li>Shape the brand from the ground up — leading marketing strategy, creative direction, and visual identity while directing photography and content production.</li>
+      </ul>
+    </div>
+
+    <div class="role cv-only">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Zoccia</span>
+          <span class="role-title">Swimwear Designer & Creative Director</span>
+        </div>
+        <div class="role-meta">Remote · 2020 – 2022</div>
+      </div>
+      <ul>
+        <li>Co-led creative direction for a 35-piece inclusive swimwear collection on a 5-person team — conducting audience research and translating customer insight directly into design decisions.</li>
+        <li>Supported manufacturing oversight and production coordination to bring 5,000+ units to market while maintaining supply chain quality standards.</li>
+      </ul>
+    </div>
+
+    <div class="role cv-only">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">Temecula Creek Inn</span>
+          <span class="role-title">Guest Services & Front Desk Agent</span>
+        </div>
+        <div class="role-meta">Temecula, CA · 2021 – 2024</div>
+      </div>
+      <ul>
+        <li>Coordinated guest services and front desk operations to maintain high satisfaction and repeat loyalty across a full-service resort property.</li>
+        <li>Streamlined interdepartmental communication to ensure efficient daily operations and seamless guest experiences.</li>
+        <li>Resolved guest concerns promptly and professionally, contributing to consistently improved customer service ratings.</li>
+      </ul>
+    </div>
+
+    <div class="role cv-only">
+      <div class="role-header">
+        <div class="role-left">
+          <span class="role-company">School of Education Dean's Office</span>
+          <span class="role-title">Administrative Assistant · Loyola University Maryland</span>
+        </div>
+        <div class="role-meta">Baltimore, MD · 2021 – 2024</div>
+      </div>
+      <ul>
+        <li>Managed a database of 1,400+ school principals across 24 districts, maintaining accuracy and supporting outreach for 20+ major education programs.</li>
+        <li>Automated 1,000+ records per semester, significantly streamlining reporting workflows and event logistics for the Dean's Office.</li>
+        <li>Conducted data analysis to inform programmatic strategy and support institutional decision-making.</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- ENGINEERING PROJECTS -->
   <div class="section">
     <div class="section-title">Engineering Projects</div>
@@ -374,68 +502,6 @@
       <ul>
         <li>Built a 17-panel personal campaign OS to manage platform strategy, milestone tracking, and state-level pageant operations — treating a personal goal as a product engineering problem.</li>
         <li>Supports 4 team members across a Kanban board, project management, file sharing, built-in advocacy quiz, messaging, and a live campaign page — all backed by Supabase with real-time sync.</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- EXPERIENCE -->
-  <div class="section">
-    <div class="section-title">Professional Experience</div>
-
-    <div class="role">
-      <div class="role-header">
-        <div class="role-left">
-          <span class="role-company">Ballmecca</span>
-          <span class="role-title">Software Engineer Intern → Senior Software Engineer & Co-Founder</span>
-        </div>
-        <div class="role-meta">Los Angeles, CA · 2024 – Present</div>
-      </div>
-      <ul>
-        <li>Started as a Software Engineer & UI/UX Intern — built reusable front-end architecture that contributed to a ~50% reduction in UI bugs, integrated APIs that cut feature delivery time by ~30%, and ran market research to keep prototypes grounded in real user needs.</li>
-        <li>Grew into Co-Founder; architected a scalable Firebase backend with cross-platform integration that improved system performance by ~40%.</li>
-        <li>Built a responsive component library and design system that reduced development time by ~25% and continues to power the full product roadmap.</li>
-      </ul>
-    </div>
-
-    <div class="role">
-      <div class="role-header">
-        <div class="role-left">
-          <span class="role-company">Morenita Design</span>
-          <span class="role-title">Founder & Software Engineer</span>
-        </div>
-        <div class="role-meta">Temecula, CA · 2025 – Present</div>
-      </div>
-      <ul>
-        <li>Run an independent software and systems studio building custom web applications, internal tooling, and technical documentation for 4 active clients across health & wellness, entertainment, photography & film, and e-commerce — 7 clients served to date.</li>
-        <li>Architect and ship full-stack applications end-to-end — owning system design, database architecture, front-end, client integration, and delivery independently.</li>
-      </ul>
-    </div>
-
-    <div class="role fashion-only">
-      <div class="role-header">
-        <div class="role-left">
-          <span class="role-company">Lucky Brides</span>
-          <span class="role-title">Chief Marketing Officer & Stylist</span>
-        </div>
-        <div class="role-meta">Riverside, CA · 2025 – Present</div>
-      </div>
-      <ul>
-        <li>Consistently close ~$5,000 in weekly styling sales as the studio's primary stylist, driving revenue for this early-stage bridal startup.</li>
-        <li>Shape the brand from the ground up — leading marketing strategy, creative direction, and visual identity while directing photography and content production.</li>
-      </ul>
-    </div>
-
-    <div class="role fashion-only">
-      <div class="role-header">
-        <div class="role-left">
-          <span class="role-company">Zoccia</span>
-          <span class="role-title">Swimwear Designer & Creative Director</span>
-        </div>
-        <div class="role-meta">Remote · 2020 – 2022</div>
-      </div>
-      <ul>
-        <li>Co-led creative direction for a 35-piece inclusive swimwear collection on a 5-person team — conducting audience research and translating customer insight directly into design decisions.</li>
-        <li>Supported manufacturing oversight and production coordination to bring 5,000+ units to market while maintaining supply chain quality standards.</li>
       </ul>
     </div>
   </div>
@@ -518,11 +584,10 @@
 </div>
 
 <script>
-  function toggleFashion() {
-    const btn = document.getElementById('fashionToggle');
-    const blocks = document.querySelectorAll('.fashion-only');
+  function toggleCV() {
+    const btn = document.getElementById('cvToggle');
     const isActive = btn.classList.toggle('active');
-    blocks.forEach(b => b.classList.toggle('visible', isActive));
+    document.querySelectorAll('.cv-only').forEach(b => b.classList.toggle('visible', isActive));
   }
 
   window.addEventListener('beforeprint', () => {
