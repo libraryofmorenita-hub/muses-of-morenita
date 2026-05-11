@@ -6,534 +6,245 @@
   <title>Your Project Portal · Morenita Design</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
-  <!--
-    ══════════════════════════════════════════════════════════════════
-    CONTENT SECURITY POLICY
-    Allows: Supabase REST + Auth, Supabase CDN (JS SDK), inline styles/scripts
-    Blocks: all other external scripts, frames, and object embeds
-    ══════════════════════════════════════════════════════════════════
-  -->
   <meta http-equiv="Content-Security-Policy"
     content="
       default-src 'self';
       script-src 'unsafe-inline' https://cdn.jsdelivr.net;
-      style-src 'unsafe-inline';
+      style-src 'unsafe-inline' https://fonts.googleapis.com;
       connect-src https://agekvrkqrwepdoeetpbx.supabase.co;
       img-src 'self' data: https:;
-      font-src 'self' data:;
+      font-src 'self' data: https://fonts.gstatic.com;
       frame-src 'none';
       object-src 'none';
     ">
 
-  <!--
-    ══════════════════════════════════════════════════════════════════
-    SUPABASE JS SDK — loaded from jsDelivr CDN (pinned to v2 latest)
-    Used for: magic link auth, reading client_portals row via RLS,
-              client-side writes (intake form, revision requests, last_seen)
-    ══════════════════════════════════════════════════════════════════
-  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
-    /* ── RESET & ROOT ───────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --ink:    #1C1714;
+      --accent: #c8a96e;
+      --ink:    #1a1a1a;
+      --sub:    #555;
+      --muted:  #888;
+      --faint:  #e4e4e2;
+      --bg:     #f5f5f3;
+      --card:   #ffffff;
+      --radius: 8px;
+      --shadow: 0 1px 6px rgba(0,0,0,.07), 0 2px 16px rgba(0,0,0,.05);
       --terra:  #8B4A2F;
-      --gold:   #e3a235;
-      --cream:  #FAF7F2;
-      --warm:   #F2EDE5;
-      --muted:  #8a7d74;
-      --faint:  #d4ccc5;
-      --radius: 10px;
-      --shadow: 0 2px 16px rgba(28,23,20,.08);
     }
+
     html { font-size: 16px; }
     body {
-      font-family: Georgia, 'Times New Roman', serif;
-      background: var(--cream);
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
       color: var(--ink);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── LAYOUT ─────────────────────────────────────────────────── */
-    .portal-wrap {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 2rem 1.25rem 4rem;
+    /* ── LOADING ──────────────────────────────────────────── */
+    .loading-wrap {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; font-size: 13px; color: var(--muted);
     }
 
-    /* ── HEADER ─────────────────────────────────────────────────── */
-    .portal-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 2.5rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--faint);
-    }
-    .portal-logo {
-      width: 36px;
-      height: 36px;
-      flex-shrink: 0;
-    }
-    .portal-header-text {}
-    .portal-brand {
-      font-size: 11px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--terra);
-      font-family: system-ui, sans-serif;
-    }
-    .portal-client-name {
-      font-size: 1.4rem;
-      font-weight: normal;
-      color: var(--ink);
-      margin-top: 2px;
-    }
-    .portal-logout-btn {
-      margin-left: auto;
-      font-size: 11px;
-      font-family: system-ui, sans-serif;
-      color: var(--muted);
-      background: none;
-      border: 1px solid var(--faint);
-      border-radius: 6px;
-      padding: 5px 10px;
-      cursor: pointer;
-      transition: color .15s;
-    }
-    .portal-logout-btn:hover { color: var(--terra); border-color: var(--terra); }
-
-    /* ── CARDS ──────────────────────────────────────────────────── */
-    .card {
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 1.4rem 1.5rem;
-      margin-bottom: 1.25rem;
-    }
-    .card-label {
-      font-size: 10px;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--terra);
-      font-family: system-ui, sans-serif;
-      font-weight: 600;
-      margin-bottom: .75rem;
-    }
-
-    /* ── STATUS BADGE ───────────────────────────────────────────── */
-    .status-badge {
-      display: inline-block;
-      font-size: 11px;
-      font-family: system-ui, sans-serif;
-      font-weight: 600;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 20px;
-      margin-bottom: 1rem;
-    }
-    .status-badge.discovery  { background: #F0EBE4; color: #8B4A2F; }
-    .status-badge.active     { background: #EAF4EC; color: #2D6A4F; }
-    .status-badge.in-review  { background: #FEF3CD; color: #85640A; }
-    .status-badge.complete   { background: #E8ECF4; color: #2D3E6B; }
-    .status-badge.default    { background: #F0EBE4; color: var(--muted); }
-
-    /* ── MILESTONES ─────────────────────────────────────────────── */
-    .ms-list { display: grid; gap: .5rem; }
-    .ms-item {
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-      font-size: .9rem;
-    }
-    .ms-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 2px solid var(--faint);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 9px;
-    }
-    .ms-dot.done { background: var(--terra); border-color: var(--terra); color: #fff; }
-    .ms-label { color: var(--ink); }
-    .ms-label.done { color: var(--muted); text-decoration: line-through; }
-
-    /* ── UPDATES ────────────────────────────────────────────────── */
-    .update-item {
-      padding: .7rem 0;
-      border-bottom: 1px solid var(--warm);
-    }
-    .update-item:last-child { border-bottom: none; }
-    .update-date {
-      font-size: 11px;
-      font-family: system-ui, sans-serif;
-      color: var(--muted);
-      margin-bottom: .25rem;
-    }
-    .update-msg { font-size: .925rem; line-height: 1.55; }
-
-    /* ── DOCUMENT CARDS ─────────────────────────────────────────── */
-    .doc-actions { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: .75rem; }
-    .doc-btn {
-      font-family: system-ui, sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 7px 16px;
-      border-radius: 7px;
-      border: none;
-      cursor: pointer;
-      transition: opacity .15s;
-    }
-    .doc-btn:hover { opacity: .82; }
-    .doc-btn.primary { background: var(--terra); color: #fff; }
-    .doc-btn.outline { background: transparent; color: var(--terra); border: 1.5px solid var(--terra); }
-    .doc-frame {
-      margin-top: 1rem;
-      border: 1px solid var(--faint);
-      border-radius: 8px;
-      padding: 1.25rem;
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: .875rem;
-      line-height: 1.65;
-      max-height: 480px;
-      overflow-y: auto;
-      display: none;
-    }
-    .doc-frame.open { display: block; }
-
-    /* ── E-SIGNATURE ────────────────────────────────────────────── */
-    .sign-panel {
-      margin-top: 1rem;
-      background: var(--warm);
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
-    }
-    .sign-panel p {
-      font-size: .875rem;
-      line-height: 1.5;
-      margin-bottom: .75rem;
-      color: var(--ink);
-    }
-    .sign-inp {
-      width: 100%;
-      font-family: Georgia, serif;
-      font-size: 1rem;
-      padding: 8px 10px;
-      border: 1.5px solid var(--faint);
-      border-radius: 7px;
-      background: #fff;
-      color: var(--ink);
-      margin-bottom: .6rem;
-    }
-    .sign-inp:focus { outline: none; border-color: var(--terra); }
-    .sign-agree {
-      display: flex;
-      align-items: flex-start;
-      gap: .5rem;
-      font-size: .85rem;
-      line-height: 1.4;
-      margin-bottom: .75rem;
-    }
-    .sign-agree input { margin-top: 2px; flex-shrink: 0; }
-    .sign-submit-btn {
-      font-family: system-ui, sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: .04em;
-      padding: 9px 22px;
-      background: var(--terra);
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      cursor: pointer;
-      transition: opacity .15s;
-    }
-    .sign-submit-btn:hover { opacity: .85; }
-    .sign-submit-btn:disabled { opacity: .5; cursor: not-allowed; }
-    .signed-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: .4rem;
-      font-family: system-ui, sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      color: #2D6A4F;
-      background: #EAF4EC;
-      border-radius: 20px;
-      padding: 5px 12px;
-      margin-top: .5rem;
-    }
-
-    /* ── INTAKE FORM ────────────────────────────────────────────── */
-    .intake-section { margin-bottom: 1.25rem; }
-    .intake-section-title {
-      font-size: 11px;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      font-family: system-ui, sans-serif;
-      font-weight: 700;
-      color: var(--muted);
-      margin-bottom: .75rem;
-      padding-bottom: .4rem;
-      border-bottom: 1px solid var(--faint);
-    }
-    .intake-field { margin-bottom: .85rem; }
-    .intake-lbl {
-      display: block;
-      font-size: 11px;
-      font-family: system-ui, sans-serif;
-      font-weight: 600;
-      color: var(--muted);
-      margin-bottom: .3rem;
-      letter-spacing: .04em;
-    }
-    .intake-inp, .intake-textarea {
-      width: 100%;
-      font-family: Georgia, serif;
-      font-size: .9rem;
-      padding: 8px 10px;
-      border: 1.5px solid var(--faint);
-      border-radius: 7px;
-      background: #fff;
-      color: var(--ink);
-      transition: border-color .15s;
-    }
-    .intake-inp:focus, .intake-textarea:focus { outline: none; border-color: var(--terra); }
-    .intake-textarea { resize: vertical; min-height: 70px; }
-    .access-group {
-      background: var(--warm);
-      border-radius: 8px;
-      padding: .85rem 1rem;
-      margin-bottom: .75rem;
-    }
-    .access-group-title {
-      font-size: 11px;
-      font-family: system-ui, sans-serif;
-      font-weight: 700;
-      color: var(--terra);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      margin-bottom: .6rem;
-    }
-    .intake-save-btn {
-      font-family: system-ui, sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 9px 22px;
-      background: var(--terra);
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      cursor: pointer;
-      margin-top: .5rem;
-      transition: opacity .15s;
-    }
-    .intake-save-btn:hover { opacity: .85; }
-    .intake-save-btn:disabled { opacity: .5; cursor: not-allowed; }
-    .intake-saved-msg {
-      display: inline-block;
-      font-family: system-ui, sans-serif;
-      font-size: 12px;
-      color: #2D6A4F;
-      margin-left: .75rem;
-      opacity: 0;
-      transition: opacity .3s;
-    }
-    .intake-saved-msg.show { opacity: 1; }
-
-    /* ── REVISION REQUEST ────────────────────────────────────────── */
-    .rev-textarea {
-      width: 100%;
-      font-family: Georgia, serif;
-      font-size: .9rem;
-      padding: 8px 10px;
-      border: 1.5px solid var(--faint);
-      border-radius: 7px;
-      background: #fff;
-      color: var(--ink);
-      resize: vertical;
-      min-height: 80px;
-      margin-bottom: .6rem;
-    }
-    .rev-textarea:focus { outline: none; border-color: var(--terra); }
-    .rev-submit-btn {
-      font-family: system-ui, sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 9px 22px;
-      background: var(--terra);
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      cursor: pointer;
-      transition: opacity .15s;
-    }
-    .rev-submit-btn:hover { opacity: .85; }
-    .rev-history { margin-top: 1rem; display: grid; gap: .5rem; }
-    .rev-item {
-      background: var(--warm);
-      border-radius: 7px;
-      padding: .6rem .8rem;
-      font-size: .875rem;
-    }
-    .rev-item-date {
-      font-size: 11px;
-      font-family: system-ui, sans-serif;
-      color: var(--muted);
-      margin-bottom: .2rem;
-    }
-
-    /* ── AUTH SCREEN ────────────────────────────────────────────── */
+    /* ── AUTH SCREEN ──────────────────────────────────────── */
     .auth-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 2rem 1.25rem;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 2rem 1.25rem;
     }
     .auth-card {
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 2.5rem 2rem;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
+      background: var(--card); border-radius: 12px;
+      box-shadow: var(--shadow); padding: 2.5rem 2rem;
+      max-width: 400px; width: 100%; text-align: center;
     }
     .auth-logo { width: 44px; height: 44px; margin: 0 auto 1.25rem; display: block; }
-    .auth-brand {
-      font-size: 11px;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--terra);
-      font-family: system-ui, sans-serif;
-      margin-bottom: .4rem;
-    }
-    .auth-title {
-      font-size: 1.5rem;
-      font-weight: normal;
-      color: var(--ink);
-      margin-bottom: .5rem;
-    }
-    .auth-sub {
-      font-size: .875rem;
-      color: var(--muted);
-      font-family: system-ui, sans-serif;
-      margin-bottom: 1.5rem;
-      line-height: 1.5;
-    }
+    .auth-brand { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--terra); margin-bottom: .4rem; font-weight: 600; }
+    .auth-title { font-size: 1.4rem; font-weight: 600; color: var(--ink); margin-bottom: .5rem; }
+    .auth-sub { font-size: .875rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
     .auth-inp {
-      width: 100%;
-      font-family: system-ui, sans-serif;
-      font-size: 1rem;
-      padding: 10px 12px;
-      border: 1.5px solid var(--faint);
-      border-radius: 8px;
-      background: var(--cream);
-      color: var(--ink);
-      margin-bottom: .75rem;
-      text-align: left;
-      transition: border-color .15s;
+      width: 100%; font-family: inherit; font-size: 1rem;
+      padding: 10px 12px; border: 1.5px solid var(--faint); border-radius: 8px;
+      background: var(--bg); color: var(--ink); margin-bottom: .75rem; transition: border-color .15s;
     }
-    .auth-inp:focus { outline: none; border-color: var(--terra); }
+    .auth-inp:focus { outline: none; border-color: var(--accent); }
     .auth-btn {
-      width: 100%;
-      font-family: system-ui, sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: .04em;
-      padding: 11px;
-      background: var(--terra);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: opacity .15s;
+      width: 100%; font-family: inherit; font-size: 14px; font-weight: 600;
+      letter-spacing: .02em; padding: 11px; background: var(--terra);
+      color: #fff; border: none; border-radius: 8px; cursor: pointer; transition: opacity .15s;
     }
-    .auth-btn:hover { opacity: .85; }
+    .auth-btn:hover { opacity: .88; }
     .auth-btn:disabled { opacity: .5; cursor: not-allowed; }
-    .auth-msg {
-      font-size: .875rem;
-      font-family: system-ui, sans-serif;
-      margin-top: .75rem;
-      min-height: 1.4em;
-    }
+    .auth-msg { font-size: .875rem; margin-top: .75rem; min-height: 1.4em; }
     .auth-msg.success { color: #2D6A4F; }
     .auth-msg.error   { color: #c0392b; }
 
-    /* ── LOADING STATE ──────────────────────────────────────────── */
-    .loading-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      font-family: system-ui, sans-serif;
-      font-size: 13px;
-      color: var(--muted);
+    /* ── TOPBAR ───────────────────────────────────────────── */
+    .p-topbar {
+      position: sticky; top: 0; z-index: 100;
+      height: 48px; background: var(--card);
+      border-bottom: 1px solid var(--faint);
+      display: flex; align-items: center; padding: 0 1.5rem; gap: .75rem;
+    }
+    .p-topbar-logo { width: 20px; height: 20px; flex-shrink: 0; }
+    .p-topbar-brand { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--terra); font-weight: 600; flex-shrink: 0; }
+    .p-topbar-sep { color: var(--faint); font-size: 14px; }
+    .p-topbar-project { font-size: 13px; font-weight: 500; color: var(--sub); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .p-topbar-logout {
+      font-size: 11px; font-weight: 500; color: var(--muted);
+      background: none; border: 1px solid var(--faint); border-radius: 6px;
+      padding: 4px 10px; cursor: pointer; flex-shrink: 0; transition: color .15s;
+    }
+    .p-topbar-logout:hover { color: var(--ink); border-color: #bbb; }
+
+    /* ── HERO ─────────────────────────────────────────────── */
+    .p-hero {
+      height: 200px; background: var(--accent);
+      background-size: cover; background-position: center;
+      position: relative; display: flex; align-items: flex-end;
+    }
+    .p-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.58) 0%, rgba(0,0,0,.12) 50%, transparent 100%);
+    }
+    .p-hero-content { position: relative; z-index: 1; padding: 1.25rem 1.75rem; width: 100%; }
+    .p-hero-name { font-size: 1.6rem; font-weight: 700; color: #fff; line-height: 1.1; margin-bottom: .3rem; }
+    .p-hero-tagline { font-size: .8rem; color: rgba(255,255,255,.78); margin-bottom: .55rem; font-weight: 400; }
+    .p-status-badge {
+      display: inline-block; font-size: 10px; letter-spacing: .06em;
+      text-transform: uppercase; font-weight: 700; padding: 3px 10px;
+      border-radius: 20px; background: rgba(255,255,255,.22); color: #fff;
+      backdrop-filter: blur(4px);
     }
 
-    /* ── FOOTER ─────────────────────────────────────────────────── */
-    .portal-footer {
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--faint);
-      text-align: center;
-      font-size: 12px;
-      font-family: system-ui, sans-serif;
-      color: var(--muted);
+    /* ── TABS ─────────────────────────────────────────────── */
+    .p-tabs {
+      background: var(--card); border-bottom: 1px solid var(--faint);
+      display: flex; overflow-x: auto; padding: 0 1.25rem;
+      position: sticky; top: 48px; z-index: 90; scrollbar-width: none;
     }
-    .portal-footer a { color: var(--terra); text-decoration: none; }
-    .portal-footer a:hover { text-decoration: underline; }
-
-    /* ── EMPTY STATES ───────────────────────────────────────────── */
-    .empty { font-size: .875rem; color: var(--muted); font-family: system-ui, sans-serif; font-style: italic; }
-
-    /* ── DELIVERABLES ───────────────────────────────────────────── */
-    .deliverables-text { font-size: .925rem; line-height: 1.65; white-space: pre-wrap; }
-
-    /* ── CONTACT ────────────────────────────────────────────────── */
-    .contact-link {
-      display: inline-flex;
-      align-items: center;
-      gap: .4rem;
-      font-family: system-ui, sans-serif;
-      font-size: .9rem;
-      font-weight: 600;
-      color: var(--terra);
-      text-decoration: none;
-      margin-top: .25rem;
+    .p-tabs::-webkit-scrollbar { display: none; }
+    .p-tab {
+      font-family: inherit; font-size: 13px; font-weight: 500; color: var(--muted);
+      background: none; border: none; border-bottom: 2px solid transparent;
+      padding: .7rem 1rem; cursor: pointer; white-space: nowrap;
+      transition: color .15s, border-color .15s;
     }
-    .contact-link:hover { text-decoration: underline; }
+    .p-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .p-tab:hover:not(.active) { color: var(--ink); }
 
+    /* ── CONTENT ──────────────────────────────────────────── */
+    .p-content { max-width: 720px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+    .p-tab-panel { display: none; }
+    .p-tab-panel.active { display: block; }
+
+    /* ── CARDS ────────────────────────────────────────────── */
+    .p-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+    .p-card-label { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: .75rem; }
+
+    /* ── MILESTONES ───────────────────────────────────────── */
+    .ms-list { display: grid; gap: .5rem; }
+    .ms-item { display: flex; align-items: center; gap: .6rem; font-size: .9rem; }
+    .ms-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--faint); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; }
+    .ms-dot.done { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .ms-label { color: var(--ink); }
+    .ms-label.done { color: var(--muted); text-decoration: line-through; }
+
+    /* ── UPDATES ──────────────────────────────────────────── */
+    .update-item { padding: .75rem 0; border-bottom: 1px solid var(--faint); }
+    .update-item:last-child { border-bottom: none; }
+    .update-date { font-size: 11px; color: var(--muted); margin-bottom: .25rem; font-weight: 500; }
+    .update-msg { font-size: .9rem; line-height: 1.65; color: var(--ink); }
+
+    /* ── DOCUMENTS ────────────────────────────────────────── */
+    .doc-actions { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: .75rem; }
+    .doc-btn { font-family: inherit; font-size: 12px; font-weight: 600; padding: 7px 16px; border-radius: 7px; border: none; cursor: pointer; transition: opacity .15s; }
+    .doc-btn:hover { opacity: .82; }
+    .doc-btn.primary { background: var(--accent); color: #fff; }
+    .doc-btn.outline { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+    .doc-frame { margin-top: 1rem; border: 1px solid var(--faint); border-radius: 8px; padding: 1.25rem; font-family: Georgia, serif; font-size: .875rem; line-height: 1.65; max-height: 480px; overflow-y: auto; display: none; }
+    .doc-frame.open { display: block; }
+    .docs-empty { padding: 2.5rem; text-align: center; font-size: .875rem; color: var(--muted); font-style: italic; }
+
+    /* ── E-SIGNATURE ──────────────────────────────────────── */
+    .sign-panel { margin-top: 1rem; background: #f8f8f6; border-radius: 8px; padding: 1rem 1.1rem; }
+    .sign-panel p { font-size: .875rem; line-height: 1.5; margin-bottom: .75rem; color: var(--ink); }
+    .sign-inp { width: 100%; font-family: Georgia, serif; font-size: 1rem; padding: 8px 10px; border: 1.5px solid var(--faint); border-radius: 7px; background: #fff; color: var(--ink); margin-bottom: .6rem; }
+    .sign-inp:focus { outline: none; border-color: var(--accent); }
+    .sign-agree { display: flex; align-items: flex-start; gap: .5rem; font-size: .85rem; line-height: 1.4; margin-bottom: .75rem; }
+    .sign-agree input { margin-top: 2px; flex-shrink: 0; accent-color: var(--accent); }
+    .sign-submit-btn { font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: .02em; padding: 9px 22px; background: var(--accent); color: #fff; border: none; border-radius: 7px; cursor: pointer; transition: opacity .15s; }
+    .sign-submit-btn:hover { opacity: .85; }
+    .sign-submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .signed-badge { display: inline-flex; align-items: center; gap: .4rem; font-size: 12px; font-weight: 600; color: #2D6A4F; background: #EAF4EC; border-radius: 20px; padding: 5px 12px; margin-bottom: .5rem; }
+
+    /* ── INTAKE ───────────────────────────────────────────── */
+    .intake-section { margin-bottom: 1.25rem; }
+    .intake-section-title { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: .75rem; padding-bottom: .4rem; border-bottom: 1px solid var(--faint); }
+    .intake-field { margin-bottom: .85rem; }
+    .intake-lbl { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: .3rem; letter-spacing: .04em; }
+    .intake-inp, .intake-textarea { width: 100%; font-family: inherit; font-size: .9rem; padding: 8px 10px; border: 1.5px solid var(--faint); border-radius: 7px; background: #fff; color: var(--ink); transition: border-color .15s; }
+    .intake-inp:focus, .intake-textarea:focus { outline: none; border-color: var(--accent); }
+    .intake-textarea { resize: vertical; min-height: 70px; }
+    .access-group { background: #f8f8f6; border-radius: 8px; padding: .85rem 1rem; margin-bottom: .75rem; }
+    .access-group-title { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-bottom: .6rem; }
+    .intake-save-btn { font-family: inherit; font-size: 13px; font-weight: 700; padding: 9px 22px; background: var(--accent); color: #fff; border: none; border-radius: 7px; cursor: pointer; margin-top: .5rem; transition: opacity .15s; }
+    .intake-save-btn:hover { opacity: .85; }
+    .intake-save-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .intake-saved-msg { display: inline-block; font-size: 12px; color: #2D6A4F; margin-left: .75rem; opacity: 0; transition: opacity .3s; }
+    .intake-saved-msg.show { opacity: 1; }
+
+    /* ── REVISIONS ────────────────────────────────────────── */
+    .rev-textarea { width: 100%; font-family: inherit; font-size: .9rem; padding: 8px 10px; border: 1.5px solid var(--faint); border-radius: 7px; background: #fff; color: var(--ink); resize: vertical; min-height: 80px; margin-bottom: .6rem; }
+    .rev-textarea:focus { outline: none; border-color: var(--accent); }
+    .rev-submit-btn { font-family: inherit; font-size: 13px; font-weight: 700; padding: 9px 22px; background: var(--accent); color: #fff; border: none; border-radius: 7px; cursor: pointer; transition: opacity .15s; }
+    .rev-submit-btn:hover { opacity: .85; }
+    .rev-history { margin-top: 1rem; display: grid; gap: .5rem; }
+    .rev-item { background: #f8f8f6; border-radius: 7px; padding: .6rem .8rem; font-size: .875rem; }
+    .rev-item-date { font-size: 11px; color: var(--muted); margin-bottom: .2rem; }
+
+    /* ── EMPTY / FOOTER ───────────────────────────────────── */
+    .p-empty { font-size: .875rem; color: var(--muted); font-style: italic; padding: .5rem 0; }
+    .p-footer { text-align: center; font-size: 12px; color: var(--muted); padding: 2rem 1.5rem; border-top: 1px solid var(--faint); }
+    .p-footer a { color: var(--terra); text-decoration: none; }
+
+    /* ── RESPONSIVE — tablet (≤768px) ───────────────────────── */
+    @media (max-width: 768px) {
+      .p-hero { height: 180px; }
+      .p-hero-content { padding: 1rem 1.25rem; }
+      .p-content { padding: 1.25rem 1rem 3rem; }
+    }
+
+    /* ── RESPONSIVE — phone (≤480px) ────────────────────────── */
     @media (max-width: 480px) {
-      .portal-wrap { padding: 1.25rem .9rem 3rem; }
-      .card { padding: 1.1rem 1rem; }
+      .p-hero { height: 160px; }
+      .p-hero-name { font-size: 1.3rem; }
+      .p-content { padding: 1rem .85rem 3rem; }
+      .p-card { padding: 1rem 1.1rem; }
       .auth-card { padding: 2rem 1.25rem; }
+      /* Topbar: hide brand wordmark + separator to give project name room on narrow screens */
+      .p-topbar-brand, .p-topbar-sep { display: none; }
+      .p-topbar { padding: 0 1rem; gap: .5rem; }
+    }
+
+    @media print {
+      .loading-wrap, .auth-wrap, #state-portal { display: none !important; }
+      #doc-print-area { display: block !important; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
   </style>
 </head>
 <body>
 
-  <!--
-    ══════════════════════════════════════════════════════════════════
-    LOADING STATE — shown while we check for an existing auth session
-    ══════════════════════════════════════════════════════════════════
-  -->
   <div class="loading-wrap" id="state-loading">Loading your portal…</div>
 
-  <!--
-    ══════════════════════════════════════════════════════════════════
-    AUTH SCREEN — shown if client is not authenticated
-    Client enters email → receives magic link → clicks it → session set
-    ══════════════════════════════════════════════════════════════════
-  -->
   <div class="auth-wrap" id="state-auth" style="display:none">
     <div class="auth-card">
       <svg class="auth-logo" xmlns="http://www.w3.org/2000/svg" viewBox="140 43 315 322">
@@ -549,296 +260,195 @@
     </div>
   </div>
 
-  <!--
-    ══════════════════════════════════════════════════════════════════
-    PORTAL — shown after authentication, populated from client_portals
-    ══════════════════════════════════════════════════════════════════
-  -->
   <div id="state-portal" style="display:none">
-    <div class="portal-wrap">
 
-      <!-- ── HEADER ── -->
-      <header class="portal-header">
-        <svg class="portal-logo" xmlns="http://www.w3.org/2000/svg" viewBox="140 43 315 322">
-          <polygon points="268.4 72.4 298.3 43.8 330.7 74.2 379.3 68.6 388.3 113.3 431.6 126.3 418.5 169.5 454.4 198.9 421.6 232.3 432.3 279.5 392 288.5 377.9 332 329.6 324.5 293.7 363.7 254.5 323.7 202.3 340 189.3 287.8 145.2 269.1 164.8 226.6 140.6 187.7 169.7 157.7 166.5 107.6 210.5 101.8 224.9 64.4 268.4 72.4" fill="#e3a235"/>
-        </svg>
-        <div class="portal-header-text">
-          <div class="portal-brand">Morenita Design · Client Portal</div>
-          <div class="portal-client-name" id="ph-client-name"></div>
-        </div>
-        <button class="portal-logout-btn" onclick="handleLogout()">Sign out</button>
-      </header>
+    <header class="p-topbar">
+      <svg class="p-topbar-logo" xmlns="http://www.w3.org/2000/svg" viewBox="140 43 315 322">
+        <polygon points="268.4 72.4 298.3 43.8 330.7 74.2 379.3 68.6 388.3 113.3 431.6 126.3 418.5 169.5 454.4 198.9 421.6 232.3 432.3 279.5 392 288.5 377.9 332 329.6 324.5 293.7 363.7 254.5 323.7 202.3 340 189.3 287.8 145.2 269.1 164.8 226.6 140.6 187.7 169.7 157.7 166.5 107.6 210.5 101.8 224.9 64.4 268.4 72.4" fill="#e3a235"/>
+      </svg>
+      <span class="p-topbar-brand">Morenita Design</span>
+      <span class="p-topbar-sep">·</span>
+      <span class="p-topbar-project" id="ph-topbar-project"></span>
+      <button class="p-topbar-logout" onclick="handleLogout()">Sign out</button>
+    </header>
 
-      <!-- ── SECTION 1: STATUS + MILESTONES ── -->
-      <div class="card" id="sec-status">
-        <div class="card-label">Project Status</div>
-        <div id="ph-status-badge"></div>
-        <div class="ms-list" id="ph-milestones"></div>
+    <div class="p-hero" id="ph-hero">
+      <div class="p-hero-overlay"></div>
+      <div class="p-hero-content">
+        <div class="p-hero-name" id="ph-hero-name"></div>
+        <div class="p-hero-tagline" id="ph-hero-tagline"></div>
+        <div class="p-status-badge" id="ph-status-badge"></div>
       </div>
+    </div>
 
-      <!-- ── SECTION 2: UPDATES ── -->
-      <div class="card" id="sec-updates" style="display:none">
-        <div class="card-label">Updates from Your Designer</div>
-        <div id="ph-updates"></div>
-      </div>
+    <nav class="p-tabs">
+      <button class="p-tab active" data-tab="overview"  onclick="showTab('overview')">Overview</button>
+      <button class="p-tab"        data-tab="updates"   onclick="showTab('updates')">Updates</button>
+      <button class="p-tab"        data-tab="docs"      onclick="showTab('docs')">Documents</button>
+      <button class="p-tab"        data-tab="intake"    onclick="showTab('intake')">Intake</button>
+      <button class="p-tab"        data-tab="revisions" onclick="showTab('revisions')">Revisions</button>
+    </nav>
 
-      <!-- ── SECTION 3: CONTRACT ── -->
-      <div class="card" id="sec-contract" style="display:none">
-        <div class="card-label">Your Contract</div>
-        <div id="ph-signed-status"></div>
-        <div class="doc-actions" id="ph-contract-actions">
-          <button class="doc-btn primary" onclick="toggleDoc('contract')">View Contract</button>
+    <div class="p-content">
+
+      <!-- OVERVIEW -->
+      <div class="p-tab-panel active" id="tab-overview">
+        <div class="p-card" id="ov-latest-update" style="display:none">
+          <div class="p-card-label">Latest from Amelia</div>
+          <div id="ph-latest-update"></div>
         </div>
-        <div class="doc-frame" id="doc-frame-contract"></div>
-        <!-- E-signature panel — shown only if contract is not yet signed -->
-        <div class="sign-panel" id="sign-panel" style="display:none">
-          <p>Please read the contract above, then sign below to confirm your agreement.</p>
-          <input class="sign-inp" type="text" id="sign-name-inp" placeholder="Type your full legal name to sign"
-            oninput="checkSignReady()">
-          <div class="sign-agree">
-            <input type="checkbox" id="sign-agree-check" onchange="checkSignReady()">
-            <label for="sign-agree-check">I have read and agree to the terms of this contract.</label>
-          </div>
-          <button class="sign-submit-btn" id="sign-submit-btn" onclick="submitSignature()" disabled>Sign Contract</button>
+        <div class="p-card">
+          <div class="p-card-label">Project Progress</div>
+          <div class="ms-list" id="ph-milestones"></div>
         </div>
       </div>
 
-      <!-- ── SECTION 4: DEPOSIT INVOICE ── -->
-      <div class="card" id="sec-invoice-deposit" style="display:none">
-        <div class="card-label">Deposit Invoice</div>
-        <p style="font-size:.875rem;color:var(--muted);font-family:system-ui,sans-serif;margin-bottom:.5rem">Your upfront deposit — required before work begins.</p>
-        <div class="doc-actions">
-          <button class="doc-btn primary" onclick="toggleDoc('invoice-deposit')">View Invoice</button>
-          <button class="doc-btn outline" onclick="printDoc('invoice-deposit')">Print / Save PDF</button>
+      <!-- UPDATES -->
+      <div class="p-tab-panel" id="tab-updates">
+        <div class="p-card">
+          <div class="p-card-label">Updates from Your Designer</div>
+          <div id="ph-updates-list"></div>
         </div>
-        <div class="doc-frame" id="doc-frame-invoice-deposit"></div>
       </div>
 
-      <!-- ── SECTION 5: FINAL INVOICE ── -->
-      <div class="card" id="sec-invoice-final" style="display:none">
-        <div class="card-label">Final Invoice</div>
-        <p style="font-size:.875rem;color:var(--muted);font-family:system-ui,sans-serif;margin-bottom:.5rem">Your remaining balance — due upon project completion.</p>
-        <div class="doc-actions">
-          <button class="doc-btn primary" onclick="toggleDoc('invoice-final')">View Invoice</button>
-          <button class="doc-btn outline" onclick="printDoc('invoice-final')">Print / Save PDF</button>
-        </div>
-        <div class="doc-frame" id="doc-frame-invoice-final"></div>
-      </div>
-
-      <!-- ── SECTION 6: DELIVERABLES ── -->
-      <div class="card" id="sec-deliverables" style="display:none">
-        <div class="card-label">Your Deliverables</div>
-        <div class="deliverables-text" id="ph-deliverables"></div>
-      </div>
-
-      <!-- ── SECTION 7: CLIENT INTAKE FORM ── -->
-      <div class="card" id="sec-intake">
-        <div class="card-label">Project Info</div>
-        <p style="font-size:.875rem;color:var(--muted);font-family:system-ui,sans-serif;margin-bottom:1.25rem;line-height:1.5">
-          Help us understand your brand before we begin. Fill in what you know — you can always come back and edit this.
-        </p>
-
-        <!-- Section A: Brand & Project Info -->
-        <div class="intake-section">
-          <div class="intake-section-title">Brand &amp; Project Info</div>
-
-          <div class="intake-field">
-            <label class="intake-lbl" for="if-brand-name">Brand / Project Name</label>
-            <input class="intake-inp" id="if-brand-name" type="text" placeholder="Your brand or business name">
+      <!-- DOCUMENTS -->
+      <div class="p-tab-panel" id="tab-docs">
+        <div class="p-card" id="sec-contract" style="display:none">
+          <div class="p-card-label">Contract</div>
+          <div id="ph-signed-status"></div>
+          <div class="doc-actions" id="ph-contract-actions">
+            <button class="doc-btn primary" onclick="toggleDoc('contract')">View Contract</button>
           </div>
-          <div class="intake-field">
-            <label class="intake-lbl" for="if-current-url">Current Website URL</label>
-            <input class="intake-inp" id="if-current-url" type="url" placeholder="https://yoursite.com — leave blank if none">
-          </div>
-          <div class="intake-field">
-            <label class="intake-lbl" for="if-colors">Brand Colors</label>
-            <input class="intake-inp" id="if-colors" type="text" placeholder="E.g. navy, gold, cream — or paste hex codes">
-          </div>
-          <div class="intake-field">
-            <label class="intake-lbl" for="if-fonts">Fonts You Like</label>
-            <input class="intake-inp" id="if-fonts" type="text" placeholder="E.g. Garamond, clean sans-serif — or 'not sure'">
-          </div>
-          <div class="intake-field">
-            <label class="intake-lbl" for="if-vibe">Vibe / Tone</label>
-            <input class="intake-inp" id="if-vibe" type="text" placeholder="E.g. Luxury &amp; editorial · Playful &amp; bold · Clean &amp; minimal">
-          </div>
-          <div class="intake-field">
-            <label class="intake-lbl" for="if-audience">Target Audience</label>
-            <textarea class="intake-textarea" id="if-audience" placeholder="Who are your ideal clients or customers?"></textarea>
-          </div>
-          <div class="intake-field">
-            <label class="intake-lbl" for="if-sites">Sites You Love</label>
-            <textarea class="intake-textarea" id="if-sites" placeholder="List 2–3 websites you love and what you like about each"></textarea>
-          </div>
-          <div class="intake-field">
-            <label class="intake-lbl" for="if-notes">Additional Notes</label>
-            <textarea class="intake-textarea" id="if-notes" placeholder="Anything else you'd like us to know going in"></textarea>
+          <div class="doc-frame" id="doc-frame-contract"></div>
+          <div class="sign-panel" id="sign-panel" style="display:none">
+            <p>Please read the contract above, then sign below to confirm your agreement.</p>
+            <input class="sign-inp" type="text" id="sign-name-inp" placeholder="Type your full legal name to sign" oninput="checkSignReady()">
+            <div class="sign-agree">
+              <input type="checkbox" id="sign-agree-check" onchange="checkSignReady()">
+              <label for="sign-agree-check">I have read and agree to the terms of this contract.</label>
+            </div>
+            <button class="sign-submit-btn" id="sign-submit-btn" onclick="submitSignature()" disabled>Sign Contract</button>
           </div>
         </div>
+        <div class="p-card" id="sec-invoice-deposit" style="display:none">
+          <div class="p-card-label">Deposit Invoice</div>
+          <p style="font-size:.875rem;color:var(--muted);margin-bottom:.5rem">Your upfront deposit — required before work begins.</p>
+          <div class="doc-actions">
+            <button class="doc-btn primary" onclick="toggleDoc('invoice-deposit')">View Invoice</button>
+            <button class="doc-btn outline" onclick="printDoc('invoice-deposit')">Print / Save PDF</button>
+          </div>
+          <div class="doc-frame" id="doc-frame-invoice-deposit"></div>
+        </div>
+        <div class="p-card" id="sec-invoice-final" style="display:none">
+          <div class="p-card-label">Final Invoice</div>
+          <p style="font-size:.875rem;color:var(--muted);margin-bottom:.5rem">Your remaining balance — due upon project completion.</p>
+          <div class="doc-actions">
+            <button class="doc-btn primary" onclick="toggleDoc('invoice-final')">View Invoice</button>
+            <button class="doc-btn outline" onclick="printDoc('invoice-final')">Print / Save PDF</button>
+          </div>
+          <div class="doc-frame" id="doc-frame-invoice-final"></div>
+        </div>
+        <div class="docs-empty" id="docs-empty">Your documents will appear here when they're ready.</div>
+      </div>
 
-        <!-- Section B: Technical Access (shown for redesigns) -->
-        <div class="intake-section" id="intake-access-section">
-          <div class="intake-section-title">Technical Access</div>
-          <p style="font-size:.8rem;color:var(--muted);font-family:system-ui,sans-serif;margin-bottom:1rem;line-height:1.5">
-            If we're redesigning or migrating an existing site, we'll need login access. This is stored securely and only visible to your designer.
+      <!-- INTAKE -->
+      <div class="p-tab-panel" id="tab-intake">
+        <div class="p-card">
+          <div class="p-card-label">Project Info</div>
+          <p style="font-size:.875rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.6">
+            Help us understand your brand before we begin. Fill in what you know — you can always come back and edit this.
           </p>
-
-          <!-- CMS Access -->
-          <div class="access-group">
-            <div class="access-group-title">Current CMS / Website Platform</div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-cms-platform">Platform</label>
-              <input class="intake-inp" id="if-cms-platform" type="text" placeholder="WordPress, Squarespace, Wix, Webflow, Showit, custom, other…">
+          <div class="intake-section">
+            <div class="intake-section-title">Brand &amp; Project Info</div>
+            <div class="intake-field"><label class="intake-lbl" for="if-brand-name">Brand / Project Name</label><input class="intake-inp" id="if-brand-name" type="text" placeholder="Your brand or business name"></div>
+            <div class="intake-field"><label class="intake-lbl" for="if-current-url">Current Website URL</label><input class="intake-inp" id="if-current-url" type="url" placeholder="https://yoursite.com — leave blank if none"></div>
+            <div class="intake-field"><label class="intake-lbl" for="if-colors">Brand Colors</label><input class="intake-inp" id="if-colors" type="text" placeholder="E.g. navy, gold, cream — or paste hex codes"></div>
+            <div class="intake-field"><label class="intake-lbl" for="if-fonts">Fonts You Like</label><input class="intake-inp" id="if-fonts" type="text" placeholder="E.g. Garamond, clean sans-serif — or 'not sure'"></div>
+            <div class="intake-field"><label class="intake-lbl" for="if-vibe">Vibe / Tone</label><input class="intake-inp" id="if-vibe" type="text" placeholder="E.g. Luxury &amp; editorial · Playful &amp; bold · Clean &amp; minimal"></div>
+            <div class="intake-field"><label class="intake-lbl" for="if-audience">Target Audience</label><textarea class="intake-textarea" id="if-audience" placeholder="Who are your ideal clients or customers?"></textarea></div>
+            <div class="intake-field"><label class="intake-lbl" for="if-sites">Sites You Love</label><textarea class="intake-textarea" id="if-sites" placeholder="List 2–3 websites you love and what you like about each"></textarea></div>
+            <div class="intake-field"><label class="intake-lbl" for="if-notes">Additional Notes</label><textarea class="intake-textarea" id="if-notes" placeholder="Anything else you'd like us to know going in"></textarea></div>
+          </div>
+          <div class="intake-section" id="intake-access-section">
+            <div class="intake-section-title">Technical Access</div>
+            <p style="font-size:.8rem;color:var(--muted);margin-bottom:1rem;line-height:1.5">If we're redesigning or migrating an existing site, we'll need login access. This is stored securely and only visible to your designer.</p>
+            <div class="access-group">
+              <div class="access-group-title">CMS / Website Platform</div>
+              <div class="intake-field"><label class="intake-lbl" for="if-cms-platform">Platform</label><input class="intake-inp" id="if-cms-platform" type="text" placeholder="WordPress, Squarespace, Webflow, custom…"></div>
+              <div class="intake-field"><label class="intake-lbl" for="if-cms-url">Admin Login URL</label><input class="intake-inp" id="if-cms-url" type="url" placeholder="E.g. yoursite.com/wp-admin"></div>
+              <div class="intake-field"><label class="intake-lbl" for="if-cms-user">Username</label><input class="intake-inp" id="if-cms-user" type="text"></div>
+              <div class="intake-field"><label class="intake-lbl" for="if-cms-pass">Password</label><input class="intake-inp" id="if-cms-pass" type="text"></div>
             </div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-cms-url">Admin Login URL</label>
-              <input class="intake-inp" id="if-cms-url" type="url" placeholder="E.g. yoursite.com/wp-admin">
+            <div class="access-group">
+              <div class="access-group-title">Hosting Provider</div>
+              <div class="intake-field"><label class="intake-lbl" for="if-host-provider">Provider</label><input class="intake-inp" id="if-host-provider" type="text" placeholder="SiteGround, Bluehost, WP Engine, GoDaddy…"></div>
+              <div class="intake-field"><label class="intake-lbl" for="if-host-url">Login URL</label><input class="intake-inp" id="if-host-url" type="url" placeholder="https://…"></div>
+              <div class="intake-field"><label class="intake-lbl" for="if-host-user">Username</label><input class="intake-inp" id="if-host-user" type="text"></div>
+              <div class="intake-field"><label class="intake-lbl" for="if-host-pass">Password</label><input class="intake-inp" id="if-host-pass" type="text"></div>
             </div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-cms-user">Username</label>
-              <input class="intake-inp" id="if-cms-user" type="text" placeholder="Admin username">
+            <div class="access-group">
+              <div class="access-group-title">Domain Registrar</div>
+              <div class="intake-field"><label class="intake-lbl" for="if-domain-provider">Provider</label><input class="intake-inp" id="if-domain-provider" type="text" placeholder="GoDaddy, Namecheap, Google Domains…"></div>
+              <div class="intake-field"><label class="intake-lbl" for="if-domain-url">Login URL</label><input class="intake-inp" id="if-domain-url" type="url" placeholder="https://…"></div>
+              <div class="intake-field"><label class="intake-lbl" for="if-domain-user">Username</label><input class="intake-inp" id="if-domain-user" type="text"></div>
+              <div class="intake-field"><label class="intake-lbl" for="if-domain-pass">Password</label><input class="intake-inp" id="if-domain-pass" type="text"></div>
             </div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-cms-pass">Password</label>
-              <input class="intake-inp" id="if-cms-pass" type="text" placeholder="Password — visible so you can verify it's correct">
+            <div class="access-group">
+              <div class="access-group-title">Analytics &amp; Other</div>
+              <div class="intake-field"><label class="intake-lbl" for="if-analytics">Google Analytics</label><input class="intake-inp" id="if-analytics" type="text" placeholder="GA4 Property ID, or 'I'll send you an invite'"></div>
+              <div class="intake-field"><label class="intake-lbl" for="if-other-access">Other Access Notes</label><textarea class="intake-textarea" id="if-other-access" placeholder="Any other tools, social accounts, or platforms we'll need"></textarea></div>
             </div>
           </div>
-
-          <!-- Hosting Access -->
-          <div class="access-group">
-            <div class="access-group-title">Hosting Provider</div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-host-provider">Provider</label>
-              <input class="intake-inp" id="if-host-provider" type="text" placeholder="E.g. SiteGround, Bluehost, WP Engine, Cloudflare, GoDaddy…">
-            </div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-host-url">Login URL</label>
-              <input class="intake-inp" id="if-host-url" type="url" placeholder="https://…">
-            </div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-host-user">Username</label>
-              <input class="intake-inp" id="if-host-user" type="text" placeholder="">
-            </div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-host-pass">Password</label>
-              <input class="intake-inp" id="if-host-pass" type="text" placeholder="">
-            </div>
-          </div>
-
-          <!-- Domain Registrar -->
-          <div class="access-group">
-            <div class="access-group-title">Domain Registrar</div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-domain-provider">Provider</label>
-              <input class="intake-inp" id="if-domain-provider" type="text" placeholder="E.g. GoDaddy, Namecheap, Google Domains, Cloudflare…">
-            </div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-domain-url">Login URL</label>
-              <input class="intake-inp" id="if-domain-url" type="url" placeholder="https://…">
-            </div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-domain-user">Username</label>
-              <input class="intake-inp" id="if-domain-user" type="text" placeholder="">
-            </div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-domain-pass">Password</label>
-              <input class="intake-inp" id="if-domain-pass" type="text" placeholder="">
-            </div>
-          </div>
-
-          <!-- Analytics & Other -->
-          <div class="access-group">
-            <div class="access-group-title">Analytics &amp; Other</div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-analytics">Google Analytics</label>
-              <input class="intake-inp" id="if-analytics" type="text" placeholder="GA4 Property ID, or 'I'll send you an invite' — let us know">
-            </div>
-            <div class="intake-field">
-              <label class="intake-lbl" for="if-other-access">Other Access Notes</label>
-              <textarea class="intake-textarea" id="if-other-access" placeholder="Any other tools, social accounts, or platforms we'll need"></textarea>
-            </div>
-          </div>
-        </div><!-- /intake-access-section -->
-
-        <button class="intake-save-btn" id="intake-save-btn" onclick="saveIntake()">Save Project Info</button>
-        <span class="intake-saved-msg" id="intake-saved-msg">✓ Saved</span>
+          <button class="intake-save-btn" id="intake-save-btn" onclick="saveIntake()">Save Project Info</button>
+          <span class="intake-saved-msg" id="intake-saved-msg">✓ Saved</span>
+        </div>
       </div>
 
-      <!-- ── SECTION 8: REVISION REQUEST ── -->
-      <div class="card" id="sec-revisions">
-        <div class="card-label">Request a Revision</div>
-        <p style="font-size:.875rem;color:var(--muted);font-family:system-ui,sans-serif;margin-bottom:.85rem;line-height:1.5">
-          Have feedback or a change request? Submit it here and your designer will follow up.
-        </p>
-        <textarea class="rev-textarea" id="rev-textarea" placeholder="Describe your revision request clearly — include page name, section, and what you'd like changed."></textarea>
-        <button class="rev-submit-btn" onclick="submitRevision()">Submit Request</button>
-        <div class="rev-history" id="rev-history"></div>
+      <!-- REVISIONS -->
+      <div class="p-tab-panel" id="tab-revisions">
+        <div class="p-card">
+          <div class="p-card-label">Request a Revision</div>
+          <p style="font-size:.875rem;color:var(--muted);margin-bottom:.85rem;line-height:1.6">Have feedback or a change request? Submit it here and your designer will follow up.</p>
+          <textarea class="rev-textarea" id="rev-textarea" placeholder="Describe your revision request clearly — include page name, section, and what you'd like changed."></textarea>
+          <button class="rev-submit-btn" onclick="submitRevision()">Submit Request</button>
+          <div class="rev-history" id="rev-history"></div>
+        </div>
       </div>
 
-      <!-- ── SECTION 9: CONTACT ── -->
-      <div class="card">
-        <div class="card-label">Questions?</div>
-        <p style="font-size:.875rem;color:var(--muted);font-family:system-ui,sans-serif;margin-bottom:.5rem">Reach out directly for anything urgent.</p>
-        <a class="contact-link" href="mailto:missameliava@gmail.com">
-          missameliava@gmail.com ↗
-        </a>
-      </div>
+    </div>
 
-      <!-- ── FOOTER ── -->
-      <footer class="portal-footer">
-        <p>Designed &amp; built by <a href="https://libraryofmorenita-hub.github.io/amelia-arabe/" target="_blank" rel="noopener noreferrer">Morenita Design</a></p>
-        <p style="margin-top:.3rem">Your portal is private and only accessible to you.</p>
-      </footer>
+    <footer class="p-footer">
+      <p>Designed &amp; built by <a href="https://libraryofmorenita-hub.github.io/amelia-arabe/" target="_blank" rel="noopener noreferrer">Morenita Design</a></p>
+      <p style="margin-top:.3rem">Your portal is private and only accessible to you.</p>
+    </footer>
 
-    </div><!-- /portal-wrap -->
-  </div><!-- /state-portal -->
+  </div>
 
-  <!-- Hidden print area for document printing -->
   <div id="doc-print-area" style="display:none"></div>
 
   <script>
-    // ══════════════════════════════════════════════════════════════════
-    // SUPABASE CONFIG
-    // These keys are safe for client-side use — RLS policies enforce
-    // that authenticated clients can only read their own row.
-    // ══════════════════════════════════════════════════════════════════
-    const SB_URL   = 'https://agekvrkqrwepdoeetpbx.supabase.co';
-    const SB_ANON  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
-
+    const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
+    const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
     const sb = supabase.createClient(SB_URL, SB_ANON);
 
-    // ── Global state ─────────────────────────────────────────────────
-    let portalData = null;   // client_portals row fetched from Supabase
+    let portalData = null;
 
-    // ══════════════════════════════════════════════════════════════════
-    // UTILITY — escapes HTML special characters to prevent XSS when
-    // rendering user-authored or AI-generated text into innerHTML.
-    // ══════════════════════════════════════════════════════════════════
     function esc(str) {
       if (!str) return '';
-      return String(str)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#039;');
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // SHOW STATE — switches between loading / auth / portal screens
-    // ══════════════════════════════════════════════════════════════════
     function showState(name) {
       ['loading','auth','portal'].forEach(s => {
         document.getElementById('state-' + s).style.display = (s === name) ? '' : 'none';
       });
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // AUTH — SEND MAGIC LINK
-    // Calls supabase.auth.signInWithOtp() which triggers Supabase to
-    // send a magic link email via the configured Resend SMTP.
-    // Supabase redirects to this portal.html page after click.
-    // ══════════════════════════════════════════════════════════════════
+    function showTab(name) {
+      document.querySelectorAll('.p-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+      document.querySelectorAll('.p-tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+    }
+
     async function sendMagicLink() {
       const emailEl = document.getElementById('auth-email-inp');
       const email = (emailEl.value || '').trim().toLowerCase();
@@ -855,11 +465,7 @@
       try {
         const { error } = await sb.auth.signInWithOtp({
           email,
-          options: {
-            // Supabase redirects here after magic link click.
-            // The #access_token hash is handled automatically by the SDK on load.
-            emailRedirectTo: window.location.href.split('#')[0]
-          }
+          options: { emailRedirectTo: window.location.href.split('#')[0] }
         });
         if (error) throw error;
         msgEl.textContent = 'Check your inbox — a sign-in link is on its way.';
@@ -871,170 +477,122 @@
       }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // AUTH — HANDLE LOGOUT
-    // Signs the client out of their Supabase session.
-    // ══════════════════════════════════════════════════════════════════
     async function handleLogout() {
       await sb.auth.signOut();
       showState('auth');
       portalData = null;
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // FETCH PORTAL DATA
-    // Reads the client's row from client_portals via RLS.
-    // RLS policy: auth.uid() = user_id — so this only returns their row.
-    // Also updates last_seen timestamp after a successful read.
-    // ══════════════════════════════════════════════════════════════════
-    // ── fetchPortalData ───────────────────────────────────────────────
-    // First tries to find the row by user_id (returning clients).
-    // If not found, falls back to email match (first login after magic link).
-    // On first login: claims the row by writing user_id so future reads work.
     async function fetchPortalData(userId, userEmail) {
-      // Try by user_id first (fast path for returning clients)
-      let { data, error } = await sb
-        .from('client_portals')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
+      let { data, error } = await sb.from('client_portals').select('*').eq('user_id', userId).maybeSingle();
       if (error) throw error;
-
-      // First login: user_id not yet set — find row by email and claim it
       if (!data && userEmail) {
-        const { data: byEmail, error: emailErr } = await sb
-          .from('client_portals')
-          .select('*')
-          .eq('email', userEmail.toLowerCase().trim())
-          .maybeSingle();
+        const { data: byEmail, error: emailErr } = await sb.from('client_portals').select('*').eq('email', userEmail.toLowerCase().trim()).maybeSingle();
         if (emailErr) throw emailErr;
         if (byEmail) {
-          // Claim this row — write user_id so RLS works on all future reads
-          await sb.from('client_portals')
-            .update({ user_id: userId })
-            .eq('email', userEmail.toLowerCase().trim());
+          await sb.from('client_portals').update({ user_id: userId }).eq('email', userEmail.toLowerCase().trim());
           data = { ...byEmail, user_id: userId };
         }
       }
-
       return data;
     }
 
     async function updateLastSeen(userId) {
-      // Update last_seen; ignore errors (non-critical)
-      await sb.from('client_portals')
-        .update({ last_seen: new Date().toISOString() })
-        .eq('user_id', userId);
+      await sb.from('client_portals').update({ last_seen: new Date().toISOString() }).eq('user_id', userId);
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // RENDER PORTAL — populates all sections from the fetched row
-    // ══════════════════════════════════════════════════════════════════
     function renderPortal(row) {
       portalData = row;
 
-      // ── Header ────────────────────────────────────────────────────
-      document.getElementById('ph-client-name').textContent = row.display_name || 'Your Project';
+      // Accent color
+      document.documentElement.style.setProperty('--accent', row.portal_accent || '#c8a96e');
 
-      // ── Status badge ──────────────────────────────────────────────
-      const statusEl = document.getElementById('ph-status-badge');
-      const s = (row.status || 'Active').toLowerCase().replace(/\s+/g, '-');
-      const statusClass = ['discovery','active','in-review','complete'].includes(s) ? s : 'default';
-      statusEl.innerHTML = `<div class="status-badge ${statusClass}">${esc(row.status || 'Active')}</div>`;
-
-      // ── Milestones ────────────────────────────────────────────────
-      const msEl = document.getElementById('ph-milestones');
-      const milestones = row.milestones || [];
-      if (milestones.length > 0) {
-        msEl.innerHTML = milestones.map(m => `
-          <div class="ms-item">
-            <div class="ms-dot${m.done ? ' done' : ''}">${m.done ? '✓' : ''}</div>
-            <span class="ms-label${m.done ? ' done' : ''}">${esc(m.label)}</span>
-          </div>`).join('');
-      } else {
-        msEl.innerHTML = '';
+      // Hero cover image
+      if (row.portal_cover) {
+        document.getElementById('ph-hero').style.backgroundImage = `url(${JSON.stringify(row.portal_cover)})`;
       }
 
-      // ── Updates ───────────────────────────────────────────────────
+      // Names + tagline + status
+      const name = row.display_name || 'Your Project';
+      document.getElementById('ph-topbar-project').textContent = name;
+      document.getElementById('ph-hero-name').textContent = name;
+      const taglineEl = document.getElementById('ph-hero-tagline');
+      if (row.portal_tagline) {
+        taglineEl.textContent = row.portal_tagline;
+      } else {
+        taglineEl.style.display = 'none';
+      }
+      document.getElementById('ph-status-badge').textContent = row.status || 'Active';
+
+      // Overview: latest update
       const updates = row.updates || [];
-      const updSec = document.getElementById('sec-updates');
-      const updEl  = document.getElementById('ph-updates');
+      const latestCard = document.getElementById('ov-latest-update');
       if (updates.length > 0) {
-        updEl.innerHTML = updates.slice().reverse().map(u => `
-          <div class="update-item">
-            <div class="update-date">${esc(u.date || '')}</div>
-            <div class="update-msg">${esc(u.message)}</div>
-          </div>`).join('');
-        updSec.style.display = '';
+        const latest = updates[updates.length - 1];
+        document.getElementById('ph-latest-update').innerHTML =
+          `<div class="update-date">${esc(latest.date || '')}</div><div class="update-msg">${esc(latest.message)}</div>`;
+        latestCard.style.display = '';
       } else {
-        updSec.style.display = 'none';
+        latestCard.style.display = 'none';
       }
 
-      // ── Contract ──────────────────────────────────────────────────
+      // Overview: milestones
+      const milestones = row.milestones || [];
+      const msEl = document.getElementById('ph-milestones');
+      msEl.innerHTML = milestones.length > 0
+        ? milestones.map(m => `<div class="ms-item"><div class="ms-dot${m.done ? ' done' : ''}">${m.done ? '✓' : ''}</div><span class="ms-label${m.done ? ' done' : ''}">${esc(m.label)}</span></div>`).join('')
+        : '<div class="p-empty">Milestones will appear here as we map out the project.</div>';
+
+      // Updates tab
+      document.getElementById('ph-updates-list').innerHTML = updates.length > 0
+        ? updates.slice().reverse().map(u => `<div class="update-item"><div class="update-date">${esc(u.date || '')}</div><div class="update-msg">${esc(u.message)}</div></div>`).join('')
+        : '<div class="p-empty">No updates yet — check back soon.</div>';
+
+      // Documents
+      let docsCount = 0;
       const conSec = document.getElementById('sec-contract');
       if (row.show_contract && row.contract_html) {
-        // Populate doc frame (sanitized server-side; safe to set as innerHTML)
         document.getElementById('doc-frame-contract').innerHTML = row.contract_html;
-
-        // Determine signed status
-        const signedEl = document.getElementById('ph-signed-status');
+        const signedEl  = document.getElementById('ph-signed-status');
         const signPanel = document.getElementById('sign-panel');
         if (row.contract_signed_at && row.contract_signed_name) {
           const d = new Date(row.contract_signed_at).toLocaleString('en-US',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
           signedEl.innerHTML = `<div class="signed-badge">✓ Signed by ${esc(row.contract_signed_name)} on ${d}</div>`;
           signPanel.style.display = 'none';
-          // Update contract actions to only show print
-          document.getElementById('ph-contract-actions').innerHTML = `
-            <button class="doc-btn primary" onclick="toggleDoc('contract')">View Contract</button>
-            <button class="doc-btn outline" onclick="printDoc('contract')">Print / Save PDF</button>`;
+          document.getElementById('ph-contract-actions').innerHTML =
+            `<button class="doc-btn primary" onclick="toggleDoc('contract')">View Contract</button>
+             <button class="doc-btn outline" onclick="printDoc('contract')">Print / Save PDF</button>`;
         } else {
           signedEl.innerHTML = '';
           signPanel.style.display = '';
         }
-        conSec.style.display = '';
-      } else {
-        conSec.style.display = 'none';
-      }
+        conSec.style.display = ''; docsCount++;
+      } else { conSec.style.display = 'none'; }
 
-      // ── Deposit Invoice ───────────────────────────────────────────
       const depSec = document.getElementById('sec-invoice-deposit');
       if (row.show_invoice_deposit && row.invoice_deposit_html) {
         document.getElementById('doc-frame-invoice-deposit').innerHTML = row.invoice_deposit_html;
-        depSec.style.display = '';
-      } else {
-        depSec.style.display = 'none';
-      }
+        depSec.style.display = ''; docsCount++;
+      } else { depSec.style.display = 'none'; }
 
-      // ── Final Invoice ─────────────────────────────────────────────
       const finSec = document.getElementById('sec-invoice-final');
       if (row.show_invoice_final && row.invoice_final_html) {
         document.getElementById('doc-frame-invoice-final').innerHTML = row.invoice_final_html;
-        finSec.style.display = '';
-      } else {
-        finSec.style.display = 'none';
-      }
+        finSec.style.display = ''; docsCount++;
+      } else { finSec.style.display = 'none'; }
 
-      // ── Deliverables ──────────────────────────────────────────────
-      const delSec = document.getElementById('sec-deliverables');
-      const delEl  = document.getElementById('ph-deliverables');
-      if (row.deliverables) {
-        delEl.textContent = row.deliverables;
-        delSec.style.display = '';
-      } else {
-        delSec.style.display = 'none';
-      }
+      document.getElementById('docs-empty').style.display = docsCount > 0 ? 'none' : '';
 
-      // ── Intake form — prefill with previously saved data ──────────
+      // Intake prefill
       const b = row.intake_brand || {};
-      if (b.brand_name)   document.getElementById('if-brand-name').value   = b.brand_name;
-      if (b.current_url)  document.getElementById('if-current-url').value  = b.current_url;
-      if (b.colors)       document.getElementById('if-colors').value       = b.colors;
-      if (b.fonts)        document.getElementById('if-fonts').value        = b.fonts;
-      if (b.vibe)         document.getElementById('if-vibe').value         = b.vibe;
-      if (b.target_audience) document.getElementById('if-audience').value  = b.target_audience;
-      if (b.sites_love)   document.getElementById('if-sites').value        = b.sites_love;
-      if (b.notes)        document.getElementById('if-notes').value        = b.notes;
-      // Technical access (parsed from stored flat text into groups)
+      if (b.brand_name)      document.getElementById('if-brand-name').value   = b.brand_name;
+      if (b.current_url)     document.getElementById('if-current-url').value  = b.current_url;
+      if (b.colors)          document.getElementById('if-colors').value       = b.colors;
+      if (b.fonts)           document.getElementById('if-fonts').value        = b.fonts;
+      if (b.vibe)            document.getElementById('if-vibe').value         = b.vibe;
+      if (b.target_audience) document.getElementById('if-audience').value     = b.target_audience;
+      if (b.sites_love)      document.getElementById('if-sites').value        = b.sites_love;
+      if (b.notes)           document.getElementById('if-notes').value        = b.notes;
       const a = row.access_logins_structured || {};
       if (a.cms_platform)    document.getElementById('if-cms-platform').value    = a.cms_platform;
       if (a.cms_url)         document.getElementById('if-cms-url').value         = a.cms_url;
@@ -1051,48 +609,26 @@
       if (a.analytics)       document.getElementById('if-analytics').value       = a.analytics;
       if (a.other_access)    document.getElementById('if-other-access').value    = a.other_access;
 
-      // ── Revision history ──────────────────────────────────────────
+      // Revision history
       const revs = row.revision_requests || [];
-      const revHistEl = document.getElementById('rev-history');
-      if (revs.length > 0) {
-        revHistEl.innerHTML = revs.slice().reverse().map(r => `
-          <div class="rev-item">
-            <div class="rev-item-date">${esc(r.date || '')}</div>
-            <div>${esc(r.message)}</div>
-          </div>`).join('');
-      } else {
-        revHistEl.innerHTML = '';
-      }
+      document.getElementById('rev-history').innerHTML = revs.length > 0
+        ? revs.slice().reverse().map(r => `<div class="rev-item"><div class="rev-item-date">${esc(r.date || '')}</div><div>${esc(r.message)}</div></div>`).join('')
+        : '';
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // DOCUMENT VIEWER — toggles the inline doc frame open/closed
-    // ══════════════════════════════════════════════════════════════════
     function toggleDoc(key) {
       const frame = document.getElementById('doc-frame-' + key);
       if (!frame) return;
       const isOpen = frame.classList.toggle('open');
-      // Show signature panel only when contract is open and not yet signed
       if (key === 'contract') {
         const signPanel = document.getElementById('sign-panel');
-        if (signPanel) {
-          const alreadySigned = !!(portalData?.contract_signed_at);
-          signPanel.style.display = (isOpen && !alreadySigned) ? '' : 'none';
-        }
+        if (signPanel) signPanel.style.display = (isOpen && !portalData?.contract_signed_at) ? '' : 'none';
       }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // DOCUMENT PRINTING — renders doc in a print-only div, triggers print
-    // ══════════════════════════════════════════════════════════════════
     function printDoc(key) {
       const frame = document.getElementById('doc-frame-' + key);
-      if (!frame || !frame.innerHTML.trim()) {
-        // Frame might not be open yet — open it first if content exists
-        toggleDoc(key);
-        setTimeout(() => printDoc(key), 100);
-        return;
-      }
+      if (!frame || !frame.innerHTML.trim()) { toggleDoc(key); setTimeout(() => printDoc(key), 100); return; }
       const area = document.getElementById('doc-print-area');
       area.innerHTML = `<div style="max-width:680px;margin:0 auto;padding:2rem 0;font-family:Georgia,'Times New Roman',serif;color:#1C1714">${frame.innerHTML}</div>`;
       area.style.display = 'block';
@@ -1101,156 +637,64 @@
       area.innerHTML = '';
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // E-SIGNATURE — enables Sign button only when both name + checkbox set
-    // ══════════════════════════════════════════════════════════════════
     function checkSignReady() {
-      const name = (document.getElementById('sign-name-inp').value || '').trim();
+      const name   = (document.getElementById('sign-name-inp').value || '').trim();
       const agreed = document.getElementById('sign-agree-check').checked;
       document.getElementById('sign-submit-btn').disabled = !(name && agreed);
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // E-SIGNATURE — SUBMIT
-    // Appends signature block to contract HTML, saves to Supabase:
-    //   contract_signed_html — full contract + signature block
-    //   contract_signed_at   — ISO timestamp
-    //   contract_signed_name — typed name
-    // Studio portal tab reads these and shows "✓ Signed by…"
-    // ══════════════════════════════════════════════════════════════════
     async function submitSignature() {
       const name = (document.getElementById('sign-name-inp').value || '').trim();
       if (!name) return;
       const btn = document.getElementById('sign-submit-btn');
-      btn.disabled = true;
-      btn.textContent = 'Signing…';
-
+      btn.disabled = true; btn.textContent = 'Signing…';
       const signedAt = new Date().toISOString();
-      const readableDate = new Date(signedAt).toLocaleString('en-US',{
-        year:'numeric', month:'long', day:'numeric',
-        hour:'2-digit', minute:'2-digit', timeZoneName:'short'
-      });
-
-      // Build signature block appended to contract
-      const sigBlock = `
-        <div style="margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid #d4ccc5;font-family:Georgia,serif;color:#1C1714">
-          <p style="font-size:.8rem;color:#8a7d74;margin-bottom:.5rem">Electronic Signature</p>
-          <p style="font-size:.95rem">Electronically signed by <strong>${esc(name)}</strong> on ${readableDate} via Morenita Design client portal.</p>
-        </div>`;
+      const readableDate = new Date(signedAt).toLocaleString('en-US',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'});
+      const sigBlock = `<div style="margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid #d4ccc5;font-family:Georgia,serif;color:#1C1714"><p style="font-size:.8rem;color:#8a7d74;margin-bottom:.5rem">Electronic Signature</p><p style="font-size:.95rem">Electronically signed by <strong>${esc(name)}</strong> on ${readableDate} via Morenita Design client portal.</p></div>`;
       const contractHtml = document.getElementById('doc-frame-contract').innerHTML;
       const signedHtml = contractHtml + sigBlock;
-
       try {
         const { data: { session } } = await sb.auth.getSession();
         const userId = session?.user?.id;
         if (!userId) throw new Error('Session expired — please refresh and sign in again.');
-
-        const { error } = await sb.from('client_portals')
-          .update({
-            contract_signed_html: signedHtml,
-            contract_signed_at:   signedAt,
-            contract_signed_name: name
-          })
-          .eq('user_id', userId);
-
+        const { error } = await sb.from('client_portals').update({ contract_signed_html: signedHtml, contract_signed_at: signedAt, contract_signed_name: name }).eq('user_id', userId);
         if (error) throw error;
-
-        // Update local state and re-render signed status
         portalData.contract_signed_at   = signedAt;
         portalData.contract_signed_name = name;
         portalData.contract_signed_html = signedHtml;
-
         const d = new Date(signedAt).toLocaleString('en-US',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('ph-signed-status').innerHTML =
-          `<div class="signed-badge">✓ Signed by ${esc(name)} on ${d}</div>`;
+        document.getElementById('ph-signed-status').innerHTML = `<div class="signed-badge">✓ Signed by ${esc(name)} on ${d}</div>`;
         document.getElementById('sign-panel').style.display = 'none';
-        document.getElementById('ph-contract-actions').innerHTML = `
-          <button class="doc-btn primary" onclick="toggleDoc('contract')">View Contract</button>
-          <button class="doc-btn outline" onclick="printDoc('contract')">Print / Save PDF</button>`;
-
-        // Update doc frame to include signature block
+        document.getElementById('ph-contract-actions').innerHTML = `<button class="doc-btn primary" onclick="toggleDoc('contract')">View Contract</button><button class="doc-btn outline" onclick="printDoc('contract')">Print / Save PDF</button>`;
         document.getElementById('doc-frame-contract').innerHTML = signedHtml;
-
       } catch (e) {
         alert('Signature could not be saved: ' + e.message);
-        btn.disabled = false;
-        btn.textContent = 'Sign Contract';
+        btn.disabled = false; btn.textContent = 'Sign Contract';
       }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // INTAKE FORM — SAVE
-    // Collects all intake fields and writes them to Supabase:
-    //   intake_brand              — Section A: brand/project info (jsonb)
-    //   access_logins_structured  — Section B: technical access (jsonb, private in studio)
-    // ══════════════════════════════════════════════════════════════════
     async function saveIntake() {
-      const saveBtn = document.getElementById('intake-save-btn');
+      const saveBtn  = document.getElementById('intake-save-btn');
       const savedMsg = document.getElementById('intake-saved-msg');
       saveBtn.disabled = true;
-
       const get = id => (document.getElementById(id)?.value || '').trim();
-
-      const intake_brand = {
-        brand_name:     get('if-brand-name'),
-        current_url:    get('if-current-url'),
-        colors:         get('if-colors'),
-        fonts:          get('if-fonts'),
-        vibe:           get('if-vibe'),
-        target_audience:get('if-audience'),
-        sites_love:     get('if-sites'),
-        notes:          get('if-notes')
-      };
-
-      const access_logins_structured = {
-        cms_platform:    get('if-cms-platform'),
-        cms_url:         get('if-cms-url'),
-        cms_user:        get('if-cms-user'),
-        cms_pass:        get('if-cms-pass'),
-        host_provider:   get('if-host-provider'),
-        host_url:        get('if-host-url'),
-        host_user:       get('if-host-user'),
-        host_pass:       get('if-host-pass'),
-        domain_provider: get('if-domain-provider'),
-        domain_url:      get('if-domain-url'),
-        domain_user:     get('if-domain-user'),
-        domain_pass:     get('if-domain-pass'),
-        analytics:       get('if-analytics'),
-        other_access:    get('if-other-access')
-      };
-
-      // Build flat readable text for the studio's access_logins field
+      const intake_brand = { brand_name: get('if-brand-name'), current_url: get('if-current-url'), colors: get('if-colors'), fonts: get('if-fonts'), vibe: get('if-vibe'), target_audience: get('if-audience'), sites_love: get('if-sites'), notes: get('if-notes') };
+      const access_logins_structured = { cms_platform: get('if-cms-platform'), cms_url: get('if-cms-url'), cms_user: get('if-cms-user'), cms_pass: get('if-cms-pass'), host_provider: get('if-host-provider'), host_url: get('if-host-url'), host_user: get('if-host-user'), host_pass: get('if-host-pass'), domain_provider: get('if-domain-provider'), domain_url: get('if-domain-url'), domain_user: get('if-domain-user'), domain_pass: get('if-domain-pass'), analytics: get('if-analytics'), other_access: get('if-other-access') };
       const access_logins = buildAccessText(access_logins_structured);
-
       try {
         const { data: { session } } = await sb.auth.getSession();
         const userId = session?.user?.id;
         if (!userId) throw new Error('Session expired');
-
-        const { error } = await sb.from('client_portals')
-          .update({ intake_brand, access_logins_structured, access_logins })
-          .eq('user_id', userId);
-
+        const { error } = await sb.from('client_portals').update({ intake_brand, access_logins_structured, access_logins }).eq('user_id', userId);
         if (error) throw error;
-
-        // Update local state
-        if (portalData) {
-          portalData.intake_brand = intake_brand;
-          portalData.access_logins_structured = access_logins_structured;
-          portalData.access_logins = access_logins;
-        }
-
+        if (portalData) { portalData.intake_brand = intake_brand; portalData.access_logins_structured = access_logins_structured; portalData.access_logins = access_logins; }
         savedMsg.classList.add('show');
         setTimeout(() => savedMsg.classList.remove('show'), 2500);
       } catch (e) {
         alert('Could not save: ' + e.message);
-      } finally {
-        saveBtn.disabled = false;
-      }
+      } finally { saveBtn.disabled = false; }
     }
 
-    // Builds a readable flat text string from the structured access object
-    // for display in the studio portal tab.
     function buildAccessText(a) {
       const lines = [];
       if (a.cms_platform)    lines.push('CMS: ' + a.cms_platform);
@@ -1270,69 +714,34 @@
       return lines.join('\n');
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // REVISION REQUESTS — SUBMIT
-    // Appends a new request to the revision_requests jsonb array.
-    // Uses Supabase's array append via RPC or a read-then-write approach.
-    // Studio shows these in the Portal tab with a mark-read button.
-    // ══════════════════════════════════════════════════════════════════
     async function submitRevision() {
       const ta = document.getElementById('rev-textarea');
       const msg = (ta.value || '').trim();
       if (!msg) return;
-
       try {
         const { data: { session } } = await sb.auth.getSession();
         const userId = session?.user?.id;
         if (!userId) throw new Error('Session expired');
-
         const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
         const newReq = { date, message: msg, read: false };
-
-        // Read current array first, then append (Supabase doesn't support native push on jsonb via RLS update)
         const existing = portalData?.revision_requests || [];
         const updated = [...existing, newReq];
-
-        const { error } = await sb.from('client_portals')
-          .update({ revision_requests: updated })
-          .eq('user_id', userId);
-
+        const { error } = await sb.from('client_portals').update({ revision_requests: updated }).eq('user_id', userId);
         if (error) throw error;
-
-        // Update local state and re-render history
         if (portalData) portalData.revision_requests = updated;
         ta.value = '';
-        const revHistEl = document.getElementById('rev-history');
-        revHistEl.innerHTML = updated.slice().reverse().map(r => `
-          <div class="rev-item">
-            <div class="rev-item-date">${esc(r.date || '')}</div>
-            <div>${esc(r.message)}</div>
-          </div>`).join('');
-
-      } catch (e) {
-        alert('Could not submit: ' + e.message);
-      }
+        document.getElementById('rev-history').innerHTML = updated.slice().reverse().map(r => `<div class="rev-item"><div class="rev-item-date">${esc(r.date || '')}</div><div>${esc(r.message)}</div></div>`).join('');
+      } catch (e) { alert('Could not submit: ' + e.message); }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // INIT — runs on page load
-    // 1. Checks for an existing session (handles magic link redirect too)
-    // 2. If authenticated: fetches portal data and renders
-    // 3. If not: shows auth screen
-    // ══════════════════════════════════════════════════════════════════
     (async () => {
       showState('loading');
       try {
-        // getSession() automatically exchanges the #access_token hash
-        // (from magic link click) into a stored session — no extra step needed.
         const { data: { session }, error } = await sb.auth.getSession();
         if (error) throw error;
-
         if (session?.user) {
-          // Authenticated — fetch and render portal data
           const row = await fetchPortalData(session.user.id, session.user.email);
           if (!row) {
-            // Email not found in client_portals — likely not a client yet
             showState('auth');
             const msg = document.getElementById('auth-msg');
             msg.textContent = 'No portal found for this account. Contact your designer to get access.';
@@ -1341,27 +750,14 @@
           }
           renderPortal(row);
           showState('portal');
-          // Fire-and-forget: update last_seen timestamp
           updateLastSeen(session.user.id);
-          // Clean hash from URL (remove the access_token fragment for cleanliness)
           if (window.location.hash.includes('access_token')) {
             history.replaceState(null, '', window.location.pathname + window.location.search);
           }
-        } else {
-          showState('auth');
-        }
-      } catch (e) {
-        console.error('Portal init error:', e);
-        showState('auth');
-      }
+        } else { showState('auth'); }
+      } catch (e) { console.error('Portal init error:', e); showState('auth'); }
     })();
 
-    // ══════════════════════════════════════════════════════════════════
-    // AUTH STATE CHANGE LISTENER
-    // Handles the case where a magic link is clicked while the portal
-    // tab is already open (e.g. in a different tab), and the session
-    // updates asynchronously via the Supabase auth listener.
-    // ══════════════════════════════════════════════════════════════════
     sb.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         try {

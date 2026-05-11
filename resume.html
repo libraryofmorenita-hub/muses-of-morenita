@@ -260,16 +260,66 @@
   /* Prevents a role or edu block from splitting mid-block */
   .role, .edu-block { break-inside: avoid; }
 
+  /* ── RESPONSIVE — tablet (≤768px) ───────────── */
+  @media (max-width: 768px) {
+    body { padding: 20px 12px; }
+    .page { padding: 36px 28px; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+
+  /* ── RESPONSIVE — phone (≤480px) ────────────── */
+  @media (max-width: 480px) {
+    body { padding: 12px 0; }
+    .toolbar { padding: 0 12px; flex-wrap: wrap; gap: .4rem; }
+    .btn { font-size: 10px; padding: 7px 12px; }
+    .page { padding: 24px 16px; }
+    .resume-header h1 { font-size: 34px; }
+    .skills-grid { grid-template-columns: 1fr; }
+    /* Stack date below company name — prevents crowding on narrow screens */
+    .role-header { flex-direction: column; align-items: flex-start; gap: 2px; }
+    .role-meta { text-align: left; white-space: normal; }
+  }
+
   /* ── PRINT ───────────────────────────────────── */
   @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     body { background: white; padding: 0; }
     .toolbar { display: none; }
-    .page {
-      padding: 36px 44px;
-      box-shadow: none;
-      max-width: 100%;
-    }
+
+    /* Restore full layouts — browser may apply narrow-screen breakpoints during print */
+    .skills-grid { grid-template-columns: 1fr 1fr 1fr !important; gap: 12px !important; }
+    .two-col { grid-template-columns: 1fr 1fr !important; gap: 20px !important; }
+    .role-header { flex-direction: row !important; align-items: baseline !important; }
+    .role-meta { text-align: right !important; white-space: nowrap !important; }
+
+    /* Page margins */
+    .page { padding: 28px 36px; box-shadow: none; max-width: 100%; }
+
+    /* Vertical rhythm — balanced between compact and readable */
+    .resume-header { margin-bottom: 16px; padding-bottom: 12px; }
+    .section { margin-bottom: 14px; }
+    .section-title { margin-bottom: 10px; padding-bottom: 5px; }
+    .role { margin-bottom: 10px; }
+
+    /* Type — slightly reduced for print density, still comfortable to read */
+    .resume-header h1 { font-size: 36px; }
+    .resume-header .subtitle { font-size: 11px; letter-spacing: 0.07em; }
+    .contact-line { font-size: 11px; gap: 14px; }
+    .summary { font-size: 12.5px; line-height: 1.75; }
+    .skill-col ul li { font-size: 11.5px; line-height: 1.7; }
+    .role ul li { font-size: 11.5px; line-height: 1.7; }
+    .role-company { font-size: 15px; }
+    .client-entry { font-size: 11.5px; line-height: 1.7; }
+    /* Education & Leadership — smaller text to fill page 2 cleanly */
+    .two-col .edu-detail { font-size: 10.5px; line-height: 1.6; }
+    .two-col .edu-degree { font-size: 10.5px; }
+    .two-col .role ul li { font-size: 10.5px; line-height: 1.6; }
+    .two-col .role-company { font-size: 13px; }
+    .two-col .role-title { font-size: 10.5px; }
+    .two-col .role-meta { font-size: 10px; }
+    .two-col .role { margin-bottom: 10px; }
+
     /* Override site colors to black on white for clean print */
     :root {
       --brown:  #000000;
@@ -278,7 +328,7 @@
       --text:   #000000;
       --border: #cccccc;
     }
-    .resume-header h1 { color: #000; font-size: 38px; }
+    .resume-header h1 { color: #000; }
     .resume-header { border-bottom-color: #000; border-bottom-width: 1px; }
     .section-title { color: #000; border-bottom-color: #000; }
     .role-company { color: #000; }
@@ -300,7 +350,7 @@
   <!-- HEADER -->
   <div class="resume-header">
     <h1>Amelia <em>Arabe</em></h1>
-    <div class="subtitle">Computer & Electrical Design Engineer &nbsp;·&nbsp; Embedded Systems &nbsp;·&nbsp; Hardware-Software Integration</div>
+    <div class="subtitle">Systems Engineer & Founder &nbsp;·&nbsp; Embedded Systems &nbsp;·&nbsp; Hardware-Software Integration</div>
     <div class="contact-line">
       <span>Temecula, CA</span>
       <span>(951) 809-5841</span>
@@ -313,7 +363,7 @@
   <div class="section">
     <div class="section-title">Summary</div>
     <p class="summary">
-      Computer and Electrical Design Engineer with a foundation in embedded systems, hardware-software integration, digital logic, and microprocessor architecture. I build at the seam of hardware and software: autonomous rovers, voice-controlled medical devices, scalable full-stack platforms, and data-driven products. Cross-disciplinary by nature, I hold the technical, the human, and the strategic in the same frame and move between them without losing precision. Curious about intelligent systems and where machine learning meets physical design. Driven by technology that is sustainable, purposeful, and made for people.
+      I am a Computer and Electrical Design Engineer who builds at the seam of hardware and software. Whether I’m architecting autonomous systems, developing machine learning pipelines, or scaling full-stack platforms, my focus is on creating technology that is intentional and sustainable. As a founder and community leader, I bring a rare blend of technical precision and human-centric strategy to every project. I don't just write code or design circuits; I build systems that solve problems for people.
     </p>
   </div>
 
@@ -326,35 +376,35 @@
         <ul>
           <li>FPGA Design (Xilinx / Altera)</li>
           <li>Digital Logic & Circuit Design</li>
-          <li>Microprocessor & Embedded Systems</li>
-          <li>Linear Circuit Analysis</li>
-          <li>Hardware-Software Integration</li>
+          <li>Microprocessor Systems</li>
+          <li>Hardware-Software Co-design</li>
           <li>Autonomous Systems Design</li>
           <li>Biometric & Sensor Integration</li>
+          <li>Sustainable Systems Design</li>
         </ul>
       </div>
       <div class="skill-col">
-        <div class="skill-label">Software & Systems</div>
+        <div class="skill-label">Software & Architecture</div>
         <ul>
-          <li>C / C++ / Python</li>
+          <li>Embedded C / C++ / Python</li>
           <li>JavaScript / GraphQL</li>
-          <li>Firebase / Supabase</li>
-          <li>REST APIs / Full Stack Architecture</li>
+          <li>Firebase / Supabase / REST APIs</li>
+          <li>Full-Stack Architecture</li>
           <li>Voice Recognition Systems</li>
           <li>Object-Oriented & System Design</li>
-          <li>Quantum Computing (fundamentals)</li>
+          <li>Machine Learning (fundamentals)</li>
         </ul>
       </div>
       <div class="skill-col">
-        <div class="skill-label">Design & Tools</div>
+        <div class="skill-label">Leadership & Design</div>
         <ul>
-          <li>HTML / CSS / Figma / Framer</li>
-          <li>Adobe Suite — Illustrator, InDesign, PS</li>
           <li>UI/UX Prototyping & Design Systems</li>
           <li>Technical Documentation</li>
-          <li>Canva / Web Design / Branding</li>
-          <li>English (Fluent) · Tagalog (Fluent)</li>
-          <li>German (Intermediate)</li>
+          <li>Brand Strategy & Visual Identity</li>
+          <li>Cross-functional Team Management</li>
+          <li>Product Lifecycle Management</li>
+          <li>Adobe Suite · Figma · Framer</li>
+          <li>English · Tagalog · German</li>
         </ul>
       </div>
     </div>
@@ -373,9 +423,9 @@
         <div class="role-meta">Los Angeles, CA · 2024 – Present</div>
       </div>
       <ul>
-        <li>Started as a Software Engineer & UI/UX Intern — built reusable front-end architecture that contributed to a ~50% reduction in UI bugs, integrated APIs that cut feature delivery time by ~30%, and ran market research to keep prototypes grounded in real user needs.</li>
-        <li>Grew into Co-Founder; architected a scalable Firebase backend with cross-platform integration that improved system performance by ~40%.</li>
-        <li>Built a responsive component library and design system that reduced development time by ~25% and continues to power the full product roadmap.</li>
+        <li>Co-founded and scaled a software product as founding engineer — architecting a Firebase backend with cross-platform integration that improved system performance by ~40% and supports the full product roadmap.</li>
+        <li>Built a reusable component library and design system that reduced development time by ~25% and cut UI bugs by ~50%.</li>
+        <li>Integrated APIs and front-end architecture that accelerated feature delivery by ~30%, validated continuously against real user research.</li>
       </ul>
     </div>
 
@@ -388,8 +438,8 @@
         <div class="role-meta">Temecula, CA · 2025 – Present</div>
       </div>
       <ul>
-        <li>Run an independent software and systems studio building custom web applications, internal tooling, and technical documentation for 4 active clients across health & wellness, entertainment, photography & film, and e-commerce — 7 clients served to date.</li>
-        <li>Architect and ship full-stack applications end-to-end — owning system design, database architecture, front-end, client integration, and delivery independently.</li>
+        <li>Founded and scaled an independent software and systems studio — directing end-to-end product lifecycles for 7 clients across health & wellness, entertainment, and e-commerce, with 4 active engagements.</li>
+        <li>Architect and ship full-stack applications independently — owning system design, database architecture (Supabase), front-end, and client delivery from zero to production.</li>
       </ul>
       <div class="client-list">
         <div class="client-list-label">Selected Clients</div>
@@ -460,7 +510,7 @@
   </div>
 
   <!-- ENGINEERING PROJECTS -->
-  <div class="section">
+  <div class="section section-projects">
     <div class="section-title">Engineering Projects</div>
 
     <div class="role">
@@ -472,8 +522,8 @@
         <div class="role-meta">Baltimore, MD · 2025</div>
       </div>
       <ul>
-        <li>Led a 4-person team as Systems Designer and Project Manager to build a low-cost, voice-controlled hospital bed for quadriplegic patients — combining real-time voice recognition, biometric monitoring, and safety-critical command validation into a single embedded system.</li>
-        <li>Took the project from schematic to functional prototype, delivering a clinically validated system through Volunteers for Medical Engineering.</li>
+        <li>Led a 4-person cross-functional team as Systems Designer and Project Manager to engineer a low-cost, voice-controlled hospital bed for quadriplegic patients — integrating real-time voice recognition, biometric monitoring, and safety-critical command validation into a single embedded system.</li>
+        <li>Delivered a clinically validated prototype through Volunteers for Medical Engineering, taking the system from schematic to functional deployment.</li>
       </ul>
     </div>
 
@@ -486,8 +536,8 @@
         <div class="role-meta">Baltimore, MD · 2024</div>
       </div>
       <ul>
-        <li>Built an autonomous rover as part of a team to combat invasive Spotted Lantern Flies — integrating motor control, sensor arrays, and embedded decision logic for real-time detection, path navigation, and insect attraction in live outdoor environments.</li>
-        <li>Completed field testing at the Loyola Arboretum with accurate path following, obstacle avoidance, and confirmed insect attraction — validating the full system end-to-end.</li>
+        <li>Served as Systems Architect and Team Lead for an autonomous rover designed to combat invasive Spotted Lantern Flies — directing hardware-software co-design across motor control, sensor arrays, and embedded decision logic for real-time detection and path navigation.</li>
+        <li>Completed field validation at the Loyola Arboretum with confirmed path following, obstacle avoidance, and live insect attraction — delivering a fully functional autonomous system end-to-end.</li>
       </ul>
     </div>
 
@@ -500,8 +550,8 @@
         <div class="role-meta">2026</div>
       </div>
       <ul>
-        <li>Built a 17-panel personal campaign OS to manage platform strategy, milestone tracking, and state-level pageant operations — treating a personal goal as a product engineering problem.</li>
-        <li>Supports 4 team members across a Kanban board, project management, file sharing, built-in advocacy quiz, messaging, and a live campaign page — all backed by Supabase with real-time sync.</li>
+        <li>Architected a 17-panel personal campaign OS — treating a real-world operational goal as a product engineering problem, designing for 4 concurrent users with Kanban management, milestone tracking, file sharing, advocacy tooling, and a live campaign page.</li>
+        <li>Backed by Supabase with real-time sync; supports full state-level pageant operations as a candidate for Miss California USA 2026.</li>
       </ul>
     </div>
   </div>
@@ -520,7 +570,7 @@
           </div>
           <div class="edu-detail" style="margin-top:8px; font-style:italic; color:var(--brown)">Campus Leadership</div>
           <div class="edu-detail" style="margin-top:4px">
-            <strong style="font-weight:500">Society of Women Engineers — President</strong> (Sep 2023 – May 2025) · Organized workshops, networking sessions, and STEM outreach expanding participation among underrepresented groups; managed student leadership team for mentorship and professional development.
+            <strong style="font-weight:500">Society of Women Engineers — President</strong> (Sep 2023 – May 2025) · Oversaw strategy and operations for a 100+ member engineering chapter — directing a leadership board of 10 officers, executing 15+ annual professional development and STEM outreach events, and building industry and academic partnerships to expand access for women in engineering.
           </div>
           <div class="edu-detail" style="margin-top:6px">
             <strong style="font-weight:500">BSA Fashion Show — Scene Leader, 25th Annual</strong> (2023 – 2024) · Directed choreography, lighting, sound, and media production for 20 models within a 100-model production.
@@ -538,7 +588,7 @@
             <div class="role-meta">2026</div>
           </div>
           <ul>
-            <li>Competing for Miss California USA 2026. Platform: sustainable technology, green energy access, and community infrastructure.</li>
+            <li>Leverage a public platform to advocate for sustainable technology and green energy access — presenting technical concepts to community stakeholders and local officials. Direct a full campaign operation including team coordination, public relations, and platform strategy as a candidate for Miss California USA 2026.</li>
           </ul>
         </div>
         <div class="role" style="margin-top:10px">

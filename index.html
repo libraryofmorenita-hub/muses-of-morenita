@@ -232,6 +232,13 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 
   /* Project modal */
   .proj-modal{width:100%;}
+
+  /* Resume panel — swap iframe for mobile summary card + PDF download */
+  #panel-resume iframe{display:none;}
+  #panel-resume-mobile{display:flex!important;}
+
+  /* Detail slide-panel — full width so it doesn't overflow the screen */
+  .detail-panel{width:100%;}
 }
 
 @media(max-width:480px){
@@ -979,7 +986,18 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 
 <!-- ══ RÉSUMÉ ══ -->
 <div class="panel" id="panel-resume" style="padding:0;">
-<iframe src="resume.html" style="width:100%;height:calc(100vh - 50px);border:none;display:block;"></iframe>
+
+  <!-- Mobile fallback: summary card + PDF download, shown instead of the iframe on small screens -->
+  <div id="panel-resume-mobile" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 50px);gap:1.5rem;padding:2.5rem 1.5rem;background:var(--ivory);">
+    <div style="max-width:520px;width:100%;">
+      <p style="font-family:var(--fd);font-size:28px;font-weight:300;letter-spacing:-.01em;color:var(--ink);margin-bottom:.35rem;">Amelia Arabe</p>
+      <p style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:1.5rem;">Computer &amp; Electrical Design Engineer</p>
+      <p style="font-size:13px;line-height:1.85;color:var(--charcoal);font-weight:300;margin-bottom:2rem;">Computer and Electrical Design Engineer with a foundation in embedded systems, hardware-software integration, digital logic, and microprocessor architecture. I build at the seam of hardware and software: autonomous rovers, voice-controlled medical devices, scalable full-stack platforms, and data-driven products. Cross-disciplinary by nature, I hold the technical, the human, and the strategic in the same frame and move between them without losing precision. Curious about intelligent systems and where machine learning meets physical design. Driven by technology that is sustainable, purposeful, and made for people.</p>
+      <a href="resume.pdf" download style="display:inline-block;padding:10px 24px;background:var(--ink);color:var(--ivory);text-decoration:none;border-radius:6px;font-size:11px;font-family:var(--fb);letter-spacing:.08em;text-transform:uppercase;">Download PDF</a>
+    </div>
+  </div>
+
+  <iframe src="resume.html" style="width:100%;height:calc(100vh - 50px);border:none;display:block;"></iframe>
 
 </div>
 
@@ -1499,6 +1517,25 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 
           <!-- PORTAL — manage what clients see at portal.html -->
           <div class="co-tab-panel" id="clpanel-portal">
+
+            <!-- Portal appearance — accent color, cover image, tagline -->
+            <div class="co-section">
+              <div class="co-sec-lbl">Portal Appearance</div>
+              <div class="co-field-row">
+                <div class="co-field">
+                  <label class="co-lbl">Accent Color</label>
+                  <input type="color" class="co-inp" id="cld-portal-accent" value="#c8a96e" oninput="saveClient()" style="height:36px;padding:2px 4px;cursor:pointer;">
+                </div>
+                <div class="co-field">
+                  <label class="co-lbl">Cover Image URL</label>
+                  <input class="co-inp" id="cld-portal-cover" type="url" placeholder="https://…" oninput="saveClient()">
+                </div>
+              </div>
+              <div class="co-field">
+                <label class="co-lbl">Project Tagline</label>
+                <input class="co-inp" id="cld-portal-tagline" placeholder="One-line description shown in the portal hero" oninput="saveClient()">
+              </div>
+            </div>
 
             <!-- Client email (required for magic link auth) -->
             <div class="co-section">
@@ -3570,7 +3607,10 @@ function addClient() {
     portal_show_contract:        false,
     portal_signed_name: '',     // typed name from client's e-signature
     portal_signed_at:   '',     // ISO timestamp of signing
-    portal_last_seen:   ''      // last time client opened the portal
+    portal_last_seen:   '',     // last time client opened the portal
+    portal_accent:      '#c8a96e',
+    portal_cover:       '',
+    portal_tagline:     ''
   };
   D.clients.unshift(c);
   closeModal('client');
@@ -3699,6 +3739,12 @@ function saveClient() {
   if (showInvDep)   c.portal_show_invoice_deposit = showInvDep.checked;
   if (showInvFin)   c.portal_show_invoice_final   = showInvFin.checked;
   if (showContract) c.portal_show_contract         = showContract.checked;
+  const accentEl  = document.getElementById('cld-portal-accent');
+  const coverEl   = document.getElementById('cld-portal-cover');
+  const taglineEl = document.getElementById('cld-portal-tagline');
+  if (accentEl)  c.portal_accent  = accentEl.value;
+  if (coverEl)   c.portal_cover   = coverEl.value.trim();
+  if (taglineEl) c.portal_tagline = taglineEl.value.trim();
   // Update header
   document.getElementById('cld-name').textContent    = c.name;
   document.getElementById('cld-service').textContent = c.service;
@@ -3884,6 +3930,14 @@ Include sections: parties & recitals, project scope, deliverables, timeline, pay
 function renderPortalTab() {
   const c = D.clients.find(x => x.id === activeClientId);
   if (!c) return;
+
+  // Appearance fields
+  const accentEl  = document.getElementById('cld-portal-accent');
+  const coverEl   = document.getElementById('cld-portal-cover');
+  const taglineEl = document.getElementById('cld-portal-tagline');
+  if (accentEl)  accentEl.value  = c.portal_accent  || '#c8a96e';
+  if (coverEl)   coverEl.value   = c.portal_cover   || '';
+  if (taglineEl) taglineEl.value = c.portal_tagline || '';
 
   // Email field
   const emailEl = document.getElementById('cld-email');
@@ -4152,6 +4206,9 @@ async function publishToPortal(sendInvite) {
     invoice_final_html:   showFin ? (c.generated_docs?.invoice_final   || '') : '',
     contract_html:        showCon ? (c.generated_docs?.contract         || '') : '',
     deliverables:         c.deliverables || '',
+    portal_accent:        c.portal_accent  || '#c8a96e',
+    portal_cover:         c.portal_cover   || '',
+    portal_tagline:       c.portal_tagline || '',
     send_invite:          !!sendInvite
   };
 
