@@ -18,69 +18,142 @@ function useFonts() {
   }, []);
 }
 
+/* ─── MVP Timeline: 3 months · May 2026 meeting ─────────────── */
+/* Both sides 50% · Couple linking essential · TestFlight target */
+/* Shop = affiliate only · No Shopify · Julia handles affiliate apps */
+
 /* ── Phase + task data ───────────────────────────────────────── */
 const PHASES = [
-  { id:0, label:"Foundation & Setup",         clientLabel:"Foundation",          weeks:[1,2],   color:C.sage,    hours:50,
-    tasks:["Flutter project structure + flavor config","Supabase: schema, auth, storage, RLS skeleton","RevenueCat: App Store Connect subscription SKUs","Firebase: FCM project + push certificate","Sanity: article + contributor schema","Shopify: store + Storefront API credentials","Design token system in Flutter"] },
-  { id:1, label:"Auth & Onboarding",           clientLabel:"Onboarding",          weeks:[3,7],   color:C.orange,  hours:125,
-    tasks:["Sign in with Apple (mandatory)","Email + password auth fallback","Onboarding: side selection, goals, pronouns, baseline","Couple link option + subscription paywall","Onboarding state machine — quit and resume"] },
-  { id:2, label:"Moon Side Core",              clientLabel:"Moon Side",           weeks:[8,15],  color:C.moon,    hours:200,
-    tasks:["Cycle calendar with phase color coding + predictions","Daily log modal: BBT, LH, CM, symptoms, mood","Home dashboard: phase banner, action cards","Postpartum mode activation","Apple HealthKit sync: BBT, sleep, activity","Logging streak counter"] },
-  { id:3, label:"Sun Side Core",               clientLabel:"Sun Side",            weeks:[16,20], color:C.sun,     hours:125,
-    tasks:["Single-screen Solar dashboard (no scroll)","Lifestyle log: sleep, stress, exercise, alcohol, heat","Sperm health module: log + parameter charts","Behavior task system: Health + Partner Support","Solar lifestyle score + animated gauge","Sun side insights + correlation cards"] },
-  { id:4, label:"Fertility Score Engine",       clientLabel:"Fertility Score",     weeks:[21,25], color:C.green,   hours:125,
-    tasks:["7-factor weighted algorithm — Moon side","7-factor weighted algorithm — Sun side","Combined Eclipse Score with Alignment Bonus","Score ring UI + animation","Score breakdown modal: contributor bars + explanations","'How to improve' micro-content cards","Score history + nightly trend calculation"] },
-  { id:5, label:"Probability Engine",           clientLabel:"Probability Engine",  weeks:[26,28], color:C.yellow,  hours:75,
-    tasks:["Conception probability algorithm (educational)","Real-time update as user logs data","'Maintain this behavior → +X%' projection","Legal copy review with CMO — disclaimed","Probability suppressed in grief mode","Probability breakdown explainer modal"] },
-  { id:6, label:"Eclipse System",               clientLabel:"Eclipse Mode",        weeks:[29,33], color:C.eclipse, hours:125,
-    tasks:["Partner code generation","Deep link invite via iMessage/email","Per-user privacy toggle controls","Supabase RLS policies for couple data","Eclipse tab: combined score, fertile window, milestones","Supabase Realtime — live partner sync","Eclipse Grief Support mode"] },
-  { id:7, label:"Gamification",                 clientLabel:"Gamification",        weeks:[34,36], color:C.orange,  hours:75,
-    tasks:["Logging, Healthy Habit, Partner Support streaks","Badge data model + nightly award logic","All specified badges + achievement badges","Score increase arc animation + color pulse","Milestone unlock: confetti + badge reveal","Task completion micro-animation + optional sound"] },
-  { id:8, label:"Notifications + Claude API",   clientLabel:"Notifications",       weeks:[37,39], color:C.purple,  hours:75,
-    tasks:["FCM + Supabase pg_cron for all types","Full suite: cycle, score, streaks, partner","Granular preference controls + Focus Mode","Claude API: phase-aware notification copy","Solar lunar-phase support nudges — dynamic","Auto-frequency reduction after 3+ days off"] },
-  { id:9, label:"Shop — Affiliate",             clientLabel:"Shop",                weeks:[40,43], color:C.green,   hours:100,
-    tasks:["Shopify Storefront API: listings by category","AI recommendation strip: home + shop","Product detail: Claude-generated rationale","Cart → Shopify hosted checkout (WebView)","RevenueCat paywall: Free → Optimize → Eclipse","Subscription management in Profile","Stripe web checkout (Apple tax bypass)"] },
-  { id:10, label:"Beta QA + TestFlight",         clientLabel:"QA & Launch",         weeks:[44,47], color:C.sage,    hours:100,
-    tasks:["Full regression test on physical devices","Flutter DevTools profiling","Supabase query optimization + index review","TestFlight internal beta: 5–10 testers","PostHog event tracking confirmed","App Store Connect: screenshots, keywords, privacy manifest","Address top beta issues only"] },
+  { id:0, label:"Foundation & Setup",          clientLabel:"Foundation",    weeks:[1,1],   color:C.sage,    hours:40,
+    tasks:[
+      "Flutter project structure + flavor config (dev/prod)",
+      "Supabase: project, schema, RLS skeleton, auth, storage",
+      "RevenueCat: App Store Connect Free + Optimize SKUs",
+      "Firebase: FCM project + push certificate",
+      "Affiliate product table in Supabase (name, brand, url, phase_tags, image_url)",
+      "Design token system: both color palettes, typography, spacing",
+    ]},
+  { id:1, label:"Auth & Onboarding",            clientLabel:"Onboarding",    weeks:[2,3],   color:C.orange,  hours:70,
+    tasks:[
+      "Sign in with Apple (mandatory for App Store)",
+      "Email + password auth fallback",
+      "Onboarding: side selection (Moon / Sun), goals, pronouns",
+      "Cycle baseline setup (Moon) + health baseline setup (Sun)",
+      "Couple link option at onboarding (code or skip)",
+      "Subscription paywall — Free tier + Optimize",
+      "Onboarding state machine: quit and resume at any screen",
+    ]},
+  { id:2, label:"Moon Side — 50%",              clientLabel:"Moon Side",     weeks:[4,6],   color:C.moon,    hours:90,
+    tasks:[
+      "Cycle calendar with phase color coding + predictions",
+      "Daily log: period flow, symptoms, mood, energy, sleep",
+      "Home dashboard: phase banner + day count + contextual tip",
+      "Today's action cards (3 scrollable)",
+      "Cycle phase calculation algorithm (period log → phase → predictions)",
+      "Logging streak counter",
+    ]},
+  { id:3, label:"Sun Side — 50%",               clientLabel:"Sun Side",      weeks:[6,8],   color:C.sun,     hours:75,
+    tasks:[
+      "Single-screen Solar dashboard (everything visible, no scroll)",
+      "Lifestyle log: sleep, stress, exercise, alcohol, supplements",
+      "Basic sperm health entry (date, motility %, volume — manual)",
+      "Solar lifestyle score calculation + gauge ring",
+      "Daily Mission card — one directive per day",
+      "Health behavior task checklist (supplement, no alcohol, exercise)",
+    ]},
+  { id:4, label:"Fertility Score — Simplified", clientLabel:"Fertility Score",weeks:[8,9],   color:C.green,   hours:50,
+    tasks:[
+      "Simplified 4-factor score algorithm — Moon side",
+      "Simplified 4-factor score algorithm — Sun side",
+      "Score ring UI: arc fills, color zones (red → amber → green → gold)",
+      "Score status label: Needs Attention / Building / Good / Strong / Peak",
+      "Plain-language score summary — one paragraph, no breakdown bars yet",
+      "Eclipse combined score calculation (if coupled)",
+    ]},
+  { id:5, label:"Couple Linking",               clientLabel:"Eclipse Mode",  weeks:[9,10],  color:C.eclipse, hours:65,
+    tasks:[
+      "Partner code generation (6-digit, 48hr expiry) — Supabase Edge Function",
+      "Enter code → validate → create couple record",
+      "Confirmation screen + shared dashboard explainer",
+      "Basic shared view: her phase + his score + fertile window countdown",
+      "Privacy defaults (summaries only — no raw logs visible)",
+      "Disconnect flow: archive milestones, individual data retained",
+    ]},
+  { id:6, label:"Affiliate Shop",               clientLabel:"Shop",          weeks:[11,11], color:C.orange,  hours:35,
+    tasks:[
+      "Phase-tagged product cards from Supabase catalog",
+      "Click tracking: log user_id, phase, product_id, timestamp to Supabase",
+      "Affiliate URL redirect → Thorne website or Amazon",
+      "Phase-aware recommendation strip on home dashboard (3 products)",
+      "Product detail: name, brand, phase tag, why-recommended copy",
+    ]},
+  { id:7, label:"Push Notifications — Basic",   clientLabel:"Notifications", weeks:[11,11], color:C.purple,  hours:20,
+    tasks:[
+      "Daily log reminder (user-set time)",
+      "Cycle phase transition alert",
+      "Fertile window opening alert (2 days before + day of)",
+      "Eclipse: partner's fertile window alert (if linked)",
+    ]},
+  { id:8, label:"QA + TestFlight Beta",          clientLabel:"QA & Beta",     weeks:[12,12], color:C.sage,    hours:50,
+    tasks:[
+      "Device testing on iPhone SE, 14, 15 (physical devices)",
+      "Score algorithm validation with known inputs",
+      "Privacy model audit: confirm no raw logs visible cross-partner",
+      "TestFlight build submitted, internal beta: 5–10 testers",
+      "Critical bug fixes only — no new features this window",
+      "App Store Connect listing started: description, keywords, screenshots",
+    ]},
 ];
 
 const MILESTONES = [
-  {week:2,  label:"Stack confirmed",          color:C.sage   },
-  {week:7,  label:"First user signs up",       color:C.orange },
-  {week:15, label:"Moon side complete",         color:C.moon   },
-  {week:20, label:"Sun side complete",          color:C.sun    },
-  {week:25, label:"Fertility Score live",       color:C.green  },
-  {week:28, label:"Probability Engine live",    color:C.yellow },
-  {week:33, label:"Eclipse linked",             color:C.eclipse},
-  {week:36, label:"Gamification live",          color:C.orange },
-  {week:43, label:"Shop live",                  color:C.green  },
-  {week:44, label:"TestFlight beta open",       color:C.sage   },
-  {week:48, label:"MVP Launch",                 color:C.red, big:true},
+  { week:1,  label:"Stack confirmed",           color:C.sage    },
+  { week:3,  label:"First user signs up",        color:C.orange  },
+  { week:6,  label:"Moon side logging works",    color:C.moon    },
+  { week:8,  label:"Sun side complete",          color:C.sun     },
+  { week:9,  label:"Fertility Score live",       color:C.green   },
+  { week:10, label:"First couple linked",        color:C.eclipse },
+  { week:11, label:"Shop + affiliates live",     color:C.orange  },
+  { week:12, label:"TestFlight Beta",            color:C.red, big:true },
 ];
 
+/* No Shopify · No Claude API · No Sanity in MVP */
 const MONTHLY_COSTS = [
-  {service:"Supabase",        low:0,  high:25,  note:"DB, auth, storage, realtime, edge functions", color:C.green },
-  {service:"RevenueCat",      low:0,  high:0,   note:"Free under $2,500 MRR · 1% after",            color:C.sun   },
-  {service:"Shopify",         low:39, high:105, note:"Commerce — Basic to Shopify plan",             color:C.orange},
-  {service:"Claude API",      low:20, high:80,  note:"AI notifications, recs, vision",               color:C.purple},
-  {service:"Firebase FCM",    low:0,  high:0,   note:"Free under 1M push/month",                    color:C.yellow},
-  {service:"Sanity CMS",      low:0,  high:0,   note:"Library content — free tier at launch",        color:C.sage  },
-  {service:"Sentry",          low:0,  high:26,  note:"Error monitoring — free under 5k errors",      color:C.red   },
-  {service:"PostHog",         low:0,  high:0,   note:"Analytics — free under 1M events",             color:C.green },
-  {service:"Cloudflare R2",   low:0,  high:5,   note:"File storage for photos and uploads",          color:C.sage  },
-  {service:"Apple Developer", low:8,  high:8,   note:"$99/year annualized",                         color:C.stone },
+  { service:"Supabase",        low:0, high:25, note:"DB, auth, affiliate click tracking, couple sync", color:C.green  },
+  { service:"RevenueCat",      low:0, high:0,  note:"Free under $2,500 MRR · 1% after",               color:C.sun    },
+  { service:"Firebase FCM",    low:0, high:0,  note:"Free under 1M push/month",                       color:C.yellow },
+  { service:"Sentry",          low:0, high:0,  note:"Free under 5k errors/month",                     color:C.red    },
+  { service:"PostHog",         low:0, high:0,  note:"Free under 1M events/month",                     color:C.green  },
+  { service:"Cloudflare",      low:0, high:5,  note:"CDN · affiliate redirect tracking endpoint",     color:C.sage   },
+  { service:"Apple Developer", low:8, high:8,  note:"$99/year annualized",                            color:C.stone  },
+];
+
+const DEFERRED = [
+  { label:"Probability Engine",         when:"Month 4–5",  color:C.yellow  },
+  { label:"Full Fertility Score UI",    when:"Month 4–5",  color:C.green   },
+  { label:"Gamification — badges",      when:"Month 4–5",  color:C.orange  },
+  { label:"Claude API notifications",   when:"Month 5–6",  color:C.purple  },
+  { label:"The Library (Sanity CMS)",   when:"Month 5–6",  color:C.purple  },
+  { label:"Ombre Aura visualization",   when:"Month 5–6",  color:C.moon    },
+  { label:"LH Strip Photo AI",          when:"Month 6–7",  color:C.purple  },
+  { label:"Grief & Loss full flows",    when:"Month 6–7",  color:C.sage    },
+  { label:"LGBTQIA+ inclusive flows",   when:"Month 6–7",  color:C.moon    },
+  { label:"Postpartum mode",            when:"Month 6–7",  color:C.red     },
+  { label:"Med Spa bookings",           when:"Month 7–8",  color:C.sun     },
+  { label:"Android launch",             when:"Month 10+",  color:C.green   },
 ];
 
 const OPEN_DECISIONS = [
-  {label:"App name confirmed",          detail:"Kairos is working title. bykairos.app and bykairos.ai are available.",                               status:"pending",   color:C.orange},
-  {label:"Medical Advisory Board",      detail:"CMO obtained. Confirm OBGYN + RE + Urologist + Perinatal therapist as contributors.",               status:"pending",   color:C.red   },
-  {label:"Vendor pipeline — Phase 2",   detail:"Existing relationships with supplement or wellness brands for marketplace?",                          status:"pending",   color:C.purple},
-  {label:"Med spa partnerships",        detail:"Service provider network needed before Phase 18.",                                                    status:"pending",   color:C.moon  },
-  {label:"Subscription pricing",        detail:"Proposal: $14.99 Optimize, $22.99 Eclipse. Client suggested $20/$40. Confirm before RevenueCat setup.", status:"pending", color:C.green},
-  {label:"Beta test invite list",       detail:"5–10 trusted testers needed for TestFlight at Week 44.",                                             status:"pending",   color:C.sage  },
-  {label:"Meeting cadence",             detail:"Recommend bi-weekly check-ins with this dashboard as standing agenda.",                               status:"pending",   color:C.yellow},
-  {label:"Data research partnerships",  detail:"Confirmed not in MVP. Flag for Phase 3 legal review.",                                               status:"confirmed", color:C.green },
-  {label:"Own brand product line",      detail:"Affiliate-only at launch. Own products deferred to post-MVP.",                                       status:"confirmed", color:C.green },
+  { label:"App name confirmed",          detail:"Kairos is working title. bykairos.app + bykairos.ai available. Confirm before App Store listing.",   status:"pending",   color:C.orange },
+  { label:"Thorne affiliate approved",   detail:"Julia applying. Approval typically 1–2 weeks. Must be live before Week 11 shop build.",              status:"pending",   color:C.green  },
+  { label:"Amazon Associates approved",  detail:"Julia applying. Approval 1–3 days. Required for Amazon product links in affiliate shop.",            status:"pending",   color:C.green  },
+  { label:"Beta test invite list",       detail:"5–10 testers needed for TestFlight by Week 12. Client to identify and share contact list.",          status:"pending",   color:C.sage   },
+  { label:"Subscription pricing — MVP",  detail:"MVP ships Free + Optimize only. Eclipse tier launches post-MVP. Confirm Optimize price point.",      status:"pending",   color:C.moon   },
+  { label:"Medical Advisory Board",      detail:"CMO confirmed. Need OBGYN + RE + Urologist + Perinatal therapist for content review in Phase 2.",   status:"pending",   color:C.red    },
+  { label:"Meeting cadence",             detail:"Bi-weekly check-ins recommended. This dashboard serves as standing agenda.",                         status:"pending",   color:C.yellow },
+  { label:"Shop = affiliate only at launch", detail:"Confirmed May 6. Thorne + Amazon affiliate links. No Shopify. No own brand products at MVP.",    status:"confirmed", color:C.green  },
+  { label:"Both sides at 50% for MVP",   detail:"Confirmed May 6. Moon + Sun both ship at 50% feature depth. Full scope builds in background.",      status:"confirmed", color:C.green  },
+  { label:"Couple linking in MVP",       detail:"Confirmed May 6. Eclipse mode essential for launch. Basic shared view ships Week 10.",              status:"confirmed", color:C.green  },
+  { label:"Data research partnerships",  detail:"Not in MVP. Flag for Phase 3 legal review.",                                                        status:"confirmed", color:C.green  },
 ];
 
 const totalTaskCount = PHASES.reduce((a, p) => a + p.tasks.length, 0);
@@ -188,46 +261,109 @@ function MoonDemo() {
       </div>
 
       {/* Full-width ombre color square — the whole aura */}
-      <div style={{ width:"100%", height:216, position:"relative", flexShrink:0, overflow:"hidden" }}>
-        {/* Layered radial gradients create a mesh / ombre color field */}
-        <div style={{ position:"absolute", inset:0, background:"#F0EAE0" }} />
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse at 18% 22%, rgba(194,58,48,0.75) 0%, transparent 48%)" }} />
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse at 82% 18%, rgba(90,156,56,0.70) 0%, transparent 48%)" }} />
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse at 76% 78%, rgba(224,192,48,0.88) 0%, transparent 42%)" }} />
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse at 18% 80%, rgba(138,88,154,0.72) 0%, transparent 48%)" }} />
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse at 50% 50%, rgba(246,241,233,0.35) 0%, transparent 55%)" }} />
-        {/* Soft cream edges to keep it airy */}
-        <div style={{ position:"absolute", top:0, left:0, right:0, height:24, background:"linear-gradient(to bottom, rgba(246,241,233,0.5), transparent)" }} />
-        <div style={{ position:"absolute", bottom:0, left:0, right:0, height:24, background:"linear-gradient(to top, rgba(246,241,233,0.4), transparent)" }} />
+      <div style={{ width:"100%", height:216, position:"relative", flexShrink:0, overflow:"hidden", background:"#F7EEE3" }}>
 
-        {/* Corner phase labels */}
-        <div style={{ position:"absolute", top:8, left:10, fontFamily:"'DM Mono',monospace", fontSize:7, color:"rgba(255,255,255,0.85)", letterSpacing:"0.06em" }}>New Moon</div>
-        <div style={{ position:"absolute", top:8, right:10, fontFamily:"'DM Mono',monospace", fontSize:7, color:"rgba(255,255,255,0.85)", letterSpacing:"0.06em" }}>Waxing</div>
-        <div style={{ position:"absolute", bottom:8, left:10, fontFamily:"'DM Mono',monospace", fontSize:7, color:"rgba(255,255,255,0.85)", letterSpacing:"0.06em" }}>Waning</div>
-        <div style={{ position:"absolute", bottom:8, right:10, fontFamily:"'DM Mono',monospace", fontSize:7, color:"rgba(255,255,255,0.95)", letterSpacing:"0.06em", fontWeight:"600" }}>Full Moon ★</div>
+        {/* ── Analogous warm palette — all in the rose-amber family ── */}
+        {/* Colors that blend: rose→salmon, terracotta→amber, amber→mauve — no muddy intersections */}
 
-        {/* Day 14 marker — in the yellow/Full Moon zone (bottom right) */}
-        <div style={{ position:"absolute", bottom:"26%", right:"24%", display:"flex", flexDirection:"column", alignItems:"center", gap:3 }}>
-          <div style={{ fontFamily:"'DM Mono',monospace", fontSize:8, color:"rgba(30,24,10,0.85)", background:"rgba(255,255,255,0.65)", padding:"2px 6px", borderRadius:2, backdropFilter:"blur(4px)", letterSpacing:"0.06em" }}>Day 14</div>
-          <div style={{ width:13, height:13, borderRadius:"50%", background:"white", boxShadow:"0 0 18px rgba(255,255,255,0.95), 0 2px 6px rgba(0,0,0,0.18)" }} />
+        {/* Deep rose — upper left, New Moon / Menstrual */}
+        <div style={{
+          position:"absolute", top:-55, left:-55,
+          width:240, height:240, borderRadius:"50%",
+          background:"radial-gradient(circle, #B84060 0%, rgba(184,64,96,0.55) 38%, transparent 70%)",
+          filter:"blur(38px)", opacity:0.62,
+        }}/>
+
+        {/* Warm terracotta — upper right, Waxing / Follicular */}
+        <div style={{
+          position:"absolute", top:-40, right:-40,
+          width:220, height:220, borderRadius:"50%",
+          background:"radial-gradient(circle, #C47250 0%, rgba(196,114,80,0.50) 38%, transparent 70%)",
+          filter:"blur(36px)", opacity:0.58,
+        }}/>
+
+        {/* Honey amber — lower right, Full Moon / Ovulation — the dominant, brightest zone */}
+        <div style={{
+          position:"absolute", bottom:-40, right:-30,
+          width:245, height:230, borderRadius:"50%",
+          background:"radial-gradient(circle, #C89838 0%, rgba(200,152,56,0.62) 40%, transparent 70%)",
+          filter:"blur(32px)", opacity:0.74,
+        }}/>
+
+        {/* Dusty plum — lower left, Waning / Luteal */}
+        <div style={{
+          position:"absolute", bottom:-50, left:-40,
+          width:225, height:225, borderRadius:"50%",
+          background:"radial-gradient(circle, #906080 0%, rgba(144,96,128,0.52) 38%, transparent 70%)",
+          filter:"blur(36px)", opacity:0.60,
+        }}/>
+
+        {/* Blush salmon — center-top bridge, softens rose + terracotta */}
+        <div style={{
+          position:"absolute", top:10, left:"28%",
+          width:160, height:150, borderRadius:"50%",
+          background:"radial-gradient(circle, #DC9080 0%, rgba(220,144,128,0.42) 42%, transparent 70%)",
+          filter:"blur(28px)", opacity:0.44,
+        }}/>
+
+        {/* Golden peach — center bridge, amber + plum */}
+        <div style={{
+          position:"absolute", bottom:"18%", left:"28%",
+          width:140, height:130, borderRadius:"50%",
+          background:"radial-gradient(circle, #C8885A 0%, rgba(200,136,90,0.40) 42%, transparent 70%)",
+          filter:"blur(26px)", opacity:0.40,
+        }}/>
+
+        {/* Warm luminous core — candlelight glow at center */}
+        <div style={{
+          position:"absolute", top:"5%", left:"10%",
+          width:"80%", height:"90%", borderRadius:"50%",
+          background:"radial-gradient(circle, rgba(255,252,244,0.58) 0%, rgba(255,248,232,0.18) 52%, transparent 72%)",
+          filter:"blur(18px)",
+        }}/>
+
+        {/* Top cream vignette */}
+        <div style={{
+          position:"absolute", top:0, left:0, right:0, height:36,
+          background:"linear-gradient(to bottom, rgba(247,238,227,0.80), transparent)",
+        }}/>
+        {/* Bottom cream vignette */}
+        <div style={{
+          position:"absolute", bottom:0, left:0, right:0, height:32,
+          background:"linear-gradient(to top, rgba(247,238,227,0.70), transparent)",
+        }}/>
+
+        {/* Corner labels — Cormorant italic, sits on each phase zone */}
+        <div style={{ position:"absolute", top:9, left:11, fontFamily:"'Cormorant Garamond',serif", fontSize:8, fontStyle:"italic", color:"rgba(255,255,255,0.90)", letterSpacing:"0.04em" }}>New Moon</div>
+        <div style={{ position:"absolute", top:9, right:11, fontFamily:"'Cormorant Garamond',serif", fontSize:8, fontStyle:"italic", color:"rgba(255,255,255,0.88)", letterSpacing:"0.04em" }}>Waxing</div>
+        <div style={{ position:"absolute", bottom:9, left:11, fontFamily:"'Cormorant Garamond',serif", fontSize:8, fontStyle:"italic", color:"rgba(255,255,255,0.84)", letterSpacing:"0.04em" }}>Waning</div>
+        <div style={{ position:"absolute", bottom:9, right:11, fontFamily:"'Cormorant Garamond',serif", fontSize:8, fontStyle:"italic", color:"rgba(255,255,255,0.96)", letterSpacing:"0.04em" }}>Full Moon ★</div>
+
+        {/* Day 14 — warm glowing dot in the amber zone */}
+        <div style={{ position:"absolute", bottom:"28%", right:"22%", display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
+          <div style={{ fontFamily:"'DM Mono',monospace", fontSize:7, color:"rgba(50,30,10,0.80)", background:"rgba(255,250,238,0.75)", padding:"2px 6px", borderRadius:2, backdropFilter:"blur(6px)", letterSpacing:"0.07em" }}>Day 14</div>
+          <div style={{
+            width:13, height:13, borderRadius:"50%",
+            background:"white",
+            boxShadow:"0 0 0 3px rgba(255,255,255,0.30), 0 0 20px rgba(255,245,210,0.95), 0 0 8px rgba(200,152,56,0.5)",
+          }}/>
         </div>
 
-        {/* Health nodes — soft colored dots floating in the aura */}
+        {/* Health nodes — same warm family as the field */}
         {[
-          {x:"38%",  y:"35%", c:C.yellow, s:9,  o:0.85},
-          {x:"62%",  y:"28%", c:C.green,  s:7,  o:0.75},
-          {x:"28%",  y:"55%", c:C.red,    s:8,  o:0.70},
-          {x:"55%",  y:"60%", c:C.purple, s:6,  o:0.65},
-          {x:"45%",  y:"42%", c:C.orange, s:7,  o:0.72},
-          {x:"70%",  y:"50%", c:C.sage,   s:6,  o:0.65},
+          { l:"42%", t:"34%", c:"rgba(200,152,56,0.88)",  s:5 },
+          { l:"65%", t:"26%", c:"rgba(196,114,80,0.82)",  s:4 },
+          { l:"25%", t:"50%", c:"rgba(184,64,96,0.78)",   s:4 },
+          { l:"52%", t:"60%", c:"rgba(144,96,128,0.78)",  s:3 },
+          { l:"36%", t:"46%", c:"rgba(220,144,128,0.75)", s:4 },
+          { l:"70%", t:"50%", c:"rgba(200,136,90,0.72)",  s:3 },
         ].map((n, i) => (
           <div key={i} style={{
-            position:"absolute", left:n.x, top:n.y,
+            position:"absolute", left:n.l, top:n.t,
             width:n.s*2, height:n.s*2, borderRadius:"50%",
-            background:n.c, opacity:n.o,
-            boxShadow:`0 0 ${n.s*2}px ${n.c}`,
-            transform:"translate(-50%,-50%)",
-          }} />
+            background:n.c, transform:"translate(-50%,-50%)",
+            boxShadow:`0 0 ${n.s*3}px ${n.c}`,
+          }}/>
         ))}
       </div>
 
@@ -767,7 +903,7 @@ function ClientView({ checked }) {
   const { done, total, pct } = calcProgress(checked);
   const curIdx = getCurrentPhaseIdx(checked);
   const curPhase = PHASES[curIdx];
-  const approxWeek = Math.round(pct * 47) + 1;
+  const approxWeek = Math.round(pct * 11) + 1;
   const completedMs = MILESTONES.filter(m => m.week <= approxWeek).length;
   const mLow = MONTHLY_COSTS.reduce((a,c)=>a+c.low,0);
   const mHigh = MONTHLY_COSTS.reduce((a,c)=>a+c.high,0);
@@ -855,7 +991,7 @@ function ClientView({ checked }) {
               {[
                 {label:"Current Phase", val:curPhase.clientLabel,         color:curPhase.color},
                 {label:"Milestones",    val:`${completedMs} / ${MILESTONES.length}`, color:C.green},
-                {label:"MVP Target",    val:"Week 48 · ~12 months",       color:C.red},
+                {label:"MVP Target",    val:"Week 12 · ~3 months",        color:C.red},
               ].map(({label,val,color})=>(
                 <div key={label} style={{ padding:14, background:C.creamMid, borderRadius:4, borderTop:`2px solid ${color}` }}>
                   <Lbl color={C.stoneMid} mb={7}>{label}</Lbl>
@@ -882,13 +1018,13 @@ function ClientView({ checked }) {
           <div style={{ height:2, background:C.creamDeep, borderRadius:1 }}/>
           <div style={{ position:"absolute", top:0, left:0, height:2, background:`linear-gradient(to right,${C.moon},${C.green},${C.sun})`, width:`${pct*100}%`, borderRadius:1, transition:"width 0.8s ease" }}/>
           {MILESTONES.map((m,i)=>(
-            <div key={i} style={{ position:"absolute", top:-5, left:`${((m.week-1)/47)*100}%`, transform:"translateX(-50%)" }}>
+            <div key={i} style={{ position:"absolute", top:-5, left:`${((m.week-1)/11)*100}%`, transform:"translateX(-50%)" }}>
               <div style={{ width:m.big?12:8, height:m.big?12:8, borderRadius:"50%", background:m.week<=approxWeek?m.color:C.creamDeep, border:`2px solid ${C.cream}` }}/>
             </div>
           ))}
         </div>
         <div style={{ display:"flex", justifyContent:"space-between" }}>
-          {["Wk 1","Wk 12","Wk 24","Wk 36","Wk 48"].map(l=><Mn key={l} size={8} color={C.stoneMid}>{l}</Mn>)}
+          {["Wk 1","Wk 3","Wk 6","Wk 9","Wk 12"].map(l=><Mn key={l} size={8} color={C.stoneMid}>{l}</Mn>)}
         </div>
       </div>
 
@@ -994,15 +1130,22 @@ function ClientView({ checked }) {
       <div>
         <Lbl color={C.purple}>Technical Foundation</Lbl>
         <Hd style={{ marginBottom:8 }}>Stack & monthly obligations.</Hd>
-        <Bd style={{ marginBottom:28, maxWidth:540 }}>Built for a solo engineer on a minimal, maintainable stack. Every service reduces engineering surface area and extends runway.</Bd>
+        <Bd style={{ marginBottom:16, maxWidth:540 }}>MVP stack is deliberately lean — no Shopify, no Claude API, no Sanity. The affiliate shop is entirely Supabase-powered. Monthly cost drops to under $40.</Bd>
+        <div style={{ display:"flex", gap:12, marginBottom:28, flexWrap:"wrap" }}>
+          {[["No Shopify",C.green],["No Claude API",C.green],["No Sanity CMS",C.green]].map(([l,c])=>(
+            <div key={l} style={{ padding:"5px 14px", background:`${c}10`, border:`1px solid ${c}40`, borderRadius:2 }}>
+              <Mn size={9} color={c}>{l} in MVP · Phase 2</Mn>
+            </div>
+          ))}
+        </div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, marginBottom:28 }}>
           {[
-            {name:"Flutter + Dart",role:"iOS App",      note:"iOS first. Android Phase 3 — same codebase, near-zero extra work.",          color:C.moon  },
-            {name:"Supabase",      role:"Backend",      note:"PostgreSQL + Auth + Realtime + Edge Functions. Privacy enforced at DB level.", color:C.green },
-            {name:"RevenueCat",    role:"Subscriptions",note:"Handles all Apple IAP complexity. Free under $2,500 MRR.",                    color:C.sun   },
-            {name:"Shopify API",   role:"Commerce",     note:"Storefront API for product catalog and checkout. No custom cart needed.",     color:C.orange},
-            {name:"Claude API",    role:"AI Layer",     note:"Phase-aware notification copy, product rationale, LH strip photo analysis.",  color:C.purple},
-            {name:"Sanity.io",     role:"Library CMS",  note:"GROQ queries for phase-aware article surfacing. Free at launch volume.",      color:C.sage  },
+            {name:"Flutter + Dart",   role:"iOS App",      note:"iOS first. Android Phase 3 — same codebase, near-zero extra work.",           color:C.moon  },
+            {name:"Supabase",         role:"Backend",      note:"DB + auth + affiliate click tracking + couple sync. Privacy at DB level.",     color:C.green },
+            {name:"RevenueCat",       role:"Subscriptions",note:"Handles all Apple IAP. Free under $2,500 MRR. No custom subscription logic.",  color:C.sun   },
+            {name:"Firebase FCM",     role:"Notifications",note:"Push notifications — cycle alerts, log reminders. Free at MVP volume.",        color:C.yellow},
+            {name:"PostHog",          role:"Analytics",    note:"User behavior, funnel tracking. Free under 1M events/month.",                  color:C.sage  },
+            {name:"Supabase Storage", role:"Affiliate DB",  note:"Product catalog, click log, phase tags. No external commerce platform.",      color:C.green },
           ].map(({name,role,note,color})=>(
             <div key={name} style={{ padding:16, background:C.creamMid, borderRadius:4, borderTop:`2px solid ${color}` }}>
               <Mn size={12} color={color} style={{ display:"block", marginBottom:4 }}>{name}</Mn>
@@ -1048,7 +1191,23 @@ function ClientView({ checked }) {
 
       <Hr/>
 
-      {/* OPEN DECISIONS */}
+      {/* DEFERRED TO PHASE 2 */}
+      <div>
+        <Lbl color={C.stone}>Building in the Background</Lbl>
+        <Hd style={{ marginBottom:8 }}>Deferred. Not forgotten.</Hd>
+        <Bd style={{ marginBottom:24, maxWidth:540 }}>
+          These features are scoped and designed — they build in parallel while MVP is in testing. Each ships in the months immediately following TestFlight beta.
+        </Bd>
+        <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+          {DEFERRED.map((d, i) => (
+            <div key={i} style={{ display:"flex", alignItems:"center", gap:8, padding:"7px 14px", background:C.creamMid, border:`1px solid ${d.color}30`, borderRadius:2 }}>
+              <div style={{ width:5, height:5, borderRadius:"50%", background:d.color, flexShrink:0 }}/>
+              <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:C.inkSoft }}>{d.label}</span>
+              <Mn size={8} color={d.color} style={{ marginLeft:4 }}>{d.when}</Mn>
+            </div>
+          ))}
+        </div>
+      </div>
       <div>
         <Lbl color={C.red}>Client Action Required</Lbl>
         <Hd style={{ marginBottom:8 }}>Open decisions.</Hd>
