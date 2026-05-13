@@ -485,6 +485,22 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 .days-old{color:var(--si);}
 .status-sel{font-size:11px;border:0.5px solid var(--bd);border-radius:4px;background:transparent;padding:3px 6px;color:var(--charcoal);cursor:pointer;width:100%;}
 
+/* ── RESUME VAULT ── */
+.rv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;padding:.5rem 0 2rem;}
+.rv-card{background:white;border:0.5px solid var(--bd);border-radius:var(--rl);padding:1.25rem 1.4rem;display:flex;flex-direction:column;gap:.5rem;position:relative;}
+.rv-master{border-color:var(--sil);background:var(--sip);}
+.rv-label{font-family:var(--fd);font-size:15px;font-weight:500;color:var(--si);}
+.rv-sub{font-size:11px;color:var(--muted);line-height:1.5;}
+.rv-actions{display:flex;gap:.5rem;margin-top:.5rem;flex-wrap:wrap;}
+.rv-btn{font-size:11px;padding:6px 14px;border-radius:5px;text-decoration:none;font-family:var(--fb);cursor:pointer;border:none;transition:opacity .15s;}
+.rv-btn:hover{opacity:.8;}
+.rv-view{background:var(--ink);color:var(--ivory);}
+.rv-dl{background:transparent;border:0.5px solid var(--bd)!important;color:var(--si);}
+.rv-del{position:absolute;top:.6rem;right:.7rem;font-size:13px;color:var(--faint);background:none;border:none;cursor:pointer;line-height:1;padding:2px 4px;}
+.rv-del:hover{color:var(--si);}
+.rv-inp{width:100%;font-family:var(--fb);font-size:12px;padding:5px 8px;border:0.5px solid var(--bd);border-radius:5px;background:var(--ivory);color:var(--ink);margin-bottom:3px;}
+.rv-inp:focus{outline:none;border-color:var(--sil);}
+
 /* ── SLIDE-OUT DETAIL PANEL ── */
 .detail-panel{position:fixed;top:50px;right:0;bottom:0;width:380px;background:white;border-left:0.5px solid var(--bdm);z-index:90;transform:translateX(100%);transition:transform .25s ease;overflow-y:auto;display:flex;flex-direction:column;}
 .detail-panel.open{transform:translateX(0);}
@@ -1013,6 +1029,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
       <button class="sbitem" id="sbi-strategy" onclick="view('strategy')">&#9671; Artist Strategy</button>
       <button class="sbitem" id="sbi-income" onclick="view('income')">&#9672; Income Map</button>
       <button class="sbitem" id="sbi-tracker" onclick="view('tracker')">&#8862; Job Tracker</button>
+      <button class="sbitem" id="sbi-resumes" onclick="view('resumes')">&#9634; Resume Vault</button>
       <button class="sbitem" id="sbi-clients" onclick="view('clients')">&#9670; Clients</button>
       <button class="sbitem" id="sbi-inspiration" onclick="view('inspiration')">&#9680; Inspiration</button>
     </div>
@@ -1259,6 +1276,26 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
         </div>
 
 
+      </div>
+    </div>
+
+    <!-- RESUME VAULT -->
+    <div class="view" id="v-resumes">
+      <div class="mhead">
+        <div><h2 class="mtitle">Resume <em>Vault</em></h2><p class="msub">Master blueprint + tailored versions per target company</p></div>
+        <button class="addbtn" onclick="addResumeVariant()">+ Add Variant</button>
+      </div>
+      <!-- Master resume — always shown, not deletable -->
+      <div class="rv-grid">
+        <div class="rv-card rv-master">
+          <div class="rv-label">Master Resume</div>
+          <div class="rv-sub">Systems Engineer &amp; Founder · Base version</div>
+          <div class="rv-actions">
+            <a class="rv-btn rv-view" href="resume.html" target="_blank">View →</a>
+            <a class="rv-btn rv-dl" href="resume.pdf" download>Download PDF</a>
+          </div>
+        </div>
+        <div id="rv-variants"></div>
       </div>
     </div>
 
@@ -2056,6 +2093,7 @@ if (!D.profile || typeof D.profile !== 'object') D.profile = DEFAULTS.profile;
 if (!Array.isArray(D.works))      D.works      = JSON.parse(JSON.stringify(DEFAULTS.works));
 if (!Array.isArray(D.paintings))  D.paintings  = JSON.parse(JSON.stringify(DEFAULTS.paintings));
 if (!Array.isArray(D.jobs))       D.jobs       = [];
+if (!Array.isArray(D.resumes))    D.resumes    = [];
 if (!Array.isArray(D.files))      D.files      = [];
 if (!Array.isArray(D.drafts))     D.drafts     = [];
 if (!Array.isArray(D.clients))    D.clients    = [];
@@ -2140,7 +2178,7 @@ function go(p) {
 }
 
 function view(v) {
-  const views = ['portfolio','projects','paintings','income','tracker','clients','files','strategy','inspiration'];
+  const views = ['portfolio','projects','paintings','income','tracker','resumes','clients','files','strategy','inspiration'];
   views.forEach(x => {
     const el = document.getElementById('v-'+x);
     if (el) el.classList.toggle('on', x===v);
@@ -2151,6 +2189,7 @@ function view(v) {
   if (v === 'projects')    renderProjList();
   if (v === 'paintings')   renderPaintList();
   if (v === 'tracker')     { renderJobs(); updateFilterCounts(); }
+  if (v === 'resumes')    renderResumes();
   if (v === 'clients')     { setClientView(clViewMode); updateClientStats(); }
   if (v === 'strategy')    loadStrategy();
   if (v === 'inspiration') renderInspiration();
@@ -4339,6 +4378,37 @@ function updateFilterCounts() {
     const el = document.getElementById(id);
     if (el) el.textContent = counts[k] > 0 ? ' ('+counts[k]+')' : '';
   });
+}
+
+// ── RESUME VAULT ─────────────────────────────────
+function renderResumes() {
+  const el = document.getElementById('rv-variants');
+  if (!el) return;
+  if (!D.resumes.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--faint);font-style:italic;padding:.5rem 0">No tailored versions yet — add one when you\'re ready to target a specific role.</div>';
+    return;
+  }
+  el.innerHTML = D.resumes.map((r, i) => `
+    <div class="rv-card">
+      <button class="rv-del" onclick="removeResume(${i})">&times;</button>
+      <input class="rv-inp" value="${esc(r.label)}" placeholder="Company · Role" oninput="D.resumes[${i}].label=this.value;save()">
+      <input class="rv-inp" value="${esc(r.pdf)}" placeholder="filename.pdf" oninput="D.resumes[${i}].pdf=this.value;save()" style="font-size:10px;color:var(--muted)">
+      <div class="rv-actions">
+        <a class="rv-btn rv-view" href="${esc(r.html||r.pdf.replace('.pdf','.html'))}" target="_blank">View →</a>
+        <a class="rv-btn rv-dl" href="${esc(r.pdf)}" download>Download PDF</a>
+      </div>
+    </div>`).join('');
+}
+
+function addResumeVariant() {
+  if (!D.resumes) D.resumes = [];
+  D.resumes.push({ label: '', pdf: '', html: '' });
+  save(); renderResumes();
+}
+
+function removeResume(i) {
+  D.resumes.splice(i, 1);
+  save(); renderResumes();
 }
 
 function renderJobs() {
