@@ -701,6 +701,17 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
 .lac-published{background:var(--sap);color:var(--sa);}
 
 /* ── SERVICES ── */
+/* ── ARTISTRY SECTION ── */
+.art-sub-hd{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;font-weight:400;}
+.art-coming{font-size:11px;color:var(--faint);font-style:italic;margin:.75rem 0 1.5rem;letter-spacing:.04em;}
+.art-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:2.5rem;}
+.art-card{border:0.5px solid var(--bd);border-radius:10px;background:white;padding:1.25rem;display:flex;flex-direction:column;gap:.5rem;}
+.art-card-lbl{font-family:var(--fd);font-size:15px;font-weight:400;color:var(--ink);line-height:1.2;}
+.art-card-lbl em{color:var(--si);}
+.art-card-desc{font-size:11px;color:var(--muted);line-height:1.75;}
+@media(max-width:600px){.art-row{grid-template-columns:1fr;}}
+/* ── SERVICES ── */
+.svc-sub-title{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--si);margin-top:-.25rem;}
 .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-bottom:2.5rem;}
 .svc-card{border:0.5px solid var(--bd);border-radius:10px;background:white;padding:1.25rem;transition:border-color .2s,transform .2s,box-shadow .2s;display:flex;flex-direction:column;gap:.5rem;}
 .svc-card:hover{border-color:var(--sil);transform:translateY(-2px);box-shadow:0 6px 24px rgba(139,74,47,.08);}
@@ -872,7 +883,7 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
     <div>
       <div class="eyebrow">Portfolio &middot; Available for work</div>
       <h1 class="port-name" id="p-name">Your <em>Name</em></h1>
-      <p class="port-subtitle" id="p-subtitle">Computer &amp; Electrical Engineer &middot; Oil Painter &middot; Cellist &middot; Actress</p>
+      <p class="port-subtitle" id="p-subtitle">Architect of Systems &amp; Soul &nbsp;|&nbsp; CE/EE Engineer &nbsp;|&nbsp; Renaissance Woman</p>
       <p class="port-bio" id="p-bio">I am a creative tech entrepreneur building systems with soul. One day, the blend of my many passions will manifest as intellectual infrastructure worthy of the library of alexandria. Today I must simply create for the joy of artistry.</p>
       <div class="tags" id="p-tags"></div>
     </div>
@@ -880,47 +891,46 @@ body{font-family:var(--fb);background:var(--ivory);color:var(--ink);font-size:13
   </div>
   <div class="sec"><span class="sec-lbl">Selected Work</span><div class="sec-rule"></div><span class="sec-ct" id="p-work-ct"></span></div>
   <div class="wgrid" id="p-work-grid"></div>
-  <div class="sec"><span class="sec-lbl">Original Oil Paintings</span><div class="sec-rule"></div><span class="sec-ct">Available for purchase</span></div>
+  <div class="sec"><span class="sec-lbl">Artistry</span><div class="sec-rule"></div><span class="sec-ct">Visual Art &nbsp;·&nbsp; Acoustic Presence &nbsp;·&nbsp; Visual Presence</span></div>
+
+  <div class="art-sub-hd">Visual Art</div>
   <div class="pgrid" id="p-paint-grid"></div>
+  <div class="art-coming">Sustainable Print Collections &mdash; Coming Soon</div>
+
+  <div class="art-row">
+    <div class="art-card">
+      <div class="art-card-lbl">Acoustic Presence &nbsp;<em>Cello</em></div>
+      <div class="art-card-desc">Setting the acoustic tempo for sacred environments. Available for live performance — intimate gatherings, cultural events, and immersive brand experiences. String orchestra compositions forthcoming.</div>
+    </div>
+    <div class="art-card">
+      <div class="art-card-lbl">Visual Presence &nbsp;<em>Modeling</em></div>
+      <div class="art-card-desc">Professional brand representation rooted in authenticity, resilience, and a comfortable presence. Available for editorial, brand campaigns, and luxury activations.</div>
+    </div>
+  </div>
 
   <!-- SERVICES -->
-  <div class="sec"><span class="sec-lbl">Services</span><div class="sec-rule"></div><span class="sec-ct">Inquire for a free consultation</span></div>
+  <div class="sec"><span class="sec-lbl">The Orchestration</span><div class="sec-rule"></div><span class="sec-ct">Architecture &nbsp;·&nbsp; Orchestration &nbsp;·&nbsp; Strategy</span></div>
   <div class="svc-grid">
-    <div class="svc-card" onclick="openServiceSheet('web')">
+    <div class="svc-card" onclick="openServiceSheet('digital')">
       <div class="svc-icon">◎</div>
-      <div class="svc-title">Websites</div>
-      <div class="svc-desc">Personal portfolios to full business sites, built with precision and taste. Mix-and-match add-ons for design, animation, SEO, and more.</div>
-      <div class="svc-tag"> Tap to see tiers</div>
+      <div class="svc-title">Digital Architecture</div>
+      <div class="svc-sub-title">Websites &amp; Platforms</div>
+      <div class="svc-desc">High-fidelity personal portfolios to full-scale web applications. We don't just design interfaces — we architect the digital infrastructure that sets the tempo for your brand. Optimized with precision: modular logic, clean code, and luxury UX.</div>
+      <div class="svc-tag">Inquire for Bespoke Engagement</div>
     </div>
-    <div class="svc-card" onclick="openServiceSheet('design')">
+    <div class="svc-card" onclick="openServiceSheet('creative')">
       <div class="svc-icon">◇</div>
-      <div class="svc-title">Creative Design</div>
-      <div class="svc-desc">Brand identity, custom graphics, illustration, and animation. Build the exact package you need — icons, photography, motion, and more à la carte.</div>
-      <div class="svc-tag"> Tap to mix &amp; match</div>
+      <div class="svc-title">Creative Orchestration</div>
+      <div class="svc-sub-title">Design &amp; Brand</div>
+      <div class="svc-desc">Comprehensive brand identity, custom motion graphics, and monthly content systems. We curate a sacred environment for your brand to live in — ensuring every asset reflects a unified, intentional soul.</div>
+      <div class="svc-tag">Inquire for Bespoke Engagement</div>
     </div>
-    <div class="svc-card" onclick="openServiceSheet('social')">
-      <div class="svc-icon">✦</div>
-      <div class="svc-title">Social Media Design</div>
-      <div class="svc-desc">On-brand templates and monthly content design for feeds, stories, and reels. Delivered ready to post, every week.</div>
-      <div class="svc-tag"> Tap to see options</div>
-    </div>
-    <div class="svc-card" onclick="openServiceSheet('apps')">
-      <div class="svc-icon">⬡</div>
-      <div class="svc-title">Platform Builds</div>
-      <div class="svc-desc">Internal tools, team dashboards, and full web applications. From scoping to deployment — the infrastructure that lets your team do their best work.</div>
-      <div class="svc-tag"> Tap to see tiers</div>
-    </div>
-    <div class="svc-card" onclick="openServiceSheet('advisory')">
+    <div class="svc-card" onclick="openServiceSheet('strategy')">
       <div class="svc-icon">△</div>
-      <div class="svc-title">Technical Advisory</div>
-      <div class="svc-desc">Architecture reviews, first-hire strategy, vendor decisions, and product scoping for founders who need a senior technical voice in the room.</div>
-      <div class="svc-tag"> Tap to see options</div>
-    </div>
-    <div class="svc-card" onclick="openServiceSheet('pd')">
-      <div class="svc-icon">◈</div>
-      <div class="svc-title">Product Development Coordination</div>
-      <div class="svc-desc">For fashion and beauty brands without a full PD team. Vendor briefs, production timelines, sample review, and documentation — held together.</div>
-      <div class="svc-tag">From $2,000 / month</div>
+      <div class="svc-title">Technical &amp; Product Strategy</div>
+      <div class="svc-sub-title">Advisory &amp; Coordination</div>
+      <div class="svc-desc">Acting as the senior technical voice in the room for founders and luxury brands. We coordinate vendors, review architecture, and manage timelines with the discipline of an engineer and the open mind of an artist.</div>
+      <div class="svc-tag">Inquire for Bespoke Engagement</div>
     </div>
   </div>
 
@@ -2571,188 +2581,89 @@ function inquirePainting(type) {
 
 // ── SERVICE BOTTOM SHEET ──────────────────────────
 var SERVICE_DATA = {
-  web: {
-    title: 'Websites',
+  digital: {
+    title: 'Digital Architecture — Websites & Platforms',
     tiers: [
       {
-        name: 'Personal / Portfolio Site',
-        price: '',
+        name: 'Portfolio & Personal Site',
+        price: 'Inquire for Bespoke Engagement',
         features: [
-          '3 revisions',
-          'Brand board',
-          'Photography sourcing if needed',
-          'One page or simple multi-page site',
-          'For creatives, artists, and freelancers ready to have a home online',
+          'High-fidelity personal portfolio or creative home',
+          'Modular, precision-engineered architecture',
+          'Brand board + photography sourcing',
+          'Revision cycles included',
         ],
       },
       {
         name: 'Business Site',
-        price: '',
+        price: 'Inquire for Bespoke Engagement',
         features: [
-          '5 revisions',
-          'Brand board',
-          'Photography sourcing + direction',
-          '5 email marketing templates tailored to your audience',
           'Full custom multi-page site built from scratch',
-          'For brands ready to invest in their digital front door',
+          'Brand board + photography direction',
+          'Email marketing templates',
+          'Your complete digital front door',
         ],
       },
       {
-        name: 'Business Site + Brand System',
-        price: '',
+        name: 'Platform Build',
+        price: 'Inquire for Bespoke Engagement',
         features: [
-          'Everything in Business Site',
-          'Full brand identity — logo, color palette, typography',
-          '5 social media templates included',
-          'Brand board and style guide delivered',
-          'For founders launching with a complete visual identity',
-        ],
-      },
-    ],
-    /* Add-ons listed à la carte in the sheet */
-    addon: {
-      label: 'À la carte add-ons',
-      items: [
-        { label: 'Graphic design package (icons, custom imagery)', price: '' },
-        { label: 'Animation & motion package',                    price: '' },
-        { label: 'Photography direction session',                 price: '' },
-        { label: 'SEO setup',                                     price: '' },
-        { label: 'Email template set (5)',                        price: '' },
-        { label: 'Videography (coming soon)',                     price: 'Inquire' },
-      ],
-    },
-  },
-  design: {
-    title: 'Creative Design',
-    tiers: [
-      {
-        name: 'Brand Refresh',
-        price: '',
-        features: [
-          'Updated color palette + typography',
-          'Logo refinement',
-          'Brand board',
-          '3 revisions',
-          'For brands that exist but need to feel intentional',
-        ],
-      },
-      {
-        name: 'Full Brand System',
-        price: '',
-        features: [
-          'Logo suite',
-          'Full color palette + typography system',
-          'Brand board and style guide',
-          'Photography direction',
-          '5 branded templates (social, email, or docs)',
-          '5 revisions',
-        ],
-      },
-    ],
-    /* Mix-and-match add-ons for creative assets */
-    addon: {
-      label: 'Mix & match add-ons',
-      items: [
-        { label: 'Custom icon set (10 icons)',         price: '' },
-        { label: 'Illustration / custom imagery',      price: '' },
-        { label: 'Animation of brand assets',          price: '' },
-        { label: 'Photography sourcing',               price: '' },
-        { label: 'Videography (coming soon)',          price: 'Inquire' },
-      ],
-    },
-  },
-  social: {
-    title: 'Social Media Design',
-    tiers: [
-      {
-        name: 'Template Pack',
-        price: '',
-        features: [
-          '10 custom on-brand social media templates',
-          'Covers feed posts, stories, and reels covers',
-          'Delivered as editable Canva or Figma files',
-          'One revision round',
-        ],
-      },
-      {
-        name: 'Monthly Design Retainer',
-        price: 'From $1,500 / month',
-        features: [
-          '20 custom posts per month (feed + stories)',
-          'Brand-consistent design every week',
-          'One revision round per batch',
-          'Delivered ready to post',
-        ],
-      },
-    ],
-    addon: { label: 'Content strategy session', price: '+$350' },
-  },
-  apps: {
-    title: 'Platform Builds',
-    tiers: [
-      {
-        name: 'Internal Tool / Dashboard',
-        price: '',
-        features: [
-          'Custom internal dashboard or operations tool',
-          'Role-based views',
-          'Onboarding documentation',
-          '3 weeks post-launch support',
-        ],
-      },
-      {
-        name: 'Full Platform Build',
-        price: 'From $5,000 / month',
-        features: [
-          'Complete product architecture + build',
+          'Internal tools, dashboards, and full web applications',
           'Frontend + backend, deployed and documented',
-          'Full handoff with onboarding docs',
-          '4 weeks post-launch support',
-          'Scope call required before quote',
-        ],
-      },
-    ],
-    addon: { label: 'Ongoing retainer after launch', price: 'Inquire' },
-  },
-  advisory: {
-    title: 'Technical Advisory',
-    tiers: [
-      {
-        name: 'Hourly Sessions',
-        price: '$400 / hour',
-        features: [
-          'Architecture reviews',
-          'First-hire strategy',
-          'Vendor selection',
-          'Product scoping',
-          'MVP planning',
-        ],
-      },
-      {
-        name: 'Monthly Retainer',
-        price: 'From $2,500 / month',
-        features: [
-          'Weekly async support',
-          'Priority response',
-          'Architecture oversight',
-          'Team onboarding guidance',
+          'Role-based architecture + onboarding docs',
+          'Post-launch support included',
         ],
       },
     ],
     addon: null,
   },
-  pd: {
-    title: 'Product Development Coordination',
+  creative: {
+    title: 'Creative Orchestration — Design & Brand',
     tiers: [
       {
-        name: 'Monthly Coordination',
-        price: 'From $2,000 / month',
+        name: 'Brand Identity System',
+        price: 'Inquire for Bespoke Engagement',
         features: [
-          'Vendor briefs and coordination',
-          'Production timeline management',
-          'Sample review and documentation',
-          'Communication between design and production',
-          'Fashion and beauty specialty',
+          'Logo suite, color palette, and typography system',
+          'Brand board and style guide',
+          'Photography direction',
+          'Branded templates for social, email, or docs',
+        ],
+      },
+      {
+        name: 'Monthly Content Design',
+        price: 'Inquire for Bespoke Engagement',
+        features: [
+          'Custom social content — feed, stories, and reels',
+          'Brand-consistent design delivered weekly',
+          'Motion graphics and animation',
+          'A sacred environment for your brand to live in',
+        ],
+      },
+    ],
+    addon: null,
+  },
+  strategy: {
+    title: 'Technical & Product Strategy — Advisory & Coordination',
+    tiers: [
+      {
+        name: 'Architecture & Advisory',
+        price: 'Inquire for Bespoke Engagement',
+        features: [
+          'Architecture reviews and technical audits',
+          'First-hire and vendor strategy',
+          'MVP scoping and product roadmapping',
+          'Senior technical voice for founders and luxury brands',
+        ],
+      },
+      {
+        name: 'Product Development Coordination',
+        price: 'Inquire for Bespoke Engagement',
+        features: [
+          'Vendor briefs and production timelines',
+          'Cross-team coordination and documentation',
+          'Sustainable ventures and interdisciplinary projects',
+          'Renaissance approach to complex problem-solving',
         ],
       },
     ],
