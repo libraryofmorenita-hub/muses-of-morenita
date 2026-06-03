@@ -32,6 +32,7 @@
   .btn.active { background:var(--gold); color:var(--brown); }
   .page { width:100%; max-width:860px; background:white; padding:52px 56px; }
 
+  /* HEADER */
   .resume-header { margin-bottom:28px; padding-bottom:20px; border-bottom:1.5px solid var(--brown); }
   .resume-header h1 { font-family:'Cormorant Garamond',serif; font-size:46px; font-weight:400; color:var(--brown); line-height:1; margin-bottom:5px; }
   .resume-header h1 em { font-style:normal; font-weight:400; }
@@ -39,17 +40,20 @@
   .contact-line { font-size:12px; color:var(--text); font-weight:300; display:flex; gap:18px; flex-wrap:wrap; }
   .contact-line a { color:var(--brown); text-decoration:none; }
 
+  /* SECTIONS */
   .section { margin-bottom:22px; }
   .section-title {
-    font-family:'Inter',sans-serif; font-size:9px;
+    font-family:'Inter',sans-serif; font-size:9px; letter-spacing:0 em;
     text-transform:uppercase; color:var(--brown); font-weight:500;
     padding-bottom:5px; border-bottom:1px solid var(--brown);
     margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;
   }
   .section-title a { font-size:9px; color:var(--muted); text-decoration:none; text-transform:none; font-weight:400; display:inline-flex; align-items:center; gap:4px; }
 
+  /* SUMMARY */
   .summary { font-size:13px; line-height:1.8; color:var(--text); font-weight:300; }
 
+  /* SKILLS TABLE — ATS safe, linear rows */
   .skills-table { width:100%; border-collapse:collapse; }
   .skills-table tr { border-bottom:1px solid #f0ebe0; }
   .skills-table tr:last-child { border-bottom:none; }
@@ -57,6 +61,7 @@
   .skill-cat { font-family:'Inter',sans-serif; font-size:10px; letter-spacing:.04em; color:var(--muted); font-weight:500; width:160px; padding-right:16px; white-space:nowrap; padding-top:5px; }
   .skill-items { color:var(--text); font-weight:300; }
 
+  /* ROLE BLOCKS — bullets always inside */
   .role { margin-bottom:14px; display:block; }
   .role-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; gap:12px; }
   .role-left { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
@@ -67,6 +72,7 @@
   .role ul li { font-size:12px; line-height:1.7; color:var(--text); font-weight:300; position:relative; padding-left:10px; }
   .role ul li::before { content:'·'; position:absolute; left:0; color:var(--gold); font-size:14px; line-height:1.55; }
 
+  /* PROJECT BLOCKS */
   .project-role { margin-bottom:14px; display:block; }
   .proj-meta { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:2px; gap:12px; }
   .proj-name { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:500; color:var(--brown); }
@@ -76,30 +82,31 @@
   .project-role ul li { font-size:12px; line-height:1.7; color:var(--text); font-weight:300; position:relative; padding-left:10px; }
   .project-role ul li::before { content:'·'; position:absolute; left:0; color:var(--gold); font-size:14px; line-height:1.55; }
 
+  /* TWO COLUMN */
   .two-col { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
   .edu-school { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:500; color:var(--brown); margin-bottom:3px; }
   .edu-degree { font-size:12px; color:var(--text); margin-bottom:2px; }
   .edu-detail { font-size:11px; color:var(--muted); line-height:1.65; }
 
+  /* CV TOGGLE */
   .cv-only { display:none; }
   .cv-only.visible { display:block; }
 
+  /* PRINT */
   @media print {
-    body {
-      /* ROOT CAUSE FIX: body display:flex breaks Chrome's page
-         fragmentation algorithm causing bullets to detach from
-         their .role parents and reflow to page bottom.
-         Switching to block restores correct fragmentation. */
-      display:block !important;
-      background:white !important;
-      padding:0;
-    }
+    body { background:white; padding:0; }
     .toolbar { display:none; }
-    .page { padding:24px 36px; box-shadow:none !important; }
+
+    /* Tighter page margins */
+    .page { padding:24px 36px; }
+
+    /* Vertical rhythm */
     .resume-header { margin-bottom:18px; padding-bottom:14px; }
     .section { margin-bottom:18px; }
     .role { margin-bottom:12px; }
     .project-role { margin-bottom:13px; }
+
+    /* Type */
     .summary { font-size:12px; line-height:1.72; }
     .role ul li { font-size:11.5px; line-height:1.62; }
     .project-role ul li { font-size:11.5px; line-height:1.62; }
@@ -109,43 +116,52 @@
     .role-header { margin-bottom:3px; }
     .proj-sub { margin-bottom:3px; }
 
-    /* Keep each block intact */
-    .role { page-break-inside:avoid; break-inside:avoid; display:block; }
-    .project-role { page-break-inside:avoid; break-inside:avoid; display:block; }
-    .role ul, .project-role ul { page-break-inside:avoid; break-inside:avoid; }
-    .role-header, .proj-meta, .proj-sub { page-break-after:avoid; break-after:avoid; }
-
-    /* Engineering Projects starts page 2 */
-    .projects-section { page-break-before:always; break-before:page; }
-
-    /* CV toggle */
+    /* Keep each block intact — prevents bullet detachment */
+    .role {
+      page-break-inside:avoid;
+      break-inside:avoid;
+      display:block;
+    }
+    .project-role {
+      page-break-inside:avoid;
+      break-inside:avoid;
+      display:block;
+    }
+    .role ul, .project-role ul {
+      page-break-inside:avoid;
+      break-inside:avoid;
+    }
+    .role-header, .proj-meta, .proj-sub {
+      page-break-after:avoid;
+      break-after:avoid;
+    }
+    /* Engineering Projects always starts page 2 */
+    .projects-section {
+      page-break-before:always;
+      break-before:page;
+    }
+    /* Respect CV toggle state — hide cv-only unless toggle is active */
     .cv-only { display:none !important; }
     .cv-only.visible { display:block !important; }
 
-    /* ROOT CAUSE FIX 2: CSS Grid also breaks page fragmentation.
-       Convert two-col to inline-block for print. */
-    .two-col { display:block !important; }
-    .two-col > div {
-      display:inline-block !important;
-      width:48.5% !important;
-      vertical-align:top !important;
-      box-sizing:border-box !important;
-    }
-    .two-col > div:first-child { padding-right:12px !important; }
-    .two-col > div:last-child  { padding-left:12px !important; }
-
-    /* Black and white for PDF */
+    /* Force black and white for PDF */
+    body { background:white !important; }
+    .page { box-shadow:none !important; }
     .resume-header h1,
     .resume-header h1 em { color:#000 !important; }
     .resume-header { border-bottom-color:#000 !important; }
     .section-title { color:#000 !important; border-bottom-color:#000 !important; }
     .role-company, .proj-name, .edu-school { color:#000 !important; }
-    .role-title, .summary, .skill-items, .proj-sub, .edu-degree { color:#222 !important; }
-    .role-meta, .skill-cat, .edu-detail, .proj-sub span,
-    .contact-line, .contact-line a, .contact-line span { color:#444 !important; }
+    .role-title, .summary, .skill-items,
+    .proj-sub, .edu-degree { color:#222 !important; }
+    .role-meta, .skill-cat, .edu-detail,
+    .proj-sub span, .contact-line,
+    .contact-line a,
+    .contact-line span { color:#444 !important; }
     .role ul li, .project-role ul li { color:#222 !important; }
-    .role ul li::before, .project-role ul li::before { color:#000 !important; }
-    .subtitle { color:#444 !important; }
+    .role ul li::before,
+    .project-role ul li::before { color:#000 !important; }
+    .subtitle { color:#000 !important; letter-spacing:0 !important; }
   }
 </style>
 </head>
@@ -158,6 +174,7 @@
 
 <div class="page">
 
+  <!-- HEADER -->
   <div class="resume-header">
     <h1>Amelia <em>Arabe</em></h1>
     <div class="subtitle">Computer &amp; Electrical Design Engineer &nbsp;·&nbsp; Embedded Systems &nbsp;·&nbsp; Hardware-Software Integration</div>
@@ -169,31 +186,56 @@
     </div>
   </div>
 
+  <!-- SUMMARY -->
   <div class="section">
     <div class="section-title">Summary</div>
     <p class="summary">Computer and Electrical Design Engineer with three years of experience building at the seam of hardware and software — from autonomous embedded systems and voice-activated medical devices to full-stack platforms and machine learning pipelines. Founder of Morenita Design and co-founder of Ballmecca. Brings a rare combination of electrical engineering precision, systems architecture depth, and human-centered product thinking to every build. Focused on creating technology that is intentional, scalable, and built to last.</p>
   </div>
 
+  <!-- SKILLS -->
   <div class="section">
     <div class="section-title">Technical Skills</div>
     <table class="skills-table">
-      <tr><td class="skill-cat">Hardware &amp; Embedded</td><td class="skill-items">FPGA Design (Xilinx / Altera), Digital Logic &amp; Circuit Design, Embedded C / C++, Microprocessor Systems, Motor Control, Relay Logic Architecture, Biometric &amp; Sensor Integration, Hardware-Software Co-design, Autonomous Systems Design</td></tr>
-      <tr><td class="skill-cat">Software &amp; Architecture</td><td class="skill-items">Python, TypeScript, JavaScript, GraphQL, Firebase, Supabase, PostgreSQL, REST APIs, Full-Stack Architecture, Voice Recognition Systems, Object-Oriented Design, System Design</td></tr>
-      <tr><td class="skill-cat">AI &amp; Machine Learning</td><td class="skill-items">PyTorch, Hugging Face (Transformers, Diffusers), CLIP, Stable Diffusion, Claude API, Gemini, MNE (EEG), Nilearn (fMRI), Machine Learning Fundamentals</td></tr>
-      <tr><td class="skill-cat">Tools &amp; Platforms</td><td class="skill-items">Figma, Adobe Illustrator, Adobe InDesign, Photoshop, DaVinci Resolve, GitHub, Postman, Cursor, MS Word, MS Excel, MS PowerPoint</td></tr>
-      <tr><td class="skill-cat">Leadership &amp; Design</td><td class="skill-items">UI/UX Prototyping &amp; Design Systems, Technical Documentation, Brand Strategy &amp; Visual Identity, Cross-functional Team Management, Product Lifecycle Management</td></tr>
-      <tr><td class="skill-cat">Languages</td><td class="skill-items">English (Fluent), Tagalog (Fluent), German (Intermediate)</td></tr>
+      <tr>
+        <td class="skill-cat">Hardware &amp; Embedded</td>
+        <td class="skill-items">FPGA Design (Xilinx / Altera), Digital Logic &amp; Circuit Design, Embedded C / C++, Microprocessor Systems, Motor Control, Relay Logic Architecture, Biometric &amp; Sensor Integration, Hardware-Software Co-design, Autonomous Systems Design</td>
+      </tr>
+      <tr>
+        <td class="skill-cat">Software &amp; Architecture</td>
+        <td class="skill-items">Python, TypeScript, JavaScript, GraphQL, Firebase, Supabase, PostgreSQL, REST APIs, Full-Stack Architecture, Voice Recognition Systems, Object-Oriented Design, System Design</td>
+      </tr>
+      <tr>
+        <td class="skill-cat">AI &amp; Machine Learning</td>
+        <td class="skill-items">PyTorch, Hugging Face (Transformers, Diffusers), CLIP, Stable Diffusion, Claude API, Gemini, MNE (EEG), Nilearn (fMRI), Machine Learning Fundamentals</td>
+      </tr>
+      <tr>
+        <td class="skill-cat">Tools &amp; Platforms</td>
+        <td class="skill-items">Figma, Adobe Illustrator, Adobe InDesign, Photoshop, DaVinci Resolve, GitHub, Postman, Cursor, MS Word, MS Excel, MS PowerPoint</td>
+      </tr>
+      <tr>
+        <td class="skill-cat">Leadership &amp; Design</td>
+        <td class="skill-items">UI/UX Prototyping &amp; Design Systems, Technical Documentation, Brand Strategy &amp; Visual Identity, Cross-functional Team Management, Product Lifecycle Management</td>
+      </tr>
+      <tr>
+        <td class="skill-cat">Languages</td>
+        <td class="skill-items">English (Fluent), Tagalog (Fluent), German (Intermediate)</td>
+      </tr>
     </table>
   </div>
 
+  <!-- PROFESSIONAL EXPERIENCE -->
   <div class="section">
     <div class="section-title">Professional Experience</div>
 
+    <!-- Ballmecca -->
     <div class="role">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Ballmecca</span><span class="role-title">Co-Founder &amp; Senior Software Engineer</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Ballmecca</span>
+          <span class="role-title">Co-Founder &amp; Senior Software Engineer</span>
+        </div>
         <div class="role-meta">Los Angeles, CA &nbsp;·&nbsp; 2024 – Present</div>
-      </div>
+      </header>
       <ul>
         <li>Co-founded and scaled a consumer software platform as founding engineer — architecting a Firebase backend with cross-platform integration that improved system performance by 40% and supports the full product roadmap.</li>
         <li>Built a reusable component library and design system that reduced development time by 25% and cut UI bugs by 50% across the full product.</li>
@@ -202,11 +244,15 @@
       </ul>
     </div>
 
+    <!-- Morenita Design -->
     <div class="role">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Morenita Design</span><span class="role-title">Founder &amp; Creative Technology Director</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Morenita Design</span>
+          <span class="role-title">Founder &amp; Creative Technology Director</span>
+        </div>
         <div class="role-meta">Temecula, CA &nbsp;·&nbsp; 2025 – Present</div>
-      </div>
+      </header>
       <ul>
         <li>Founded and operate an independent software and systems studio — directing end-to-end product lifecycles for 7 clients across health and wellness, entertainment, and e-commerce, with 4 active engagements.</li>
         <li>Architect and ship full-stack applications independently — owning system design, database architecture, front-end, and client delivery from zero to production.</li>
@@ -215,44 +261,60 @@
       </ul>
     </div>
 
+    <!-- Lucky Brides — cv-only -->
     <div class="role cv-only">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Lucky Brides</span><span class="role-title">Chief Marketing Officer &amp; Lead Stylist</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Lucky Brides</span>
+          <span class="role-title">Chief Marketing Officer &amp; Lead Stylist</span>
+        </div>
         <div class="role-meta">Riverside, CA &nbsp;·&nbsp; 2025 – Present</div>
-      </div>
+      </header>
       <ul>
         <li>Lead brand strategy, creative direction, visual identity, and photography production for a luxury bridal boutique — ensuring every touchpoint reflects the boutique's standard of excellence.</li>
         <li>Serve as primary client-facing stylist, translating each client's vision into a precisely curated specification and closing approximately $5,000 in weekly styling revenue.</li>
       </ul>
     </div>
 
+    <!-- Zoccia — cv-only -->
     <div class="role cv-only">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Zoccia</span><span class="role-title">Swimwear Designer &amp; Creative Director</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Zoccia</span>
+          <span class="role-title">Swimwear Designer &amp; Creative Director</span>
+        </div>
         <div class="role-meta">Remote &nbsp;·&nbsp; 2020 – 2022</div>
-      </div>
+      </header>
       <ul>
         <li>Co-led creative direction for a 35-piece inclusive swimwear collection on a 5-person team — conducting audience research and translating customer insight directly into design decisions.</li>
         <li>Supported manufacturing oversight and production coordination to bring 5,000+ units to market while maintaining supply chain quality standards.</li>
       </ul>
     </div>
 
+    <!-- Temecula Creek Inn — cv-only -->
     <div class="role cv-only">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Temecula Creek Inn</span><span class="role-title">Guest Services &amp; Front Desk Agent</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Temecula Creek Inn</span>
+          <span class="role-title">Guest Services &amp; Front Desk Agent</span>
+        </div>
         <div class="role-meta">Temecula, CA &nbsp;·&nbsp; 2021 – 2024</div>
-      </div>
+      </header>
       <ul>
         <li>Coordinated guest services and front desk operations to maintain high satisfaction and repeat loyalty across a full-service resort property.</li>
         <li>Streamlined interdepartmental communication to ensure efficient daily operations and seamless guest experiences.</li>
       </ul>
     </div>
 
+    <!-- Dean's Office — cv-only -->
     <div class="role cv-only">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Loyola University Maryland — Dean's Office</span><span class="role-title">Administrative Assistant</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Loyola University Maryland — Dean's Office</span>
+          <span class="role-title">Administrative Assistant</span>
+        </div>
         <div class="role-meta">Baltimore, MD &nbsp;·&nbsp; 2021 – 2024</div>
-      </div>
+      </header>
       <ul>
         <li>Managed a database of 1,400+ school principals across 24 districts, maintaining accuracy and supporting outreach for 20+ major education programs.</li>
         <li>Automated 1,000+ records per semester, significantly streamlining reporting workflows and event logistics for the Dean's Office.</li>
@@ -261,72 +323,98 @@
     </div>
   </div>
 
+  <!-- SELECTED CLIENTS -->
   <div class="section">
     <div class="section-title" id="clients-title">Selected Clients — Morenita Design</div>
 
+    <!-- Kairos -->
     <div class="role">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Kairos</span><span class="role-title">Lead Architect &amp; Full-Stack Engineer</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Kairos</span>
+          <span class="role-title">Lead Architect &amp; Full-Stack Engineer</span>
+        </div>
         <div class="role-meta">Health &amp; Fertility Tech &nbsp;·&nbsp; 2025 – Present</div>
-      </div>
+      </header>
       <ul>
         <li>Architecting a full-stack couples health and fertility tracking application with cycle logging, health analytics, personalised dashboards, and integrated e-commerce marketplace. Stack: Swift/SwiftUI, Node.js, PostgreSQL, Supabase, Shopify Storefront API, Sanity.io.</li>
       </ul>
     </div>
 
+    <!-- YK Entertainment -->
     <div class="role">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">YK Entertainment</span><span class="role-title">Lead Architect &amp; CTO Advisor</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">YK Entertainment</span>
+          <span class="role-title">Lead Architect &amp; CTO Advisor</span>
+        </div>
         <div class="role-meta">B2B SaaS &nbsp;·&nbsp; 2025 – Present</div>
-      </div>
+      </header>
       <ul>
         <li>Architected a B2B platform connecting Southern California vendors and event planners — covering booking, scheduling, client management, and vendor discovery tools.</li>
       </ul>
     </div>
 
+    <!-- Neurosect -->
     <div class="role">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Neurosect</span><span class="role-title">ML Engineer &amp; Data Pipeline Architect</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Neurosect</span>
+          <span class="role-title">ML Engineer &amp; Data Pipeline Architect</span>
+        </div>
         <div class="role-meta">Research &nbsp;·&nbsp; Healthcare AI &nbsp;·&nbsp; 2025 – Present</div>
-      </div>
+      </header>
       <ul>
         <li>Building a modular machine learning data pipeline to make multimodal neural decoding processing real — architecting five sequential stages covering signal separation, per-subject fMRI and EEG decoding, Bayesian consensus fusion, and image synthesis using PyTorch, Hugging Face, and Stable Diffusion.</li>
         <li>Designing the multi-subject consensus architecture as a novel contribution — implementing Bayesian inverse-uncertainty weighting and quantum probability amplitude calculations across three simultaneous neural data streams.</li>
       </ul>
     </div>
 
+    <!-- Lucky Brides client — cv-only -->
     <div class="role cv-only">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Lucky Brides</span><span class="role-title">Bridal Stylist &amp; Custom Design Consultant</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Lucky Brides</span>
+          <span class="role-title">Bridal Stylist &amp; Custom Design Consultant</span>
+        </div>
         <div class="role-meta">Luxury Retail &nbsp;·&nbsp; 2025 – Present</div>
-      </div>
+      </header>
       <ul>
         <li>Consult directly with clients to translate personal vision into precise garment specifications — managing decision milestones, fit requirements, and custom design details from initial consultation through final selection.</li>
         <li>Drive approximately $5,000 in weekly styling revenue through high-touch client specification work in a luxury retail environment.</li>
       </ul>
     </div>
 
+    <!-- Grupo RPM — cv-only -->
     <div class="role cv-only">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Grupo RPM Health</span><span class="role-title">Brand Designer</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Grupo RPM Health</span>
+          <span class="role-title">Brand Designer</span>
+        </div>
         <div class="role-meta">Health &amp; Wellness &nbsp;·&nbsp; 2024</div>
-      </div>
+      </header>
       <ul>
         <li>Produced graphic design for PPE product lines — delivering marketing materials, packaging design, and brand assets aligned to the client's visual identity and product positioning.</li>
       </ul>
     </div>
 
+    <!-- Professor X — cv-only -->
     <div class="role cv-only">
-      <div class="role-header">
-        <div class="role-left"><span class="role-company">Professor X Spiritual Guidance Academy</span><span class="role-title">Full-Stack Engineer</span></div>
+      <header class="role-header">
+        <div class="role-left">
+          <span class="role-company">Professor X Spiritual Guidance Academy</span>
+          <span class="role-title">Full-Stack Engineer</span>
+        </div>
         <div class="role-meta">EdTech &nbsp;·&nbsp; 2025</div>
-      </div>
+      </header>
       <ul>
         <li>Designed and built a custom platform for a spiritual coaching practice — covering course delivery, session booking, community engagement, and e-commerce on WordPress/Hostinger.</li>
       </ul>
     </div>
   </div>
 
+  <!-- ENGINEERING PROJECTS — page 2 starts here -->
   <div class="section projects-section">
     <div class="section-title">
       Engineering Projects
@@ -336,8 +424,12 @@
       </a>
     </div>
 
+    <!-- MAXINE -->
     <div class="project-role">
-      <div class="proj-meta"><span class="proj-name">Volunteers for Medical Engineering</span><div class="role-meta">Baltimore, MD &nbsp;·&nbsp; 2025</div></div>
+      <div class="proj-meta">
+        <span class="proj-name">Volunteers for Medical Engineering</span>
+        <div class="role-meta">Baltimore, MD &nbsp;·&nbsp; 2025</div>
+      </div>
       <p class="proj-sub">MAXINE.v1 Voice Activated Hospital Bed &nbsp;·&nbsp; <span>Systems Design Lead &amp; Project Manager</span></p>
       <ul>
         <li>Led a 4-person cross-functional team to engineer a voice-controlled hospital bed for quadriplegic patients — integrating real-time voice recognition, a 7-channel relay control architecture, and safety-critical command validation into a single embedded system in Embedded C++.</li>
@@ -345,8 +437,12 @@
       </ul>
     </div>
 
+    <!-- ARNOLD -->
     <div class="project-role">
-      <div class="proj-meta"><span class="proj-name">Loyola University Maryland</span><div class="role-meta">Baltimore, MD &nbsp;·&nbsp; 2024</div></div>
+      <div class="proj-meta">
+        <span class="proj-name">Loyola University Maryland</span>
+        <div class="role-meta">Baltimore, MD &nbsp;·&nbsp; 2024</div>
+      </div>
       <p class="proj-sub">SLF Terminator Rover (ARNOLD) &nbsp;·&nbsp; <span>Systems Architect &amp; Embedded Software Lead</span></p>
       <ul>
         <li>Directed hardware-software co-design across motor control, sensor arrays, computer vision, and embedded decision logic for an autonomous rover — implementing real-time detection and autonomous navigation in Embedded C++.</li>
@@ -354,8 +450,12 @@
       </ul>
     </div>
 
+    <!-- Morenita Signals -->
     <div class="project-role">
-      <div class="proj-meta"><span class="proj-name">Morenita Design</span><div class="role-meta">Temecula, CA &nbsp;·&nbsp; 2025</div></div>
+      <div class="proj-meta">
+        <span class="proj-name">Morenita Design</span>
+        <div class="role-meta">Temecula, CA &nbsp;·&nbsp; 2025</div>
+      </div>
       <p class="proj-sub">Morenita Signals ML Data Pipeline &nbsp;·&nbsp; <span>ML Engineer &amp; Data Pipeline Architect</span></p>
       <ul>
         <li>Designed and built a modular machine learning data pipeline in Python — architecting collection, preprocessing, and subject classification stages across large-scale open datasets to produce structured training data for downstream ML models.</li>
@@ -363,8 +463,12 @@
       </ul>
     </div>
 
+    <!-- Crown HQ — cv-only -->
     <div class="project-role cv-only">
-      <div class="proj-meta"><span class="proj-name">Miss Temecula Valley USA 2026 Campaign</span><div class="role-meta">2026</div></div>
+      <div class="proj-meta">
+        <span class="proj-name">Miss Temecula Valley USA 2026 Campaign</span>
+        <div class="role-meta">2026</div>
+      </div>
       <p class="proj-sub">Crown HQ Personal Campaign OS &nbsp;·&nbsp; <span>Architect &amp; Full-Stack Engineer</span></p>
       <ul>
         <li>Architected a 17-panel personal campaign OS — designing for 4 concurrent users with Kanban management, milestone tracking, file sharing, advocacy tooling, and a live campaign page backed by Supabase with real-time sync.</li>
@@ -372,6 +476,7 @@
     </div>
   </div>
 
+  <!-- EDUCATION + LEADERSHIP -->
   <div class="two-col">
     <div>
       <div class="section">
@@ -385,35 +490,48 @@
         <div class="edu-detail" style="margin-top:5px;"><strong style="font-weight:500;">BSA Fashion Show — Scene Leader, 25th Annual</strong> (2023–2024) &nbsp;·&nbsp; Directed choreography, lighting, sound, and media production for 20 models within a 100-model production.</div>
       </div>
     </div>
+
     <div>
       <div class="section">
         <div class="section-title">Leadership &amp; Community</div>
 
+        <!-- Miss Philippines USA -->
         <div class="role">
-          <div class="role-header">
-            <div class="role-left"><span class="role-company">Miss Philippines USA</span><span class="role-title">Top Model Award</span></div>
+          <header class="role-header">
+            <div class="role-left">
+              <span class="role-company">Miss Philippines USA</span>
+              <span class="role-title">Top Model Award</span>
+            </div>
             <div class="role-meta">Los Angeles, CA &nbsp;·&nbsp; 2025</div>
-          </div>
+          </header>
           <ul>
             <li>Won Top Model Award — voted by photographers for best runway walk and best to work with on set. Selected as Bontika Swim ambassador for sustainable fashion advocacy.</li>
           </ul>
         </div>
 
+        <!-- Temecula Valley Youth Orchestra -->
         <div class="role" style="margin-top:10px;">
-          <div class="role-header">
-            <div class="role-left"><span class="role-company">Temecula Valley Youth Orchestra</span><span class="role-title">Lead Double Bassist</span></div>
+          <header class="role-header">
+            <div class="role-left">
+              <span class="role-company">Temecula Valley Youth Orchestra</span>
+              <span class="role-title">Lead Double Bassist</span>
+            </div>
             <div class="role-meta">Temecula, CA &nbsp;·&nbsp; 2018 – 2021</div>
-          </div>
+          </header>
           <ul>
             <li>Served as Lead Double Bassist — an achievement that earned a performance seat alongside the adult Temecula Valley Orchestra ensemble, one of the few youth members selected to do so.</li>
           </ul>
         </div>
 
+        <!-- Cadenza String Orchestra — always visible -->
         <div class="role" style="margin-top:10px;">
-          <div class="role-header">
-            <div class="role-left"><span class="role-company">Cadenza String Orchestra</span><span class="role-title">Cellist &amp; Double Bassist</span></div>
+          <header class="role-header">
+            <div class="role-left">
+              <span class="role-company">Cadenza String Orchestra</span>
+              <span class="role-title">Cellist &amp; Double Bassist</span>
+            </div>
             <div class="role-meta">2017 – 2019</div>
-          </div>
+          </header>
           <ul>
             <li>Performed cello and double bass; the orchestra took 1st place at the 2019 Summa Cum Laude International Youth Music Festival in Vienna, Austria.</li>
           </ul>
@@ -425,16 +543,6 @@
 </div>
 
 <script>
-  // ROOT CAUSE FIX: Remove flex formatting context from body before print.
-  // body { display:flex } breaks Chrome's page-break-inside:avoid on .role elements,
-  // causing bullets to detach and reflow to page bottom.
-  window.addEventListener('beforeprint', function() {
-    document.body.style.setProperty('display', 'block', 'important');
-  });
-  window.addEventListener('afterprint', function() {
-    document.body.style.removeProperty('display');
-  });
-
   function toggleCV() {
     const btn = document.getElementById('cvToggle');
     const active = btn.classList.toggle('active');

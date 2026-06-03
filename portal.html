@@ -20,7 +20,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
@@ -141,7 +141,7 @@
     .p-tab:hover:not(.active) { color: var(--ink); }
 
     /* ── CONTENT ──────────────────────────────────────────── */
-    .p-content { max-width: 720px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+    .p-content { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
     .p-tab-panel { display: none; }
     .p-tab-panel.active { display: block; }
 
@@ -239,6 +239,229 @@
       #doc-print-area { display: block !important; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
+
+    /* ── PROGRESS DIAL ────────────────────────────────────────── */
+    .ov-progress-wrap { display: grid; grid-template-columns: auto 1fr; gap: 2rem; align-items: center; }
+    .ov-dial-wrap { position: relative; width: 120px; height: 120px; flex-shrink: 0; }
+    .ov-dial-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+    .ov-pct-num { font-size: 1.85rem; font-weight: 700; color: var(--ink); line-height: 1; }
+    .ov-pct-lbl { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+    .ov-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; margin-bottom: 1rem; }
+    .ov-stat { padding: .65rem .85rem; background: var(--bg); border-radius: 6px; border-top: 2px solid var(--faint); }
+    .ov-stat-lbl { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .3rem; }
+    .ov-stat-val { font-size: .9rem; font-weight: 600; color: var(--ink); }
+    .phase-bar-row { display: grid; grid-template-columns: 110px 1fr 32px; align-items: center; gap: .5rem; margin-bottom: .35rem; }
+    .phase-bar-name { font-size: 10px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .phase-bar-track { height: 3px; background: var(--faint); border-radius: 2px; overflow: hidden; }
+    .phase-bar-fill { height: 100%; border-radius: 2px; transition: width .6s ease; }
+    .phase-bar-frac { font-size: 9px; color: var(--muted); text-align: right; }
+
+    /* ── MILESTONE TIMELINE ───────────────────────────────────── */
+    .ms-timeline-wrap { margin-bottom: .25rem; }
+    .ms-track-outer { position: relative; height: 2px; background: var(--faint); border-radius: 1px; margin-bottom: 16px; }
+    .ms-track-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 1px; background: linear-gradient(to right, #8A589A, var(--accent)); transition: width .8s ease; }
+    .ms-nodes-row { position: relative; height: 16px; }
+    .ms-node { position: absolute; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+    .ms-node-dot { width: 8px; height: 8px; border-radius: 50%; border: 2px solid var(--faint); background: var(--card); }
+    .ms-node-dot.reached { background: var(--accent); border-color: var(--accent); }
+    .ms-node-dot.big { width: 12px; height: 12px; margin-top: -2px; }
+    .ms-week-row { display: flex; justify-content: space-between; font-size: 8px; color: var(--muted); margin-top: .5rem; }
+
+    /* ── OPEN DECISIONS ───────────────────────────────────────── */
+    .od-item { display: grid; grid-template-columns: 16px 1fr auto; gap: .75rem; align-items: start; padding: .8rem 1rem; border-radius: 6px; margin-bottom: .4rem; }
+    .od-item.confirmed { background: rgba(45,106,79,.06); border: 1px solid rgba(45,106,79,.18); }
+    .od-item.pending { background: var(--bg); border: 1px solid var(--faint); }
+    .od-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; }
+    .od-dot.confirmed { background: #2D6A4F; }
+    .od-dot.pending { background: var(--faint); }
+    .od-label { font-size: .875rem; font-weight: 600; color: var(--ink); margin-bottom: .2rem; }
+    .od-detail { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+    .od-badge { font-size: 9px; font-weight: 700; letter-spacing: .05em; padding: 3px 8px; border-radius: 2px; white-space: nowrap; align-self: flex-start; }
+    .od-badge.confirmed { background: rgba(45,106,79,.1); color: #2D6A4F; }
+    .od-badge.pending { background: rgba(160,112,0,.1); color: #a07000; }
+
+    /* ── DEFERRED FEATURES ────────────────────────────────────── */
+    .def-grid { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .def-tag { display: flex; align-items: center; gap: .4rem; padding: 4px 10px; background: var(--bg); border: 1px solid var(--faint); border-radius: 3px; font-size: 11px; color: var(--sub); }
+    .def-when { font-size: 9px; color: var(--muted); }
+
+    /* ── STUDIO TAB ───────────────────────────────────────────── */
+    .studio-wrap { background: #16120E; border-radius: 8px; overflow: hidden; }
+    .st-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .st-heading { font-size: 1.25rem; font-weight: 300; color: #F6F1E9; font-style: italic; }
+    .st-lbl { font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: #DF7830; margin-bottom: .25rem; }
+    .st-counts { display: flex; align-items: center; gap: 1.5rem; }
+    .st-count-num { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .st-count-sub { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: rgba(246,241,233,.3); }
+    .st-mini-dial { position: relative; width: 52px; height: 52px; flex-shrink: 0; }
+    .st-mini-inner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #F6F1E9; }
+    .st-phase-btn { all: unset; cursor: pointer; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: 10px 1fr auto 32px 18px; align-items: center; gap: .65rem; padding: .7rem 1.25rem; border-left: 3px solid transparent; transition: all .2s; }
+    .st-phase-btn:hover { background: rgba(255,255,255,.03); }
+    .st-phase-btn.open { background: rgba(255,255,255,.05); }
+    .st-phase-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .st-phase-name { font-size: .95rem; font-style: italic; font-weight: 300; color: rgba(246,241,233,.85); }
+    .st-phase-name.done { color: rgba(246,241,233,.35); text-decoration: line-through; }
+    .st-phase-wk { font-size: 9px; color: rgba(246,241,233,.25); white-space: nowrap; }
+    .st-phase-frac { font-size: 10px; min-width: 28px; text-align: right; }
+    .st-phase-arr { font-size: 14px; color: rgba(246,241,233,.25); transition: transform .25s; text-align: center; }
+    .st-tasks-wrap { overflow: hidden; transition: max-height .4s cubic-bezier(.4,0,.2,1); }
+    .st-task-list { padding: .25rem 1.25rem .75rem 2.75rem; border-left: 3px solid rgba(255,255,255,.06); }
+    .st-cbox { display: flex; gap: .6rem; align-items: flex-start; padding: .35rem 0; cursor: pointer; user-select: none; }
+    .st-cbox-box { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; border-radius: 2px; border: 1.5px solid rgba(255,255,255,.14); display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .st-cbox-lbl { font-size: 12px; color: rgba(246,241,233,.8); line-height: 1.6; transition: all .2s; }
+    .st-cbox-lbl.done { color: rgba(246,241,233,.28); text-decoration: line-through; }
+    .st-launch-row { display: flex; align-items: center; gap: .75rem; margin: .25rem 1.25rem .75rem; padding: .85rem 1rem; border: 1px solid rgba(194,58,48,.35); border-radius: 4px; }
+    .st-launch-dot { width: 8px; height: 8px; border-radius: 50%; background: #C23A30; flex-shrink: 0; }
+    .st-launch-label { font-size: .95rem; font-style: italic; font-weight: 300; color: #C23A30; }
+    .st-launch-pct { font-size: 9px; color: rgba(194,58,48,.55); margin-left: auto; }
+    .st-revs-section { padding: 1rem 1.25rem 1.25rem; border-top: 1px solid rgba(255,255,255,.05); margin-top: .5rem; }
+    .st-rev-item { background: rgba(255,255,255,.04); border-radius: 6px; padding: .65rem .85rem; margin-bottom: .4rem; }
+    .st-rev-date { font-size: 10px; color: rgba(246,241,233,.3); margin-bottom: .2rem; }
+    .st-rev-msg { font-size: .875rem; color: rgba(246,241,233,.7); line-height: 1.6; }
+    .st-rev-unread { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: .35rem; vertical-align: middle; }
+
+    @media (max-width: 480px) {
+      .ov-progress-wrap { grid-template-columns: 1fr; }
+      .ov-dial-wrap { margin: 0 auto; }
+      .ov-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       KAIROS APP TAB
+    ═══════════════════════════════════════════════════════════ */
+    #tab-app { margin: -1.5rem -1.25rem -4rem; background: #F6F1E9; }
+    .k-wrap { max-width: 860px; margin: 0 auto; padding: 3.5rem 2.5rem 5rem; }
+
+    /* Typography */
+    .k-hd { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 4vw, 42px); font-style: italic; font-weight: 300; color: #1C1710; line-height: 1.15; margin-bottom: 1.25rem; }
+    .k-bd { font-family: 'DM Sans', sans-serif; font-size: 13px; color: #8A7E6E; line-height: 1.85; margin: 0; }
+    .k-section-lbl { font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 14px; }
+    .k-hr { height: 1px; background: #E0D5C2; margin: 3.5rem 0; }
+    .k-section { padding: 0; }
+
+    /* Hero */
+    .k-hero { padding: 4.5rem 0 4rem; text-align: center; position: relative; overflow: hidden; }
+    .k-ambient { position: absolute; inset: 0; pointer-events: none; }
+    .k-blob { position: absolute; border-radius: 50%; }
+    .k-hero-ico { display: flex; justify-content: center; margin-bottom: 20px; }
+    .k-wordmark { font-family: 'Cormorant Garamond', serif; font-size: clamp(72px, 14vw, 140px); font-style: italic; font-weight: 300; line-height: .92; letter-spacing: -.02em; color: #1C1710; }
+    .k-greek { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-style: italic; color: #8A7E6E; margin-top: 14px; letter-spacing: .04em; }
+    .k-concept-row { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 22px; flex-wrap: wrap; }
+    .k-concept-item { display: flex; align-items: center; gap: 7px; }
+    .k-concept-moon { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: #8A589A; }
+    .k-concept-sun  { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: #DF7830; }
+    .k-concept-mono { font-family: 'DM Mono', monospace; font-size: 9px; color: #B8ADA0; }
+    .k-concept-sep { width: 1px; height: 14px; background: #E0D5C2; }
+    .k-tagline-desc { font-family: 'DM Sans', sans-serif; font-size: 14px; color: #8A7E6E; max-width: 480px; margin: 14px auto 0; line-height: 1.82; }
+    .k-tags { display: flex; justify-content: center; gap: 7px; margin-top: 26px; flex-wrap: wrap; }
+    .k-tag { font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 5px 12px; border-radius: 2px; border: 1px solid; }
+    .k-status-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; background: #EDE5D6; border-radius: 2px; margin-top: 26px; }
+    .k-pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: #5A9C38; animation: kpulse 2s ease-in-out infinite; }
+    @keyframes kpulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .k-status-text { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: #5A9C38; }
+    .k-status-sub { font-family: 'DM Mono', monospace; font-size: 9px; color: #B8ADA0; }
+
+    /* Progress section */
+    .k-progress-grid { display: grid; grid-template-columns: auto 1fr; gap: 3.25rem; align-items: center; margin-bottom: 2.25rem; }
+    .k-dial-outer { position: relative; width: 180px; height: 180px; flex-shrink: 0; }
+    .k-dial-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+    .k-dial-pct { font-family: 'DM Mono', monospace; font-size: 2.4rem; color: #1C1710; line-height: 1; }
+    .k-dial-lbl { font-family: 'DM Sans', sans-serif; font-size: 8px; letter-spacing: .16em; text-transform: uppercase; color: #B8ADA0; margin-top: 5px; }
+    .k-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; margin-bottom: 1rem; }
+    .k-stat { padding: .65rem .85rem; background: #EDE5D6; border-radius: 4px; border-top: 2px solid #E0D5C2; }
+    .k-stat-lbl { font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: #B8ADA0; margin-bottom: .3rem; }
+    .k-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-style: italic; color: #1C1710; }
+    .k-phase-bar-row { display: grid; grid-template-columns: 110px 1fr 32px; align-items: center; gap: .5rem; margin-bottom: .35rem; }
+    .k-phase-bar-name { font-family: 'DM Sans', sans-serif; font-size: 10px; color: #8A7E6E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .k-phase-bar-track { height: 2px; background: #E0D5C2; border-radius: 1px; overflow: hidden; }
+    .k-phase-bar-fill { height: 100%; border-radius: 1px; transition: width .6s ease; }
+    .k-phase-bar-frac { font-family: 'DM Mono', monospace; font-size: 9px; color: #B8ADA0; text-align: right; }
+    .k-ms-track-outer { position: relative; height: 2px; background: #E0D5C2; border-radius: 1px; margin-bottom: 14px; }
+    .k-ms-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 1px; background: linear-gradient(to right, #8A589A, #DF7830); transition: width .8s ease; }
+    .k-ms-weeks { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 8px; color: #B8ADA0; margin-top: .4rem; }
+
+    /* Vision */
+    .k-vision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; margin-top: 1.5rem; }
+    .k-concept-cards { display: flex; flex-direction: column; gap: 12px; }
+    .k-concept-card { display: flex; gap: 14px; padding: 16px; background: #EDE5D6; border-radius: 5px; border-left: 3px solid; }
+    .k-concept-card-hd { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: #1C1710; margin-bottom: 5px; }
+    .k-concept-card-bd { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #8A7E6E; line-height: 1.65; }
+
+    /* Features */
+    .k-feat-btns { display: flex; gap: 6px; margin-bottom: 2rem; flex-wrap: wrap; }
+    .k-feat-btn { font-family: inherit; cursor: pointer; padding: 8px 15px; border-radius: 3px; border: 1px solid #E0D5C2; background: transparent; display: flex; align-items: center; gap: 7px; transition: all .2s; }
+    .k-feat-lbl { font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: .06em; color: #8A7E6E; transition: color .2s; }
+    .k-feat-display { display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: start; }
+    .k-feat-desc { padding-top: 8px; }
+
+    /* Phone frame */
+    .k-phone { width: 260px; height: 520px; border-radius: 34px; border: 8px solid #1C1710; overflow: hidden; position: relative; box-shadow: 0 28px 70px rgba(0,0,0,.20); flex-shrink: 0; }
+    .k-phone-notch { height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 6px; flex-shrink: 0; }
+    .k-phone-notch-bar { width: 64px; height: 16px; background: #1C1710; border-radius: 0 0 10px 10px; }
+    .k-phone-demo { height: 100%; display: flex; flex-direction: column; }
+
+    /* Fertility Score detail */
+    .k-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 1.5rem; }
+    .k-score-card { padding: 14px 16px; background: #EDE5D6; border-radius: 5px; border-top: 2px solid; }
+    .k-score-card-lbl { font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 10px; }
+    .k-factor-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+    .k-factor-pill { font-family: 'DM Mono', monospace; font-size: 9px; color: #8A7E6E; background: #F6F1E9; padding: 2px 7px; border-radius: 2px; }
+
+    /* Pricing */
+    .k-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #E0D5C2; border-radius: 5px; overflow: hidden; margin-bottom: 14px; }
+    .k-tier { padding: 22px 18px; }
+    .k-tier-lbl { font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 10px; }
+    .k-tier-price { font-family: 'DM Mono', monospace; font-size: 26px; line-height: 1; margin-bottom: 14px; }
+    .k-tier-period { font-size: 11px; margin-left: 2px; }
+    .k-tier-items { display: flex; flex-direction: column; gap: 7px; }
+    .k-tier-item { font-family: 'DM Sans', sans-serif; font-size: 11px; color: #3A3020; line-height: 1.55; display: flex; gap: 8px; align-items: flex-start; }
+    .k-check { width: 9px; height: 7px; flex-shrink: 0; margin-top: 3px; }
+
+    /* Tech stack */
+    .k-mvp-flags { display: flex; gap: 10px; margin-bottom: 1.75rem; flex-wrap: wrap; }
+    .k-mvp-flag { padding: 5px 13px; border-radius: 2px; border: 1px solid; }
+    .k-stack-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: .5rem; }
+    .k-stack-card { padding: 14px 15px; background: #EDE5D6; border-radius: 4px; border-top: 2px solid; }
+    .k-stack-name { font-family: 'DM Mono', monospace; font-size: 12px; display: block; margin-bottom: 3px; }
+    .k-stack-role { font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: #B8ADA0; display: block; margin-bottom: 6px; }
+    .k-costs-table { border: 1px solid #E0D5C2; border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
+    .k-costs-row { display: grid; grid-template-columns: 150px 1fr 52px 52px; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid #E0D5C2; }
+    .k-costs-row:last-of-type { border-bottom: none; }
+    .k-costs-service { display: flex; align-items: center; gap: 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: #3A3020; }
+    .k-costs-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .k-costs-note { font-family: 'DM Sans', sans-serif; font-size: 10px; color: #B8ADA0; }
+    .k-costs-low, .k-costs-high { font-family: 'DM Mono', monospace; font-size: 10px; color: #8A7E6E; text-align: right; }
+    .k-costs-total { display: grid; grid-template-columns: 150px 1fr 52px 52px; align-items: center; gap: 12px; padding: 11px 16px; background: #1C1710; font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: rgba(246,241,233,.35); }
+    .k-costs-total span:nth-child(3) { font-family: 'DM Mono', monospace; font-size: 12px; color: #F6F1E9; text-align: right; letter-spacing: 0; text-transform: none; }
+    .k-costs-total span:nth-child(4) { font-family: 'DM Mono', monospace; font-size: 12px; color: #5A9C38; text-align: right; letter-spacing: 0; text-transform: none; }
+
+    /* Deferred + Decisions */
+    .k-deferred-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .k-deferred-tag { display: flex; align-items: center; gap: 7px; padding: 6px 13px; background: #EDE5D6; border: 1px solid #E0D5C2; border-radius: 2px; font-family: 'DM Sans', sans-serif; font-size: 11px; color: #3A3020; }
+    .k-deferred-when { font-family: 'DM Mono', monospace; font-size: 8px; color: #B8ADA0; }
+    .k-decision { display: grid; grid-template-columns: 18px 1fr auto; gap: 14px; align-items: start; padding: 15px 17px; border-radius: 4px; margin-bottom: 8px; border: 1px solid; }
+    .k-decision.confirmed { background: rgba(90,156,56,.06); border-color: rgba(90,156,56,.22); }
+    .k-decision.pending { background: #EDE5D6; border-color: #E0D5C2; }
+    .k-decision-dot { width: 16px; height: 16px; border-radius: 50%; background: #E0D5C2; display: flex; align-items: center; justify-content: center; margin-top: 1px; flex-shrink: 0; }
+    .k-decision-dot.confirmed { background: #5A9C38; }
+    .k-decision-label { font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 600; color: #1C1710; margin-bottom: .2rem; }
+    .k-decision-detail { font-family: 'DM Sans', sans-serif; font-size: .8rem; color: #8A7E6E; line-height: 1.55; }
+    .k-decision-badge { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: .05em; padding: 3px 9px; border-radius: 2px; white-space: nowrap; align-self: flex-start; }
+    .k-decision-badge.confirmed { background: rgba(90,156,56,.12); color: #5A9C38; }
+    .k-decision-badge:not(.confirmed) { background: rgba(223,120,48,.12); color: #DF7830; }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      .k-wrap { padding: 2.5rem 1.5rem 4rem; }
+      .k-progress-grid, .k-vision-grid, .k-two-col, .k-feat-display { grid-template-columns: 1fr; }
+      .k-phone { margin: 0 auto; }
+      .k-feat-display { flex-direction: column; }
+      .k-pricing-grid, .k-stack-grid { grid-template-columns: 1fr 1fr; }
+      .k-stat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .k-pricing-grid, .k-stack-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -282,14 +505,426 @@
     </div>
 
     <nav class="p-tabs">
+      <button class="p-tab" data-tab="app"      onclick="showTab('app')"      id="tab-btn-app" style="display:none">App</button>
       <button class="p-tab active" data-tab="overview"  onclick="showTab('overview')">Overview</button>
       <button class="p-tab"        data-tab="updates"   onclick="showTab('updates')">Updates</button>
       <button class="p-tab"        data-tab="docs"      onclick="showTab('docs')">Documents</button>
       <button class="p-tab"        data-tab="intake"    onclick="showTab('intake')">Intake</button>
       <button class="p-tab"        data-tab="revisions" onclick="showTab('revisions')">Revisions</button>
+      <button class="p-tab"        data-tab="studio"    onclick="showTab('studio')" id="tab-btn-studio" style="display:none">Studio</button>
     </nav>
 
     <div class="p-content">
+
+      <!-- APP TAB -->
+      <div class="p-tab-panel" id="tab-app">
+        <div class="k-wrap">
+
+          <!-- HERO -->
+          <div class="k-hero">
+            <div class="k-ambient">
+              <div class="k-blob" style="top:10%;left:5%;width:200px;height:200px;background:#8A589A;opacity:.06;filter:blur(60px)"></div>
+              <div class="k-blob" style="top:15%;right:6%;width:180px;height:180px;background:#DF7830;opacity:.07;filter:blur(55px)"></div>
+              <div class="k-blob" style="bottom:10%;left:12%;width:160px;height:160px;background:#8AA870;opacity:.06;filter:blur(50px)"></div>
+              <div class="k-blob" style="bottom:15%;right:10%;width:150px;height:150px;background:#E0C030;opacity:.08;filter:blur(50px)"></div>
+            </div>
+            <div class="k-hero-ico">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="15" cy="12" r="8" fill="#DF7830" opacity="0.3"/><circle cx="10" cy="12" r="8" fill="#8A589A" opacity="0.7"/></svg>
+            </div>
+            <div class="k-wordmark">Kairos</div>
+            <div class="k-greek">καιρός — the opportune moment. the critical point of action.</div>
+            <div class="k-concept-row">
+              <div class="k-concept-item">
+                <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M16 10A8 8 0 0 1 7 17a8 8 0 0 0 9-7z" fill="#8A589A" opacity="0.9"/></svg>
+                <span class="k-concept-moon">Moon cycle</span>
+              </div>
+              <div class="k-concept-sep"></div>
+              <span class="k-concept-mono">∿ 28 days</span>
+              <div class="k-concept-sep"></div>
+              <span class="k-concept-mono">24 hrs ∿</span>
+              <div class="k-concept-sep"></div>
+              <div class="k-concept-item">
+                <span class="k-concept-sun">Sun cycle</span>
+                <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="#DF7830" opacity="0.9"/><line x1="10" y1="2" x2="10" y2="4.5" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="10" y1="15.5" x2="10" y2="18" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="10" x2="4.5" y2="10" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="15.5" y1="10" x2="18" y2="10" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="4.2" y1="4.2" x2="6" y2="6" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="14" y1="14" x2="15.8" y2="15.8" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="15.8" y1="4.2" x2="14" y2="6" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="6" y1="14" x2="4.2" y2="15.8" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+            <p class="k-tagline-desc">A pregnancy optimization platform built around two celestial rhythms. Two complete experiences. One shared moment of alignment.</p>
+            <div class="k-tags">
+              <span class="k-tag" style="color:#8A589A;border-color:#8A589A;background:#8A589A14">Lunar Tracking</span>
+              <span class="k-tag" style="color:#DF7830;border-color:#DF7830;background:#DF783014">Solar Score</span>
+              <span class="k-tag" style="color:#5A9C38;border-color:#5A9C38;background:#5A9C3814">Fertility Score</span>
+              <span class="k-tag" style="color:#8A4840;border-color:#8A4840;background:#8A484014">Eclipse Mode</span>
+              <span class="k-tag" style="color:#E0C030;border-color:#E0C030;background:#E0C03014">AI Shop</span>
+              <span class="k-tag" style="color:#8AA870;border-color:#8AA870;background:#8AA87014">The Library</span>
+            </div>
+            <div style="display:flex;justify-content:center;margin-top:26px">
+              <div class="k-status-badge">
+                <div class="k-pulse-dot"></div>
+                <span class="k-status-text">Active Build</span>
+                <span class="k-status-sub">&nbsp;· iOS · Flutter · Phase 1</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- PROGRESS (dynamic) -->
+          <div id="k-progress-section" style="display:none">
+            <div class="k-section-lbl" style="color:#5A9C38">Overall Progress</div>
+            <div class="k-progress-grid">
+              <div class="k-dial-outer">
+                <svg id="k-dial-svg" width="180" height="180" viewBox="0 0 180 180"></svg>
+                <div class="k-dial-inner">
+                  <div class="k-dial-pct" id="k-dial-pct">0%</div>
+                  <div class="k-dial-lbl">Complete</div>
+                </div>
+              </div>
+              <div>
+                <div class="k-stat-grid" id="k-stat-grid"></div>
+                <div id="k-phase-bars"></div>
+                <div style="margin-top:1.5rem">
+                  <div class="k-section-lbl" style="color:#8A7E6E;margin-bottom:.65rem">Checkpoints</div>
+                  <div class="k-ms-track-outer"><div class="k-ms-fill" id="k-ms-fill" style="width:0%"></div></div>
+                  <div id="k-ms-nodes" style="position:relative;height:18px;margin-bottom:.4rem"></div>
+                  <div class="k-ms-weeks" id="k-ms-weeks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="k-hr"></div>
+
+          <!-- VISION -->
+          <div class="k-section">
+            <div class="k-section-lbl" style="color:#8A589A">What Is Kairos</div>
+            <div class="k-hd">Not a period tracker.<br>A pregnancy optimization platform.</div>
+            <div class="k-vision-grid">
+              <div>
+                <p class="k-bd">Most fertility apps are reactive — they tell you when you're ovulating and stop there. Kairos is proactive. It gives both partners a shared Fertility Score™ and a daily action plan to improve their combined odds — week over week.</p>
+                <p class="k-bd" style="margin-top:14px">Built around two celestial rhythms: the 28-day lunar cycle governing reproductive health, and the daily solar arc governing energy and lifestyle. When they align — that's the Kairos moment.</p>
+              </div>
+              <div class="k-concept-cards">
+                <div class="k-concept-card" style="border-left-color:#8A589A">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px"><path d="M16 10A8 8 0 0 1 7 17a8 8 0 0 0 9-7z" fill="#8A589A" opacity="0.9"/></svg>
+                  <div><div class="k-concept-card-hd">Moon Cycle</div><div class="k-concept-card-bd">28-day lunar rhythm · Cycle tracking, hormonal health, ovulation</div></div>
+                </div>
+                <div class="k-concept-card" style="border-left-color:#DF7830">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px"><circle cx="10" cy="10" r="4" fill="#DF7830" opacity="0.9"/><line x1="10" y1="2" x2="10" y2="4.5" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="10" y1="15.5" x2="10" y2="18" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="10" x2="4.5" y2="10" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="15.5" y1="10" x2="18" y2="10" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  <div><div class="k-concept-card-hd">Sun Cycle</div><div class="k-concept-card-bd">Daily solar arc · Lifestyle, sperm health, behavioral optimization</div></div>
+                </div>
+                <div class="k-concept-card" style="border-left-color:#8A4840">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:2px"><circle cx="15" cy="12" r="8" fill="#DF7830" opacity="0.3"/><circle cx="10" cy="12" r="8" fill="#8A589A" opacity="0.7"/></svg>
+                  <div><div class="k-concept-card-hd">Eclipse Mode</div><div class="k-concept-card-bd">When both align · Couple dashboard, combined score, shared journey</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="k-hr"></div>
+
+          <!-- FEATURES -->
+          <div class="k-section">
+            <div class="k-section-lbl" style="color:#DF7830">Core Features</div>
+            <div class="k-hd">Six pillars. One platform.</div>
+            <p class="k-bd" style="max-width:560px;margin-bottom:2rem">Select a feature to see an app preview. Each pillar interconnects — the Score feeds the Shop, the Library feeds the Score, Eclipse connects both sides.</p>
+            <div class="k-feat-btns">
+              <button class="k-feat-btn" id="kfb-0" onclick="kShowFeature(0)">
+                <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M16 10A8 8 0 0 1 7 17a8 8 0 0 0 9-7z" fill="#8A589A" opacity="0.9"/></svg>
+                <span class="k-feat-lbl" id="kfl-0">Moon Side</span>
+              </button>
+              <button class="k-feat-btn" id="kfb-1" onclick="kShowFeature(1)">
+                <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="#DF7830" opacity="0.9"/><line x1="10" y1="2" x2="10" y2="4.5" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="10" y1="15.5" x2="10" y2="18" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="10" x2="4.5" y2="10" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/><line x1="15.5" y1="10" x2="18" y2="10" stroke="#DF7830" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span class="k-feat-lbl" id="kfl-1">Sun Side</span>
+              </button>
+              <button class="k-feat-btn" id="kfb-2" onclick="kShowFeature(2)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="15" cy="12" r="8" fill="#DF7830" opacity="0.3"/><circle cx="10" cy="12" r="8" fill="#8A589A" opacity="0.7"/></svg>
+                <span class="k-feat-lbl" id="kfl-2">Eclipse Mode</span>
+              </button>
+              <button class="k-feat-btn" id="kfb-3" onclick="kShowFeature(3)"><span class="k-feat-lbl" id="kfl-3">Fertility Score</span></button>
+              <button class="k-feat-btn" id="kfb-4" onclick="kShowFeature(4)"><span class="k-feat-lbl" id="kfl-4">The Shop</span></button>
+              <button class="k-feat-btn" id="kfb-5" onclick="kShowFeature(5)"><span class="k-feat-lbl" id="kfl-5">The Library</span></button>
+            </div>
+            <div class="k-feat-display">
+              <div class="k-feat-desc" id="k-feat-desc"></div>
+              <div class="k-phone">
+                <!-- MOON DEMO -->
+                <div class="k-phone-demo" id="kdemo-0" style="background:#F6F1E9">
+                  <div class="k-phone-notch"><div class="k-phone-notch-bar"></div></div>
+                  <div style="padding:6px 11px 5px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #E0D5C2;flex-shrink:0">
+                    <span style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:#1C1710">Lunar Aura</span>
+                    <span style="font-family:'DM Mono',monospace;font-size:7px;color:#E0C030;background:#E0C03018;padding:2px 7px;border-radius:2px">Day 14 · Peak</span>
+                  </div>
+                  <div style="width:100%;height:172px;position:relative;flex-shrink:0;overflow:hidden;background:#F7EEE3">
+                    <div style="position:absolute;top:-40px;left:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#B84060 0%,rgba(184,64,96,.55) 38%,transparent 70%);filter:blur(35px);opacity:.62"></div>
+                    <div style="position:absolute;top:-30px;right:-30px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,#C47250 0%,rgba(196,114,80,.50) 38%,transparent 70%);filter:blur(33px);opacity:.58"></div>
+                    <div style="position:absolute;bottom:-30px;right:-20px;width:200px;height:190px;border-radius:50%;background:radial-gradient(circle,#C89838 0%,rgba(200,152,56,.62) 40%,transparent 70%);filter:blur(30px);opacity:.74"></div>
+                    <div style="position:absolute;bottom:-40px;left:-30px;width:185px;height:185px;border-radius:50%;background:radial-gradient(circle,#906080 0%,rgba(144,96,128,.52) 38%,transparent 70%);filter:blur(33px);opacity:.60"></div>
+                    <div style="position:absolute;top:0;left:0;right:0;height:28px;background:linear-gradient(to bottom,rgba(247,238,227,.80),transparent)"></div>
+                    <div style="position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(to top,rgba(247,238,227,.70),transparent)"></div>
+                    <div style="position:absolute;top:7px;left:9px;font-family:'Cormorant Garamond',serif;font-size:7px;font-style:italic;color:rgba(255,255,255,.90)">New Moon</div>
+                    <div style="position:absolute;top:7px;right:9px;font-family:'Cormorant Garamond',serif;font-size:7px;font-style:italic;color:rgba(255,255,255,.88)">Waxing</div>
+                    <div style="position:absolute;bottom:7px;left:9px;font-family:'Cormorant Garamond',serif;font-size:7px;font-style:italic;color:rgba(255,255,255,.84)">Waning</div>
+                    <div style="position:absolute;bottom:7px;right:9px;font-family:'Cormorant Garamond',serif;font-size:7px;font-style:italic;color:rgba(255,255,255,.96)">Full Moon ★</div>
+                    <div style="position:absolute;bottom:22%;right:20%;display:flex;flex-direction:column;align-items:center;gap:3px">
+                      <div style="font-family:'DM Mono',monospace;font-size:6px;color:rgba(50,30,10,.80);background:rgba(255,250,238,.75);padding:1px 5px;border-radius:2px">Day 14</div>
+                      <div style="width:11px;height:11px;border-radius:50%;background:white;box-shadow:0 0 0 3px rgba(255,255,255,.30),0 0 18px rgba(255,245,210,.95)"></div>
+                    </div>
+                  </div>
+                  <div style="padding:7px 11px;flex:1;overflow:hidden">
+                    <div style="font-family:'DM Sans',sans-serif;font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:#B8ADA0;margin-bottom:7px">Your Cycle Phases</div>
+                    <div style="display:flex;gap:7px;margin-bottom:5px"><div style="width:6px;height:6px;border-radius:50%;background:#C23A30;flex-shrink:0;margin-top:3px"></div><div><div style="font-family:'DM Sans',sans-serif;font-size:9px;color:#1C1710">New Moon · Menstrual <span style="font-family:'DM Mono',monospace;font-size:6px;color:#B8ADA0">Days 1–5</span></div><div style="font-family:'DM Sans',sans-serif;font-size:8px;color:#8A7E6E">Rest. Warmth. Iron-rich foods.</div></div></div>
+                    <div style="display:flex;gap:7px;margin-bottom:5px"><div style="width:6px;height:6px;border-radius:50%;background:#5A9C38;flex-shrink:0;margin-top:3px"></div><div><div style="font-family:'DM Sans',sans-serif;font-size:9px;color:#1C1710">Waxing · Follicular <span style="font-family:'DM Mono',monospace;font-size:6px;color:#B8ADA0">Days 6–13</span></div><div style="font-family:'DM Sans',sans-serif;font-size:8px;color:#8A7E6E">Energy rises. Optimism builds.</div></div></div>
+                    <div style="display:flex;gap:7px;margin-bottom:5px"><div style="width:6px;height:6px;border-radius:50%;background:#E0C030;flex-shrink:0;margin-top:3px"></div><div><div style="font-family:'DM Sans',sans-serif;font-size:9px;color:#1C1710">Full Moon · Ovulation <span style="font-family:'DM Mono',monospace;font-size:6px;color:#B8ADA0">Days 14–16</span></div><div style="font-family:'DM Sans',sans-serif;font-size:8px;color:#8A7E6E">Peak fertility. Feel radiant.</div></div></div>
+                    <div style="display:flex;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:#8A589A;flex-shrink:0;margin-top:3px"></div><div><div style="font-family:'DM Sans',sans-serif;font-size:9px;color:#1C1710">Waning · Luteal <span style="font-family:'DM Mono',monospace;font-size:6px;color:#B8ADA0">Days 17–28</span></div><div style="font-family:'DM Sans',sans-serif;font-size:8px;color:#8A7E6E">Nesting. Sensitivity rises.</div></div></div>
+                  </div>
+                  <div style="height:30px;background:#EDE5D6;display:flex;align-items:center;justify-content:space-around;border-top:1px solid #E0D5C2;flex-shrink:0">
+                    <span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A589A;letter-spacing:.1em;text-transform:uppercase">Home</span>
+                    <span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#B8ADA0;letter-spacing:.1em;text-transform:uppercase">Cycle</span>
+                    <span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#B8ADA0;letter-spacing:.1em;text-transform:uppercase">Together</span>
+                    <span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#B8ADA0;letter-spacing:.1em;text-transform:uppercase">Shop</span>
+                    <span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#B8ADA0;letter-spacing:.1em;text-transform:uppercase">Profile</span>
+                  </div>
+                </div>
+                <!-- SUN DEMO -->
+                <div class="k-phone-demo" id="kdemo-1" style="display:none;background:#F7F7F5">
+                  <div class="k-phone-notch" style="background:white"><div class="k-phone-notch-bar"></div></div>
+                  <div style="padding:10px 11px 7px;background:white;border-bottom:3px solid #DF7830;flex-shrink:0">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">
+                      <div><div style="font-family:'DM Mono',monospace;font-size:7px;color:#A0998C;letter-spacing:.14em;text-transform:uppercase;margin-bottom:2px">Solar Score · Today</div><div style="font-family:'DM Mono',monospace;font-size:36px;color:#1C1710;line-height:1">74</div></div>
+                      <div style="text-align:right;padding-top:2px"><div style="font-family:'DM Mono',monospace;font-size:9px;color:#5A9C38;margin-bottom:5px">▲ +4 pts</div><div style="padding:2px 7px;background:#DF783015;border:1px solid #DF783050"><span style="font-family:'DM Mono',monospace;font-size:7px;color:#DF7830;letter-spacing:.1em">STRONG</span></div></div>
+                    </div>
+                    <div style="height:3px;background:#EBEBE8"><div style="height:100%;width:74%;background:linear-gradient(to right,#DF7830,#E0C030)"></div></div>
+                  </div>
+                  <div style="flex:1;background:white;overflow:hidden">
+                    <div style="padding:8px 11px;border-bottom:1px solid #EBEBE8"><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:5px"><div><div style="font-family:'DM Mono',monospace;font-size:7px;color:#A0998C;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px">Sleep</div><div style="font-family:'DM Mono',monospace;font-size:17px;color:#1C1710;line-height:1">7.4<span style="font-size:8px;color:#A0998C">hrs</span></div></div><div style="font-family:'DM Mono',monospace;font-size:8px;color:#5A9C38">+0.4h</div></div><div style="height:2px;background:#EBEBE8"><div style="height:100%;background:#5A9C38;width:74%"></div></div></div>
+                    <div style="padding:8px 11px;border-bottom:1px solid #EBEBE8"><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:5px"><div><div style="font-family:'DM Mono',monospace;font-size:7px;color:#A0998C;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px">Stress Index</div><div style="font-family:'DM Mono',monospace;font-size:17px;color:#1C1710;line-height:1">2.8<span style="font-size:8px;color:#A0998C">/10</span></div></div><div style="font-family:'DM Mono',monospace;font-size:8px;color:#8AA870">↓ Low</div></div><div style="height:2px;background:#EBEBE8"><div style="height:100%;background:#8AA870;width:28%"></div></div></div>
+                    <div style="padding:8px 11px;border-bottom:1px solid #EBEBE8"><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:5px"><div><div style="font-family:'DM Mono',monospace;font-size:7px;color:#A0998C;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px">Sperm Motility</div><div style="font-family:'DM Mono',monospace;font-size:17px;color:#1C1710;line-height:1">68<span style="font-size:8px;color:#A0998C">%</span></div></div><div style="font-family:'DM Mono',monospace;font-size:8px;color:#8A589A">Stable</div></div><div style="height:2px;background:#EBEBE8"><div style="height:100%;background:#8A589A;width:68%"></div></div></div>
+                    <div style="padding:8px 11px"><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:5px"><div><div style="font-family:'DM Mono',monospace;font-size:7px;color:#A0998C;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px">Diet Quality</div><div style="font-family:'DM Mono',monospace;font-size:17px;color:#1C1710;line-height:1">80<span style="font-size:8px;color:#A0998C">pts</span></div></div><div style="font-family:'DM Mono',monospace;font-size:8px;color:#DF7830">+5 pts</div></div><div style="height:2px;background:#EBEBE8"><div style="height:100%;background:#DF7830;width:80%"></div></div></div>
+                  </div>
+                  <div style="padding:6px 9px 7px;background:#F7F7F5;flex-shrink:0"><div style="padding:7px 9px;background:white;border-left:3px solid #DF7830;border-radius:0 3px 3px 0"><div style="font-family:'DM Mono',monospace;font-size:6px;color:#DF7830;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">Today's Directive</div><div style="font-family:'DM Sans',sans-serif;font-size:9px;color:#3A3020;line-height:1.55">No alcohol. CoQ10 taken. Lunar partner's window opens in 2 days.</div></div></div>
+                  <div style="height:30px;background:white;display:flex;align-items:center;justify-content:space-around;border-top:1px solid #EBEBE8;flex-shrink:0">
+                    <span style="font-family:'DM Mono',monospace;font-size:6px;color:#DF7830;letter-spacing:.1em;text-transform:uppercase">Home</span>
+                    <span style="font-family:'DM Mono',monospace;font-size:6px;color:#C0B8B0;letter-spacing:.1em;text-transform:uppercase">Data</span>
+                    <span style="font-family:'DM Mono',monospace;font-size:6px;color:#C0B8B0;letter-spacing:.1em;text-transform:uppercase">Together</span>
+                    <span style="font-family:'DM Mono',monospace;font-size:6px;color:#C0B8B0;letter-spacing:.1em;text-transform:uppercase">Shop</span>
+                    <span style="font-family:'DM Mono',monospace;font-size:6px;color:#C0B8B0;letter-spacing:.1em;text-transform:uppercase">Profile</span>
+                  </div>
+                </div>
+                <!-- ECLIPSE DEMO -->
+                <div class="k-phone-demo" id="kdemo-2" style="display:none;background:#F6F1E9">
+                  <div class="k-phone-notch"><div class="k-phone-notch-bar"></div></div>
+                  <div style="padding:7px 11px 6px;display:flex;align-items:center;justify-content:center;gap:7px;border-bottom:1px solid #E0D5C2;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="15" cy="12" r="8" fill="#DF7830" opacity="0.3"/><circle cx="10" cy="12" r="8" fill="#8A589A" opacity="0.7"/></svg><span style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:#1C1710">Eclipse Mode</span></div>
+                  <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:5px;padding:9px 7px 7px;align-items:center;flex-shrink:0">
+                    <div style="background:#EDE5D6;border:1px solid #8A589A30;border-radius:5px;padding:9px 7px"><div style="font-family:'DM Mono',monospace;font-size:6px;color:#8A589A;letter-spacing:.1em;margin-bottom:6px">MOON</div><div style="font-family:'DM Mono',monospace;font-size:22px;color:#8A589A;line-height:1">82</div><div style="font-family:'DM Sans',sans-serif;font-size:7px;color:#8A7E6E;margin-top:3px">Day 14 · Ovulation</div><div style="height:1px;background:#E0D5C2;margin:5px 0"></div><div style="font-family:'Cormorant Garamond',serif;font-size:9px;font-style:italic;color:#8A7E6E">Fertile window open</div></div>
+                    <div style="text-align:center"><div style="width:36px;height:36px;border-radius:50%;background:#EDE5D6;border:1px solid #8A484030;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 3px"><div style="font-family:'DM Mono',monospace;font-size:11px;color:#8A4840">78</div></div><div style="font-family:'DM Mono',monospace;font-size:6px;color:#B8ADA0">Eclipse</div></div>
+                    <div style="background:#16120E;border:1px solid #DF783020;border-radius:5px;padding:9px 7px"><div style="font-family:'DM Mono',monospace;font-size:6px;color:#DF7830;letter-spacing:.1em;margin-bottom:6px">SUN</div><div style="font-family:'DM Mono',monospace;font-size:22px;color:#DF7830;line-height:1">74</div><div style="font-family:'DM Mono',monospace;font-size:7px;color:rgba(255,255,255,.30);margin-top:3px">Lifestyle · Strong</div><div style="height:1px;background:rgba(255,255,255,.06);margin:5px 0"></div><div style="font-family:'DM Mono',monospace;font-size:7px;color:rgba(255,255,255,.30)">Streak: 7 days</div></div>
+                  </div>
+                  <div style="padding:5px 7px;flex-shrink:0"><div style="padding:7px 9px;background:#8A484008;border:1px solid #8A484025;border-radius:4px"><div style="font-family:'DM Mono',monospace;font-size:6px;color:#8A4840;letter-spacing:.1em;margin-bottom:3px">Fertile Window</div><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-family:'Cormorant Garamond',serif;font-size:11px;font-style:italic;color:#1C1710">Open now · Day 14</div><div style="font-family:'DM Mono',monospace;font-size:8px;color:#8A4840">Peak</div></div></div></div>
+                  <div style="padding:0 7px;flex:1;min-height:0;overflow:hidden"><div style="font-family:'DM Sans',sans-serif;font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:#B8ADA0;margin-bottom:6px">Shared Milestones</div>
+                    <div style="display:flex;gap:6px;align-items:center;margin-bottom:5px"><div style="width:6px;height:6px;border-radius:50%;background:#5A9C38"></div><span style="font-family:'DM Sans',sans-serif;font-size:9px;color:#3A3020">Accounts linked</span></div>
+                    <div style="display:flex;gap:6px;align-items:center;margin-bottom:5px"><div style="width:6px;height:6px;border-radius:50%;background:#5A9C38"></div><span style="font-family:'DM Sans',sans-serif;font-size:9px;color:#3A3020">First fertile window</span></div>
+                    <div style="display:flex;gap:6px;align-items:center;margin-bottom:5px"><div style="width:6px;height:6px;border-radius:50%;background:#E0D5C2"></div><span style="font-family:'DM Sans',sans-serif;font-size:9px;color:#B8ADA0">30-day behavior streak</span></div>
+                    <div style="display:flex;gap:6px;align-items:center"><div style="width:6px;height:6px;border-radius:50%;background:#E0D5C2"></div><span style="font-family:'DM Sans',sans-serif;font-size:9px;color:#B8ADA0">Eclipse Score 85+</span></div>
+                  </div>
+                  <div style="margin:6px 7px 7px;padding:8px 9px;background:#EDE5D6;border-radius:3px;text-align:center;flex-shrink:0"><div style="font-family:'Cormorant Garamond',serif;font-size:10px;font-style:italic;color:#1C1710">"Everything is aligned. Tonight is a good night."</div></div>
+                  <div style="height:30px;background:#E0D5C2;display:flex;align-items:center;justify-content:space-around;border-top:1px solid #D4C9B8;flex-shrink:0">
+                    <span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Home</span>
+                    <span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Cycle</span>
+                    <span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A4840;letter-spacing:.1em;text-transform:uppercase">Together</span>
+                    <span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Shop</span>
+                    <span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Profile</span>
+                  </div>
+                </div>
+                <!-- SCORE DEMO -->
+                <div class="k-phone-demo" id="kdemo-3" style="display:none;background:#F6F1E9">
+                  <div class="k-phone-notch"><div class="k-phone-notch-bar"></div></div>
+                  <div style="padding:7px 11px 5px;border-bottom:1px solid #E0D5C2;flex-shrink:0"><div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:#1C1710">Fertility Score™</div><div style="font-family:'DM Sans',sans-serif;font-size:8px;color:#8A7E6E">Tap any factor to see how to improve it</div></div>
+                  <div style="display:flex;justify-content:center;padding:11px 0 7px;flex-shrink:0">
+                    <div style="position:relative;width:108px;height:108px">
+                      <svg width="108" height="108" viewBox="0 0 108 108" style="transform:rotate(-90deg)"><defs><linearGradient id="kfsg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8A589A"/><stop offset="50%" stop-color="#5A9C38"/><stop offset="100%" stop-color="#E0C030"/></linearGradient></defs><circle cx="54" cy="54" r="44" fill="none" stroke="#E0D5C2" stroke-width="6"/><circle cx="54" cy="54" r="44" fill="none" stroke="url(#kfsg)" stroke-width="6" stroke-linecap="round" stroke-dasharray="228 277"/></svg>
+                      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-family:'DM Mono',monospace;font-size:27px;color:#1C1710;line-height:1">82</div><div style="font-family:'DM Mono',monospace;font-size:6px;color:#5A9C38;letter-spacing:.1em;margin-top:2px">STRONG</div></div>
+                    </div>
+                  </div>
+                  <div style="padding:0 11px;flex:1;min-height:0;overflow:hidden">
+                    <div style="font-family:'DM Sans',sans-serif;font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:#B8ADA0;margin-bottom:7px">Score Breakdown</div>
+                    <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'DM Sans',sans-serif;font-size:9px;color:#3A3020">Cycle Regularity</span><span style="font-family:'DM Mono',monospace;font-size:8px;color:#8A589A">88%</span></div><div style="height:2px;background:#E0D5C2;border-radius:2px"><div style="height:100%;border-radius:2px;background:#8A589A;width:88%"></div></div></div>
+                    <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'DM Sans',sans-serif;font-size:9px;color:#3A3020">Ovulation Confirmed</span><span style="font-family:'DM Mono',monospace;font-size:8px;color:#E0C030">95%</span></div><div style="height:2px;background:#E0D5C2;border-radius:2px"><div style="height:100%;border-radius:2px;background:#E0C030;width:95%"></div></div></div>
+                    <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'DM Sans',sans-serif;font-size:9px;color:#3A3020">Nutrition + Supps</span><span style="font-family:'DM Mono',monospace;font-size:8px;color:#5A9C38">65%</span></div><div style="height:2px;background:#E0D5C2;border-radius:2px"><div style="height:100%;border-radius:2px;background:#5A9C38;width:65%"></div></div></div>
+                    <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'DM Sans',sans-serif;font-size:9px;color:#3A3020">Lifestyle Quality</span><span style="font-family:'DM Mono',monospace;font-size:8px;color:#DF7830">78%</span></div><div style="height:2px;background:#E0D5C2;border-radius:2px"><div style="height:100%;border-radius:2px;background:#DF7830;width:78%"></div></div></div>
+                    <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'DM Sans',sans-serif;font-size:9px;color:#3A3020">Partner Alignment</span><span style="font-family:'DM Mono',monospace;font-size:8px;color:#8A4840">82%</span></div><div style="height:2px;background:#E0D5C2;border-radius:2px"><div style="height:100%;border-radius:2px;background:#8A4840;width:82%"></div></div></div>
+                  </div>
+                  <div style="padding:6px 11px 8px;flex-shrink:0"><div style="padding:6px 9px;background:#5A9C3810;border:1px solid #5A9C3830;border-radius:3px"><div style="font-family:'DM Mono',monospace;font-size:6px;color:#5A9C38;margin-bottom:2px">How to improve</div><div style="font-family:'DM Sans',sans-serif;font-size:8px;color:#3A3020;line-height:1.5">Logging your prenatal daily could add up to 12 pts over 30 days.</div></div></div>
+                  <div style="height:30px;background:#EDE5D6;display:flex;align-items:center;justify-content:space-around;border-top:1px solid #E0D5C2;flex-shrink:0"><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#5A9C38;letter-spacing:.1em;text-transform:uppercase">Home</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#B8ADA0;letter-spacing:.1em;text-transform:uppercase">Cycle</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#B8ADA0;letter-spacing:.1em;text-transform:uppercase">Together</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#B8ADA0;letter-spacing:.1em;text-transform:uppercase">Shop</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#B8ADA0;letter-spacing:.1em;text-transform:uppercase">Profile</span></div>
+                </div>
+                <!-- SHOP DEMO -->
+                <div class="k-phone-demo" id="kdemo-4" style="display:none;background:#F6F1E9">
+                  <div class="k-phone-notch"><div class="k-phone-notch-bar"></div></div>
+                  <div style="padding:7px 11px 6px;border-bottom:1px solid #E0D5C2;display:flex;justify-content:space-between;align-items:center;flex-shrink:0"><div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:#1C1710">For You Now</div><div style="font-family:'DM Mono',monospace;font-size:7px;color:#E0C030">Day 14 · Peak</div></div>
+                  <div style="padding:6px 9px;background:#E0C03010;border-bottom:1px solid #E0D5C2;flex-shrink:0"><div style="font-family:'DM Mono',monospace;font-size:6px;color:#E0C030;margin-bottom:2px">AI Picks · Ovulation Phase</div><div style="font-family:'DM Sans',sans-serif;font-size:8px;color:#8A7E6E">Based on today's phase and your logged data</div></div>
+                  <div style="padding:9px;flex:1;min-height:0;overflow:hidden">
+                    <div style="height:92px;background:#E0D5C2;border-radius:5px;margin-bottom:7px;position:relative;display:flex;align-items:center;justify-content:center"><div style="position:absolute;top:6px;left:6px;padding:2px 7px;background:#E0C030;border-radius:2px"><span style="font-family:'DM Mono',monospace;font-size:6px;color:#1C1710">Ovulation</span></div></div>
+                    <div style="margin-bottom:5px"><div style="font-family:'DM Sans',sans-serif;font-size:7px;color:#8A7E6E;margin-bottom:2px">Thorne Research</div><div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:#1C1710;margin-bottom:3px">CoQ10 200mg</div><div style="font-family:'DM Mono',monospace;font-size:12px;color:#1C1710">$34.00</div></div>
+                    <div style="padding:7px 9px;background:#EDE5D6;border-radius:3px;margin-bottom:8px"><div style="font-family:'DM Mono',monospace;font-size:6px;color:#5A9C38;margin-bottom:2px">Why Kairos recommends this</div><div style="font-family:'DM Sans',sans-serif;font-size:8px;color:#8A7E6E;line-height:1.5">TTC mode active. CoQ10 supports egg quality during the ovulation window.</div></div>
+                    <div style="display:flex;gap:5px"><div style="flex:1;padding:7px;background:#1C1710;border-radius:3px;text-align:center"><span style="font-family:'DM Sans',sans-serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#F6F1E9">Add to Cart</span></div><div style="padding:7px 10px;background:#EDE5D6;border-radius:3px"><span style="font-family:'DM Sans',sans-serif;font-size:8px;color:#8A7E6E">Save</span></div></div>
+                  </div>
+                  <div style="height:30px;background:#E0D5C2;display:flex;align-items:center;justify-content:space-around;border-top:1px solid #D4C9B8;flex-shrink:0"><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Home</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Cycle</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Together</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#DF7830;letter-spacing:.1em;text-transform:uppercase">Shop</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Profile</span></div>
+                </div>
+                <!-- LIBRARY DEMO -->
+                <div class="k-phone-demo" id="kdemo-5" style="display:none;background:#F6F1E9">
+                  <div class="k-phone-notch"><div class="k-phone-notch-bar"></div></div>
+                  <div style="padding:7px 11px 6px;border-bottom:1px solid #E0D5C2;display:flex;justify-content:space-between;align-items:center;flex-shrink:0"><div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:#1C1710">For You Now</div><div style="font-family:'DM Mono',monospace;font-size:7px;color:#8A589A">Day 14 · Ovulation</div></div>
+                  <div style="height:80px;background:#E0D5C2;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="position:absolute;top:7px;left:9px;display:flex;gap:4px"><span style="font-family:'DM Mono',monospace;font-size:6px;color:#8A589A;background:#8A589A15;border:1px solid #8A589A40;padding:2px 6px">Ovulation</span><span style="font-family:'DM Mono',monospace;font-size:6px;color:#8A7E6E;background:#8A7E6E15;border:1px solid #8A7E6E40;padding:2px 6px">Expert</span></div></div>
+                  <div style="padding:9px 11px;flex:1;min-height:0;overflow:hidden">
+                    <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:#1C1710;line-height:1.35;margin-bottom:7px">Reading your body's fertile window with confidence</div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid #E0D5C2"><span style="font-family:'DM Sans',sans-serif;font-size:8px;color:#8A7E6E">Dr. [Name], OBGYN</span><span style="font-family:'DM Mono',monospace;font-size:8px;color:#B8ADA0">6 min read</span></div>
+                    <div style="font-family:'DM Sans',sans-serif;font-size:9px;color:#8A7E6E;line-height:1.7">The fertile window spans approximately six days — the five days before ovulation and the day of ovulation itself.</div>
+                    <div style="font-family:'DM Sans',sans-serif;font-size:9px;color:#B8ADA0;line-height:1.7;margin-top:5px">Cervical mucus, basal body temperature, and LH surges each tell part of the story...</div>
+                    <div style="display:flex;gap:6px;margin-top:9px"><div style="flex:1;padding:6px;background:#1C1710;border-radius:3px;text-align:center"><span style="font-family:'DM Sans',sans-serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#F6F1E9">Read Full Article</span></div><div style="padding:6px 9px;background:#EDE5D6;border-radius:3px"><span style="font-family:'DM Sans',sans-serif;font-size:8px;color:#8A7E6E">Save</span></div></div>
+                  </div>
+                  <div style="height:30px;background:#E0D5C2;display:flex;align-items:center;justify-content:space-around;border-top:1px solid #D4C9B8;flex-shrink:0"><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Home</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Cycle</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Together</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A7E6E;letter-spacing:.1em;text-transform:uppercase">Shop</span><span style="font-family:'DM Sans',sans-serif;font-size:6px;color:#8A589A;letter-spacing:.1em;text-transform:uppercase">Profile</span></div>
+                </div>
+              </div><!-- end .k-phone -->
+            </div><!-- end .k-feat-display -->
+          </div><!-- end features section -->
+
+          <div class="k-hr"></div>
+
+          <!-- FERTILITY SCORE DETAIL -->
+          <div class="k-section">
+            <div class="k-section-lbl" style="color:#5A9C38">The Centerpiece</div>
+            <div class="k-hd">The Fertility Score™</div>
+            <div class="k-two-col">
+              <div>
+                <p class="k-bd">Analogous to a credit score — legible, explainable, and actionable. Both partners have their own score (0–100) built from 7 weighted factors. The Eclipse Score combines them with an Alignment Bonus earned when both show up.</p>
+                <p class="k-bd" style="margin-top:14px">On tap, users see every contributing factor as a colored bar with a one-sentence plain-language explanation and a specific action to improve it. Score updates nightly as new data is logged.</p>
+              </div>
+              <div>
+                <div class="k-score-card" style="border-top-color:#8A589A">
+                  <div class="k-score-card-lbl" style="color:#8A589A">Moon Side</div>
+                  <div class="k-factor-pills"><span class="k-factor-pill">Cycle Regularity 20%</span><span class="k-factor-pill">Ovulation Confirmed 20%</span><span class="k-factor-pill">Nutrition + Supplements 15%</span><span class="k-factor-pill">Lifestyle Quality 15%</span><span class="k-factor-pill">Tracking Consistency 10%</span><span class="k-factor-pill">Symptom Load 10%</span><span class="k-factor-pill">Partner Alignment 10%</span></div>
+                </div>
+                <div class="k-score-card" style="border-top-color:#DF7830;margin-top:10px">
+                  <div class="k-score-card-lbl" style="color:#DF7830">Sun Side</div>
+                  <div class="k-factor-pills"><span class="k-factor-pill">Substance Avoidance 20%</span><span class="k-factor-pill">Sleep Quality 15%</span><span class="k-factor-pill">Supplement Adherence 15%</span><span class="k-factor-pill">Exercise Balance 15%</span><span class="k-factor-pill">Diet Quality 10%</span><span class="k-factor-pill">Stress Management 10%</span><span class="k-factor-pill">Partner Support 15%</span></div>
+                </div>
+                <div style="padding:12px 15px;background:#8A484010;border:1px solid #8A484030;border-radius:5px;margin-top:10px">
+                  <div class="k-score-card-lbl" style="color:#8A4840">Eclipse Combined</div>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:#3A3020">(Moon × 0.5) + (Sun × 0.5) + Alignment Bonus (up to +5 pts)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="k-hr"></div>
+
+          <!-- REVENUE MODEL -->
+          <div class="k-section">
+            <div class="k-section-lbl" style="color:#5A9C38">Revenue Model</div>
+            <div class="k-hd">Freemium. Three tiers.</div>
+            <p class="k-bd" style="max-width:540px;margin-bottom:1.75rem">Free to download for core tracking. Premium unlocks the full suite. Eclipse gives both partners full access plus couple-specific features.</p>
+            <div class="k-pricing-grid">
+              <div class="k-tier" style="background:#F6F1E9">
+                <div class="k-tier-lbl" style="color:#8A7E6E">Free</div>
+                <div class="k-tier-price" style="color:#8A7E6E">$0<span class="k-tier-period" style="color:#8A7E6E">always</span></div>
+                <div class="k-tier-items">
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A7E6E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Cycle &amp; ovulation tracking</div>
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A7E6E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Basic Fertility Score (number only)</div>
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A7E6E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>3-month cycle history</div>
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A7E6E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Shop access + purchase</div>
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A7E6E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Couple linking (basic dashboard)</div>
+                </div>
+              </div>
+              <div class="k-tier" style="background:#1C1710">
+                <div class="k-tier-lbl" style="color:rgba(246,241,233,.4)">Optimize</div>
+                <div class="k-tier-price" style="color:#8A589A">$14.99<span class="k-tier-period" style="color:rgba(246,241,233,.4)">/month</span></div>
+                <div class="k-tier-items">
+                  <div class="k-tier-item" style="color:rgba(246,241,233,.6)"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="rgba(246,241,233,.4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Full Fertility Score breakdown</div>
+                  <div class="k-tier-item" style="color:rgba(246,241,233,.6)"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="rgba(246,241,233,.4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Pregnancy Probability Engine</div>
+                  <div class="k-tier-item" style="color:rgba(246,241,233,.6)"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="rgba(246,241,233,.4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited history + analytics</div>
+                  <div class="k-tier-item" style="color:rgba(246,241,233,.6)"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="rgba(246,241,233,.4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>LH strip photo AI</div>
+                  <div class="k-tier-item" style="color:rgba(246,241,233,.6)"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="rgba(246,241,233,.4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Phase-aware Library content</div>
+                  <div class="k-tier-item" style="color:rgba(246,241,233,.6)"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="rgba(246,241,233,.4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>AI recommendations</div>
+                  <div class="k-tier-item" style="color:rgba(246,241,233,.6)"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="rgba(246,241,233,.4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>PDF health report export</div>
+                </div>
+              </div>
+              <div class="k-tier" style="background:#F6F1E9">
+                <div class="k-tier-lbl" style="color:#8A7E6E">Eclipse</div>
+                <div class="k-tier-price" style="color:#8A4840">$22.99<span class="k-tier-period" style="color:#8A7E6E">/month</span></div>
+                <div class="k-tier-items">
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A4840" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Both partners get full Optimize</div>
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A4840" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Combined Eclipse Score</div>
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A4840" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Couple-specific gamification</div>
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A4840" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Joint shop bundles</div>
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A4840" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Intimacy window optimization</div>
+                  <div class="k-tier-item"><svg class="k-check" viewBox="0 0 9 7" fill="none"><polyline points="1,4.5 3.5,7 9,1" stroke="#8A4840" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Couple AI recommendations</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="k-hr"></div>
+
+          <!-- TECH STACK -->
+          <div class="k-section">
+            <div class="k-section-lbl" style="color:#8A589A">Technical Foundation</div>
+            <div class="k-hd">Stack &amp; monthly obligations.</div>
+            <p class="k-bd" style="max-width:540px;margin-bottom:1rem">MVP stack is deliberately lean — no Shopify, no Claude API, no Sanity. The affiliate shop is entirely Supabase-powered. Monthly cost drops to under $40.</p>
+            <div class="k-mvp-flags">
+              <div class="k-mvp-flag" style="background:#5A9C3810;border-color:#5A9C3840"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#5A9C38">No Shopify · Phase 2</span></div>
+              <div class="k-mvp-flag" style="background:#5A9C3810;border-color:#5A9C3840"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#5A9C38">No Claude API · Phase 2</span></div>
+              <div class="k-mvp-flag" style="background:#5A9C3810;border-color:#5A9C3840"><span style="font-family:'DM Mono',monospace;font-size:9px;color:#5A9C38">No Sanity CMS · Phase 2</span></div>
+            </div>
+            <div class="k-stack-grid">
+              <div class="k-stack-card" style="border-top-color:#8A589A"><span class="k-stack-name" style="color:#8A589A">Flutter + Dart</span><span class="k-stack-role">iOS App</span><p class="k-bd" style="font-size:11px;margin-top:4px">iOS first. Android Phase 3 — same codebase, near-zero extra work.</p></div>
+              <div class="k-stack-card" style="border-top-color:#5A9C38"><span class="k-stack-name" style="color:#5A9C38">Supabase</span><span class="k-stack-role">Backend</span><p class="k-bd" style="font-size:11px;margin-top:4px">DB + auth + affiliate click tracking + couple sync. Privacy at DB level.</p></div>
+              <div class="k-stack-card" style="border-top-color:#DF7830"><span class="k-stack-name" style="color:#DF7830">RevenueCat</span><span class="k-stack-role">Subscriptions</span><p class="k-bd" style="font-size:11px;margin-top:4px">Handles all Apple IAP. Free under $2,500 MRR. No custom subscription logic.</p></div>
+              <div class="k-stack-card" style="border-top-color:#E0C030"><span class="k-stack-name" style="color:#E0C030">Firebase FCM</span><span class="k-stack-role">Notifications</span><p class="k-bd" style="font-size:11px;margin-top:4px">Push notifications — cycle alerts, log reminders. Free at MVP volume.</p></div>
+              <div class="k-stack-card" style="border-top-color:#8AA870"><span class="k-stack-name" style="color:#8AA870">PostHog</span><span class="k-stack-role">Analytics</span><p class="k-bd" style="font-size:11px;margin-top:4px">User behavior, funnel tracking. Free under 1M events/month.</p></div>
+              <div class="k-stack-card" style="border-top-color:#5A9C38"><span class="k-stack-name" style="color:#5A9C38">Supabase Storage</span><span class="k-stack-role">Affiliate DB</span><p class="k-bd" style="font-size:11px;margin-top:4px">Product catalog, click log, phase tags. No external commerce platform.</p></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px;margin-top:1.5rem">
+              <div class="k-section-lbl" style="color:#5A9C38;margin-bottom:0">Monthly Infrastructure</div>
+              <div><span style="font-family:'DM Mono',monospace;font-size:9px;color:#8A7E6E">Launch range&nbsp;&nbsp;</span><span style="font-family:'DM Mono',monospace;font-size:16px;color:#5A9C38">$8</span><span style="font-family:'DM Mono',monospace;font-size:10px;color:#8A7E6E"> – </span><span style="font-family:'DM Mono',monospace;font-size:16px;color:#5A9C38">$38</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:#8A7E6E">/month</span></div>
+            </div>
+            <div class="k-costs-table">
+              <div class="k-costs-row" style="background:#F6F1E9"><div class="k-costs-service"><div class="k-costs-dot" style="background:#5A9C38"></div>Supabase</div><div class="k-costs-note">DB, auth, affiliate click tracking, couple sync</div><div class="k-costs-low">Free</div><div class="k-costs-high" style="color:#5A9C38">$25</div></div>
+              <div class="k-costs-row" style="background:#EDE5D6"><div class="k-costs-service"><div class="k-costs-dot" style="background:#DF7830"></div>RevenueCat</div><div class="k-costs-note">Free under $2,500 MRR · 1% after</div><div class="k-costs-low" style="color:#5A9C38">Free</div><div class="k-costs-high">—</div></div>
+              <div class="k-costs-row" style="background:#F6F1E9"><div class="k-costs-service"><div class="k-costs-dot" style="background:#E0C030"></div>Firebase FCM</div><div class="k-costs-note">Free under 1M push/month</div><div class="k-costs-low" style="color:#5A9C38">Free</div><div class="k-costs-high">—</div></div>
+              <div class="k-costs-row" style="background:#EDE5D6"><div class="k-costs-service"><div class="k-costs-dot" style="background:#C23A30"></div>Sentry</div><div class="k-costs-note">Free under 5k errors/month</div><div class="k-costs-low" style="color:#5A9C38">Free</div><div class="k-costs-high">—</div></div>
+              <div class="k-costs-row" style="background:#F6F1E9"><div class="k-costs-service"><div class="k-costs-dot" style="background:#5A9C38"></div>PostHog</div><div class="k-costs-note">Free under 1M events/month</div><div class="k-costs-low" style="color:#5A9C38">Free</div><div class="k-costs-high">—</div></div>
+              <div class="k-costs-row" style="background:#EDE5D6"><div class="k-costs-service"><div class="k-costs-dot" style="background:#8AA870"></div>Cloudflare</div><div class="k-costs-note">CDN · affiliate redirect tracking endpoint</div><div class="k-costs-low">$0</div><div class="k-costs-high" style="color:#8AA870">$5</div></div>
+              <div class="k-costs-row" style="background:#F6F1E9"><div class="k-costs-service"><div class="k-costs-dot" style="background:#8A7E6E"></div>Apple Developer</div><div class="k-costs-note">$99/year annualized</div><div class="k-costs-low">$8</div><div class="k-costs-high" style="color:#8A7E6E">$8</div></div>
+              <div class="k-costs-total"><span>Total / month</span><div></div><span>$8</span><span>$38</span></div>
+            </div>
+            <div style="padding:14px 16px;background:#DF783008;border:1px solid #DF783030;border-radius:4px;margin-top:10px">
+              <div class="k-section-lbl" style="color:#DF7830;margin-bottom:6px">Apple Tax</div>
+              <p class="k-bd" style="font-size:12px">Apple takes 30% of in-app subscription revenue in Year 1 (15% after). Mitigation: direct users to subscribe via the Kairos website using Stripe — Apple cannot take a cut of web-originated subscriptions. Legal and widely practiced.</p>
+            </div>
+          </div>
+
+          <div class="k-hr"></div>
+
+          <!-- DEFERRED (dynamic from Supabase) -->
+          <div id="k-deferred-section" style="display:none">
+            <div class="k-section">
+              <div class="k-section-lbl" style="color:#8A7E6E">Building in the Background</div>
+              <div class="k-hd">Deferred. Not forgotten.</div>
+              <p class="k-bd" style="max-width:540px;margin-bottom:1.5rem">These features are scoped and designed — they build in parallel while MVP is in testing. Each ships in the months immediately following TestFlight beta.</p>
+              <div class="k-deferred-tags" id="k-deferred-tags"></div>
+            </div>
+            <div class="k-hr"></div>
+          </div>
+
+          <!-- OPEN DECISIONS (dynamic from Supabase) -->
+          <div id="k-decisions-section" style="display:none">
+            <div class="k-section">
+              <div class="k-section-lbl" style="color:#C23A30">Client Action Required</div>
+              <div class="k-hd">Open decisions.</div>
+              <p class="k-bd" style="max-width:540px;margin-bottom:1.75rem">These items require your input before they affect the build. Confirmed items are noted. Pending items need a decision before the relevant phase begins.</p>
+              <div id="k-decisions-list"></div>
+            </div>
+          </div>
+
+        </div><!-- end .k-wrap -->
+      </div><!-- end #tab-app -->
 
       <!-- OVERVIEW -->
       <div class="p-tab-panel active" id="tab-overview">
@@ -297,9 +932,50 @@
           <div class="p-card-label">Latest from Amelia</div>
           <div id="ph-latest-update"></div>
         </div>
-        <div class="p-card">
+
+        <!-- Phase progress (shown when phases data exists) -->
+        <div class="p-card" id="ov-progress-section" style="display:none">
           <div class="p-card-label">Project Progress</div>
+          <div class="ov-progress-wrap">
+            <div class="ov-dial-wrap">
+              <svg id="ph-dial-svg" width="120" height="120" viewBox="0 0 120 120"></svg>
+              <div class="ov-dial-inner">
+                <div class="ov-pct-num" id="ph-dial-pct">0%</div>
+                <div class="ov-pct-lbl">Complete</div>
+              </div>
+            </div>
+            <div>
+              <div class="ov-stats" id="ph-stat-grid"></div>
+              <div id="ph-phase-bars"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milestones (always shown when data exists) -->
+        <div class="p-card" id="ov-milestones-card">
+          <div class="p-card-label">Milestones</div>
+          <div class="ms-timeline-wrap" id="ph-milestone-timeline" style="display:none">
+            <div class="ms-track-outer">
+              <div class="ms-track-fill" id="ph-ms-fill" style="width:0%"></div>
+            </div>
+            <div class="ms-nodes-row" id="ph-ms-nodes"></div>
+            <div class="ms-week-row" id="ph-ms-weeks"></div>
+          </div>
           <div class="ms-list" id="ph-milestones"></div>
+        </div>
+
+        <!-- Open decisions (shown when open_decisions data exists) -->
+        <div class="p-card" id="ov-open-decisions" style="display:none">
+          <div class="p-card-label">Your Input Needed</div>
+          <p style="font-size:.875rem;color:var(--muted);margin-bottom:.85rem;line-height:1.6">These items require your confirmation before the relevant phase begins.</p>
+          <div id="ph-open-decisions"></div>
+        </div>
+
+        <!-- Deferred features (shown when deferred_features data exists) -->
+        <div class="p-card" id="ov-deferred" style="display:none">
+          <div class="p-card-label">Deferred · Not Forgotten</div>
+          <p style="font-size:.875rem;color:var(--muted);margin-bottom:.85rem;line-height:1.6">These features are scoped and designed — they ship in phases following the MVP launch.</p>
+          <div id="ph-deferred-features"></div>
         </div>
       </div>
 
@@ -415,6 +1091,44 @@
         </div>
       </div>
 
+      <!-- STUDIO (Amelia only) -->
+      <div class="p-tab-panel" id="tab-studio">
+        <div class="studio-wrap">
+          <div class="st-header">
+            <div>
+              <div class="st-lbl">Studio · Amelia</div>
+              <div class="st-heading">Task Breakdown</div>
+            </div>
+            <div class="st-counts">
+              <div class="st-mini-dial">
+                <svg id="st-dial-svg" width="52" height="52" viewBox="0 0 52 52">
+                  <defs>
+                    <linearGradient id="stdlg" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#8A589A"/>
+                      <stop offset="100%" stop-color="#DF7830"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div class="st-mini-inner" id="st-dial-pct">0%</div>
+              </div>
+              <div>
+                <div class="st-count-num" id="st-done-count" style="color:#5A9C38">0</div>
+                <div class="st-count-sub">Done</div>
+              </div>
+              <div>
+                <div class="st-count-num" id="st-left-count" style="color:rgba(246,241,233,.3)">0</div>
+                <div class="st-count-sub">Left</div>
+              </div>
+            </div>
+          </div>
+          <div id="st-phases"></div>
+          <div class="st-revs-section">
+            <div class="st-lbl">Client Revisions</div>
+            <div id="st-revisions" style="margin-top:.75rem"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <footer class="p-footer">
@@ -432,6 +1146,8 @@
     const sb = supabase.createClient(SB_URL, SB_ANON);
 
     let portalData = null;
+    let currentUserEmail = null;
+    let studioOpenPhase = null;
 
     function esc(str) {
       if (!str) return '';
@@ -501,8 +1217,9 @@
       await sb.from('client_portals').update({ last_seen: new Date().toISOString() }).eq('user_id', userId);
     }
 
-    function renderPortal(row) {
+    function renderPortal(row, userEmail) {
       portalData = row;
+      if (userEmail) currentUserEmail = userEmail.toLowerCase().trim();
 
       // Accent color
       document.documentElement.style.setProperty('--accent', row.portal_accent || '#c8a96e');
@@ -614,6 +1331,20 @@
       document.getElementById('rev-history').innerHTML = revs.length > 0
         ? revs.slice().reverse().map(r => `<div class="rev-item"><div class="rev-item-date">${esc(r.date || '')}</div><div>${esc(r.message)}</div></div>`).join('')
         : '';
+
+      // New sections
+      renderProgress(row);
+      renderOpenDecisions(row);
+      renderDeferred(row);
+      renderStudio(row);
+
+      // App tab — shown when row has phases (Kairos only)
+      if ((row.phases || []).length > 0) {
+        document.getElementById('tab-btn-app').style.display = '';
+        showTab('app');
+        renderAppTab(row);
+        kShowFeature(0);
+      }
     }
 
     function toggleDoc(key) {
@@ -734,6 +1465,414 @@
       } catch (e) { alert('Could not submit: ' + e.message); }
     }
 
+    /* ── PROGRESS ─────────────────────────────────────────────── */
+    function renderProgress(row) {
+      const phases = row.phases || [];
+      if (!phases.length) return;
+
+      const checked = row.task_checked || {};
+      const totalTasks = phases.reduce((a, p) => a + (p.tasks?.length || 0), 0);
+      const doneTasks = Object.values(checked).filter(Boolean).length;
+      const pct = totalTasks > 0 ? doneTasks / totalTasks : 0;
+
+      function phaseProgress(p) {
+        const done = (p.tasks || []).filter((_, i) => checked[`${p.id}-${i}`]).length;
+        return { done, total: p.tasks?.length || 0 };
+      }
+
+      const milestones = row.milestones || [];
+
+      let curPhase = phases[0];
+      for (let i = 0; i < phases.length; i++) {
+        const { done, total } = phaseProgress(phases[i]);
+        if (total > 0 && done < total) { curPhase = phases[i]; break; }
+      }
+
+      document.getElementById('ov-progress-section').style.display = '';
+
+      // Dial SVG
+      const r = 46, circ = 2 * Math.PI * r;
+      document.getElementById('ph-dial-svg').innerHTML = `
+        <defs>
+          <linearGradient id="dlg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8A589A"/>
+            <stop offset="50%" stop-color="${row.portal_accent || '#c8a96e'}"/>
+            <stop offset="100%" stop-color="#DF7830"/>
+          </linearGradient>
+        </defs>
+        <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--faint)" stroke-width="7"/>
+        <circle cx="60" cy="60" r="${r}" fill="none" stroke="url(#dlg)" stroke-width="7"
+          stroke-linecap="round"
+          stroke-dasharray="${pct * circ} ${circ}"
+          transform="rotate(-90 60 60)"
+          style="transition:stroke-dasharray .8s ease"/>
+      `;
+      document.getElementById('ph-dial-pct').textContent = Math.round(pct * 100) + '%';
+
+      // Stats
+      const completedMs = milestones.filter(m => m.done).length;
+      document.getElementById('ph-stat-grid').innerHTML = `
+        <div class="ov-stat" style="border-top-color:${curPhase.color || 'var(--accent)'}">
+          <div class="ov-stat-lbl">Current Phase</div>
+          <div class="ov-stat-val">${esc(curPhase.clientLabel || curPhase.label || '')}</div>
+        </div>
+        <div class="ov-stat" style="border-top-color:#2D6A4F">
+          <div class="ov-stat-lbl">Milestones</div>
+          <div class="ov-stat-val">${completedMs} / ${milestones.length}</div>
+        </div>
+        <div class="ov-stat" style="border-top-color:#C23A30">
+          <div class="ov-stat-lbl">Tasks</div>
+          <div class="ov-stat-val">${doneTasks} / ${totalTasks}</div>
+        </div>
+      `;
+
+      // Phase bars
+      document.getElementById('ph-phase-bars').innerHTML = phases.map(p => {
+        const { done, total } = phaseProgress(p);
+        const pp = total > 0 ? done / total : 0;
+        return `<div class="phase-bar-row">
+          <span class="phase-bar-name">${esc(p.clientLabel || p.label || '')}</span>
+          <div class="phase-bar-track">
+            <div class="phase-bar-fill" style="width:${pp * 100}%;background:${p.color || 'var(--accent)'}"></div>
+          </div>
+          <span class="phase-bar-frac">${done}/${total}</span>
+        </div>`;
+      }).join('');
+
+      // Milestone timeline (if milestones have week numbers)
+      const msWithWeeks = milestones.filter(m => m.week != null);
+      if (msWithWeeks.length > 0) {
+        document.getElementById('ph-milestones').style.display = 'none';
+        document.getElementById('ph-milestone-timeline').style.display = '';
+        const maxWk = Math.max(...msWithWeeks.map(m => m.week));
+        const approxWk = Math.round(pct * (maxWk - 1)) + 1;
+        document.getElementById('ph-ms-fill').style.width = `${((approxWk - 1) / (maxWk - 1)) * 100}%`;
+        document.getElementById('ph-ms-nodes').innerHTML = msWithWeeks.map(m => {
+          const leftPct = ((m.week - 1) / (maxWk - 1)) * 100;
+          const reached = m.week <= approxWk;
+          return `<div class="ms-node" style="left:${leftPct}%">
+            <div class="ms-node-dot${reached ? ' reached' : ''}${m.big ? ' big' : ''}"></div>
+          </div>`;
+        }).join('');
+        document.getElementById('ph-ms-weeks').innerHTML =
+          [`Wk 1`, `Wk ${Math.round(maxWk / 4)}`, `Wk ${Math.round(maxWk / 2)}`, `Wk ${Math.round(maxWk * 3 / 4)}`, `Wk ${maxWk}`]
+          .map(l => `<span>${l}</span>`).join('');
+      }
+    }
+
+    /* ── OPEN DECISIONS ────────────────────────────────────────── */
+    function renderOpenDecisions(row) {
+      const decisions = row.open_decisions || [];
+      if (!decisions.length) return;
+      document.getElementById('ov-open-decisions').style.display = '';
+      document.getElementById('ph-open-decisions').innerHTML = decisions.map(d => {
+        const conf = d.status === 'confirmed';
+        return `<div class="od-item ${conf ? 'confirmed' : 'pending'}">
+          <div class="od-dot ${conf ? 'confirmed' : 'pending'}">
+            ${conf ? `<svg width="8" height="6" viewBox="0 0 9 7" fill="none"><polyline points="1,4 3.5,6.5 8,1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''}
+          </div>
+          <div>
+            <div class="od-label">${esc(d.label)}</div>
+            <div class="od-detail">${esc(d.detail)}</div>
+          </div>
+          <div class="od-badge ${conf ? 'confirmed' : 'pending'}">${conf ? 'Confirmed' : 'Pending'}</div>
+        </div>`;
+      }).join('');
+    }
+
+    /* ── DEFERRED ──────────────────────────────────────────────── */
+    function renderDeferred(row) {
+      const deferred = row.deferred_features || [];
+      if (!deferred.length) return;
+      document.getElementById('ov-deferred').style.display = '';
+      document.getElementById('ph-deferred-features').innerHTML =
+        `<div class="def-grid">${deferred.map(d =>
+          `<div class="def-tag"><span>${esc(d.label)}</span><span class="def-when">${esc(d.when || '')}</span></div>`
+        ).join('')}</div>`;
+    }
+
+    /* ── STUDIO ────────────────────────────────────────────────── */
+    function renderStudio(row) {
+      if (currentUserEmail !== 'missameliava@gmail.com') return;
+      document.getElementById('tab-btn-studio').style.display = '';
+
+      const phases = row.phases || [];
+      const checked = row.task_checked || {};
+      const totalTasks = phases.reduce((a, p) => a + (p.tasks?.length || 0), 0);
+      const doneTasks = Object.values(checked).filter(Boolean).length;
+      const pct = totalTasks > 0 ? doneTasks / totalTasks : 0;
+
+      document.getElementById('st-done-count').textContent = doneTasks;
+      document.getElementById('st-left-count').textContent = totalTasks - doneTasks;
+      document.getElementById('st-dial-pct').textContent = Math.round(pct * 100) + '%';
+
+      // Mini dial
+      const r2 = 20, circ2 = 2 * Math.PI * r2;
+      const dialSvg = document.getElementById('st-dial-svg');
+      const existingDefs = dialSvg.querySelector('defs');
+      dialSvg.innerHTML = (existingDefs ? existingDefs.outerHTML : `<defs><linearGradient id="stdlg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8A589A"/><stop offset="100%" stop-color="#DF7830"/></linearGradient></defs>`) +
+        `<circle cx="26" cy="26" r="${r2}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4"/>
+         <circle cx="26" cy="26" r="${r2}" fill="none" stroke="url(#stdlg)" stroke-width="4"
+           stroke-linecap="round"
+           stroke-dasharray="${pct * circ2} ${circ2}"
+           transform="rotate(-90 26 26)"
+           style="transition:stroke-dasharray .8s ease"/>`;
+
+      function phaseProgress(p) {
+        const done = (p.tasks || []).filter((_, i) => checked[`${p.id}-${i}`]).length;
+        return { done, total: p.tasks?.length || 0, pct: p.tasks?.length ? done / p.tasks.length : 0 };
+      }
+
+      const phasesEl = document.getElementById('st-phases');
+      phasesEl.innerHTML = phases.map(phase => {
+        const { done: pd, total: pt, pct: pp } = phaseProgress(phase);
+        const isDone = pp === 1 && pt > 0;
+        const isOpen = studioOpenPhase === phase.id;
+        const wkLabel = phase.weeks ? `Wk ${phase.weeks[0]}–${phase.weeks[1]}` : '';
+        const tasksHtml = (phase.tasks || []).map((task, ti) => {
+          const key = `${phase.id}-${ti}`;
+          const isChk = !!checked[key];
+          return `<div class="st-cbox" onclick="studioToggleTask('${key}')">
+            <div class="st-cbox-box" style="${isChk ? `background:${phase.color||'var(--accent)'};border-color:${phase.color||'var(--accent)'}` : ''}">
+              ${isChk ? `<svg width="9" height="7" viewBox="0 0 9 7" fill="none"><polyline points="1,4 3.5,6.5 8,1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''}
+            </div>
+            <span class="st-cbox-lbl${isChk ? ' done' : ''}">${esc(task)}</span>
+          </div>`;
+        }).join('');
+        return `<div>
+          <button class="st-phase-btn${isOpen ? ' open' : ''}"
+            style="border-left-color:${isOpen ? (phase.color || 'var(--accent)') : 'transparent'}"
+            onclick="studioTogglePhase(${JSON.stringify(phase.id)})">
+            <div class="st-phase-dot" style="background:${isDone ? (phase.color || 'var(--accent)') : (phase.color || '#fff') + '60'}"></div>
+            <div class="st-phase-name${isDone ? ' done' : ''}">${esc(phase.label)}</div>
+            <div class="st-phase-wk">${esc(wkLabel)}</div>
+            <div class="st-phase-frac" style="color:${phase.color || 'var(--accent)'}">${pd}/${pt}</div>
+            <div class="st-phase-arr" style="${isOpen ? 'transform:rotate(90deg)' : ''}">›</div>
+          </button>
+          <div class="st-tasks-wrap" style="max-height:${isOpen ? '600px' : '0'};border-left:3px solid ${(phase.color || 'var(--accent)') + '35'}">
+            <div class="st-task-list">${tasksHtml}</div>
+          </div>
+        </div>`;
+      }).join('') + (phases.length ? `<div class="st-launch-row">
+        <div class="st-launch-dot"></div>
+        <div class="st-launch-label">${esc(row.mvp_label || 'MVP Launch')}</div>
+        <div class="st-launch-pct">${Math.round(pct * 100)}% to launch</div>
+      </div>` : '');
+
+      // Revisions admin view
+      const revs = row.revision_requests || [];
+      document.getElementById('st-revisions').innerHTML = revs.length > 0
+        ? revs.slice().reverse().map(r => `<div class="st-rev-item">
+            <div class="st-rev-date">${esc(r.date || '')}${r.read === false ? ' <span class="st-rev-unread"></span><span style="font-size:9px;color:var(--accent)">unread</span>' : ''}</div>
+            <div class="st-rev-msg">${esc(r.message)}</div>
+          </div>`).join('')
+        : '<div style="font-size:.875rem;color:rgba(246,241,233,.3);font-style:italic">No revision requests yet.</div>';
+    }
+
+    function studioTogglePhase(id) {
+      studioOpenPhase = studioOpenPhase === id ? null : id;
+      if (portalData) renderStudio(portalData);
+    }
+
+    async function studioToggleTask(key) {
+      if (!portalData) return;
+      const checked = { ...(portalData.task_checked || {}), [key]: !(portalData.task_checked || {})[key] };
+      portalData.task_checked = checked;
+      renderStudio(portalData);
+      renderProgress(portalData);
+      try {
+        const { data: { session } } = await sb.auth.getSession();
+        const userId = session?.user?.id;
+        if (!userId) return;
+        await sb.from('client_portals').update({ task_checked: checked }).eq('user_id', userId);
+      } catch(e) { console.error('Could not save task state:', e); }
+    }
+
+    /* ── KAIROS FEATURE DATA ───────────────────────────────────── */
+    const K_FEAT_DATA = [
+      { color:'#8A589A', label:'Moon Side',
+        tagline:'Warm. Cyclical. Emotionally Intelligent.',
+        desc:'The Moon Side adapts to every phase of the 28-day cycle — soft visuals, phase-reactive colors, and an emotional intelligence layer that meets the user where they are.',
+        items:['Cycle calendar with phase color coding','Lunar Aura health visualization','Phase-aware dashboard (no scroll)','TTC optimization + TWW support','Hormonal health & postpartum mode','Grief & loss emotional support flow'],
+        phase:'Weeks 8–15 · 200 hrs' },
+      { color:'#DF7830', label:'Sun Side',
+        tagline:'Precise. Angular. Performance-Driven.',
+        desc:'The Sun Side is built for the user who wants data, not decoration. Everything fits on one screen — score, metrics, directive, and partner sync.',
+        items:['Single-screen Solar dashboard (no scroll)','Sperm health logging + parameter trends','Lifestyle score: sleep, stress, diet, exercise','Daily Mission card — one clear directive','Behavior + partner support task system','Data-forward correlation insights'],
+        phase:'Weeks 16–20 · 125 hrs' },
+      { color:'#8A4840', label:'Eclipse Mode',
+        tagline:'When the moon and sun align.',
+        desc:'Eclipse Mode is the shared space — a summary layer that lets both partners stay connected without exposing raw data. Link with a code. Disconnect at any time.',
+        items:['Account linking via 6-digit code or deep link','Combined Eclipse Score with Alignment Bonus','Shared milestone journal and feed','Fertile window alignment countdown','Live partner sync via Supabase Realtime','Eclipse Grief Support mode'],
+        phase:'Weeks 29–33 · 125 hrs' },
+      { color:'#5A9C38', label:'Fertility Score',
+        tagline:'Like a credit score for your reproductive health.',
+        desc:'Both partners have their own score (0–100) built from 7 weighted factors. Tap the ring for a plain-language breakdown of what\'s working and what to do next.',
+        items:['7-factor weighted algorithm per side','Score ring: 0–100 with color zones','Plain-language contributor breakdown','"How to improve" action cards per factor','Combined Eclipse Score with Alignment Bonus','Score history + nightly trend calculation'],
+        phase:'Weeks 21–25 · 125 hrs' },
+      { color:'#DF7830', label:'The Shop',
+        tagline:'Products that know where you are in your cycle.',
+        desc:'AI recommendations keyed to your current phase, score, and logged symptoms. A knowledgeable friend, not a storefront. No paid placements — ever.',
+        items:['Phase-aware AI recommendation strip','Score Booster products for weak factors','Eclipse Bundle Builder for couples','Affiliate products at launch','Vetted third-party brands in Phase 2','Med spa bookings in Phase 2'],
+        phase:'Weeks 40–43 · 100 hrs' },
+      { color:'#8A589A', label:'The Library',
+        tagline:'Knowledge that moves with your cycle.',
+        desc:'Expert-written guides and brand editorial, surfaced automatically based on the user\'s current phase, logged symptoms, and goals.',
+        items:['Hybrid: brand editorial + expert contributors','Phase-aware article surfacing (live in app)','Moon + Sun content streams','Grief & loss editorial collection','Web-accessible SEO acquisition hub','Minimum 30 articles seeded at launch'],
+        phase:'Month 5–6 · 75 hrs' },
+    ];
+
+    function kShowFeature(idx) {
+      K_FEAT_DATA.forEach((f, i) => {
+        const btn  = document.getElementById('kfb-' + i);
+        const lbl  = document.getElementById('kfl-' + i);
+        const demo = document.getElementById('kdemo-' + i);
+        if (btn) {
+          btn.style.border     = i === idx ? `1.5px solid ${f.color}` : '1.5px solid transparent';
+          btn.style.background = i === idx ? `${f.color}12` : 'transparent';
+        }
+        if (lbl)  lbl.style.color   = i === idx ? f.color : '#8A7E6E';
+        if (demo) demo.style.display = i === idx ? '' : 'none';
+      });
+      const f = K_FEAT_DATA[idx];
+      const descEl = document.getElementById('k-feat-desc');
+      if (!descEl || !f) return;
+      descEl.innerHTML =
+        `<div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-style:italic;color:${f.color};margin-bottom:.4rem">${esc(f.label)}</div>
+         <div style="font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.06em;color:${f.color};margin-bottom:14px;font-style:italic">${esc(f.tagline)}</div>
+         <p class="k-bd" style="margin-bottom:18px">${esc(f.desc)}</p>
+         <div>${f.items.map(it =>
+           `<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
+              <div style="width:18px;height:2px;background:${f.color};flex-shrink:0;margin-top:9px;border-radius:1px"></div>
+              <span class="k-bd">${esc(it)}</span>
+            </div>`).join('')}</div>
+         <div style="margin-top:24px;padding:12px 14px;background:${f.color}08;border:1px solid ${f.color}30;border-radius:4px">
+           <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:${f.color};margin-bottom:4px">Phase</div>
+           <div style="font-family:'DM Mono',monospace;font-size:11px;color:#1C1710">${esc(f.phase)}</div>
+         </div>`;
+    }
+
+    /* ── KAIROS APP TAB ────────────────────────────────────────── */
+    function renderAppTab(row) {
+      const phases = row.phases || [];
+      if (!phases.length) return;
+
+      const checked    = row.task_checked || {};
+      const totalTasks = phases.reduce((a, p) => a + (p.tasks?.length || 0), 0);
+      const doneTasks  = Object.values(checked).filter(Boolean).length;
+      const pct        = totalTasks > 0 ? doneTasks / totalTasks : 0;
+
+      function phaseProgress(p) {
+        const done = (p.tasks || []).filter((_, i) => checked[`${p.id}-${i}`]).length;
+        return { done, total: p.tasks?.length || 0 };
+      }
+
+      const milestones = row.milestones || [];
+      let curPhase = phases[0];
+      for (let i = 0; i < phases.length; i++) {
+        const { done, total } = phaseProgress(phases[i]);
+        if (total > 0 && done < total) { curPhase = phases[i]; break; }
+      }
+
+      document.getElementById('k-progress-section').style.display = '';
+
+      // Dial (180×180 viewBox, r=73)
+      const r = 73, circ = 2 * Math.PI * r;
+      document.getElementById('k-dial-svg').innerHTML = `
+        <defs>
+          <linearGradient id="kdlg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"   stop-color="#8A589A"/>
+            <stop offset="50%"  stop-color="${row.portal_accent || '#c8a96e'}"/>
+            <stop offset="100%" stop-color="#DF7830"/>
+          </linearGradient>
+        </defs>
+        <circle cx="90" cy="90" r="${r}" fill="none" stroke="#E0D5C2" stroke-width="9"/>
+        <circle cx="90" cy="90" r="${r}" fill="none" stroke="url(#kdlg)" stroke-width="9"
+          stroke-linecap="round"
+          stroke-dasharray="${pct * circ} ${circ}"
+          transform="rotate(-90 90 90)"
+          style="transition:stroke-dasharray .8s ease"/>`;
+      document.getElementById('k-dial-pct').textContent = Math.round(pct * 100) + '%';
+
+      // Stat grid
+      const completedMs = milestones.filter(m => m.done).length;
+      document.getElementById('k-stat-grid').innerHTML = `
+        <div class="k-stat" style="border-top-color:${curPhase.color || '#c8a96e'}">
+          <div class="k-stat-lbl">Current Phase</div>
+          <div class="k-stat-val">${esc(curPhase.clientLabel || curPhase.label || '')}</div>
+        </div>
+        <div class="k-stat" style="border-top-color:#5A9C38">
+          <div class="k-stat-lbl">Milestones</div>
+          <div class="k-stat-val">${completedMs} / ${milestones.length}</div>
+        </div>
+        <div class="k-stat" style="border-top-color:#C23A30">
+          <div class="k-stat-lbl">Tasks</div>
+          <div class="k-stat-val">${doneTasks} / ${totalTasks}</div>
+        </div>`;
+
+      // Phase bars
+      document.getElementById('k-phase-bars').innerHTML = phases.map(p => {
+        const { done, total } = phaseProgress(p);
+        const pp = total > 0 ? done / total : 0;
+        return `<div class="k-phase-bar-row">
+          <span class="k-phase-bar-name">${esc(p.clientLabel || p.label || '')}</span>
+          <div class="k-phase-bar-track">
+            <div class="k-phase-bar-fill" style="width:${pp * 100}%;background:${p.color || '#c8a96e'}"></div>
+          </div>
+          <span class="k-phase-bar-frac">${done}/${total}</span>
+        </div>`;
+      }).join('');
+
+      // Milestone timeline
+      const msWithWeeks = milestones.filter(m => m.week != null);
+      if (msWithWeeks.length > 0) {
+        const maxWk    = Math.max(...msWithWeeks.map(m => m.week));
+        const approxWk = Math.round(pct * (maxWk - 1)) + 1;
+        document.getElementById('k-ms-fill').style.width =
+          `${((approxWk - 1) / (maxWk - 1)) * 100}%`;
+        document.getElementById('k-ms-nodes').innerHTML = msWithWeeks.map(m => {
+          const leftPct = ((m.week - 1) / (maxWk - 1)) * 100;
+          const reached = m.week <= approxWk;
+          return `<div class="ms-node" style="left:${leftPct}%">
+            <div class="ms-node-dot${reached ? ' reached' : ''}${m.big ? ' big' : ''}"></div>
+          </div>`;
+        }).join('');
+        document.getElementById('k-ms-weeks').innerHTML =
+          [`Wk 1`,`Wk ${Math.round(maxWk/4)}`,`Wk ${Math.round(maxWk/2)}`,`Wk ${Math.round(maxWk*3/4)}`,`Wk ${maxWk}`]
+          .map(l => `<span>${l}</span>`).join('');
+      }
+
+      // Deferred features
+      const deferred = row.deferred_features || [];
+      if (deferred.length) {
+        document.getElementById('k-deferred-section').style.display = '';
+        document.getElementById('k-deferred-tags').innerHTML = deferred.map(d =>
+          `<div class="k-deferred-tag">
+            <span>${esc(d.label)}</span>
+            <span class="k-deferred-when">${esc(d.when || '')}</span>
+          </div>`).join('');
+      }
+
+      // Open decisions
+      const decisions = row.open_decisions || [];
+      if (decisions.length) {
+        document.getElementById('k-decisions-section').style.display = '';
+        document.getElementById('k-decisions-list').innerHTML = decisions.map(d => {
+          const conf = d.status === 'confirmed';
+          return `<div class="od-item ${conf ? 'confirmed' : 'pending'}">
+            <div class="od-dot ${conf ? 'confirmed' : 'pending'}">
+              ${conf ? `<svg width="8" height="6" viewBox="0 0 9 7" fill="none"><polyline points="1,4 3.5,6.5 8,1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''}
+            </div>
+            <div>
+              <div class="od-label">${esc(d.label)}</div>
+              <div class="od-detail">${esc(d.detail)}</div>
+            </div>
+            <div class="od-badge ${conf ? 'confirmed' : 'pending'}">${conf ? 'Confirmed' : 'Pending'}</div>
+          </div>`;
+        }).join('');
+      }
+    }
+
     (async () => {
       showState('loading');
       try {
@@ -748,7 +1887,7 @@
             msg.className = 'auth-msg error';
             return;
           }
-          renderPortal(row);
+          renderPortal(row, session.user.email);
           showState('portal');
           updateLastSeen(session.user.id);
           if (window.location.hash.includes('access_token')) {
@@ -763,7 +1902,7 @@
         try {
           const row = await fetchPortalData(session.user.id, session.user.email);
           if (row) {
-            renderPortal(row);
+            renderPortal(row, session.user.email);
             showState('portal');
             updateLastSeen(session.user.id);
             if (window.location.hash.includes('access_token')) {
@@ -774,6 +1913,7 @@
       } else if (event === 'SIGNED_OUT') {
         showState('auth');
         portalData = null;
+        currentUserEmail = null;
       }
     });
   </script>
