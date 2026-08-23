@@ -1,0 +1,15 @@
+# OS
+.DS_Store
+
+# Nested Next.js prototype (separate git project, not part of this repo)
+muses-of-morenita/
+
+# Node
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Env / secrets
+.env
+.env.*
+!.env.example

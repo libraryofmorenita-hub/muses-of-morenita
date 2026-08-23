@@ -1,0 +1,3169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muses of Morenita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Dark section backgrounds */
+  --espresso-deep: #111111;
+  --espresso: #1A1A1A;
+  --espresso-mid: #242424;
+  --espresso-warm: #303030;
+  /* Light text for dark sections */
+  --parchment: #EEEEEE;
+  --parchment-dim: #AAAAAA;
+  /* Accent — mid gray, ~4:1 contrast on both white and #111 */
+  --gold: #888888;
+  --gold-dim: rgba(120,120,120,0.2);
+  --gold-faint: rgba(120,120,120,0.08);
+  /* CTA button */
+  --terra: #222222;
+  --terra-light: #444444;
+  /* Light section backgrounds */
+  --white: #FFFFFF;
+  --gray-light: #F5F5F5;
+  --gray-mid: #DDDDDD;
+  --gray-dark: #666666;
+  /* one-off success green — only appears at join completion, not part of the main palette */
+  --success: #7AAF8A;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Inter", sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: auto; }
+
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  background: var(--white);
+  color: var(--espresso);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── TYPOGRAPHY UTILITIES ─── */
+.label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.caption {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.tracked-caps {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ─── NAVIGATION ─── */
+#nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  background: var(--white);
+  border-bottom: 0.5px solid var(--gray-mid);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+#nav.transparent {
+  background: transparent;
+  border-bottom-color: rgba(0,0,0,0.1);
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  color: var(--espresso);
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-center a {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  text-decoration: none;
+  cursor: pointer;
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.nav-center a.active {
+  color: var(--espresso);
+  border-bottom-color: var(--espresso);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.nav-signin {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.nav-join {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--espresso);
+  padding: 8px 18px;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: var(--espresso);
+}
+
+
+.nav-mobile-menu {
+  display: none;
+  position: fixed;
+  top: 52px;
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border-bottom: 0.5px solid var(--gray-mid);
+  padding: 16px 32px 20px;
+  z-index: 99;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nav-mobile-menu.open { display: flex; }
+
+.nav-mobile-menu a {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ─── FOOTER ─── */
+#footer {
+  background: var(--espresso-deep);
+}
+
+.footer-row1 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  padding: 40px 48px;
+}
+
+.footer-col-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 18px;
+  color: var(--parchment);
+  margin-bottom: 4px;
+}
+
+.footer-sub {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+
+.footer-info {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 12px;
+  color: var(--parchment-dim);
+  line-height: 1.8;
+}
+
+.footer-col-label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+
+.footer-link {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 12px;
+  color: var(--parchment-dim);
+  text-decoration: none;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.footer-row2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 48px;
+  border-top: 0.5px solid #2A2A2A;
+}
+
+.footer-copy {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #555555;
+}
+
+/* ─── PAGE SYSTEM ─── */
+.page { display: none; }
+.page.active { display: block; }
+body { padding-top: 52px; }
+
+/* ─── SHARED BUTTON STYLES ─── */
+.btn-terra {
+  background: var(--terra);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: none;
+  padding: 11px 28px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-outline-light {
+  background: transparent;
+  color: #EEEEEE;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 0.5px solid rgba(255,255,255,0.35);
+  padding: 10px 28px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-outline-dark {
+  background: transparent;
+  color: var(--espresso);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 0.5px solid var(--gray-mid);
+  padding: 10px 20px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* ─── PLACEHOLDER IMAGE ─── */
+.img-ph {
+  background: var(--gray-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════
+   PAGE 01 — LANDING
+═══════════════════════════════════════ */
+
+/* Masthead date strip */
+.masthead-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 48px;
+  border-bottom: 1px solid var(--gray-mid);
+  background: var(--white);
+}
+
+.masthead-strip span {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+}
+
+/* Above fold grid */
+.landing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 320px;
+  min-height: 520px;
+  border-bottom: 1px solid var(--gray-mid);
+}
+
+.landing-left {
+  border-right: 1px solid var(--gray-mid);
+  padding: 36px 32px;
+}
+
+.landing-center {
+  border-right: 1px solid var(--gray-mid);
+  display: flex;
+  flex-direction: column;
+}
+
+.story-card {
+  border-bottom: 1px solid var(--gray-mid);
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 16px;
+  align-items: start;
+  flex: 1;
+}
+
+.story-card:last-child {
+  border-bottom: none;
+  flex: 1;
+}
+
+.story-thumb {
+  height: 80px;
+}
+
+.story-category {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+
+.story-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  color: var(--espresso);
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+
+.story-deck {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 12px;
+  color: var(--gray-dark);
+  line-height: 1.65;
+}
+
+.story-meta {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  margin-top: 8px;
+}
+
+/* Lead story left */
+.lead-category {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+
+.lead-img { height: 240px; margin-bottom: 20px; }
+
+.lead-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 38px;
+  color: var(--espresso);
+  line-height: 1.05;
+  margin-bottom: 12px;
+}
+
+.lead-deck {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--gray-dark);
+  line-height: 1.75;
+  max-width: 380px;
+  margin-bottom: 16px;
+}
+
+.lead-meta {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  margin-bottom: 20px;
+}
+
+.ghost-link {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 0.5px solid var(--gold-dim);
+  padding-bottom: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* Sidebar */
+.landing-sidebar {
+  background: var(--gray-light);
+  padding: 24px 22px;
+}
+
+.sidebar-section-label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  border-bottom: 1px solid var(--gray-mid);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.archive-card {
+  background: var(--white);
+  padding: 14px;
+}
+
+.archive-img { height: 100px; margin-bottom: 10px; }
+
+.archive-card-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--espresso);
+  margin-bottom: 4px;
+}
+
+.archive-card-meta {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  margin-bottom: 8px;
+}
+
+.archive-card-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 11px;
+  color: var(--gray-dark);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.join-cta-box {
+  background: var(--espresso);
+  padding: 20px 18px;
+  margin-top: 20px;
+}
+
+.join-cta-head {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 20px;
+  color: var(--parchment);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.join-cta-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 11px;
+  color: var(--parchment-dim);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+
+.join-cta-btn {
+  display: block;
+  background: var(--terra);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+}
+
+.join-cta-sub {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #666666;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Section divider strip */
+.divider-strip {
+  background: var(--white);
+  border-top: 2px solid var(--espresso);
+  border-bottom: 1px solid var(--gray-mid);
+  padding: 10px 48px;
+}
+
+.divider-strip span {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--espresso);
+}
+
+/* Below fold four column grid */
+.below-fold {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--white);
+}
+
+.below-card {
+  border-right: 1px solid var(--gray-mid);
+  padding: 24px 24px;
+}
+
+.below-card:last-child { border-right: none; }
+
+.below-img { height: 120px; margin-bottom: 12px; }
+
+.below-category {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.below-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--espresso);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.below-meta {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+}
+
+/* Platform intro band */
+.platform-band {
+  background: var(--espresso-deep);
+  padding: 80px 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.platform-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.platform-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 44px;
+  color: var(--parchment);
+  line-height: 1.05;
+  margin-bottom: 20px;
+}
+
+.platform-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 15px;
+  color: var(--parchment-dim);
+  line-height: 1.85;
+  margin-bottom: 28px;
+}
+
+.platform-btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Feature tiles */
+.feature-section {
+  background: var(--white);
+  padding: 80px 48px;
+}
+
+.feature-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 40px;
+}
+
+.feature-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.feature-tile {
+  padding: 0 40px;
+  border-right: 0.5px solid var(--gold-dim);
+}
+
+.feature-tile:first-child { padding-left: 0; }
+.feature-tile:last-child { border-right: none; padding-right: 0; }
+
+.diamond {
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  margin-bottom: 20px;
+}
+
+.tile-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 24px;
+  color: var(--espresso);
+  margin-bottom: 12px;
+}
+
+.tile-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--gray-dark);
+  line-height: 1.8;
+}
+
+/* ═══════════════════════════════════════
+   PAGE 02 — THE MUSES
+═══════════════════════════════════════ */
+
+.muses-header {
+  background: var(--white);
+  padding: 52px 48px 40px;
+  border-bottom: 1px solid var(--gray-mid);
+}
+
+.muses-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.muses-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.muses-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 44px;
+  color: var(--espresso);
+}
+
+.muses-count {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+}
+
+.filter-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.filter-pill {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 14px 5px;
+  cursor: pointer;
+  border: 0.5px solid var(--gray-mid);
+  color: var(--gray-dark);
+  background: transparent;
+}
+
+.filter-pill.active {
+  background: var(--espresso);
+  color: var(--white);
+  border-color: var(--espresso);
+}
+
+/* min-height keeps the footer below the fold even when few search results collapse the grid.
+   align-content: start prevents remaining cards from stretching to fill the empty space. */
+.muse-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  padding: 40px 48px 24px;
+  background: var(--white);
+  min-height: 100vh;
+  align-content: start;
+}
+
+.muse-card {
+  background: var(--white);
+  border: 0.5px solid var(--gray-mid);
+  overflow: hidden;
+}
+
+.muse-card.founder { border-color: var(--gold); }
+.muse-card.linked { cursor: pointer; }
+.muse-card.linked:hover { border-color: var(--espresso); }
+.team-card.linked { cursor: pointer; }
+.team-card.linked:hover { border-color: var(--espresso); }
+
+.muse-img { height: 220px; }
+
+.muse-body { padding: 14px 16px 18px; }
+
+.muse-name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--espresso);
+  margin-bottom: 4px;
+  line-height: 1.1;
+}
+
+.muse-role {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  margin-bottom: 10px;
+}
+
+.muse-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.muse-tag {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 0.5px solid var(--gray-mid);
+  color: var(--gray-dark);
+  padding: 2px 7px;
+}
+
+/* sticky sits 10px off the viewport bottom. #footer-muses gets 72px padding-top so the
+   footer content always clears the bar at full scroll — sticky + in-flow siblings overlap otherwise. */
+.muses-search {
+  position: sticky;
+  bottom: 10px;
+  left: 48px;
+  right: 48px;
+  z-index: 50;
+  margin: 0 auto;
+  max-width: calc(100% - 96px);
+  background: rgba(15, 9, 4, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+}
+
+.search-icon {
+  font-size: 16px;
+  color: var(--parchment-dim);
+  flex-shrink: 0;
+}
+
+.search-input {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 18px;
+  color: var(--parchment);
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  caret-color: var(--parchment);
+  min-width: 0;
+}
+
+.search-input::placeholder {
+  color: var(--parchment-dim);
+}
+
+.muses-no-results {
+  padding: 48px;
+  text-align: center;
+}
+
+.muses-no-results-text {
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+}
+
+.search-filters-btn {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #CCCCCC;
+  border: 0.5px solid #555555;
+  padding: 7px 16px;
+  cursor: pointer;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════
+   PAGE 03 — THE ARCHIVE
+═══════════════════════════════════════ */
+
+.archive-hero {
+  background: var(--espresso-deep);
+  padding: 72px 48px 56px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: end;
+}
+
+.archive-hero-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.archive-hero-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 56px;
+  color: var(--parchment);
+  line-height: 1.0;
+  margin-bottom: 16px;
+}
+
+.archive-hero-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 14px;
+  color: var(--parchment-dim);
+  line-height: 1.8;
+  max-width: 420px;
+}
+
+.archive-stats {
+  display: flex;
+  gap: 40px;
+  align-items: flex-end;
+}
+
+.archive-stat-num {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 40px;
+  color: var(--parchment);
+  line-height: 1;
+}
+
+.archive-stat-label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  margin-top: 4px;
+}
+
+.archive-filter-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-mid);
+  padding: 16px 48px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.archive-product-grid {
+  padding: 40px 48px 80px;
+  background: var(--white);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-content: start;
+}
+.archive-loading, .archive-empty {
+  grid-column: 1 / -1;
+  padding: 60px 0;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--gray-mid);
+}
+
+.archive-featured {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 0.5px solid var(--gray-mid);
+  overflow: hidden;
+}
+
+.archive-featured-img { height: 100%; min-height: 220px; }
+
+.archive-featured-body {
+  padding: 28px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.archive-feat-type {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.archive-feat-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 28px;
+  color: var(--espresso);
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.archive-feat-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--gray-dark);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.archive-feat-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.archive-price {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--espresso);
+}
+
+.product-card {
+  border: 0.5px solid var(--gray-mid);
+  overflow: hidden;
+}
+
+.product-img { height: 160px; }
+
+.product-body { padding: 16px 18px 20px; }
+
+.product-type {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.product-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  color: var(--espresso);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.product-desc {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 12px;
+  color: var(--gray-dark);
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+
+.product-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-price {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--espresso);
+}
+
+.btn-terra-sm {
+  background: var(--terra);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.btn-outline-sm {
+  background: transparent;
+  color: var(--espresso);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 0.5px solid var(--gray-mid);
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════
+   PAGE 04 — ABOUT
+═══════════════════════════════════════ */
+
+.about-hero {
+  background: var(--white);
+  padding: 80px 48px;
+  border-bottom: 1px solid var(--gray-mid);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: end;
+}
+
+.about-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.about-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 52px;
+  color: var(--espresso);
+  line-height: 1.0;
+}
+
+.about-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 15px;
+  color: var(--gray-dark);
+  line-height: 1.85;
+  max-width: 480px;
+  margin-bottom: 28px;
+}
+
+.values-section {
+  background: var(--gray-light);
+  padding: 80px 48px;
+}
+
+.values-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 40px;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.value-block {
+  padding: 28px;
+  border-left: 1.5px solid var(--gold);
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+
+.value-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--espresso);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.value-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--gray-dark);
+  line-height: 1.75;
+}
+
+.team-section {
+  background: var(--white);
+  padding: 80px 48px;
+}
+
+.team-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 40px;
+}
+
+.team-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 36px;
+  color: var(--espresso);
+  margin-bottom: 40px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.team-card {
+  background: var(--white);
+  border: 0.5px solid var(--gray-mid);
+  overflow: hidden;
+}
+
+.team-img { height: 200px; }
+
+.team-body { padding: 14px 16px 18px; }
+
+.team-name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--espresso);
+  margin-bottom: 3px;
+}
+
+.team-title-label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.team-bio {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 12px;
+  color: var(--gray-dark);
+  line-height: 1.7;
+}
+
+.contact-band {
+  background: var(--espresso-deep);
+  padding: 72px 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.contact-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 44px;
+  color: var(--parchment);
+  line-height: 1.0;
+  margin-bottom: 16px;
+}
+
+.contact-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 14px;
+  color: var(--parchment-dim);
+  line-height: 1.8;
+}
+
+.contact-info-row { margin-bottom: 16px; }
+
+.contact-info-label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.contact-info-value {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 14px;
+  color: var(--parchment-dim);
+}
+
+/* ═══════════════════════════════════════
+   PAGE 05 — LOGIN
+═══════════════════════════════════════ */
+
+.login-page {
+  background: var(--espresso-deep);
+  min-height: calc(100vh - 52px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+  padding-bottom: 60px;
+}
+
+.login-logo {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 24px;
+  color: var(--parchment);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.login-sub {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #888888;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.login-card {
+  background: var(--espresso-mid);
+  padding: 40px;
+  width: 100%;
+  max-width: 440px;
+}
+
+.login-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 32px;
+  color: var(--parchment);
+  margin-bottom: 32px;
+}
+
+.form-field { margin-bottom: 18px; }
+
+.form-label {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #AAAAAA;
+  margin-bottom: 7px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--espresso-warm);
+  border: 0.5px solid #4A4A4A;
+  color: #EEEEEE;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-input:focus { border-color: #AAAAAA; }
+
+.form-input::placeholder {
+  color: #777777;
+}
+
+.login-submit {
+  width: 100%;
+  background: var(--terra);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 12px;
+  margin-top: 8px;
+  cursor: pointer;
+  border: none;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.login-divider-line {
+  flex: 1;
+  height: 0.5px;
+  background: #3A3A3A;
+}
+
+.login-divider-text {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  color: #777777;
+}
+
+.login-alt {
+  width: 100%;
+  background: transparent;
+  border: 0.5px solid #555555;
+  color: #AAAAAA;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 11px;
+  cursor: pointer;
+}
+
+.login-footer {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #666666;
+  text-align: center;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════
+   PAGE 06 — JOIN
+═══════════════════════════════════════ */
+
+.join-page {
+  background: var(--espresso-deep);
+  min-height: calc(100vh - 52px);
+  display: grid;
+  grid-template-columns: 280px 1fr;
+}
+
+/* Join left panel */
+.join-left {
+  background: var(--espresso);
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100vh - 52px);
+}
+
+.join-logo {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 16px;
+  color: var(--parchment);
+  letter-spacing: 0.04em;
+  margin-bottom: 48px;
+}
+
+.join-steps-list { display: flex; flex-direction: column; gap: 0; }
+
+.join-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 0.5px solid #2E2E2E;
+}
+
+.join-step-item:last-child { border-bottom: none; }
+
+.step-num {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  min-width: 20px;
+  margin-top: 1px;
+  color: #555555;
+}
+
+.step-num.step-active { color: #CCCCCC; }
+.step-num.step-done { color: #888888; }
+
+.step-name {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #555555;
+}
+
+.step-name.step-active { color: #EEEEEE; }
+.step-name.step-done { color: #888888; }
+
+.join-progress-wrap { margin-top: auto; padding-top: 32px; }
+
+.join-progress-bar {
+  height: 2px;
+  background: #3A3A3A;
+  position: relative;
+  overflow: hidden;
+}
+
+.join-progress-fill {
+  height: 100%;
+  background: var(--gold);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.join-step-counter {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #666666;
+  margin-top: 8px;
+}
+
+/* Join right panel */
+.join-right {
+  padding: 56px 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100vh - 52px);
+}
+
+.join-step-panel { display: none; }
+.join-step-panel.active {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.join-step-label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.join-step-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 44px;
+  color: var(--parchment);
+  line-height: 1.0;
+  margin-bottom: 12px;
+}
+
+.join-step-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--parchment-dim);
+  line-height: 1.75;
+  margin-bottom: 40px;
+}
+
+/* Tier cards */
+.tier-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px; }
+
+.tier-recommended-label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.tier-card {
+  background: var(--espresso-mid);
+  border: 0.5px solid #3A3A3A;
+  padding: 20px 22px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.tier-card:hover { border-color: #666666; }
+.tier-card.selected { border-color: #AAAAAA; background: #2E2E2E; }
+
+.tier-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.tier-name {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--parchment);
+}
+
+.tier-price {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 11px;
+  color: var(--parchment-dim);
+}
+
+.tier-desc {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 12px;
+  color: var(--parchment-dim);
+  line-height: 1.6;
+}
+
+/* Toggle grid */
+.toggle-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 500px;
+  margin-bottom: 32px;
+}
+
+.toggle-pill {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 8px 18px 9px;
+  border: 0.5px solid #444444;
+  background: var(--espresso-mid);
+  color: #AAAAAA;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-pill:hover { border-color: #777777; color: #CCCCCC; }
+.toggle-pill.selected {
+  background: var(--espresso-warm);
+  color: #EEEEEE;
+  border-color: #888888;
+}
+
+.toggle-add {
+  border-style: dashed !important;
+  color: var(--parchment-dim) !important;
+}
+
+/* Step bottom nav */
+.step-nav {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 0.5px solid #333333;
+  gap: 12px;
+  align-items: center;
+}
+
+.step-nav.space-between { justify-content: space-between; }
+
+.step-back {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.step-skip {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #AAAAAA;
+  cursor: pointer;
+  background: transparent;
+  border: 0.5px solid #555555;
+  padding: 10px 20px;
+}
+
+.step-continue {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--terra);
+  border: none;
+  padding: 10px 28px;
+  cursor: pointer;
+}
+
+/* Step 3 — name row */
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Step 4 — password strength */
+.strength-bar-wrap {
+  height: 2px;
+  background: #3A3A3A;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s, background 0.3s;
+}
+
+/* Step 5 — envelope */
+.envelope-mark {
+  font-size: 48px;
+  color: #888888;
+  margin-bottom: 24px;
+  display: block;
+}
+
+.resend-line {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 12px;
+  color: var(--parchment-dim);
+  margin-bottom: 32px;
+}
+
+.resend-link {
+  color: #AAAAAA;
+  border-bottom: 0.5px solid #555555;
+  padding-bottom: 1px;
+  cursor: pointer;
+}
+
+/* Step 6 — complete */
+.complete-label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #88BB99;
+  margin-bottom: 16px;
+}
+
+.profile-preview {
+  max-width: 200px;
+  background: var(--espresso-mid);
+  border: 0.5px solid #3A3A3A;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.preview-img {
+  height: 120px;
+  background: var(--espresso-warm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #AAAAAA;
+}
+
+.preview-body { padding: 10px 12px; }
+
+.preview-name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--parchment);
+}
+
+.preview-role {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+}
+
+.final-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.btn-outline-parchment {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #EEEEEE;
+  background: transparent;
+  border: 0.5px solid #666666;
+  padding: 10px 22px;
+  cursor: pointer;
+}
+
+/* Mobile top progress bar for join */
+.join-mobile-progress {
+  display: none;
+  height: 3px;
+  background: #2A2A2A;
+  position: relative;
+}
+
+.join-mobile-progress-fill {
+  height: 100%;
+  background: var(--gold);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — MOBILE
+═══════════════════════════════════════ */
+@media (max-width: 768px) {
+  body { padding-top: 52px; }
+
+  /* Nav */
+  .nav-center { display: none; }
+  .nav-hamburger { display: flex; }
+  #nav { padding: 0 20px; }
+
+  /* Masthead */
+  .masthead-strip { display: none; }
+
+  /* Landing grids */
+  .landing-grid {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .landing-left { border-right: none; padding: 24px 20px; }
+  .landing-center { border-right: none; }
+  .story-card { grid-template-columns: 80px 1fr; padding: 16px 20px; }
+  .landing-sidebar { padding: 20px; }
+
+  .below-fold { grid-template-columns: 1fr 1fr; }
+  .below-card { border-right: none; }
+  .below-card:nth-child(odd) { border-right: 1px solid var(--gray-mid); }
+
+  .platform-band { grid-template-columns: 1fr; gap: 32px; padding: 60px 20px; }
+  .feature-tiles { grid-template-columns: 1fr; }
+  .feature-tile { padding: 0 0 32px; border-right: none; border-bottom: 0.5px solid var(--gold-dim); }
+  .feature-tile:last-child { border-bottom: none; padding-bottom: 0; }
+  .feature-section { padding: 60px 20px; }
+
+  /* Muses */
+  .muses-header { padding: 32px 20px 24px; }
+  .muse-grid { grid-template-columns: 1fr 1fr; padding: 24px 20px 24px; gap: 16px; }
+  .muses-search { max-width: calc(100% - 32px); left: 16px; right: 16px; bottom: 10px; }
+
+  /* Archive */
+  .archive-hero { grid-template-columns: 1fr; gap: 32px; padding: 48px 20px; }
+  .archive-stats { gap: 24px; }
+  .archive-filter-bar { padding: 12px 20px; }
+  .archive-product-grid { grid-template-columns: 1fr; padding: 24px 20px 60px; }
+  .archive-featured { grid-column: span 1; grid-template-columns: 1fr; }
+  .archive-featured-img { min-height: 160px; }
+  .archive-featured-body { padding: 20px; }
+
+  /* About */
+  .about-hero { grid-template-columns: 1fr; gap: 32px; padding: 48px 20px; }
+  .values-section { padding: 60px 20px; }
+  .values-grid { grid-template-columns: 1fr; }
+  .team-section { padding: 60px 20px; }
+  .team-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .contact-band { grid-template-columns: 1fr; gap: 40px; padding: 48px 20px; }
+
+  /* Login */
+  .login-card { max-width: 100%; margin: 0 20px; }
+  .login-page { padding: 48px 0 40px; }
+
+  /* Join */
+  .join-page { grid-template-columns: 1fr; }
+  .join-left { display: none; }
+  .join-mobile-progress { display: block; }
+  .join-right { padding: 32px 24px 40px; min-height: auto; }
+  .join-step-heading { font-size: 32px; }
+
+  /* Footer */
+  .footer-row1 { grid-template-columns: 1fr 1fr; padding: 32px 20px; gap: 24px; }
+  .footer-row2 { padding: 12px 20px; flex-direction: column; gap: 4px; text-align: center; }
+
+  .masthead-strip { display: none; }
+}
+
+@media (max-width: 480px) {
+  .muse-grid { grid-template-columns: 1fr; }
+  .below-fold { grid-template-columns: 1fr; }
+  .below-card { border-right: none; }
+  .team-grid { grid-template-columns: 1fr; }
+  .footer-row1 { grid-template-columns: 1fr; }
+  .name-row { grid-template-columns: 1fr; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav id="nav">
+  <a class="nav-logo" onclick="navigate('/')">Muses of Morenita</a>
+  <div class="nav-center">
+    <a data-route="/muses" onclick="navigate('/muses')">The Muses</a>
+    <a data-route="/archive" onclick="navigate('/archive')">The Archive</a>
+    <a data-route="/about" onclick="navigate('/about')">About</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-signin" onclick="navigate('/login')">Sign In</a>
+    <a class="nav-join" onclick="navigate('/join')">Join</a>
+    <div class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="nav-mobile-menu" id="mobileMenu">
+  <a onclick="navigate('/muses'); closeMobileMenu()">The Muses</a>
+  <a onclick="navigate('/archive'); closeMobileMenu()">The Archive</a>
+  <a onclick="navigate('/about'); closeMobileMenu()">About</a>
+  <a onclick="navigate('/login'); closeMobileMenu()">Sign In</a>
+  <a onclick="navigate('/join'); closeMobileMenu()">Join</a>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 01 — LANDING
+═══════════════════════════════════════ -->
+<div id="page-landing" class="page">
+
+  <!-- Masthead date strip -->
+  <div class="masthead-strip" id="mastheadStrip">
+    <span id="mastheadDate"></span>
+    <span>Los Angeles, CA &mdash; Creative Technology</span>
+    <span>Est. 2026 &mdash; Morenita Technology</span>
+  </div>
+
+  <!-- Above fold: three column grid -->
+  <div class="landing-grid" id="landingHero">
+
+    <!-- Left: Lead story -->
+    <div class="landing-left">
+      <div class="lead-category">Engineering</div>
+      <div class="img-ph lead-img">ARNOLD &mdash; Project Image</div>
+      <div class="lead-title">ARNOLD: The Rover Engineered to Save America's Trees</div>
+      <div class="lead-deck">An autonomous rover built to detect and eliminate the Spotted Lanternfly. Field-validated at Loyola Maryland Arboretum. 2,200 trees protected.</div>
+      <div class="lead-meta">Amelia Arabe &nbsp;&middot;&nbsp; Engineering &nbsp;&middot;&nbsp; 6 min read</div>
+      <a class="ghost-link">Read the Case Study</a>
+    </div>
+
+    <!-- Center: Secondary stories -->
+    <div class="landing-center">
+      <div class="story-card">
+        <div class="img-ph story-thumb"></div>
+        <div>
+          <div class="story-category">Biomedical Imaging</div>
+          <div class="story-title">Neurosect: Minority Report, Grounded in Engineering</div>
+          <div class="story-deck">A speculative multimodal imaging system. fMRI, EEG, MEG, and PPG in Bayesian consensus.</div>
+          <div class="story-meta">Amelia Arabe &nbsp;&middot;&nbsp; 8 min read</div>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="img-ph story-thumb"></div>
+        <div>
+          <div class="story-category">Fine Art</div>
+          <div class="story-title">Garden Bouquet &mdash; Commission Series</div>
+          <div class="story-deck">New oil paintings available for commission. Original works in the warm palette of Southern California.</div>
+          <div class="story-meta">Amelia Arabe &nbsp;&middot;&nbsp; Fine Art</div>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="img-ph story-thumb"></div>
+        <div>
+          <div class="story-category">Platform</div>
+          <div class="story-title">Youth Sports Needs Better Infrastructure. Ballmecca is Building It.</div>
+          <div class="story-deck">68% of youth coaches are unpaid volunteers. A platform connecting athletes with verified coaching through video feedback.</div>
+          <div class="story-meta">Morenita Technology &nbsp;&middot;&nbsp; 4 min read</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Sidebar -->
+    <div class="landing-sidebar">
+      <div class="sidebar-section-label">From the Archive</div>
+      <div class="archive-card">
+        <div class="img-ph archive-img">Archive Image</div>
+        <div class="archive-card-title">Multi-Hyphenate Job Kit</div>
+        <div class="archive-card-meta">Digital Product &middot; $47</div>
+        <div class="archive-card-body">ATS resume template, cover letter framework, and role targeting worksheet. For creatives who cannot fit into one box.</div>
+        <a class="ghost-link" onclick="navigate('/archive')">Get in The Archive</a>
+      </div>
+
+      <div class="join-cta-box">
+        <div class="join-cta-head">Your career deserves a home.</div>
+        <div class="join-cta-body">Muses of Morenita is where multi-hyphenate creatives organize every version of themselves. Free to join.</div>
+        <button class="join-cta-btn" onclick="navigate('/join')">Join the Muses</button>
+        <div class="join-cta-sub">Free to start. No credit card.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section divider strip -->
+  <div class="divider-strip">
+    <span>More from the Muses</span>
+  </div>
+
+  <!-- Below fold: four column grid -->
+  <div class="below-fold">
+    <div class="below-card">
+      <div class="img-ph below-img">Film</div>
+      <div class="below-category">Film</div>
+      <div class="below-title">Madeline Abiera on Directing Without Compromise</div>
+      <div class="below-meta">Madeline Abiera &nbsp;&middot;&nbsp; 5 min read</div>
+    </div>
+    <div class="below-card">
+      <div class="img-ph below-img">Visual</div>
+      <div class="below-category">Visual</div>
+      <div class="below-title">Vega Robinson: 3D Animation as Cultural Archive</div>
+      <div class="below-meta">Vega Robinson &nbsp;&middot;&nbsp; 6 min read</div>
+    </div>
+    <div class="below-card">
+      <div class="img-ph below-img">Engineering</div>
+      <div class="below-category">Engineering</div>
+      <div class="below-title">MAXINE: An Open-Source Recovery Companion for Hospital Beds</div>
+      <div class="below-meta">Amelia Arabe &nbsp;&middot;&nbsp; 7 min read</div>
+    </div>
+    <div class="below-card">
+      <div class="img-ph below-img">Music</div>
+      <div class="below-category">Music</div>
+      <div class="below-title">The Cello as Infrastructure: Setting the Tempo for Human Connection</div>
+      <div class="below-meta">Amelia Arabe &nbsp;&middot;&nbsp; 3 min read</div>
+    </div>
+  </div>
+
+  <!-- Platform intro band -->
+  <div class="platform-band">
+    <div>
+      <div class="platform-eyebrow">Muses of Morenita</div>
+      <div class="platform-heading">Where multi-hyphenate creatives build their world.</div>
+    </div>
+    <div>
+      <div class="platform-body">A platform for creatives who refuse to be one thing. Organize every version of your career in one place. Publish your work. Run your business. Discover your people.</div>
+      <div class="platform-btns">
+        <button class="btn-terra" onclick="navigate('/join')">Join the Muses</button>
+        <button class="btn-outline-light" onclick="navigate('/muses')">Browse the Muses</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature tiles -->
+  <div class="feature-section">
+    <div class="feature-eyebrow">What you get</div>
+    <div class="feature-tiles">
+      <div class="feature-tile">
+        <div class="diamond"></div>
+        <div class="tile-title">Your professional home.</div>
+        <div class="tile-body">One place for every version of you. Engineer, painter, cellist, filmmaker. Career toggles let visitors choose how they see you.</div>
+      </div>
+      <div class="feature-tile">
+        <div class="diamond"></div>
+        <div class="tile-title">Publish your work.</div>
+        <div class="tile-body">Long-form essays, videos, articles, and project case studies. Your ideas live here and reach the people who need to find them.</div>
+      </div>
+      <div class="feature-tile">
+        <div class="diamond"></div>
+        <div class="tile-title">Run your business.</div>
+        <div class="tile-body">Invoices, contracts, appointments, and client tools built for creatives. Everything you need, nothing you do not.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer injected by JS -->
+  <div id="footer-landing"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 02 — THE MUSES
+═══════════════════════════════════════ -->
+<div id="page-muses" class="page">
+
+  <!-- Page header -->
+  <div class="muses-header">
+    <div class="muses-header-top">
+      <div>
+        <div class="muses-eyebrow">libraryofmorenita.org</div>
+        <div class="muses-heading">Muses of Morenita</div>
+      </div>
+      <div class="muses-count">24 Creatives</div>
+    </div>
+
+    <!-- Filter strip -->
+    <div class="filter-strip" id="muses-filter-strip">
+      <div class="filter-pill active" data-filter="all" onclick="musesFilterClick(this)">All</div>
+      <div class="filter-pill" data-filter="Engineering" onclick="musesFilterClick(this)">Engineering</div>
+      <div class="filter-pill" data-filter="Visual Art" onclick="musesFilterClick(this)">Visual Art</div>
+      <div class="filter-pill" data-filter="Film" onclick="musesFilterClick(this)">Film</div>
+      <div class="filter-pill" data-filter="Music" onclick="musesFilterClick(this)">Music</div>
+      <div class="filter-pill" data-filter="Writing" onclick="musesFilterClick(this)">Writing</div>
+      <div class="filter-pill" data-filter="Photography" onclick="musesFilterClick(this)">Photography</div>
+      <div class="filter-pill" data-filter="Design" onclick="musesFilterClick(this)">Design</div>
+      <div class="filter-pill" data-filter="Modeling" onclick="musesFilterClick(this)">Modeling</div>
+    </div>
+  </div>
+
+  <!-- Muse grid -->
+  <div class="muse-grid">
+
+    <!-- Card 1: Amelia Arabe (founder) -->
+    <div class="muse-card founder linked" onclick="window.location.href='amelia-arabe-portfolio.html'">
+      <div class="img-ph muse-img">Amelia Arabe</div>
+      <div class="muse-body">
+        <div class="muse-name">Amelia Arabe</div>
+        <div class="muse-role">Engineer &middot; Founder &middot; Painter &middot; Cellist</div>
+        <div class="muse-tags">
+          <span class="muse-tag">Engineering</span>
+          <span class="muse-tag">Visual Art</span>
+          <span class="muse-tag">Music</span>
+          <span class="muse-tag">Acting</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Vega Robinson -->
+    <div class="muse-card">
+      <div class="img-ph muse-img">Vega Robinson</div>
+      <div class="muse-body">
+        <div class="muse-name">Vega Robinson</div>
+        <div class="muse-role">Art Director &middot; 3D Animator &middot; Painter</div>
+        <div class="muse-tags">
+          <span class="muse-tag">Visual Art</span>
+          <span class="muse-tag">Design</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Madeline Abiera -->
+    <div class="muse-card">
+      <div class="img-ph muse-img">Madeline Abiera</div>
+      <div class="muse-body">
+        <div class="muse-name">Madeline Abiera</div>
+        <div class="muse-role">Director of Film &amp; Media Production</div>
+        <div class="muse-tags">
+          <span class="muse-tag">Film</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Mikah Tabalanza -->
+    <div class="muse-card">
+      <div class="img-ph muse-img">Mikah Tabalanza</div>
+      <div class="muse-body">
+        <div class="muse-name">Mikah Tabalanza</div>
+        <div class="muse-role">Associate Engineer &middot; Graphic Designer</div>
+        <div class="muse-tags">
+          <span class="muse-tag">Engineering</span>
+          <span class="muse-tag">Design</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5: Placeholder -->
+    <div class="muse-card">
+      <div class="img-ph muse-img">Muse</div>
+      <div class="muse-body">
+        <div class="muse-name">&#8212; Muse</div>
+        <div class="muse-role">Photographer &middot; Writer</div>
+        <div class="muse-tags">
+          <span class="muse-tag">Photography</span>
+          <span class="muse-tag">Writing</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6: Placeholder -->
+    <div class="muse-card">
+      <div class="img-ph muse-img">Muse</div>
+      <div class="muse-body">
+        <div class="muse-name">&#8212; Muse</div>
+        <div class="muse-role">Musician &middot; Composer</div>
+        <div class="muse-tags">
+          <span class="muse-tag">Music</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 7: Placeholder -->
+    <div class="muse-card">
+      <div class="img-ph muse-img">Muse</div>
+      <div class="muse-body">
+        <div class="muse-name">&#8212; Muse</div>
+        <div class="muse-role">Designer &middot; Illustrator</div>
+        <div class="muse-tags">
+          <span class="muse-tag">Design</span>
+          <span class="muse-tag">Visual Art</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 8: Placeholder -->
+    <div class="muse-card">
+      <div class="img-ph muse-img">Muse</div>
+      <div class="muse-body">
+        <div class="muse-name">&#8212; Muse</div>
+        <div class="muse-role">Filmmaker &middot; Editor</div>
+        <div class="muse-tags">
+          <span class="muse-tag">Film</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating search bar -->
+  <div class="muses-search">
+    <span class="search-icon">&#9906;</span>
+    <input type="text" class="search-input" id="muses-search-input" placeholder="Search by name, discipline, or skill..." oninput="applyMusesFilters()" autocomplete="off" spellcheck="false">
+    <button class="search-filters-btn" onclick="clearMusesSearch()">Clear</button>
+  </div>
+
+  <!-- No-results state -->
+  <div class="muses-no-results" id="muses-no-results" style="display:none;">
+    <div class="muses-no-results-text">No muses match your search.</div>
+  </div>
+
+  <div id="footer-muses" style="padding-top: 72px;"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 03 — THE ARCHIVE
+═══════════════════════════════════════ -->
+<div id="page-archive" class="page">
+
+  <!-- Hero -->
+  <div class="archive-hero">
+    <div>
+      <div class="archive-hero-eyebrow">Muses of Morenita</div>
+      <div class="archive-hero-title">The Archive</div>
+      <div class="archive-hero-body">Curriculum, digital products, and tools for multi-hyphenate creatives. Everything built by Morenita Technology to help you scale your work and your income.</div>
+    </div>
+    <div>
+      <div class="archive-stats">
+        <div>
+          <div class="archive-stat-num" id="archive-stat-total">—</div>
+          <div class="archive-stat-label">Products</div>
+        </div>
+        <div>
+          <div class="archive-stat-num" id="archive-stat-free">—</div>
+          <div class="archive-stat-label">Free</div>
+        </div>
+        <div>
+          <div class="archive-stat-num">Free</div>
+          <div class="archive-stat-label">To Browse</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="archive-filter-bar" id="archive-filter-strip">
+    <div class="filter-pill active" data-filter="all" onclick="archiveFilterClick(this)">All</div>
+    <div class="filter-pill" data-filter="Digital Products" onclick="archiveFilterClick(this)">Digital Products</div>
+    <div class="filter-pill" data-filter="Curriculum" onclick="archiveFilterClick(this)">Curriculum</div>
+    <div class="filter-pill" data-filter="Residencies" onclick="archiveFilterClick(this)">Residencies</div>
+    <div class="filter-pill" data-filter="Free" onclick="archiveFilterClick(this)">Free</div>
+  </div>
+
+  <!-- Product grid — populated from Supabase on first visit -->
+  <div class="archive-product-grid" id="archive-grid">
+    <div class="archive-loading">Loading products…</div>
+  </div>
+
+  <div id="footer-archive"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 04 — ABOUT
+═══════════════════════════════════════ -->
+<div id="page-about" class="page">
+
+  <!-- Hero -->
+  <div class="about-hero">
+    <div>
+      <div class="about-eyebrow">Morenita Technology</div>
+      <div class="about-heading">Built by creatives, for creatives.</div>
+    </div>
+    <div>
+      <div class="about-body">[Amelia writes this &mdash; the story behind Muses of Morenita, what it is, why it exists, and who it is for.]</div>
+      <button class="btn-terra">Work with us</button>
+    </div>
+  </div>
+
+  <!-- Values -->
+  <div class="values-section">
+    <div class="values-eyebrow">What we believe</div>
+    <div class="values-grid">
+      <div class="value-block">
+        <div class="value-title">Synchronicity over speed.</div>
+        <div class="value-body">The best work happens when the conditions for collaboration are right, not when things move fastest.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">Art and engineering are the same discipline.</div>
+        <div class="value-body">Tools built without beauty are incomplete. Beauty without function is decorative. We do not choose.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">Technology should expand human capacity.</div>
+        <div class="value-body">Not replace it, not simplify it, not optimize it. Expand it. Give people more room to be human.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">Community before commerce.</div>
+        <div class="value-body">Muses of Morenita exists to serve a community first. Revenue is what makes that possible, not the point.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team -->
+  <div class="team-section">
+    <div class="team-eyebrow">The Founding Muses</div>
+    <div class="team-heading">The people behind the platform.</div>
+    <div class="team-grid">
+      <div class="team-card linked" onclick="window.location.href='amelia-arabe-portfolio.html'">
+        <div class="img-ph team-img">Amelia Arabe</div>
+        <div class="team-body">
+          <div class="team-name">Amelia Arabe</div>
+          <div class="team-title-label">CEO &middot; Creative Technology Engineer</div>
+          <div class="team-bio">Computer and electrical engineer. Founder of Morenita Technology. Engineer, inventor, painter, cellist, actress.</div>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="img-ph team-img">Vega Robinson</div>
+        <div class="team-body">
+          <div class="team-name">Vega Robinson</div>
+          <div class="team-title-label">Art Director</div>
+          <div class="team-bio">Visual director, 3D animator, and painter. Leads brand identity and motion across Morenita projects.</div>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="img-ph team-img">Madeline Abiera</div>
+        <div class="team-body">
+          <div class="team-name">Madeline Abiera</div>
+          <div class="team-title-label">Director of Film &amp; Media Production</div>
+          <div class="team-bio">Film director and production lead. Assembles crews and manages production from concept to delivery.</div>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="img-ph team-img">Mikah Tabalanza</div>
+        <div class="team-body">
+          <div class="team-name">Mikah Tabalanza</div>
+          <div class="team-title-label">Associate Engineer</div>
+          <div class="team-bio">Electrical engineering and hardware prototyping. Supports Morenita engineering projects and brand design.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact band -->
+  <div class="contact-band">
+    <div>
+      <div class="contact-heading">Start a conversation.</div>
+      <div class="contact-body">Every project starts with a free discovery call. We respond within 48 hours.</div>
+    </div>
+    <div>
+      <div class="contact-info-row">
+        <div class="contact-info-label">Email</div>
+        <div class="contact-info-value">missameliava@gmail.com</div>
+      </div>
+      <div class="contact-info-row">
+        <div class="contact-info-label">Location</div>
+        <div class="contact-info-value">Los Angeles, CA</div>
+      </div>
+      <div class="contact-info-row">
+        <div class="contact-info-label">Response</div>
+        <div class="contact-info-value">Within 48 hours</div>
+      </div>
+      <a href="mailto:missameliava@gmail.com" class="btn-terra" style="margin-top:8px;">Send a Message</a>
+    </div>
+  </div>
+
+  <div id="footer-about"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 05 — LOGIN
+═══════════════════════════════════════ -->
+<div id="page-login" class="page">
+  <div class="login-page">
+    <div class="login-logo">Muses of Morenita</div>
+    <div class="login-sub">libraryofmorenita.org</div>
+
+    <div class="login-card">
+      <div class="login-heading">Sign in.</div>
+
+      <div class="form-field">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" placeholder="your@email.com">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" placeholder="Password">
+      </div>
+
+      <button class="login-submit">Sign In</button>
+
+      <div class="login-divider">
+        <div class="login-divider-line"></div>
+        <span class="login-divider-text">or</span>
+        <div class="login-divider-line"></div>
+      </div>
+
+      <button class="login-alt" onclick="navigate('/join')">Create an account</button>
+    </div>
+
+    <div class="login-footer">Forgot your password?</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 06 — JOIN
+═══════════════════════════════════════ -->
+<div id="page-join" class="page">
+  <!-- Mobile top progress bar -->
+  <div class="join-mobile-progress">
+    <div class="join-mobile-progress-fill" id="joinMobileProgressFill"></div>
+  </div>
+
+  <div class="join-page">
+    <!-- Left panel -->
+    <div class="join-left">
+      <div>
+        <div class="join-logo">Muses of Morenita</div>
+        <div class="join-steps-list" id="joinStepsList">
+          <div class="join-step-item">
+            <span class="step-num step-active" id="snum-1">01</span>
+            <span class="step-name step-active" id="sname-1">Choose your path</span>
+          </div>
+          <div class="join-step-item">
+            <span class="step-num" id="snum-2">02</span>
+            <span class="step-name" id="sname-2">What do you do?</span>
+          </div>
+          <div class="join-step-item">
+            <span class="step-num" id="snum-3">03</span>
+            <span class="step-name" id="sname-3">Name and email</span>
+          </div>
+          <div class="join-step-item">
+            <span class="step-num" id="snum-4">04</span>
+            <span class="step-name" id="sname-4">Password</span>
+          </div>
+          <div class="join-step-item">
+            <span class="step-num" id="snum-5">05</span>
+            <span class="step-name" id="sname-5">Check your email</span>
+          </div>
+          <div class="join-step-item">
+            <span class="step-num" id="snum-6">06</span>
+            <span class="step-name" id="sname-6">You are in</span>
+          </div>
+        </div>
+      </div>
+      <div class="join-progress-wrap">
+        <div class="join-progress-bar">
+          <div class="join-progress-fill" id="joinProgressFill"></div>
+        </div>
+        <div class="join-step-counter" id="joinStepCounter">Step 1 of 6</div>
+      </div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="join-right">
+
+      <!-- Step 1: Choose your path -->
+      <div class="join-step-panel active" id="join-step-1">
+        <div>
+          <div class="join-step-label">Step 01</div>
+          <div class="join-step-heading">Choose your path.</div>
+          <div class="join-step-body">All paths are free to start. Upgrade anytime.</div>
+
+          <div class="tier-cards">
+            <div class="tier-card" onclick="selectTier(this)" data-tier="personal">
+              <div class="tier-top">
+                <span class="tier-name">Personal</span>
+                <span class="tier-price">Free</span>
+              </div>
+              <div class="tier-desc">Discover and save creative work. Browse The Muses. Build your inspiration space.</div>
+            </div>
+
+            <div>
+              <div class="tier-recommended-label">Recommended</div>
+              <div class="tier-card selected" onclick="selectTier(this)" data-tier="creative">
+                <div class="tier-top">
+                  <span class="tier-name">Creative</span>
+                  <span class="tier-price">Free to start</span>
+                </div>
+                <div class="tier-desc">Everything in Personal plus your portfolio, career toggles, publishing tools, and business suite.</div>
+              </div>
+            </div>
+
+            <div class="tier-card" onclick="selectTier(this)" data-tier="business">
+              <div class="tier-top">
+                <span class="tier-name">Business</span>
+                <span class="tier-price">Inquire</span>
+              </div>
+              <div class="tier-desc">Everything in Creative plus team accounts, client portal, and studio tooling for collectives.</div>
+            </div>
+          </div>
+        </div>
+        <div class="step-nav">
+          <button class="step-continue" onclick="goToStep(2)">Continue</button>
+        </div>
+      </div>
+
+      <!-- Step 2: What do you do? -->
+      <div class="join-step-panel" id="join-step-2">
+        <div>
+          <div class="join-step-label">Step 02</div>
+          <div class="join-step-heading">What do you do?</div>
+          <div class="join-step-body">Select everything that applies. These become the career toggles on your profile. Add more later.</div>
+
+          <div class="toggle-grid">
+            <div class="toggle-pill" onclick="togglePill(this)">Software Engineer</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Inventor</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Writer</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Painter</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Cellist</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Photographer</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Actress</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Filmmaker</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Designer</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Model</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Architect</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Musician</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Animator</div>
+            <div class="toggle-pill" onclick="togglePill(this)">Producer</div>
+            <div class="toggle-pill toggle-add" onclick="togglePill(this)">+ Add your own</div>
+          </div>
+        </div>
+        <div class="step-nav space-between">
+          <button class="step-back" onclick="goToStep(1)">Back</button>
+          <div style="display:flex;gap:12px;">
+            <button class="step-skip">Skip</button>
+            <button class="step-continue" onclick="goToStep(3)">Continue</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Name and email -->
+      <div class="join-step-panel" id="join-step-3">
+        <div>
+          <div class="join-step-label">Step 03</div>
+          <div class="join-step-heading">Who are you?</div>
+          <div class="join-step-body">This is how you appear across Muses of Morenita.</div>
+
+          <div style="max-width:440px;">
+            <div class="form-field name-row">
+              <div>
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-input" placeholder="First">
+              </div>
+              <div>
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-input" placeholder="Last">
+              </div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" placeholder="your@email.com">
+            </div>
+          </div>
+        </div>
+        <div class="step-nav space-between">
+          <button class="step-back" onclick="goToStep(2)">Back</button>
+          <button class="step-continue" onclick="goToStep(4)">Continue</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Password -->
+      <div class="join-step-panel" id="join-step-4">
+        <div>
+          <div class="join-step-label">Step 04</div>
+          <div class="join-step-heading">Secure your account.</div>
+          <div class="join-step-body">Minimum 8 characters.</div>
+
+          <div style="max-width:440px;">
+            <div class="form-field">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-input" placeholder="Password" id="passwordInput" oninput="updateStrength(this.value)">
+              <div class="strength-bar-wrap">
+                <div class="strength-bar-fill" id="strengthBar"></div>
+              </div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Confirm Password</label>
+              <input type="password" class="form-input" placeholder="Confirm password">
+            </div>
+          </div>
+        </div>
+        <div class="step-nav space-between">
+          <button class="step-back" onclick="goToStep(3)">Back</button>
+          <button class="step-continue" onclick="goToStep(5)">Create Account</button>
+        </div>
+      </div>
+
+      <!-- Step 5: Check your email -->
+      <div class="join-step-panel" id="join-step-5">
+        <div>
+          <div class="join-step-label">Step 05</div>
+          <span class="envelope-mark">&#9993;</span>
+          <div class="join-step-heading">Check your inbox.</div>
+          <div class="join-step-body">We sent a verification link to your email. Click it to activate your account.</div>
+          <div class="resend-line">Didn't get it? <span class="resend-link">Resend email</span></div>
+        </div>
+        <div class="step-nav">
+          <button class="step-continue" onclick="goToStep(6)">I have verified my email</button>
+        </div>
+      </div>
+
+      <!-- Step 6: You are in -->
+      <div class="join-step-panel" id="join-step-6">
+        <div>
+          <div class="complete-label">Complete</div>
+          <div class="join-step-heading" style="font-size:52px;margin-bottom:12px;">Welcome.</div>
+          <div class="join-step-body">Your account is ready. Build your profile and join the Muses.</div>
+
+          <div class="profile-preview">
+            <div class="preview-img">Your photo</div>
+            <div class="preview-body">
+              <div class="preview-name">Your Name</div>
+              <div class="preview-role">Creative</div>
+            </div>
+          </div>
+
+          <div class="final-btns">
+            <button class="btn-outline-parchment">Set up my profile</button>
+            <button class="step-continue" onclick="window.location.href='dashboard.html'">Go to dashboard</button>
+          </div>
+        </div>
+        <div class="step-nav" style="border-top:none;margin-top:0;padding-top:0;"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER TEMPLATE ═══ -->
+<!-- one source of truth — cloned into each page on init via injectFooters() so the footer is never out of sync -->
+<template id="footerTemplate">
+  <footer id="footer">
+    <div class="footer-row1">
+      <div>
+        <div class="footer-col-title">Muses of Morenita</div>
+        <div class="footer-sub">Morenita Technology</div>
+        <div class="footer-info">missameliava@gmail.com<br>Los Angeles, CA</div>
+      </div>
+      <div>
+        <div class="footer-col-label">Platform</div>
+        <a class="footer-link" onclick="navigate('/muses')">The Muses</a>
+        <a class="footer-link" onclick="navigate('/archive')">The Archive</a>
+        <a class="footer-link" onclick="navigate('/about')">About</a>
+      </div>
+      <div>
+        <div class="footer-col-label">Join</div>
+        <a class="footer-link" onclick="navigate('/join')">Personal</a>
+        <a class="footer-link" onclick="navigate('/join')">Creative</a>
+        <a class="footer-link" onclick="navigate('/join')">Business</a>
+      </div>
+      <div>
+        <div class="footer-col-label">Connect</div>
+        <a class="footer-link">Instagram</a>
+        <a class="footer-link">LinkedIn</a>
+        <a class="footer-link">GitHub</a>
+      </div>
+    </div>
+    <div class="footer-row2">
+      <span class="footer-copy">2026 Morenita Technology</span>
+      <span class="footer-copy">Built with an artful mind.</span>
+    </div>
+  </footer>
+</template>
+
+<script>
+// ─── SUPABASE ──────────────────────────────────────────
+const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
+const sb = supabase.createClient(SB_URL, SB_ANON);
+
+// track whether archive has been fetched this session — avoid refetching on every route visit
+let archiveLoaded = false;
+
+// ─── ROUTING ───────────────────────────────────────────
+const routes = {
+  '/': 'page-landing',
+  '/muses': 'page-muses',
+  '/archive': 'page-archive',
+  '/about': 'page-about',
+  '/login': 'page-login',
+  '/join': 'page-join',
+};
+
+let currentRoute = null;
+
+function getRouteFromHash() {
+  const hash = window.location.hash;
+  if (!hash || hash === '#') return '/';
+  return hash.replace('#', '') || '/';
+}
+
+function navigate(route) {
+  window.location.hash = '#' + route;
+}
+
+function showPage(route) {
+  const pageId = routes[route] || routes['/'];
+
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+  // Show target page
+  const page = document.getElementById(pageId);
+  if (page) page.classList.add('active');
+
+  // Load archive products on first visit
+  if (route === '/archive' && !archiveLoaded) loadArchiveProducts();
+
+  // Scroll to top
+  window.scrollTo(0, 0);
+
+  // Nav active state
+  document.querySelectorAll('.nav-center a').forEach(a => {
+    a.classList.remove('active');
+    if (a.dataset.route === route) a.classList.add('active');
+  });
+
+  // Nav transparency: only on landing, only when hero in view
+  updateNavTransparency(route);
+
+  currentRoute = route;
+}
+
+// ─── NAV TRANSPARENCY ──────────────────────────────────
+// IntersectionObserver watches the hero div — nav goes transparent only while the hero is in view.
+// Observer is disconnected on every route change so it doesn't fire on other pages.
+let heroObserver = null;
+
+function updateNavTransparency(route) {
+  const nav = document.getElementById('nav');
+  if (heroObserver) { heroObserver.disconnect(); heroObserver = null; }
+
+  if (route === '/') {
+    const hero = document.getElementById('landingHero');
+    if (hero) {
+      heroObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            nav.classList.add('transparent');
+          } else {
+            nav.classList.remove('transparent');
+          }
+        },
+        { threshold: 0.1 }
+      );
+      heroObserver.observe(hero);
+    }
+    nav.classList.add('transparent');
+  } else {
+    nav.classList.remove('transparent');
+  }
+}
+
+// ─── MOBILE MENU ───────────────────────────────────────
+function toggleMobileMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+// ─── MASTHEAD DATE ─────────────────────────────────────
+function setMastheadDate() {
+  const el = document.getElementById('mastheadDate');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = now.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+// ─── FOOTER INJECTION ──────────────────────────────────
+function injectFooters() {
+  const template = document.getElementById('footerTemplate');
+  const targets = ['footer-landing', 'footer-muses', 'footer-archive', 'footer-about'];
+  targets.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && template) {
+      el.appendChild(template.content.cloneNode(true));
+    }
+  });
+}
+
+// ─── JOIN FLOW ─────────────────────────────────────────
+let currentStep = 1;
+const totalSteps = 6;
+const stepProgress = [0, 0, 16, 33, 50, 83, 100];
+
+function goToStep(step) {
+  if (step < 1 || step > totalSteps) return;
+
+  // Hide current
+  const current = document.getElementById('join-step-' + currentStep);
+  if (current) current.classList.remove('active');
+
+  currentStep = step;
+
+  // Show new
+  const next = document.getElementById('join-step-' + currentStep);
+  if (next) next.classList.add('active');
+
+  // Update progress bar
+  const pct = stepProgress[currentStep];
+  const fill = document.getElementById('joinProgressFill');
+  const mobileFill = document.getElementById('joinMobileProgressFill');
+  if (fill) {
+    fill.style.width = pct + '%';
+    if (currentStep === 6) {
+      fill.style.background = 'var(--success)';
+    } else {
+      fill.style.background = 'var(--gold)';
+    }
+  }
+  if (mobileFill) {
+    mobileFill.style.width = pct + '%';
+    mobileFill.style.background = currentStep === 6 ? 'var(--success)' : 'var(--gold)';
+  }
+
+  // Update counter
+  const counter = document.getElementById('joinStepCounter');
+  if (counter) counter.textContent = 'Step ' + currentStep + ' of ' + totalSteps;
+
+  // Update sidebar step states
+  for (let i = 1; i <= totalSteps; i++) {
+    const num = document.getElementById('snum-' + i);
+    const name = document.getElementById('sname-' + i);
+    if (!num || !name) continue;
+
+    num.className = 'step-num';
+    name.className = 'step-name';
+
+    if (i < currentStep) {
+      num.classList.add('step-done');
+      name.classList.add('step-done');
+    } else if (i === currentStep) {
+      num.classList.add('step-active');
+      name.classList.add('step-active');
+    }
+  }
+
+}
+
+// ─── TIER SELECTION ────────────────────────────────────
+function selectTier(card) {
+  // Deselect all tier cards
+  document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+}
+
+// ─── TOGGLE PILLS ──────────────────────────────────────
+function togglePill(pill) {
+  pill.classList.toggle('selected');
+}
+
+// ─── PASSWORD STRENGTH ─────────────────────────────────
+function updateStrength(val) {
+  const bar = document.getElementById('strengthBar');
+  if (!bar) return;
+  const len = val.length;
+  if (len === 0) {
+    bar.style.width = '0%';
+    return;
+  }
+  if (len < 8) {
+    bar.style.width = '33%';
+    bar.style.background = 'var(--terra)';
+  } else if (len <= 12) {
+    bar.style.width = '66%';
+    bar.style.background = 'var(--gold)';
+  } else {
+    bar.style.width = '100%';
+    bar.style.background = 'var(--success)';
+  }
+}
+
+// ─── MUSES FILTER + SEARCH ─────────────────────────────
+let musesActiveFilter = 'all';
+
+function applyMusesFilters() {
+  const q = (document.getElementById('muses-search-input')?.value || '').trim().toLowerCase();
+  const f = musesActiveFilter;
+  const cards = document.querySelectorAll('#page-muses .muse-card');
+  let visibleCount = 0;
+
+  cards.forEach(card => {
+    const name = card.querySelector('.muse-name')?.textContent.toLowerCase() || '';
+    const role = card.querySelector('.muse-role')?.textContent.toLowerCase() || '';
+    const tagEls = Array.from(card.querySelectorAll('.muse-tag'));
+    const tagText = tagEls.map(t => t.textContent.toLowerCase()).join(' ');
+
+    const matchesSearch = !q || name.includes(q) || role.includes(q) || tagText.includes(q);
+    const matchesFilter = f === 'all' || tagEls.some(t => t.textContent === f);
+
+    const visible = matchesSearch && matchesFilter;
+    card.style.display = visible ? '' : 'none';
+    if (visible) visibleCount++;
+  });
+
+  const noResults = document.getElementById('muses-no-results');
+  if (noResults) noResults.style.display = visibleCount === 0 && (q || f !== 'all') ? 'block' : 'none';
+}
+
+function musesFilterClick(el) {
+  document.querySelectorAll('#muses-filter-strip .filter-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  musesActiveFilter = el.dataset.filter;
+  applyMusesFilters();
+}
+
+function clearMusesSearch() {
+  const input = document.getElementById('muses-search-input');
+  if (input) { input.value = ''; applyMusesFilters(); input.focus(); }
+}
+
+// ─── ARCHIVE PRODUCTS ──────────────────────────────────
+async function loadArchiveProducts() {
+  const { data, error } = await sb
+    .from('archive_products')
+    .select('*, profiles(display_name, username)')
+    .eq('published', true)
+    .order('is_featured', { ascending: false })
+    .order('sort_order')
+    .order('created_at');
+
+  archiveLoaded = true;
+  renderArchiveProducts(error ? [] : (data || []));
+}
+
+function renderArchiveProducts(products) {
+  const grid = document.getElementById('archive-grid');
+  const totalEl = document.getElementById('archive-stat-total');
+  const freeEl  = document.getElementById('archive-stat-free');
+
+  if (totalEl) totalEl.textContent = products.length || '0';
+  if (freeEl)  freeEl.textContent  = products.filter(p => p.is_free).length || '0';
+
+  if (!products.length) {
+    grid.innerHTML = '<div class="archive-empty">No products yet — check back soon.</div>';
+    return;
+  }
+
+  // first featured product gets the wide card; the rest are standard cards
+  const [featured, ...rest] = products;
+
+  const featuredHTML = `
+    <div class="archive-featured" data-type="${featured.type}" data-price="${featured.is_free ? 'Free' : (featured.price_display || '')}">
+      ${featured.image_url
+        ? `<div class="archive-featured-img" style="background:url('${featured.image_url}') center/cover;"></div>`
+        : `<div class="img-ph archive-featured-img">${featured.title}</div>`}
+      <div class="archive-featured-body">
+        <div>
+          <div class="archive-feat-type">${featured.type} &mdash; Featured</div>
+          <div class="archive-feat-title">${featured.title}</div>
+          ${featured.description ? `<div class="archive-feat-body">${featured.description}</div>` : ''}
+        </div>
+        <div class="archive-feat-bottom">
+          <span class="archive-price">${featured.price_display || (featured.is_free ? 'Free' : '')}</span>
+          ${featured.purchase_url
+            ? `<a href="${featured.purchase_url}" target="_blank" rel="noopener"><button class="btn-terra-sm">${featured.is_free ? 'Download' : 'Get it'}</button></a>`
+            : ''}
+        </div>
+      </div>
+    </div>`;
+
+  const cardsHTML = rest.map(p => `
+    <div class="product-card" data-type="${p.type}" data-price="${p.is_free ? 'Free' : (p.price_display || '')}">
+      ${p.image_url
+        ? `<div class="product-img" style="background:url('${p.image_url}') center/cover;"></div>`
+        : `<div class="img-ph product-img">${p.title}</div>`}
+      <div class="product-body">
+        <div class="product-type">${p.type}</div>
+        <div class="product-title">${p.title}</div>
+        ${p.description ? `<div class="product-desc">${p.description}</div>` : ''}
+        <div class="product-bottom">
+          <span class="product-price">${p.price_display || (p.is_free ? 'Free' : '')}</span>
+          ${p.purchase_url
+            ? `<a href="${p.purchase_url}" target="_blank" rel="noopener"><button class="${p.is_free ? 'btn-outline-sm' : 'btn-terra-sm'}">${p.is_free ? 'Download' : 'Get it'}</button></a>`
+            : ''}
+        </div>
+      </div>
+    </div>`).join('');
+
+  grid.innerHTML = featuredHTML + cardsHTML;
+
+  // reset filter to All so newly rendered cards are all visible
+  document.querySelectorAll('#archive-filter-strip .filter-pill').forEach(p => p.classList.remove('active'));
+  const allPill = document.querySelector('#archive-filter-strip [data-filter="all"]');
+  if (allPill) allPill.classList.add('active');
+}
+
+// ─── ARCHIVE FILTER ────────────────────────────────────
+function archiveFilterClick(el) {
+  document.querySelectorAll('#archive-filter-strip .filter-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const f = el.dataset.filter;
+  const items = document.querySelectorAll('#page-archive .archive-featured, #page-archive .product-card');
+  items.forEach(item => {
+    if (f === 'all') { item.style.display = ''; return; }
+    if (f === 'Free') { item.style.display = item.dataset.price === 'Free' ? '' : 'none'; return; }
+    item.style.display = item.dataset.type === f ? '' : 'none';
+  });
+}
+
+// ─── HASH ROUTING LISTENER ─────────────────────────────
+window.addEventListener('hashchange', () => {
+  const route = getRouteFromHash();
+  showPage(route);
+});
+
+// ─── INIT ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  injectFooters();
+  setMastheadDate();
+  const route = getRouteFromHash();
+  showPage(route);
+});
+</script>
+</body>
+</html>

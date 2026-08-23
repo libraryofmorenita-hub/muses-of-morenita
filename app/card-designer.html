@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Designer — Amelia Arabe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --black:       #0A0A0A;
+  --black-mid:   #1A1A1A;
+  --black-soft:  #2A2A2A;
+  --gray-dark:   #555555;
+  --gray-mid:    #999999;
+  --gray-light:  #CCCCCC;
+  --gray-faint:  #E8E8E8;
+  --white:       #FAFAFA;
+  --pure-white:  #FFFFFF;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body:    "Inter", sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font-body);
+  color: var(--black);
+  background: var(--gray-faint);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ── TOP BAR ────────────────────────────────────── */
+.topbar {
+  height: 52px;
+  flex-shrink: 0;
+  background: var(--black);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+.topbar-left { font-family: var(--font-body); font-weight: 400; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--white); }
+.topbar-center { font-family: var(--font-display); font-weight: 300; font-size: 16px; color: var(--white); }
+.topbar-right { display: flex; align-items: center; }
+.tb-cancel { font-family: var(--font-body); font-weight: 300; font-size: 11px; color: var(--gray-mid); cursor: pointer; margin-right: 16px; }
+.tb-save {
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border: none;
+  cursor: pointer;
+}
+.tb-save:hover { background: var(--gray-light); }
+
+/* ── MAIN ───────────────────────────────────────── */
+.designer-main { flex: 1; min-height: 0; display: flex; overflow: hidden; }
+
+/* ── CONTROLS ───────────────────────────────────── */
+.controls {
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--white);
+  height: 100%;
+  overflow-y: auto;
+  padding: 28px 24px;
+}
+.field { margin-bottom: 18px; }
+.field-label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 8px;
+  display: block;
+}
+.field-hint { font-weight: 300; text-transform: none; letter-spacing: 0; color: var(--gray-light); }
+.field input[type="text"],
+.field input[type="url"],
+.field input[type="number"],
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--gray-faint);
+  border: 0.5px solid var(--gray-light);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--black);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--black); }
+.field textarea { resize: none; }
+
+.toggle-row { display: flex; gap: 0; margin-bottom: 10px; }
+.toggle-opt {
+  flex: 1;
+  padding: 8px 10px;
+  text-align: center;
+  border: 1px solid var(--gray-light);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  cursor: pointer;
+}
+.toggle-opt + .toggle-opt { border-left: none; }
+.toggle-opt.active { background: var(--black); color: var(--white); border-color: var(--black); }
+
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.preset-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--gray-light);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--gray-dark);
+  cursor: pointer;
+}
+.preset-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+
+.color-row { display: flex; gap: 8px; align-items: center; }
+.color-row input[type="color"] { width: 40px; height: 36px; padding: 0; border: 0.5px solid var(--gray-light); background: none; cursor: pointer; }
+.color-row input[type="text"] { flex: 1; }
+
+.upload-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.upload-btn {
+  padding: 9px 16px;
+  border: 1px solid var(--gray-light);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.upload-name { font-family: var(--font-body); font-weight: 300; font-size: 10px; color: var(--gray-mid); }
+
+.section-divider { height: 1px; background: var(--gray-faint); margin: 22px 0; }
+.swatch-preview { width: 100%; height: 80px; padding: 0; border: 0.5px solid var(--gray-light); cursor: pointer; }
+.error-msg { font-family: var(--font-body); font-weight: 300; font-size: 11px; color: var(--gray-dark); margin-top: 10px; display: none; }
+.error-msg.visible { display: block; }
+
+/* ── PREVIEW ────────────────────────────────────── */
+.preview-panel {
+  flex: 1;
+  background: var(--gray-faint);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  overflow: auto;
+}
+.preview-stage { display: flex; align-items: center; justify-content: center; padding: 40px; }
+.live-preview-label { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-mid); margin-top: 12px; }
+
+/* ── PREVIEW CARD (bulletin) — same visual rules as bulletin-board.html ── */
+.preview-item { position: relative !important; left: auto !important; top: auto !important; }
+
+.board-card {
+  padding: 14px 16px;
+  border: 1px solid var(--gray-faint);
+  box-shadow: 2px 3px 12px rgba(0,0,0,0.06);
+  background: var(--pure-white);
+  overflow: hidden;
+}
+.card-type-tag { position: absolute; top: 10px; right: 12px; font-family: var(--font-body); font-weight: 400; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-light); }
+.card-link-arrow { position: absolute; bottom: 10px; right: 12px; font-size: 10px; color: var(--gray-mid); }
+.card-img-wrap img { width: 100%; height: 120px; object-fit: cover; display: block; }
+.card-img-wrap.no-text img { height: 100%; }
+.card-title-display { font-family: var(--font-display); font-weight: 400; font-size: 15px; color: var(--black); margin-top: 10px; }
+.card-body-display { font-family: var(--font-body); font-weight: 300; font-size: 11px; color: var(--gray-dark); line-height: 1.7; margin-top: 4px; }
+.card-text-title { font-family: var(--font-display); font-weight: 400; }
+.card-text-title.sm { font-size: 14px; }
+.card-text-title.md { font-size: 18px; }
+.card-text-title.lg { font-size: 26px; }
+.card-text-body { font-family: var(--font-body); font-weight: 300; font-size: 12px; color: var(--gray-dark); line-height: 1.7; margin-top: 6px; }
+.card-project-strip { height: 8px; background: var(--black); margin: -14px -16px 12px; }
+.card-project-title { font-family: var(--font-display); font-weight: 400; font-size: 16px; color: var(--black); margin-bottom: 4px; }
+.card-project-cat { font-family: var(--font-body); font-weight: 400; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-mid); margin-bottom: 8px; }
+.card-project-body { font-family: var(--font-body); font-weight: 300; font-size: 11px; color: var(--gray-dark); line-height: 1.6; margin-bottom: 10px; }
+.card-project-view { font-family: var(--font-body); font-weight: 400; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--black); border-bottom: 0.5px solid var(--gray-light); display: inline-block; }
+.card-link-body { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+.card-link-icon { font-size: 24px; color: var(--gray-light); margin-bottom: 10px; }
+.card-link-title { font-family: var(--font-display); font-weight: 400; font-size: 15px; color: var(--black); }
+.card-link-url { font-family: var(--font-body); font-weight: 300; font-size: 9px; color: var(--gray-mid); margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.card-swatch-block { position: absolute; top: 0; left: 0; right: 0; height: 70%; }
+.card-swatch-info { position: absolute; bottom: 0; left: 0; right: 0; height: 30%; padding: 8px 12px; }
+.card-swatch-name { font-family: var(--font-body); font-weight: 300; font-size: 11px; color: var(--black); }
+.card-swatch-hex { font-family: var(--font-body); font-weight: 300; font-size: 9px; color: var(--gray-mid); }
+.card-audio-icon { font-size: 20px; color: var(--gray-mid); }
+.card-audio-title { font-family: var(--font-display); font-weight: 400; font-size: 15px; color: var(--black); margin-top: 8px; }
+.card-audio-platform { font-family: var(--font-body); font-weight: 400; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-mid); margin-top: 4px; }
+.card-audio-embed { width: 100%; border: none; margin-top: 10px; }
+.card-audio-link { font-family: var(--font-body); font-weight: 300; font-size: 10px; color: var(--gray-dark); margin-top: 8px; display: inline-block; }
+
+/* ── PREVIEW OBJECT (archive) — same visual rules as archive-stack.html ── */
+.stack-object { transition: none; }
+.photo-object { width: 200px; height: 240px; background: var(--pure-white); border: 6px solid var(--pure-white); box-shadow: 3px 4px 16px rgba(0,0,0,0.12); display: flex; flex-direction: column; }
+.photo-object.portrait { width: 240px; height: 200px; }
+.photo-object img { width: 100%; flex: 1; min-height: 0; object-fit: cover; display: block; }
+.photo-object .obj-title { flex-shrink: 0; font-family: var(--font-body); font-weight: 300; font-size: 11px; color: var(--black); padding: 8px 10px; }
+.document-object { width: 180px; height: 240px; background: var(--pure-white); border: 0.5px solid var(--gray-faint); box-shadow: 2px 3px 12px rgba(0,0,0,0.08); overflow: hidden; }
+.document-object.portrait { width: 240px; height: 180px; }
+.document-object .doc-strip { height: 4px; background: var(--black); }
+.document-object .doc-body { padding: 14px 16px; }
+.document-object .obj-title { font-family: var(--font-display); font-weight: 400; font-size: 14px; color: var(--black); margin-bottom: 8px; }
+.document-object .doc-text { font-family: var(--font-body); font-weight: 300; font-size: 10px; color: var(--gray-dark); line-height: 1.6; background-image: repeating-linear-gradient(transparent, transparent 17px, var(--gray-faint) 17px, var(--gray-faint) 18px); }
+.sketch-object { width: 200px; height: 200px; background: var(--gray-faint); border: 1px solid var(--gray-light); box-shadow: 2px 3px 10px rgba(0,0,0,0.07); display: flex; flex-direction: column; }
+.sketch-object .sketch-fill { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.sketch-object .sketch-fill img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sketch-object .sketch-placeholder { font-size: 40px; color: var(--gray-light); }
+.sketch-object .obj-title { font-family: var(--font-body); font-weight: 300; font-size: 10px; color: var(--gray-mid); padding: 6px 10px; }
+.ticket-object { width: 280px; height: 100px; background: var(--pure-white); border: 0.5px solid var(--gray-faint); box-shadow: 2px 2px 8px rgba(0,0,0,0.08); display: flex; }
+.ticket-object.portrait { width: 160px; height: 240px; flex-direction: column; }
+.ticket-object .ticket-strip { width: 40px; background: var(--black); color: var(--white); writing-mode: vertical-rl; font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 0; text-align: center; flex-shrink: 0; }
+.ticket-object.portrait .ticket-strip { width: 100%; height: 32px; writing-mode: horizontal-tb; padding: 0 10px; display: flex; align-items: center; justify-content: center; }
+.ticket-object .ticket-content { flex: 1; padding: 10px 14px; border-left: 1px dashed var(--gray-light); display: flex; flex-direction: column; justify-content: center; }
+.ticket-object.portrait .ticket-content { border-left: none; border-top: 1px dashed var(--gray-light); }
+.ticket-object .obj-title { font-family: var(--font-display); font-weight: 400; font-size: 15px; color: var(--black); }
+.ticket-object .ticket-meta { font-family: var(--font-body); font-weight: 300; font-size: 9px; color: var(--gray-mid); margin-top: 4px; }
+.note-object { width: 160px; height: 160px; box-shadow: 2px 3px 10px rgba(0,0,0,0.1); padding: 14px; position: relative; }
+.note-object::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 0; border-style: solid; border-width: 14px 14px 0 0; border-color: rgba(0,0,0,0.08) transparent transparent transparent; }
+.note-object .note-body { font-family: var(--font-body); font-weight: 300; font-size: 12px; color: var(--black); line-height: 1.65; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">Card Designer</div>
+  <div class="topbar-center" id="type-label"></div>
+  <div class="topbar-right">
+    <span class="tb-cancel" onclick="cancelDesign()">Cancel</span>
+    <button class="tb-save" onclick="saveCard()">Save &amp; Return</button>
+  </div>
+</div>
+
+<div class="designer-main">
+  <div class="controls" id="controls"></div>
+  <div class="preview-panel">
+    <div class="preview-stage" id="preview-stage"></div>
+    <div class="live-preview-label">Live Preview</div>
+    <div class="error-msg" id="error-msg">Something went wrong. Please try again.</div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────
+const SUPABASE_URL = 'https://agekvrkqrwepdoeetpbx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const params = new URLSearchParams(window.location.search);
+const template = params.get('template') === 'archive' ? 'archive' : 'bulletin';
+const ARCHIVE_TYPES = ['photo', 'document', 'sketch', 'ticket', 'note'];
+let cardType = params.get('type') || (template === 'archive' ? 'photo' : 'text');
+const MUSE_ID = params.get('muse_id') || 'amelia-arabe';
+const editId = params.get('id');
+const isArchive = ARCHIVE_TYPES.includes(cardType);
+const tableName = template === 'archive' ? 'archive_stack_objects' : 'bulletin_board_cards';
+
+const PROJECT_LINKS = {
+  'muses-platform':     'Muses of Morenita Platform',
+  'kairos':             'Kairos',
+  'morenita-signals':   'Morenita Signals',
+  'ballmecca':          'Ballmecca',
+  'arnold':             'ARNOLD — SLF Terminator Rover',
+  'neurosect':          'Neurosect',
+  'maxine':             'MAXINE Recovery Device',
+  'oceanica':           'Oceánica Treatment Center',
+  'yk-entertainment':   'YK Entertainment',
+  'oil-paintings':      'Oil Paintings',
+  'cello-performances': 'Cello Performances',
+};
+
+const SIZE_PRESETS = {
+  sm:   { label: 'Small',  width: 180, height: 140 },
+  md:   { label: 'Medium', width: 240, height: 180 },
+  lg:   { label: 'Large',  width: 320, height: 240 },
+  wide: { label: 'Wide',   width: 360, height: 160 },
+};
+
+const TYPE_LABELS = { image: 'Image', text: 'Text', project: 'Project', link: 'Link', color: 'Color', audio: 'Audio', photo: 'Photo', document: 'Document', sketch: 'Sketch', ticket: 'Ticket', note: 'Note' };
+
+// which fields apply per type
+const TYPE_CONFIG = {
+  text:     { title: true,  body: true,  link: true,  style: 'full', fontSize: true,  image: false },
+  image:    { title: true,  body: true,  link: true,  style: 'bg',   fontSize: false, image: true },
+  project:  { title: true,  body: true,  link: true,  style: 'bg',   fontSize: false, image: false },
+  link:     { title: true,  body: false, link: true,  style: 'bg',   fontSize: false, image: false },
+  color:    { title: false, body: false, link: false, style: false, fontSize: false, image: false, colorSwatch: true },
+  audio:    { title: true,  body: false, link: false, style: 'bg',   fontSize: false, image: false, audioEmbed: true },
+  photo:    { title: true,  body: false, link: true,  image: true },
+  document: { title: true,  body: true,  link: true,  image: false },
+  sketch:   { title: true,  body: false, link: true,  image: true },
+  ticket:   { title: true,  body: false, link: false, ticket: true },
+  note:     { title: false, body: true,  link: true,  noteBg: true },
+};
+
+// ── STATE ──────────────────────────────────────────────
+const state = {
+  title: '',
+  body: '',
+  linkMode: 'url',
+  url: '',
+  projectId: '',
+  bgColor: '#ffffff',
+  textColor: '#0A0A0A',
+  fontSize: 'md',
+  rotation: 0,
+  sizePreset: 'md',
+  orientation: 'landscape',
+  imageUrl: '',
+  colorValue: '#CCCCCC',
+  ticketStrip: 'EVENT',
+  imageFile: null,
+  imageFileDataUrl: '',
+};
+
+let existingRow = null;
+
+// ── LOAD (edit mode) ─────────────────────────────────────
+async function loadExisting() {
+  if (!editId) return;
+  const { data, error } = await sb.from(tableName).select('*').eq('id', editId).maybeSingle();
+  if (error || !data) return;
+  existingRow = data;
+  cardType = data.type || cardType;
+  state.title = data.title || '';
+  state.body = data.body || '';
+  state.url = data.link_url || '';
+  state.projectId = data.project_id || '';
+  state.linkMode = data.project_id ? 'project' : 'url';
+  state.bgColor = data.bg_color || '#ffffff';
+  state.textColor = data.text_color || '#0A0A0A';
+  state.fontSize = data.font_size || 'md';
+  state.rotation = data.rotation || 0;
+  state.imageUrl = data.image_url || '';
+  state.colorValue = data.color || '#CCCCCC';
+  state.ticketStrip = data.body || 'EVENT';
+  if (!isArchive) {
+    let match = Object.entries(SIZE_PRESETS).find(([k, p]) => p.width === data.width && p.height === data.height);
+    if (match) {
+      state.sizePreset = match[0];
+      state.orientation = 'landscape';
+    } else {
+      match = Object.entries(SIZE_PRESETS).find(([k, p]) => p.height === data.width && p.width === data.height);
+      state.sizePreset = match ? match[0] : 'md';
+      state.orientation = match ? 'portrait' : 'landscape';
+    }
+  } else {
+    state.orientation = data.orientation || 'landscape';
+  }
+}
+
+// ── CONTROLS RENDERING ───────────────────────────────────
+function esc(s) { return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+
+function renderControls() {
+  const cfg = TYPE_CONFIG[cardType] || {};
+  let html = '';
+
+  if (cfg.colorSwatch) {
+    html += `
+      <div class="field">
+        <label class="field-label">Color</label>
+        <input type="color" class="swatch-preview" id="f-color" value="${esc(state.colorValue)}">
+      </div>
+      <div class="field">
+        <label class="field-label">Color Name</label>
+        <input type="text" id="f-title" placeholder="Terracotta" value="${esc(state.title)}">
+      </div>
+      <div class="field">
+        <label class="field-label">Hex</label>
+        <input type="text" id="f-hex" value="${esc(state.colorValue)}">
+      </div>
+    `;
+  }
+
+  if (cfg.title) {
+    html += `
+      <div class="field">
+        <label class="field-label">Title</label>
+        <input type="text" id="f-title" placeholder="Card title" value="${esc(state.title)}">
+      </div>
+    `;
+  }
+
+  if (cfg.ticket) {
+    html += `
+      <div class="field">
+        <label class="field-label">Left Strip Label <span class="field-hint">— max 12 characters</span></label>
+        <input type="text" id="f-ticket-strip" maxlength="12" placeholder="EVENT" value="${esc(state.ticketStrip)}">
+      </div>
+      <div class="field">
+        <label class="field-label">Meta</label>
+        <input type="text" id="f-url" placeholder="Date, venue, or a link" value="${esc(state.url)}">
+      </div>
+    `;
+  }
+
+  if (cfg.body) {
+    html += `
+      <div class="field">
+        <label class="field-label">Body</label>
+        <textarea id="f-body" rows="4" placeholder="Card copy">${esc(state.body)}</textarea>
+      </div>
+    `;
+  }
+
+  if (cfg.audioEmbed) {
+    html += `
+      <div class="field">
+        <label class="field-label">Spotify or SoundCloud URL</label>
+        <input type="url" id="f-url" placeholder="https://open.spotify.com/..." value="${esc(state.url)}">
+      </div>
+    `;
+  }
+
+  if (cfg.image) {
+    html += `
+      <div class="field">
+        <label class="field-label">Image</label>
+        <div class="upload-row">
+          <button type="button" class="upload-btn" onclick="document.getElementById('f-file').click()">Choose Image</button>
+          <span class="upload-name" id="f-file-name">${state.imageFile ? esc(state.imageFile.name) : 'No file chosen'}</span>
+        </div>
+        <input type="file" id="f-file" accept="image/*" style="display:none">
+        <input type="url" id="f-image-url" placeholder="or paste an image URL" value="${esc(state.imageUrl)}">
+      </div>
+    `;
+  }
+
+  if (cfg.link) {
+    html += `
+      <div class="field">
+        <label class="field-label">Link to Project or URL</label>
+        <div class="toggle-row">
+          <div class="toggle-opt ${state.linkMode === 'url' ? 'active' : ''}" onclick="setLinkMode('url')">External URL</div>
+          <div class="toggle-opt ${state.linkMode === 'project' ? 'active' : ''}" onclick="setLinkMode('project')">Project</div>
+        </div>
+        ${state.linkMode === 'url'
+          ? `<input type="url" id="f-url" placeholder="https://..." value="${esc(state.url)}">`
+          : `<select id="f-project">
+              <option value="">Choose a project</option>
+              ${Object.entries(PROJECT_LINKS).map(([slug, label]) => `<option value="${slug}" ${state.projectId === slug ? 'selected' : ''}>${esc(label)}</option>`).join('')}
+            </select>`}
+      </div>
+    `;
+  }
+
+  if (cfg.style === 'full' || cfg.style === 'bg') {
+    html += `
+      <div class="section-divider"></div>
+      <div class="field-label">Card Style</div>
+      <div class="field">
+        <label class="field-label">Background Color</label>
+        <div class="color-row">
+          <input type="color" id="f-bg-color" value="${esc(state.bgColor)}">
+          <input type="text" id="f-bg-hex" value="${esc(state.bgColor)}">
+        </div>
+      </div>
+      ${cfg.style === 'full' ? `
+      <div class="field">
+        <label class="field-label">Text Color</label>
+        <div class="color-row">
+          <input type="color" id="f-text-color" value="${esc(state.textColor)}">
+          <input type="text" id="f-text-hex" value="${esc(state.textColor)}">
+        </div>
+      </div>` : ''}
+    `;
+  }
+
+  if (cfg.noteBg) {
+    html += `
+      <div class="section-divider"></div>
+      <div class="field">
+        <label class="field-label">Note Color</label>
+        <div class="btn-row">
+          <button type="button" class="preset-btn ${state.bgColor === '#FFFEF0' ? 'active' : ''}" onclick="setNoteBg('#FFFEF0')">Off-white</button>
+          <button type="button" class="preset-btn ${state.bgColor === '#F4F4F4' ? 'active' : ''}" onclick="setNoteBg('#F4F4F4')">Light gray</button>
+          <button type="button" class="preset-btn ${state.bgColor === '#FFFFFF' ? 'active' : ''}" onclick="setNoteBg('#FFFFFF')">Pure white</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (cfg.fontSize) {
+    html += `
+      <div class="section-divider"></div>
+      <div class="field">
+        <label class="field-label">Font Size</label>
+        <div class="btn-row">
+          <button type="button" class="preset-btn ${state.fontSize === 'sm' ? 'active' : ''}" onclick="setFontSize('sm')">S</button>
+          <button type="button" class="preset-btn ${state.fontSize === 'md' ? 'active' : ''}" onclick="setFontSize('md')">M</button>
+          <button type="button" class="preset-btn ${state.fontSize === 'lg' ? 'active' : ''}" onclick="setFontSize('lg')">L</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (isArchive) {
+    html += `
+      <div class="section-divider"></div>
+      <div class="field">
+        <label class="field-label">Rotation</label>
+        <input type="range" id="f-rotation" min="-30" max="30" value="${state.rotation}" style="width:100%">
+      </div>
+    `;
+  }
+
+  if (!isArchive) {
+    html += `
+      <div class="section-divider"></div>
+      <div class="field">
+        <label class="field-label">Size</label>
+        <div class="btn-row">
+          ${Object.entries(SIZE_PRESETS).map(([k, p]) => `<button type="button" class="preset-btn ${state.sizePreset === k ? 'active' : ''}" onclick="setSizePreset('${k}')">${p.label}</button>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // square types (sketch, note) ignore orientation — swapping width/height is a no-op
+  const canOrient = !isArchive || ['photo', 'document', 'ticket'].includes(cardType);
+  if (canOrient) {
+    html += `
+      <div class="field">
+        <label class="field-label">Orientation</label>
+        <div class="toggle-row">
+          <div class="toggle-opt ${state.orientation === 'landscape' ? 'active' : ''}" onclick="setOrientation('landscape')">Landscape</div>
+          <div class="toggle-opt ${state.orientation === 'portrait' ? 'active' : ''}" onclick="setOrientation('portrait')">Portrait</div>
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById('controls').innerHTML = html;
+  wireControlEvents();
+}
+
+function wireControlEvents() {
+  const byId = (id) => document.getElementById(id);
+  if (byId('f-title')) byId('f-title').addEventListener('input', e => { state.title = e.target.value; updatePreview(); });
+  if (byId('f-body')) byId('f-body').addEventListener('input', e => { state.body = e.target.value; updatePreview(); });
+  if (byId('f-ticket-strip')) byId('f-ticket-strip').addEventListener('input', e => { state.ticketStrip = e.target.value.slice(0, 12); updatePreview(); });
+  if (byId('f-url')) byId('f-url').addEventListener('input', e => { state.url = e.target.value; updatePreview(); });
+  if (byId('f-image-url')) byId('f-image-url').addEventListener('input', e => { state.imageUrl = e.target.value; state.imageFile = null; updatePreview(); });
+  if (byId('f-project')) byId('f-project').addEventListener('change', e => { state.projectId = e.target.value; updatePreview(); });
+  if (byId('f-color')) byId('f-color').addEventListener('input', e => { state.colorValue = e.target.value; const hex = byId('f-hex'); if (hex) hex.value = e.target.value; updatePreview(); });
+  if (byId('f-hex')) byId('f-hex').addEventListener('input', e => { state.colorValue = e.target.value; const c = byId('f-color'); if (c) c.value = e.target.value; updatePreview(); });
+  if (byId('f-bg-color')) byId('f-bg-color').addEventListener('input', e => { state.bgColor = e.target.value; byId('f-bg-hex').value = e.target.value; updatePreview(); });
+  if (byId('f-bg-hex')) byId('f-bg-hex').addEventListener('input', e => { state.bgColor = e.target.value; byId('f-bg-color').value = e.target.value; updatePreview(); });
+  if (byId('f-text-color')) byId('f-text-color').addEventListener('input', e => { state.textColor = e.target.value; byId('f-text-hex').value = e.target.value; updatePreview(); });
+  if (byId('f-text-hex')) byId('f-text-hex').addEventListener('input', e => { state.textColor = e.target.value; byId('f-text-color').value = e.target.value; updatePreview(); });
+  if (byId('f-rotation')) byId('f-rotation').addEventListener('input', e => { state.rotation = parseFloat(e.target.value); updatePreview(); });
+  if (byId('f-file')) byId('f-file').addEventListener('change', onFileChosen);
+}
+
+function setLinkMode(mode) { state.linkMode = mode; renderControls(); updatePreview(); }
+function setFontSize(size) { state.fontSize = size; renderControls(); updatePreview(); }
+function setSizePreset(preset) { state.sizePreset = preset; renderControls(); updatePreview(); }
+function setNoteBg(hex) { state.bgColor = hex; renderControls(); updatePreview(); }
+function setOrientation(o) { state.orientation = o; renderControls(); updatePreview(); }
+
+function onFileChosen(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  state.imageFile = file;
+  state.imageUrl = '';
+  document.getElementById('f-file-name').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = (ev) => { state.imageFileDataUrl = ev.target.result; updatePreview(); };
+  reader.readAsDataURL(file);
+}
+
+// ── PREVIEW RENDERING ────────────────────────────────────
+function updatePreview() {
+  const stage = document.getElementById('preview-stage');
+  const displayImage = state.imageFileDataUrl || state.imageUrl;
+
+  if (isArchive) {
+    const el = document.createElement('div');
+    el.className = `stack-object preview-item ${cardType}-object` + (state.orientation === 'portrait' ? ' portrait' : '');
+    el.style.transform = `rotate(${state.rotation}deg)`;
+    if (cardType === 'note') el.style.background = state.bgColor || '#FFFEF0';
+    el.innerHTML = renderArchivePreviewBody(displayImage);
+    stage.innerHTML = '';
+    stage.appendChild(el);
+  } else {
+    const preset = SIZE_PRESETS[state.sizePreset];
+    const [w, h] = state.orientation === 'portrait' ? [preset.height, preset.width] : [preset.width, preset.height];
+    const el = document.createElement('div');
+    el.className = 'board-card preview-item';
+    el.style.width = w + 'px';
+    el.style.minHeight = h + 'px';
+    el.style.background = state.bgColor || '#ffffff';
+    el.innerHTML = renderBulletinPreviewBody(displayImage);
+    stage.innerHTML = '';
+    stage.appendChild(el);
+  }
+
+  document.getElementById('type-label').textContent = TYPE_LABELS[cardType] || cardType;
+}
+
+function renderBulletinPreviewBody(displayImage) {
+  const typeTag = `<div class="card-type-tag">${TYPE_LABELS[cardType]}</div>`;
+  const linkArrow = (state.linkMode === 'url' ? state.url : state.projectId) ? `<div class="card-link-arrow">↗</div>` : '';
+  let body = '';
+  switch (cardType) {
+    case 'image': {
+      const hasText = state.title || state.body;
+      body = `
+        <div class="card-img-wrap ${hasText ? '' : 'no-text'}">${displayImage ? `<img src="${esc(displayImage)}" alt="">` : ''}</div>
+        ${state.title ? `<div class="card-title-display">${esc(state.title)}</div>` : ''}
+        ${state.body ? `<div class="card-body-display">${esc(state.body)}</div>` : ''}
+      `;
+      break;
+    }
+    case 'text':
+      body = `
+        ${state.title ? `<div class="card-text-title ${state.fontSize}" style="color:${esc(state.textColor)}">${esc(state.title)}</div>` : ''}
+        ${state.body ? `<div class="card-text-body">${esc(state.body)}</div>` : ''}
+      `;
+      break;
+    case 'project':
+      body = `
+        <div class="card-project-strip"></div>
+        <div class="card-project-title">${esc(state.title)}</div>
+        <div class="card-project-cat">${esc((state.body || '').split('\n')[0])}</div>
+        <div class="card-project-body">${esc(state.body || '')}</div>
+        <div class="card-project-view">View Project</div>
+      `;
+      break;
+    case 'link':
+      body = `
+        <div class="card-link-body">
+          <div class="card-link-icon">↗</div>
+          <div class="card-link-title">${esc(state.title)}</div>
+          <div class="card-link-url">${esc(state.url || '')}</div>
+        </div>
+      `;
+      break;
+    case 'color':
+      body = `
+        <div class="card-swatch-block" style="background:${esc(state.colorValue)}"></div>
+        <div class="card-swatch-info">
+          <div class="card-swatch-name">${esc(state.title || '')}</div>
+          <div class="card-swatch-hex">${esc(state.colorValue)}</div>
+        </div>
+      `;
+      break;
+    case 'audio': {
+      const isSpotify = /open\.spotify\.com/.test(state.url || '');
+      const platform = isSpotify ? 'Spotify' : (/soundcloud\.com/.test(state.url || '') ? 'SoundCloud' : '');
+      body = `
+        <div class="card-audio-icon">♪</div>
+        <div class="card-audio-title">${esc(state.title || '')}</div>
+        ${platform ? `<div class="card-audio-platform">${platform}</div>` : ''}
+        ${isSpotify ? `<iframe class="card-audio-embed" src="${esc(state.url.replace('open.spotify.com/', 'open.spotify.com/embed/'))}" height="80" frameborder="0" allow="encrypted-media"></iframe>` : (state.url ? `<a class="card-audio-link" href="${esc(state.url)}" target="_blank" rel="noopener">Listen ↗</a>` : '')}
+      `;
+      break;
+    }
+  }
+  return typeTag + body + linkArrow;
+}
+
+function renderArchivePreviewBody(displayImage) {
+  switch (cardType) {
+    case 'photo':
+      return `${displayImage ? `<img src="${esc(displayImage)}" alt="">` : ''}<div class="obj-title">${esc(state.title || '')}</div>`;
+    case 'document':
+      return `<div class="doc-strip"></div><div class="doc-body"><div class="obj-title">${esc(state.title || '')}</div><div class="doc-text">${esc(state.body || '')}</div></div>`;
+    case 'sketch':
+      return `<div class="sketch-fill">${displayImage ? `<img src="${esc(displayImage)}" alt="">` : `<span class="sketch-placeholder">&#9998;</span>`}</div><div class="obj-title">${esc(state.title || '')}</div>`;
+    case 'ticket':
+      return `<div class="ticket-strip">${esc(state.ticketStrip || 'EVENT')}</div><div class="ticket-content"><div class="obj-title">${esc(state.title || '')}</div><div class="ticket-meta">${esc(state.url || '')}</div></div>`;
+    case 'note':
+      return `<div class="note-body">${esc(state.body || '')}</div>`;
+    default:
+      return '';
+  }
+}
+
+// ── SAVE ───────────────────────────────────────────────
+async function uploadImage(file, cardId) {
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const path = `${MUSE_ID}/${cardId}/image.${ext}`;
+  const { error } = await sb.storage.from('card-images').upload(path, file, { upsert: true });
+  if (error) throw error;
+  const { data } = sb.storage.from('card-images').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+function buildBaseData() {
+  const cfg = TYPE_CONFIG[cardType] || {};
+  const data = {
+    muse_id: MUSE_ID,
+    type: cardType,
+    title: cfg.colorSwatch ? state.title : (cfg.title ? state.title : null),
+    body: cfg.ticket ? state.ticketStrip : (cfg.body ? state.body : null),
+    link_url: cfg.ticket ? (state.url || null) : (cfg.audioEmbed ? (state.url || null) : (cfg.link && state.linkMode === 'url' ? (state.url || null) : null)),
+    project_id: (cfg.link && state.linkMode === 'project') ? (state.projectId || null) : null,
+    color: cfg.colorSwatch ? state.colorValue : null,
+    rotation: isArchive ? state.rotation : 0,
+    bg_color: state.bgColor || '#ffffff',
+  };
+  if (!isArchive) {
+    const preset = SIZE_PRESETS[state.sizePreset];
+    const [w, h] = state.orientation === 'portrait' ? [preset.height, preset.width] : [preset.width, preset.height];
+    data.width = w;
+    data.height = h;
+    data.text_color = state.textColor || '#0A0A0A';
+    data.font_size = state.fontSize || 'md';
+  } else {
+    data.orientation = state.orientation;
+  }
+  return data;
+}
+
+async function saveCard() {
+  const errorEl = document.getElementById('error-msg');
+  errorEl.classList.remove('visible');
+  try {
+    const data = buildBaseData();
+    const cfg = TYPE_CONFIG[cardType] || {};
+
+    let imageUrl = state.imageUrl || (existingRow ? existingRow.image_url : null) || null;
+
+    if (existingRow) {
+      if (cfg.image && state.imageFile) imageUrl = await uploadImage(state.imageFile, existingRow.id);
+      data.image_url = imageUrl;
+      const { error } = await sb.from(tableName).update({ ...data, updated_at: new Date() }).eq('id', existingRow.id);
+      if (error) throw error;
+    } else {
+      const newId = (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + '-' + Math.random().toString(16).slice(2));
+      if (cfg.image && state.imageFile) imageUrl = await uploadImage(state.imageFile, newId);
+      data.id = newId;
+      data.image_url = imageUrl;
+      data.z_index = 1;
+      data.x = 200;
+      data.y = 200;
+      const { error } = await sb.from(tableName).insert([data]);
+      if (error) throw error;
+    }
+
+    window.location.href = template === 'archive' ? 'archive-stack.html' : 'bulletin-board.html';
+  } catch (err) {
+    console.error(err);
+    errorEl.classList.add('visible');
+  }
+}
+
+function cancelDesign() {
+  window.location.href = template === 'archive' ? 'archive-stack.html' : 'bulletin-board.html';
+}
+
+// ── INIT ───────────────────────────────────────────────
+(async function init() {
+  await loadExisting();
+  renderControls();
+  updatePreview();
+})();
+</script>
+</body>
+</html>

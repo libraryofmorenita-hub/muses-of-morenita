@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline — Muses of Morenita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  :root{
+    --ink:#111111;
+    --mid:#666666;
+    --faint:#ababab;
+    --line:#dcdcdc;
+    --fill:#f5f5f4;
+    --paper:#ffffff;
+    --radius:10px;
+    --display:'Cormorant Garamond', serif;
+    --body:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{font-family:var(--body); color:var(--ink); background:var(--paper); font-size:13px; line-height:1.5;}
+  ::selection{background:var(--ink); color:var(--paper);}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px 80px;}
+
+  /* ── Header ── */
+  header{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:34px 0 22px; border-bottom:1px solid var(--ink); flex-wrap:wrap; gap:8px;
+  }
+  .wordmark{font-family:var(--display); font-size:30px; font-weight:600; letter-spacing:.01em;}
+  .wordmark em{font-style:italic; font-weight:500; color:var(--mid);}
+  .meta{font-size:11px; color:var(--mid); letter-spacing:.08em; text-transform:uppercase;}
+  .header-right{display:flex; align-items:baseline; gap:20px;}
+  .sign-out{font-size:11px; color:var(--faint); cursor:pointer; background:none; border:none; font-family:var(--body); letter-spacing:.06em; text-transform:uppercase;}
+  .sign-out:hover{color:var(--ink);}
+
+  /* ── Tally ── */
+  .tally{display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid var(--line);}
+  .tally > div{padding:18px 20px 16px; border-right:1px solid var(--line);}
+  .tally > div:last-child{border-right:none;}
+  .tally .n{font-family:var(--display); font-size:34px; font-weight:600; line-height:1;}
+  .tally .l{font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--mid); margin-top:5px;}
+
+  /* ── Section labels ── */
+  .sec{
+    font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--mid);
+    margin:30px 0 12px; display:flex; align-items:center; gap:10px;
+  }
+  .sec::after{content:''; flex:1; height:1px; background:var(--line);}
+  .sec-action{
+    margin-left:auto; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--mid); cursor:pointer; background:none; border:none; font-family:var(--body);
+    padding:0; flex-shrink:0;
+  }
+  .sec-action:hover{color:var(--ink);}
+  .sec-row{display:flex; align-items:center; margin:30px 0 12px; gap:10px;}
+  .sec-row .sec{margin:0; flex:1;}
+  .sec-row .sec::after{display:none;}
+  .sec-row::after{content:''; flex:1; height:1px; background:var(--line);}
+
+  /* ── Queue ── */
+  .queue{display:flex; flex-direction:column; gap:0; border:1px solid var(--ink); border-radius:var(--radius); overflow:hidden;}
+  .q-item{
+    display:flex; align-items:center; gap:14px; padding:11px 16px;
+    border-bottom:1px solid var(--line); cursor:pointer; background:var(--paper); transition:background .12s ease;
+  }
+  .q-item:last-child{border-bottom:none;}
+  .q-item:hover{background:var(--fill);}
+  .q-item.done .q-text{text-decoration:line-through; color:var(--faint);}
+  .q-item.done .q-num{color:var(--faint); border-color:var(--faint);}
+  .q-num{
+    width:22px; height:22px; border:1px solid var(--ink); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; flex-shrink:0;
+  }
+  .q-item.done .q-num::after{content:'✓';}
+  .q-item.done .q-num span{display:none;}
+  .q-text{flex:1;}
+  .q-text b{font-weight:600;}
+  .q-tag{font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--mid); flex-shrink:0;}
+  .q-add{
+    display:flex; gap:8px; padding:10px 14px; border-top:1px dashed var(--line);
+    background:var(--fill); margin-top:0;
+  }
+  .q-add input{
+    flex:1; border:none; background:transparent; font-family:var(--body); font-size:12px;
+    color:var(--ink); outline:none;
+  }
+  .q-add input::placeholder{color:var(--faint);}
+  .q-add-tag{width:70px; border:none; background:transparent; font-family:var(--body); font-size:11px; color:var(--mid); outline:none; text-transform:uppercase; letter-spacing:.06em;}
+  .q-add-tag::placeholder{color:var(--faint);}
+  .q-add-btn{font-size:11px; border:1px solid var(--line); border-radius:4px; padding:3px 10px; cursor:pointer; background:var(--paper); font-family:var(--body); color:var(--mid);}
+  .q-add-btn:hover{border-color:var(--ink); color:var(--ink);}
+
+  /* ── Board ── */
+  .board{display:grid; grid-template-columns:1fr 268px; gap:36px; align-items:start;}
+
+  /* ── Filters ── */
+  .filters{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; align-items:center;}
+  .chip{
+    font-family:var(--body); font-size:11px; padding:5px 12px;
+    border:1px solid var(--line); border-radius:999px; background:var(--paper);
+    cursor:pointer; color:var(--mid); transition:all .12s ease;
+  }
+  .chip:hover{border-color:var(--ink); color:var(--ink);}
+  .chip.on{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+  .search{
+    margin-left:auto; font-family:var(--body); font-size:12px;
+    border:none; border-bottom:1px solid var(--line); padding:5px 6px;
+    width:150px; outline:none; background:transparent; color:var(--ink);
+  }
+  .search:focus{border-bottom-color:var(--ink);}
+  .search::placeholder{color:var(--faint);}
+
+  /* ── Table ── */
+  table{width:100%; border-collapse:collapse;}
+  thead th{
+    text-align:left; font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--mid); font-weight:500; padding:10px 10px 8px; border-bottom:1px solid var(--ink);
+  }
+  tbody tr{border-bottom:1px solid var(--line); cursor:pointer;}
+  tbody tr:hover{background:var(--fill);}
+  tbody td{padding:11px 10px; vertical-align:top;}
+  .co{font-weight:600;}
+  .ro{color:var(--mid); font-size:12px;}
+  .pri{font-variant-numeric:tabular-nums; color:var(--mid);}
+  .cm{font-variant-numeric:tabular-nums; color:var(--mid); white-space:nowrap;}
+
+  .glyph{display:flex; align-items:center; white-space:nowrap;}
+  .dot{width:8px; height:8px; border-radius:50%; border:1px solid var(--ink); background:var(--paper); flex-shrink:0;}
+  .dot.fill{background:var(--ink);}
+  .glyph.dead .dot{border-color:var(--faint);}
+  .glyph.dead .dot.fill{background:var(--faint);}
+  .glyph.dead .seg{background:var(--faint);}
+  .seg{width:12px; height:1px; background:var(--ink); flex-shrink:0;}
+  .st-label{font-size:10px; letter-spacing:.1em; text-transform:uppercase; margin-left:9px; color:var(--mid);}
+  tr.is-interview .st-label{color:var(--ink); font-weight:600;}
+
+  /* ── Detail row ── */
+  tr.detail td{background:var(--fill); font-size:12px; color:var(--mid); padding:12px 14px; border-bottom:1px solid var(--line);}
+  tr.detail b{color:var(--ink); font-weight:600;}
+  .d-contact{margin-top:5px;}
+  .detail-actions{display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap;}
+  .detail-actions select{
+    font-family:var(--body); font-size:11px; border:1px solid var(--line);
+    border-radius:4px; padding:4px 8px; background:var(--paper); color:var(--ink); cursor:pointer;
+  }
+  .detail-actions select:focus{outline:none; border-color:var(--ink);}
+  .btn-sm{
+    font-family:var(--body); font-size:11px; padding:4px 10px;
+    border:1px solid var(--line); border-radius:4px; background:var(--paper);
+    color:var(--mid); cursor:pointer;
+  }
+  .btn-sm:hover{border-color:var(--ink); color:var(--ink);}
+  .btn-sm.danger:hover{border-color:#c00; color:#c00;}
+
+  /* ── Edit form inside detail row ── */
+  .edit-form{display:flex; flex-direction:column; gap:10px;}
+  .edit-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .edit-form input, .edit-form select, .edit-form textarea{
+    font-family:var(--body); font-size:12px; border:1px solid var(--line);
+    padding:6px 9px; background:var(--paper); color:var(--ink); border-radius:4px; outline:none;
+  }
+  .edit-form input:focus, .edit-form select:focus, .edit-form textarea:focus{border-color:var(--ink);}
+  .edit-form textarea{min-height:70px; resize:vertical; width:100%;}
+  .edit-form .ef-co{flex:1; min-width:140px;}
+  .edit-form .ef-ro{flex:2; min-width:200px;}
+  .edit-form .ef-sm{width:90px;}
+  .edit-btns{display:flex; gap:8px;}
+  .btn-save-sm{
+    font-family:var(--body); font-size:11px; padding:5px 14px;
+    border:1px solid var(--ink); border-radius:4px; background:var(--ink);
+    color:var(--paper); cursor:pointer;
+  }
+  .btn-save-sm:hover{opacity:.85;}
+
+  /* ── Rail ── */
+  .rail .sec{margin-top:0;}
+  .rail-block{margin-bottom:30px;}
+  .track{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:10px 14px; border-bottom:1px solid var(--line);
+    cursor:pointer; transition:padding .12s ease;
+  }
+  .track:hover{padding-left:20px;}
+  .track.on .t-name{font-weight:600;}
+  .track.on{border-bottom-color:var(--ink);}
+  .t-name{font-size:12px;}
+  .t-data{font-size:11px; color:var(--mid); font-variant-numeric:tabular-nums;}
+  .person{padding:10px 14px; border-bottom:1px solid var(--line); font-size:12px;}
+  .person b{font-weight:600; display:block;}
+  .person span{color:var(--mid); font-size:11px;}
+
+  /* ── Movement ── */
+  .m-item{display:flex; justify-content:space-between; gap:10px; padding:10px 14px; border-bottom:1px solid var(--line); font-size:12px;}
+  .m-item span{color:var(--mid); font-size:11px; white-space:nowrap;}
+  .m-add{display:flex; gap:6px; margin-top:8px; padding:0 14px;}
+  .m-add input{
+    flex:1; border:none; border-bottom:1px solid var(--line); font-family:var(--body); font-size:11px;
+    color:var(--ink); padding:4px 0; outline:none; background:transparent;
+  }
+  .m-add input::placeholder{color:var(--faint);}
+  .m-add button{font-size:10px; border:1px solid var(--line); border-radius:4px; padding:3px 9px; cursor:pointer; background:var(--paper); font-family:var(--body); color:var(--mid);}
+  .m-add button:hover{border-color:var(--ink); color:var(--ink);}
+
+  /* ── Add-application modal ── */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.35); display:none;
+    align-items:center; justify-content:center; z-index:100;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-card{
+    background:var(--paper); border-radius:var(--radius); padding:28px 32px;
+    width:min(640px, 92vw); max-height:88vh; overflow-y:auto;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .modal-title{font-family:var(--display); font-size:22px; font-weight:600; margin-bottom:4px;}
+  .modal-row{display:flex; gap:12px; flex-wrap:wrap;}
+  .modal-field{display:flex; flex-direction:column; gap:5px; flex:1; min-width:180px;}
+  .modal-field.full{min-width:100%; flex:none;}
+  .modal-field label{font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--mid);}
+  .modal-field input, .modal-field select, .modal-field textarea{
+    font-family:var(--body); font-size:13px; border:1px solid var(--line);
+    padding:8px 10px; background:var(--paper); color:var(--ink); border-radius:4px; outline:none;
+  }
+  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus{border-color:var(--ink);}
+  .modal-field textarea{min-height:80px; resize:vertical;}
+  .modal-actions{display:flex; gap:10px; margin-top:4px;}
+  .btn-primary{
+    font-family:var(--body); font-size:12px; padding:8px 20px;
+    background:var(--ink); color:var(--paper); border:none; border-radius:4px; cursor:pointer;
+  }
+  .btn-primary:hover{opacity:.85;}
+  .btn-cancel{
+    font-family:var(--body); font-size:12px; padding:8px 16px;
+    background:transparent; color:var(--mid); border:1px solid var(--line); border-radius:4px; cursor:pointer;
+  }
+  .btn-cancel:hover{border-color:var(--ink); color:var(--ink);}
+
+  /* ── Loading / mobile ── */
+  #loading{padding:60px 0; text-align:center; color:var(--faint); font-size:12px; letter-spacing:.1em; text-transform:uppercase;}
+  #main{display:none;}
+  .mobile-note{display:none;}
+  .movement-zone{display:none;}
+  @media (max-width:880px){
+    .wrap{padding:0 18px 60px;}
+    .board{grid-template-columns:1fr;}
+    .tally .n{font-size:26px;}
+    .table-zone, .rail .rail-tracks, .rail .rail-slot{display:none;}
+    .mobile-note{display:block; margin-top:26px; border:1px dashed var(--faint); border-radius:var(--radius); padding:16px 18px; font-size:12px; color:var(--mid); line-height:1.65;}
+    .mobile-note b{color:var(--ink);}
+    header{padding:24px 0 16px;}
+    .wordmark{font-size:24px;}
+    .movement-zone{display:block;}
+  }
+  @media (prefers-reduced-motion: reduce){*{transition:none !important;}}
+</style>
+</head>
+<body>
+
+<div id="loading">Loading Pipeline…</div>
+
+<div id="main">
+<div class="wrap">
+
+  <header>
+    <div class="wordmark">Pipeline <em>— Muses of Morenita</em></div>
+    <div class="header-right">
+      <div class="meta" id="header-meta"></div>
+      <button class="sign-out" onclick="signOut()">Sign out</button>
+    </div>
+  </header>
+
+  <div class="tally" id="tally"></div>
+
+  <div class="sec-row">
+    <div class="sec" style="margin:0;">Today — in order</div>
+    <button class="sec-action" onclick="openQueueAdd()">+ Add item</button>
+    <div style="flex:1; height:1px; background:var(--line);"></div>
+  </div>
+  <div class="queue" id="queue"></div>
+  <div class="q-add" id="q-add-form" style="display:none; border:1px solid var(--ink); border-radius:0 0 var(--radius) var(--radius); border-top:1px dashed var(--line);">
+    <input id="q-add-text" type="text" placeholder="What needs to happen today…">
+    <input class="q-add-tag" id="q-add-tag" type="text" placeholder="Tag">
+    <button class="q-add-btn" onclick="addQueueItem()">Add</button>
+    <button class="q-add-btn" onclick="closeQueueAdd()">✕</button>
+  </div>
+
+  <div class="movement-zone" id="movement-zone">
+    <div class="sec">Movement this week</div>
+    <div id="movement-mobile"></div>
+  </div>
+  <div class="mobile-note">
+    <b>This is your check-in.</b> The full board — filters, tracks, contacts — lives on the desktop view. Clear what you can from the queue above, then give it real attention at the laptop.
+  </div>
+
+  <div class="board">
+    <div class="table-zone">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin:30px 0 0;">
+        <div class="sec" style="margin:0; flex:1;">Board</div>
+        <button class="sec-action" onclick="openModal()" style="margin:0 12px 0 8px;">+ Add</button>
+      </div>
+      <div class="filters" id="filters" style="margin-top:12px;">
+        <input class="search" id="search" type="text" placeholder="Search…" aria-label="Search applications">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:44%">Company / Role</th>
+            <th>Stage</th>
+            <th style="width:36px">Pri</th>
+            <th style="width:60px">Drive</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <aside class="rail">
+      <div class="rail-block rail-tracks">
+        <div class="sec">Tracks</div>
+        <div id="tracks"></div>
+      </div>
+      <div class="rail-block">
+        <div class="sec">People</div>
+        <div id="people"></div>
+      </div>
+      <div class="rail-block">
+        <div class="sec">Movement</div>
+        <div id="movement"></div>
+        <div class="m-add">
+          <input id="m-add-text" type="text" placeholder="Log something…">
+          <button onclick="addMovement()">Log</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+</div>
+</div>
+
+<!-- Add / Edit application modal -->
+<div class="modal-overlay" id="modal" onclick="handleOverlay(event)">
+  <div class="modal-card">
+    <div class="modal-title" id="modal-title">Add Application</div>
+    <div class="modal-row">
+      <div class="modal-field" style="flex:1.2;">
+        <label>Company</label>
+        <input id="m-co" type="text" placeholder="Company name">
+      </div>
+      <div class="modal-field" style="flex:2;">
+        <label>Role</label>
+        <input id="m-ro" type="text" placeholder="Job title">
+      </div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field">
+        <label>Status</label>
+        <select id="m-st">
+          <option>Research</option><option>Applied</option>
+          <option>Interview</option><option>Offer</option><option>Rejected</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Tier</label>
+        <select id="m-tier">
+          <option value="T1">T1 — Dream</option>
+          <option value="T2" selected>T2 — Strong</option>
+          <option value="T3">T3 — Reach/backup</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Priority (1–5)</label>
+        <input id="m-pri" type="number" min="1" max="5" value="3">
+      </div>
+      <div class="modal-field">
+        <label>Commute (min)</label>
+        <input id="m-cm" type="number" placeholder="—">
+      </div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field" style="flex:1;">
+        <label>Track</label>
+        <input id="m-track" type="text" placeholder="South Bay Space, Fashion & Commerce…">
+      </div>
+      <div class="modal-field" style="flex:1;">
+        <label>Contact</label>
+        <input id="m-who" type="text" placeholder="Name (context)">
+      </div>
+    </div>
+    <div class="modal-field full">
+      <label>Notes</label>
+      <textarea id="m-notes" placeholder="Location, comp, context, next steps…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveApp()">Save</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Supabase ────────────────────────────────────────────
+const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
+const sb = supabase.createClient(SB_URL, SB_ANON);
+
+// ── State ───────────────────────────────────────────────
+const state = {
+  user:     null,
+  apps:     [],
+  queue:    [],
+  movement: [],
+  fStatus:  'All',
+  fTrack:   null,
+  fText:    '',
+  openId:   null,   // expanded row
+  editId:   null,   // row currently in edit-form mode
+  editingAppId: null, // modal: null = new, uuid = edit
+};
+
+const $ = id => document.getElementById(id);
+const STAGES = ['Research','Applied','Interview','Offer'];
+const TRACK_ORDER = ['Pasadena Science','City & Culture','South Bay Space','Fashion & Commerce','Software & Media','Mobility & Other','Space — Other'];
+
+// ── Auth ────────────────────────────────────────────────
+async function init() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) {
+    window.location.href = './app/muses-of-morenita-site.html#/login';
+    return;
+  }
+  state.user = user;
+
+  const [appsRes, queueRes, moveRes, profileRes] = await Promise.all([
+    sb.from('job_applications').select('*').eq('user_id', user.id)
+      .order('priority', { ascending: false }).order('created_at'),
+    sb.from('job_queue_items').select('*').eq('user_id', user.id)
+      .eq('done', false).order('sort_order'),
+    sb.from('job_movement').select('*').eq('user_id', user.id)
+      .order('created_at', { ascending: false }).limit(8),
+    sb.from('profiles').select('display_name').eq('id', user.id).maybeSingle(),
+  ]);
+
+  state.apps     = appsRes.data  || [];
+  state.queue    = queueRes.data || [];
+  state.movement = moveRes.data  || [];
+
+  const name = profileRes.data?.display_name || user.email;
+  const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  $('header-meta').textContent = `Live · ${today} · ${name}`;
+
+  $('loading').style.display = 'none';
+  $('main').style.display    = '';
+
+  setupFilters();
+  renderAll();
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  window.location.href = './app/muses-of-morenita-site.html#/login';
+}
+
+// ── Render all ──────────────────────────────────────────
+function renderAll() {
+  renderTally();
+  renderQueue();
+  renderMovement();
+  renderTracks();
+  renderPeople();
+  render();
+}
+
+// ── Tally ───────────────────────────────────────────────
+function renderTally() {
+  const c = state.apps.reduce((a, r) => { a[r.status] = (a[r.status] || 0) + 1; return a; }, {});
+  $('tally').innerHTML = `
+    <div><div class="n">${c.Interview || 0}</div><div class="l">Interview</div></div>
+    <div><div class="n">${c.Applied   || 0}</div><div class="l">Applied</div></div>
+    <div><div class="n">${c.Research  || 0}</div><div class="l">Research</div></div>
+    <div><div class="n">${c.Rejected  || 0}</div><div class="l">Closed</div></div>`;
+}
+
+// ── Queue ───────────────────────────────────────────────
+function renderQueue() {
+  const el = $('queue');
+  if (!state.queue.length) {
+    el.innerHTML = '<div class="q-item" style="cursor:default;color:var(--faint);">Queue is clear — add a task above.</div>';
+    return;
+  }
+  el.innerHTML = state.queue.map((q, i) => `
+    <div class="q-item${q.done ? ' done' : ''}" data-qid="${q.id}" role="button" tabindex="0" aria-pressed="${q.done}">
+      <span class="q-num"><span>${i + 1}</span></span>
+      <span class="q-text">${q.text}</span>
+      <span class="q-tag">${q.tag || ''}</span>
+    </div>`).join('');
+
+  el.querySelectorAll('.q-item[data-qid]').forEach(it => {
+    it.onclick = () => toggleQueue(it.dataset.qid, it);
+    it.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleQueue(it.dataset.qid, it); } };
+  });
+}
+
+async function toggleQueue(id, el) {
+  const item = state.queue.find(q => q.id === id);
+  if (!item) return;
+  const done = !item.done;
+  item.done = done;
+  el.classList.toggle('done', done);
+  el.setAttribute('aria-pressed', done);
+  // persist — done items removed from queue on next load (they stay in DB for history)
+  await sb.from('job_queue_items').update({ done, done_at: done ? new Date().toISOString() : null }).eq('id', id);
+}
+
+function openQueueAdd() {
+  $('q-add-form').style.display = 'flex';
+  $('q-add-text').focus();
+}
+function closeQueueAdd() {
+  $('q-add-form').style.display = 'none';
+  $('q-add-text').value = '';
+  $('q-add-tag').value  = '';
+}
+
+async function addQueueItem() {
+  const text = $('q-add-text').value.trim();
+  if (!text) return;
+  const tag       = $('q-add-tag').value.trim().toUpperCase() || null;
+  const sort_order = (state.queue[state.queue.length - 1]?.sort_order || 0) + 1;
+  const { data, error } = await sb.from('job_queue_items').insert({
+    user_id: state.user.id, text, tag, sort_order,
+  }).select().single();
+  if (!error) {
+    state.queue.push(data);
+    closeQueueAdd();
+    renderQueue();
+  }
+}
+
+// ── Movement ────────────────────────────────────────────
+function renderMovement() {
+  const html = state.movement.length
+    ? state.movement.map(m => `<div class="m-item">${m.text}<span>${m.date_label || ''}</span></div>`).join('')
+    : '<div style="font-size:11px;color:var(--faint);padding:6px 0;">No movement logged yet.</div>';
+  $('movement').innerHTML         = html;
+  $('movement-mobile').innerHTML  = html;
+}
+
+async function addMovement() {
+  const text = $('m-add-text').value.trim();
+  if (!text) return;
+  const date_label = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const { data, error } = await sb.from('job_movement').insert({
+    user_id: state.user.id, text, date_label,
+  }).select().single();
+  if (!error) {
+    $('m-add-text').value = '';
+    state.movement.unshift(data);
+    renderMovement();
+  }
+}
+
+// ── Tracks ──────────────────────────────────────────────
+function renderTracks() {
+  const trackNames = TRACK_ORDER.filter(t => state.apps.some(r => r.track === t));
+  $('tracks').innerHTML = trackNames.map(t => {
+    const rows = state.apps.filter(r => r.track === t && r.status !== 'Rejected');
+    if (!rows.length) return '';
+    const cms = rows.map(r => r.commute_min).filter(c => c != null).sort((a, b) => a - b);
+    const med = cms.length ? '~' + cms[Math.floor(cms.length / 2)] + ' min' : '—';
+    return `<div class="track${state.fTrack === t ? ' on' : ''}" data-t="${t}" role="button" tabindex="0">
+      <span class="t-name">${t}</span><span class="t-data">${rows.length} · ${med}</span></div>`;
+  }).join('');
+
+  $('tracks').querySelectorAll('.track').forEach(el => {
+    el.onclick = () => { state.fTrack = (state.fTrack === el.dataset.t) ? null : el.dataset.t; renderTracks(); render(); };
+  });
+}
+
+// ── People ──────────────────────────────────────────────
+function renderPeople() {
+  const seen = new Set();
+  $('people').innerHTML = state.apps.filter(r => r.contact).map(r => {
+    const key = r.contact.split('(')[0].trim() + r.company;
+    if (seen.has(key)) return '';
+    seen.add(key);
+    return `<div class="person"><b>${r.contact.split(';')[0]}</b><span>${r.company}</span></div>`;
+  }).join('');
+}
+
+// ── Filters setup ───────────────────────────────────────
+function setupFilters() {
+  const filterEl = $('filters'), searchEl = $('search');
+  ['All','Interview','Applied','Research','Rejected'].forEach(s => {
+    const c = document.createElement('button');
+    c.className  = 'chip' + (s === 'All' ? ' on' : '');
+    c.textContent = s === 'Rejected' ? 'Closed' : s;
+    c.onclick = () => {
+      state.fStatus = s;
+      filterEl.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c));
+      render();
+    };
+    filterEl.insertBefore(c, searchEl);
+  });
+  searchEl.addEventListener('input', () => { state.fText = searchEl.value.toLowerCase(); render(); });
+}
+
+// ── Glyph ───────────────────────────────────────────────
+function glyph(st) {
+  if (st === 'Rejected') {
+    return `<span class="glyph dead"><span class="dot fill"></span><span class="seg"></span><span class="dot fill"></span><span class="seg"></span><span class="dot"></span><span class="seg"></span><span class="dot"></span></span><span class="st-label">Closed</span>`;
+  }
+  const idx = STAGES.indexOf(st);
+  let h = '<span class="glyph">';
+  for (let i = 0; i < 4; i++) {
+    h += `<span class="dot${i <= idx ? ' fill' : ''}"></span>`;
+    if (i < 3) h += '<span class="seg"></span>';
+  }
+  return h + `</span><span class="st-label">${st}</span>`;
+}
+
+// ── Table render ────────────────────────────────────────
+function render() {
+  const rows = state.apps
+    .map((r, i) => ({ ...r, i }))
+    .filter(r =>
+      (state.fStatus === 'All' || r.status === state.fStatus) &&
+      (!state.fTrack  || r.track  === state.fTrack) &&
+      (!state.fText   || (r.company + ' ' + r.role + ' ' + (r.notes || '')).toLowerCase().includes(state.fText))
+    );
+
+  $('rows').innerHTML = rows.map(r => {
+    let detail = '';
+    if (state.openId === r.id) {
+      if (state.editId === r.id) {
+        detail = `<tr class="detail"><td colspan="4">
+          <div class="edit-form">
+            <div class="edit-row">
+              <input class="ef-co" id="ef-co" value="${esc(r.company)}" placeholder="Company">
+              <input class="ef-ro" id="ef-ro" value="${esc(r.role)}" placeholder="Role">
+            </div>
+            <div class="edit-row">
+              <select class="ef-sm" id="ef-st">
+                ${STAGES.concat(['Rejected']).map(s => `<option${s===r.status?' selected':''}>${s}</option>`).join('')}
+              </select>
+              <select class="ef-sm" id="ef-tier">
+                <option value="T1"${r.tier==='T1'?' selected':''}>T1</option>
+                <option value="T2"${r.tier==='T2'?' selected':''}>T2</option>
+                <option value="T3"${r.tier==='T3'?' selected':''}>T3</option>
+              </select>
+              <input class="ef-sm" id="ef-pri" type="number" min="1" max="5" value="${r.priority || 3}" placeholder="Pri">
+              <input class="ef-sm" id="ef-cm"  type="number" value="${r.commute_min || ''}" placeholder="Commute">
+              <input style="flex:1;" id="ef-track" value="${esc(r.track || '')}" placeholder="Track">
+            </div>
+            <input id="ef-who" value="${esc(r.contact || '')}" placeholder="Contact">
+            <textarea id="ef-notes">${esc(r.notes || '')}</textarea>
+            <div class="edit-btns">
+              <button class="btn-save-sm" onclick="saveEdit('${r.id}')">Save</button>
+              <button class="btn-sm"      onclick="cancelEdit()">Cancel</button>
+              <button class="btn-sm danger" onclick="deleteApp('${r.id}')" style="margin-left:auto;">Delete</button>
+            </div>
+          </div>
+        </td></tr>`;
+      } else {
+        detail = `<tr class="detail"><td colspan="4">
+          ${r.notes ? r.notes : 'No notes yet.'}
+          ${r.contact ? `<div class="d-contact"><b>Contact:</b> ${r.contact}</div>` : ''}
+          <div class="d-contact"><b>Track:</b> ${r.track || '—'} · <b>Tier:</b> ${r.tier || '—'}</div>
+          <div class="detail-actions">
+            <select onchange="quickStatus('${r.id}', this.value)">
+              ${STAGES.concat(['Rejected']).map(s => `<option${s===r.status?' selected':''}>${s}</option>`).join('')}
+            </select>
+            <button class="btn-sm" onclick="startEdit('${r.id}')">Edit</button>
+          </div>
+        </td></tr>`;
+      }
+    }
+    return `<tr class="${r.status === 'Interview' ? 'is-interview' : ''}" data-id="${r.id}">
+      <td><div class="co">${r.company}</div><div class="ro">${r.role}</div></td>
+      <td>${glyph(r.status)}</td>
+      <td class="pri">${r.priority}</td>
+      <td class="cm">${r.commute_min != null ? r.commute_min + '′' : '—'}</td>
+    </tr>${detail}`;
+  }).join('') || `<tr><td colspan="4" style="padding:24px 10px; color:var(--faint);">Nothing matches — clear a filter.</td></tr>`;
+
+  $('rows').querySelectorAll('tr[data-id]').forEach(tr => {
+    tr.onclick = () => {
+      const id = tr.dataset.id;
+      if (state.openId === id) { state.openId = null; state.editId = null; }
+      else { state.openId = id; state.editId = null; }
+      render();
+    };
+  });
+}
+
+// ── Quick status change from detail row ─────────────────
+async function quickStatus(id, status) {
+  const { error } = await sb.from('job_applications').update({ status }).eq('id', id);
+  if (!error) {
+    const app = state.apps.find(a => a.id === id);
+    if (app) app.status = status;
+    // auto-log the movement
+    const date_label = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const text = `${state.apps.find(a=>a.id===id)?.company} — moved to ${status}`;
+    const { data: mv } = await sb.from('job_movement').insert({ user_id: state.user.id, text, date_label }).select().single();
+    if (mv) state.movement.unshift(mv);
+    renderTally();
+    renderMovement();
+    render();
+  }
+}
+
+// ── Edit mode ───────────────────────────────────────────
+function startEdit(id) {
+  state.editId = id;
+  render();
+}
+function cancelEdit() {
+  state.editId = null;
+  render();
+}
+async function saveEdit(id) {
+  const payload = {
+    company:     $('ef-co').value.trim(),
+    role:        $('ef-ro').value.trim(),
+    status:      $('ef-st').value,
+    tier:        $('ef-tier').value,
+    priority:    parseInt($('ef-pri').value) || 3,
+    commute_min: parseInt($('ef-cm').value)  || null,
+    track:       $('ef-track').value.trim(),
+    contact:     $('ef-who').value.trim(),
+    notes:       $('ef-notes').value.trim(),
+  };
+  const { error } = await sb.from('job_applications').update(payload).eq('id', id);
+  if (!error) {
+    Object.assign(state.apps.find(a => a.id === id), payload);
+    state.editId = null;
+    renderTally();
+    renderTracks();
+    renderPeople();
+    render();
+  }
+}
+async function deleteApp(id) {
+  if (!confirm('Remove this application?')) return;
+  const { error } = await sb.from('job_applications').delete().eq('id', id);
+  if (!error) {
+    state.apps  = state.apps.filter(a => a.id !== id);
+    state.openId = null; state.editId = null;
+    renderTally(); renderTracks(); renderPeople(); render();
+  }
+}
+
+// ── Add/edit modal ──────────────────────────────────────
+function openModal(id) {
+  state.editingAppId = id || null;
+  const app = id ? state.apps.find(a => a.id === id) : null;
+  $('modal-title').textContent = app ? 'Edit Application' : 'Add Application';
+  $('m-co').value    = app?.company     || '';
+  $('m-ro').value    = app?.role        || '';
+  $('m-st').value    = app?.status      || 'Research';
+  $('m-tier').value  = app?.tier        || 'T2';
+  $('m-pri').value   = app?.priority    || 3;
+  $('m-cm').value    = app?.commute_min || '';
+  $('m-track').value = app?.track       || '';
+  $('m-who').value   = app?.contact     || '';
+  $('m-notes').value = app?.notes       || '';
+  $('modal').classList.add('open');
+  $('m-co').focus();
+}
+function closeModal() {
+  $('modal').classList.remove('open');
+}
+function handleOverlay(e) {
+  if (e.target === $('modal')) closeModal();
+}
+async function saveApp() {
+  const payload = {
+    user_id:     state.user.id,
+    company:     $('m-co').value.trim(),
+    role:        $('m-ro').value.trim(),
+    status:      $('m-st').value,
+    tier:        $('m-tier').value,
+    priority:    parseInt($('m-pri').value) || 3,
+    commute_min: parseInt($('m-cm').value)  || null,
+    track:       $('m-track').value.trim(),
+    contact:     $('m-who').value.trim(),
+    notes:       $('m-notes').value.trim(),
+  };
+  if (!payload.company || !payload.role) return;
+
+  let error;
+  if (state.editingAppId) {
+    const { error: e } = await sb.from('job_applications').update(payload).eq('id', state.editingAppId);
+    error = e;
+    if (!e) Object.assign(state.apps.find(a => a.id === state.editingAppId), payload);
+  } else {
+    const { data, error: e } = await sb.from('job_applications').insert(payload).select().single();
+    error = e;
+    if (!e) state.apps.unshift(data);
+  }
+  if (!error) {
+    closeModal();
+    renderTally(); renderTracks(); renderPeople(); render();
+  }
+}
+
+// ── Escape HTML in template literals ───────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Init ────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

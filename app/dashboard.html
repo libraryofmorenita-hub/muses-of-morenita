@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile Builder — Muses of Morenita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+/* ── VARIABLES ─────────────────────────────────── */
+:root {
+  --black:      #0A0A0A;
+  --black-mid:  #1A1A1A;
+  --gray-dark:  #555555;
+  --gray-mid:   #999999;
+  --gray-light: #CCCCCC;
+  --gray-faint: #E8E8E8;
+  --white:      #FAFAFA;
+  --pure-white: #FFFFFF;
+  --success:    #7AAF8A;
+  --error:      #C0392B;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body:    "Inter", sans-serif;
+}
+
+/* ── RESET ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* overflow:hidden kills document scroll — this is an app shell */
+html, body { overflow: hidden; height: 100%; }
+body { font-family: var(--font-body); font-weight: 300; background: var(--white); color: var(--black); -webkit-font-smoothing: antialiased; }
+button, input, textarea, select { font-family: inherit; font-size: inherit; }
+a { text-decoration: none; color: inherit; }
+
+/* ── SHELL ──────────────────────────────────────── */
+.shell { display: grid; grid-template-rows: 52px calc(100vh - 52px); height: 100vh; }
+
+/* ── NAV ────────────────────────────────────────── */
+#nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  background: var(--pure-white);
+  border-bottom: 1px solid var(--gray-faint);
+  z-index: 20;
+}
+.nav-logo { font-family: var(--font-display); font-weight: 300; font-size: 17px; letter-spacing: 0.04em; color: var(--black); cursor: pointer; }
+.nav-label { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-mid); }
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.nav-user { font-family: var(--font-body); font-weight: 400; font-size: 10px; color: var(--gray-dark); }
+.nav-signout { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gray-mid); cursor: pointer; border: none; background: none; padding: 0; }
+.nav-signout:hover { color: var(--black); }
+
+/* ── MAIN ROW ───────────────────────────────────── */
+.main-row { display: flex; overflow: hidden; }
+
+/* ── SIDEBAR ────────────────────────────────────── */
+#sidebar {
+  width: 220px; flex-shrink: 0;
+  border-right: 1px solid var(--gray-faint);
+  background: var(--pure-white);
+  display: flex; flex-direction: column;
+  padding: 28px 0;
+  overflow: hidden;
+}
+.sidebar-section { flex: 1; display: flex; flex-direction: column; gap: 2px; padding: 0 16px; }
+.section-link {
+  font-family: var(--font-body); font-weight: 400; font-size: 11px;
+  letter-spacing: 0.06em; color: var(--gray-dark);
+  padding: 9px 12px; cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.section-link:hover { color: var(--black); }
+.section-link.active { color: var(--black); border-left-color: var(--black); font-weight: 400; }
+
+.sidebar-bottom { padding: 16px 28px; border-top: 1px solid var(--gray-faint); margin-top: auto; }
+.preview-link { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gray-mid); display: block; }
+.preview-link:hover { color: var(--black); }
+
+/* ── CONTENT ────────────────────────────────────── */
+#content { flex: 1; overflow-y: auto; }
+#content::-webkit-scrollbar { width: 3px; }
+#content::-webkit-scrollbar-thumb { background: var(--gray-faint); }
+
+/* ── SECTION PANELS ─────────────────────────────── */
+.section { display: none; padding: 40px 48px; max-width: 760px; }
+.section.active { display: block; }
+
+.section-heading {
+  font-family: var(--font-display); font-weight: 300; font-size: 32px;
+  color: var(--black); margin-bottom: 6px;
+}
+.section-sub { font-family: var(--font-body); font-weight: 300; font-size: 12px; color: var(--gray-mid); margin-bottom: 36px; line-height: 1.7; }
+
+/* ── FORM ELEMENTS ──────────────────────────────── */
+.field { margin-bottom: 24px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.field label {
+  display: block; font-family: var(--font-body); font-weight: 400;
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gray-mid); margin-bottom: 7px;
+}
+.field input, .field textarea, .field select {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--gray-faint); background: var(--pure-white);
+  font-family: var(--font-body); font-weight: 300; font-size: 13px;
+  color: var(--black); outline: none;
+  transition: border-color 0.15s;
+}
+.field input:focus, .field textarea:focus { border-color: var(--black); }
+.field textarea { resize: vertical; min-height: 80px; line-height: 1.7; }
+.field .hint { font-family: var(--font-body); font-size: 10px; color: var(--gray-light); margin-top: 5px; }
+
+.btn-save {
+  font-family: var(--font-body); font-weight: 400; font-size: 9px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--pure-white); background: var(--black);
+  border: none; padding: 10px 24px; cursor: pointer;
+}
+.btn-save:hover { background: var(--black-mid); }
+.btn-save:disabled { opacity: 0.4; cursor: default; }
+
+.btn-ghost {
+  font-family: var(--font-body); font-weight: 400; font-size: 9px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--gray-dark); background: transparent;
+  border: 1px solid var(--gray-faint); padding: 9px 20px; cursor: pointer;
+}
+.btn-ghost:hover { border-color: var(--black); color: var(--black); }
+
+.btn-danger {
+  font-family: var(--font-body); font-weight: 400; font-size: 9px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--error); background: transparent; border: none;
+  padding: 4px 0; cursor: pointer;
+}
+
+.save-status {
+  font-family: var(--font-body); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--success);
+  margin-left: 14px; opacity: 0; transition: opacity 0.3s;
+  display: inline-block;
+}
+.save-status.visible { opacity: 1; }
+
+/* ── DIVIDER ────────────────────────────────────── */
+.divider { height: 1px; background: var(--gray-faint); margin: 32px 0; }
+
+/* ── LIST ITEMS (toggles, projects, links) ──────── */
+.list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.list-label { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-mid); }
+.list-add { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--black); background: none; border: none; cursor: pointer; padding: 0; }
+.list-add:hover { color: var(--gray-mid); }
+
+.item-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid var(--gray-faint);
+}
+.item-row:first-of-type { border-top: 1px solid var(--gray-faint); }
+.item-name { font-family: var(--font-body); font-weight: 300; font-size: 13px; color: var(--black); }
+.item-meta { font-family: var(--font-body); font-size: 10px; color: var(--gray-mid); margin-top: 2px; }
+.item-actions { display: flex; gap: 16px; align-items: center; flex-shrink: 0; }
+.item-edit { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-mid); cursor: pointer; background: none; border: none; }
+.item-edit:hover { color: var(--black); }
+.item-delete { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-light); cursor: pointer; background: none; border: none; }
+.item-delete:hover { color: var(--error); }
+
+.empty-state { font-family: var(--font-body); font-weight: 300; font-size: 12px; color: var(--gray-light); padding: 24px 0; }
+
+/* ── BREADCRUMB ─────────────────────────────────── */
+.breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; }
+.breadcrumb-back { font-family: var(--font-body); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gray-mid); cursor: pointer; background: none; border: none; padding: 0; }
+.breadcrumb-back:hover { color: var(--black); }
+.breadcrumb-sep { color: var(--gray-light); font-size: 10px; }
+.breadcrumb-current { font-family: var(--font-body); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--black); }
+
+/* ── SERVICE SECTION TABS ───────────────────────── */
+.svc-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--gray-faint); margin-bottom: 28px; }
+.svc-tab {
+  font-family: var(--font-body); font-weight: 400; font-size: 9px;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray-mid);
+  padding: 10px 20px; cursor: pointer; background: none; border: none;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.svc-tab.active { color: var(--black); border-bottom-color: var(--black); }
+.svc-tab:hover:not(.active) { color: var(--black); }
+
+/* ── ACCORDION ITEMS INDENT ─────────────────────── */
+.acc-items { padding-left: 20px; border-left: 1px solid var(--gray-faint); margin: 8px 0 12px; }
+
+/* ── DOMAIN BLOCK ───────────────────────────────── */
+.domain-cname-block {
+  background: var(--white); border: 1px solid var(--gray-faint);
+  padding: 20px 24px; margin-top: 24px;
+}
+.cname-label { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray-mid); margin-bottom: 8px; }
+.cname-value { font-family: "Courier New", monospace; font-size: 12px; color: var(--black); background: var(--gray-faint); padding: 8px 12px; display: block; margin-bottom: 16px; }
+.cname-instruction { font-family: var(--font-body); font-size: 11px; color: var(--gray-dark); line-height: 1.8; }
+
+/* ── MODAL ──────────────────────────────────────── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.35); z-index: 100;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--pure-white); width: 480px; max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 80px); display: flex; flex-direction: column;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; border-bottom: 1px solid var(--gray-faint);
+  flex-shrink: 0;
+}
+.modal-title { font-family: var(--font-display); font-weight: 300; font-size: 22px; color: var(--black); }
+.modal-close { background: none; border: none; font-size: 18px; color: var(--gray-mid); cursor: pointer; line-height: 1; }
+.modal-close:hover { color: var(--black); }
+.modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+.modal-body .field { margin-bottom: 18px; }
+.modal-footer {
+  padding: 16px 24px; border-top: 1px solid var(--gray-faint);
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ── NAV ────────────────────────────────────── -->
+  <nav id="nav">
+    <div style="display:flex;align-items:center;gap:20px;">
+      <span class="nav-logo" onclick="window.location.href='muses-of-morenita-site.html'">Muses of Morenita</span>
+      <span class="nav-label">Profile Builder</span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-user" id="nav-user"></span>
+      <button class="nav-signout" onclick="signOut()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="main-row">
+
+    <!-- ── SIDEBAR ──────────────────────────────── -->
+    <div id="sidebar">
+      <div class="sidebar-section">
+        <div class="section-link active" data-section="profile"  onclick="goSection('profile')">Profile</div>
+        <div class="section-link"        data-section="career"   onclick="goSection('career')">Career</div>
+        <div class="section-link"        data-section="services" onclick="goSection('services')">Services</div>
+        <div class="section-link"        data-section="links"    onclick="goSection('links')">Links</div>
+        <div class="section-link"        data-section="products" onclick="goSection('products')">Products</div>
+        <div class="section-link"        data-section="studio"   onclick="goSection('studio')">Studio</div>
+        <div class="section-link"        data-section="domain"   onclick="goSection('domain')">Domain</div>
+      </div>
+      <div class="sidebar-bottom">
+        <a class="preview-link" id="preview-link" href="#" target="_blank">View my profile →</a>
+      </div>
+    </div>
+
+    <!-- ── CONTENT ──────────────────────────────── -->
+    <div id="content">
+
+      <!-- PROFILE ─────────────────────────────── -->
+      <div class="section active" id="section-profile">
+        <div class="section-heading">Profile</div>
+        <div class="section-sub">Your public identity. Everything here appears on your Muses profile page.</div>
+
+        <div class="field">
+          <label>Username <span style="color:var(--gray-light);font-weight:300;text-transform:none;letter-spacing:0"> — libraryofmorenita.org/muses/<strong id="username-preview">...</strong></span></label>
+          <input id="f-username" type="text" placeholder="your-name" oninput="updateUsernamePreview(this.value)">
+          <div class="hint">Lowercase letters, numbers, and hyphens only.</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Display Name</label>
+            <input id="f-display-name" type="text" placeholder="Amelia Arabe">
+          </div>
+          <div class="field">
+            <label>Location</label>
+            <input id="f-location" type="text" placeholder="Los Angeles, CA">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Bio <span style="font-weight:300;text-transform:none;letter-spacing:0">— shows on your about view</span></label>
+          <textarea id="f-bio" placeholder="Engineer, painter, cellist, founder. Building things at the intersection of art and technology."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Sidebar Quote</label>
+          <textarea id="f-quote" placeholder="A short line that defines how you work." style="min-height:60px;"></textarea>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Contact Email</label>
+            <input id="f-email" type="email" placeholder="you@email.com">
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input id="f-phone" type="text" placeholder="+1 (000) 000-0000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Website</label>
+          <input id="f-website" type="url" placeholder="https://yoursite.com">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Avatar URL</label>
+            <input id="f-avatar" type="url" placeholder="https://...">
+            <div class="hint">Image uploads coming soon — paste a URL for now.</div>
+          </div>
+          <div class="field">
+            <label>Logo URL</label>
+            <input id="f-logo" type="url" placeholder="https://...">
+            <div class="hint">Appears in your sidebar and about view.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;">
+          <button class="btn-save" onclick="saveProfile()">Save Profile</button>
+          <span class="save-status" id="profile-status">Saved</span>
+        </div>
+      </div>
+
+      <!-- CAREER ──────────────────────────────── -->
+      <div class="section" id="section-career">
+        <div id="career-list-view">
+          <div class="section-heading">Career</div>
+          <div class="section-sub">Each toggle is a role on your sidebar. Visitors click them to browse your work per discipline.</div>
+
+          <div class="list-header">
+            <span class="list-label">Roles</span>
+            <button class="list-add" onclick="openToggleModal()">+ Add role</button>
+          </div>
+          <div id="toggle-list"></div>
+
+        </div>
+
+        <div id="career-project-view" style="display:none;">
+          <div class="breadcrumb">
+            <button class="breadcrumb-back" onclick="showCareerList()">← Career</button>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current" id="project-view-title"></span>
+          </div>
+          <div class="section-heading" id="project-view-heading"></div>
+          <div class="section-sub">Each card appears in the project grid when this role is selected.</div>
+
+          <div class="list-header">
+            <span class="list-label">Projects</span>
+            <button class="list-add" onclick="openProjectModal()">+ Add project</button>
+          </div>
+          <div id="project-list"></div>
+        </div>
+      </div>
+
+      <!-- SERVICES ────────────────────────────── -->
+      <div class="section" id="section-services">
+        <div class="section-heading">Services</div>
+        <div class="section-sub">Accordion groups that appear on your services page. Each group holds individual offerings visitors can add to their inquiry.</div>
+
+        <div class="svc-tabs">
+          <button class="svc-tab active" data-svc="work"      onclick="setSvcTab('work')">Work</button>
+          <button class="svc-tab"        data-svc="presence"  onclick="setSvcTab('presence')">Presence</button>
+          <button class="svc-tab"        data-svc="knowledge" onclick="setSvcTab('knowledge')">Knowledge</button>
+        </div>
+
+        <div class="list-header">
+          <span class="list-label">Accordion groups</span>
+          <button class="list-add" onclick="openAccordionModal()">+ Add group</button>
+        </div>
+        <div id="accordion-list"></div>
+      </div>
+
+      <!-- LINKS ───────────────────────────────── -->
+      <div class="section" id="section-links">
+        <div class="section-heading">Links</div>
+        <div class="section-sub">External links shown in the contact panel of your sidebar.</div>
+
+        <div class="list-header">
+          <span class="list-label">Social &amp; External</span>
+          <button class="list-add" onclick="openLinkModal()">+ Add link</button>
+        </div>
+        <div id="links-list"></div>
+      </div>
+
+      <!-- PRODUCTS ────────────────────────────── -->
+      <div class="section" id="section-products">
+        <div class="section-heading">Products</div>
+        <div class="section-sub">Your listings in The Archive. Publish to make them visible on the public marketplace. Unpublished products are only visible to you.</div>
+
+        <div class="list-header">
+          <span class="list-label">Your listings</span>
+          <button class="list-add" onclick="openProductModal()">+ Add product</button>
+        </div>
+        <div id="products-list"></div>
+      </div>
+
+      <!-- STUDIO ──────────────────────────────── -->
+      <div class="section" id="section-studio">
+
+        <!-- Client list -->
+        <div id="studio-client-view">
+          <div class="section-heading">Studio</div>
+          <div class="section-sub">Manage your clients and their project portals. Each project generates a shareable link your client uses to track progress, sign contracts, and submit revisions.</div>
+
+          <div class="list-header">
+            <span class="list-label">Clients</span>
+            <button class="list-add" onclick="openClientModal()">+ Add client</button>
+          </div>
+          <div id="client-list"></div>
+        </div>
+
+        <!-- Project list (per client) -->
+        <div id="studio-project-view" style="display:none;">
+          <div class="breadcrumb">
+            <button class="breadcrumb-back" onclick="showStudioClientList()">← Studio</button>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current" id="studio-project-title"></span>
+          </div>
+          <div class="section-heading" id="studio-project-heading"></div>
+          <div class="section-sub">Each project generates a portal your client can access without an account.</div>
+
+          <div class="list-header">
+            <span class="list-label">Projects</span>
+            <button class="list-add" onclick="openClientProjectModal()">+ Add project</button>
+          </div>
+          <div id="studio-project-list"></div>
+        </div>
+
+        <!-- Project detail (milestones, updates, docs) -->
+        <div id="studio-detail-view" style="display:none;">
+          <div class="breadcrumb">
+            <button class="breadcrumb-back" onclick="showStudioProjectList()">← Projects</button>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current" id="studio-detail-title"></span>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+            <div class="section-heading" id="studio-detail-heading" style="margin-bottom:0;"></div>
+            <button class="btn-ghost" id="studio-copy-link-btn" onclick="copyPortalLink()">Copy portal link</button>
+          </div>
+
+          <!-- Status + accent -->
+          <div class="field-row">
+            <div class="field">
+              <label>Project Status</label>
+              <input id="d-status" type="text" placeholder="Active" oninput="autoSaveDetail()">
+            </div>
+            <div class="field">
+              <label>Tagline</label>
+              <input id="d-tagline" type="text" placeholder="One line describing the project" oninput="autoSaveDetail()">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Cover Image URL</label>
+              <input id="d-cover" type="url" placeholder="https://..." oninput="autoSaveDetail()">
+            </div>
+            <div class="field">
+              <label>Accent Color</label>
+              <input id="d-accent" type="text" placeholder="#888888" oninput="autoSaveDetail()">
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Milestones -->
+          <div class="list-header">
+            <span class="list-label">Milestones</span>
+            <button class="list-add" onclick="addMilestone()">+ Add</button>
+          </div>
+          <div id="milestone-list"></div>
+
+          <div class="divider"></div>
+
+          <!-- Updates -->
+          <div class="list-header">
+            <span class="list-label">Updates</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:16px;">
+            <input id="d-update-msg" type="text" placeholder="Write an update for your client…" style="flex:1;padding:9px 12px;border:1px solid var(--gray-faint);font-family:var(--font-body);font-size:13px;font-weight:300;outline:none;" onfocus="this.style.borderColor='var(--black)'" onblur="this.style.borderColor='var(--gray-faint)'">
+            <button class="btn-save" onclick="addUpdate()">Post</button>
+          </div>
+          <div id="update-list"></div>
+
+          <div class="divider"></div>
+
+          <!-- Contract & Invoices -->
+          <div class="list-label" style="margin-bottom:16px;">Documents</div>
+          <div class="field" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <input id="d-show-contract" type="checkbox" style="width:auto;" onchange="autoSaveDetail()">
+            <label style="margin-bottom:0;text-transform:none;letter-spacing:0;font-size:12px;">Show contract in portal</label>
+          </div>
+          <div class="field">
+            <label>Contract HTML</label>
+            <textarea id="d-contract" placeholder="Paste contract HTML here." style="min-height:100px;" oninput="autoSaveDetail()"></textarea>
+          </div>
+          <div class="field" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <input id="d-show-deposit" type="checkbox" style="width:auto;" onchange="autoSaveDetail()">
+            <label style="margin-bottom:0;text-transform:none;letter-spacing:0;font-size:12px;">Show deposit invoice in portal</label>
+          </div>
+          <div class="field">
+            <label>Deposit Invoice HTML</label>
+            <textarea id="d-deposit" placeholder="Paste invoice HTML here." style="min-height:80px;" oninput="autoSaveDetail()"></textarea>
+          </div>
+          <div class="field" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <input id="d-show-final" type="checkbox" style="width:auto;" onchange="autoSaveDetail()">
+            <label style="margin-bottom:0;text-transform:none;letter-spacing:0;font-size:12px;">Show final invoice in portal</label>
+          </div>
+          <div class="field">
+            <label>Final Invoice HTML</label>
+            <textarea id="d-final" placeholder="Paste invoice HTML here." style="min-height:80px;" oninput="autoSaveDetail()"></textarea>
+          </div>
+
+          <div style="display:flex;align-items:center;margin-top:8px;">
+            <span class="save-status visible" id="detail-save-status" style="opacity:0;">Saved</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- DOMAIN ──────────────────────────────── -->
+      <div class="section" id="section-domain">
+        <div class="section-heading">Domain</div>
+        <div class="section-sub">Connect your own domain to your Muses profile. Your profile will be accessible at both your custom domain and your Muses URL.</div>
+
+        <div class="field">
+          <label>Custom Domain</label>
+          <input id="f-domain" type="text" placeholder="yourname.com">
+        </div>
+
+        <div style="display:flex;align-items:center;">
+          <button class="btn-save" onclick="saveDomain()">Save Domain</button>
+          <span class="save-status" id="domain-status">Saved</span>
+        </div>
+
+        <div class="domain-cname-block" id="domain-cname-block" style="display:none;">
+          <div class="cname-label">Step 1 — Add a CNAME record in your DNS settings</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+            <div>
+              <div class="cname-label" style="margin-bottom:4px;">Type</div>
+              <code class="cname-value">CNAME</code>
+            </div>
+            <div>
+              <div class="cname-label" style="margin-bottom:4px;">Name / Host</div>
+              <code class="cname-value" id="cname-host">@</code>
+            </div>
+            <div>
+              <div class="cname-label" style="margin-bottom:4px;">Value / Target</div>
+              <code class="cname-value" id="cname-target">profiles.libraryofmorenita.org</code>
+            </div>
+            <div>
+              <div class="cname-label" style="margin-bottom:4px;">TTL</div>
+              <code class="cname-value">3600</code>
+            </div>
+          </div>
+          <div class="cname-instruction">
+            DNS changes can take up to 48 hours to propagate. Once your CNAME is live, your profile will appear at your custom domain automatically.
+            Verification status: <span id="domain-verified-status" style="font-weight:400;"></span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main-row -->
+</div><!-- /shell -->
+
+<!-- ── MODAL ──────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title"></span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn-save" id="modal-save-btn" onclick="modalSave()">Save</button>
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <span class="save-status" id="modal-status">Saved</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── SUPABASE ────────────────────────────────────────────
+const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
+const sb = supabase.createClient(SB_URL, SB_ANON);
+
+// ── STATE ───────────────────────────────────────────────
+const state = {
+  user:            null,
+  profile:         null,
+  section:         'profile',
+  toggles:         [],
+  projects:        [],      // all projects for this user
+  accordions:      [],      // all service_accordions for this user
+  items:           [],      // all service_items for this user
+  links:           [],
+  domain:          null,
+  activeToggleId:  null,    // which toggle's projects are being viewed
+  activeSvcTab:    'work',
+  modalSaveFn:     null,    // set per modal open, called on Save
+  // Products
+  products:        [],
+  // Studio
+  clients:         [],
+  studioProjects:  [],      // projects for the active client
+  milestones:      [],      // milestones for active project
+  studioUpdates:   [],      // updates for active project
+  activeClientId:  null,
+  activeProjectId: null,
+  detailSaveTimer: null,
+};
+
+// ── AUTH ────────────────────────────────────────────────
+async function init() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) {
+    window.location.href = 'muses-of-morenita-site.html#/login';
+    return;
+  }
+  state.user = user;
+  document.getElementById('nav-user').textContent = user.email;
+
+  await Promise.all([
+    loadProfile(),
+    loadToggles(),
+    loadProjects(),
+    loadAccordions(),
+    loadItems(),
+    loadLinks(),
+    loadDomain(),
+    loadProducts(),
+    loadClients(),
+  ]);
+
+  renderProfile();
+  renderCareerList();
+  renderAccordionList();
+  renderLinksList();
+  renderDomain();
+  renderProductsList();
+  renderClientList();
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  window.location.href = 'muses-of-morenita-site.html#/login';
+}
+
+// ── DATA LOADERS ────────────────────────────────────────
+async function loadProfile() {
+  const { data } = await sb.from('profiles').select('*').eq('id', state.user.id).maybeSingle();
+  state.profile = data;
+}
+
+async function loadToggles() {
+  const { data } = await sb.from('career_toggles').select('*').eq('user_id', state.user.id).order('sort_order');
+  state.toggles = data || [];
+}
+
+async function loadProjects() {
+  const { data } = await sb.from('projects').select('*').eq('user_id', state.user.id).order('sort_order');
+  state.projects = data || [];
+}
+
+async function loadAccordions() {
+  const { data } = await sb.from('service_accordions').select('*').eq('user_id', state.user.id).order('sort_order');
+  state.accordions = data || [];
+}
+
+async function loadItems() {
+  const { data } = await sb.from('service_items').select('*').eq('user_id', state.user.id).order('sort_order');
+  state.items = data || [];
+}
+
+async function loadLinks() {
+  const { data } = await sb.from('social_links').select('*').eq('user_id', state.user.id).order('sort_order');
+  state.links = data || [];
+}
+
+async function loadDomain() {
+  const { data } = await sb.from('custom_domains').select('*').eq('user_id', state.user.id).maybeSingle();
+  state.domain = data;
+}
+
+// ── SECTION NAV ─────────────────────────────────────────
+function goSection(name) {
+  state.section = name;
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelectorAll('.section-link').forEach(l => {
+    l.classList.toggle('active', l.dataset.section === name);
+  });
+}
+
+// ── SAVE STATUS ─────────────────────────────────────────
+function showStatus(id) {
+  const el = document.getElementById(id);
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 2000);
+}
+
+// ── PROFILE ─────────────────────────────────────────────
+function renderProfile() {
+  const p = state.profile;
+  if (!p) return;
+  document.getElementById('f-username').value     = p.username     || '';
+  document.getElementById('f-display-name').value = p.display_name || '';
+  document.getElementById('f-location').value     = p.location     || '';
+  document.getElementById('f-bio').value          = p.bio          || '';
+  document.getElementById('f-quote').value        = p.quote        || '';
+  document.getElementById('f-email').value        = p.email_contact|| '';
+  document.getElementById('f-phone').value        = p.phone        || '';
+  document.getElementById('f-website').value      = p.website      || '';
+  document.getElementById('f-avatar').value       = p.avatar_url   || '';
+  document.getElementById('f-logo').value         = p.logo_url     || '';
+  if (p.username) updateUsernamePreview(p.username);
+  document.getElementById('preview-link').href =
+    'amelia-arabe-portfolio.html'; // will become /muses/:username once dynamic rendering is built
+}
+
+function updateUsernamePreview(val) {
+  document.getElementById('username-preview').textContent = val || '...';
+}
+
+async function saveProfile() {
+  const payload = {
+    id:            state.user.id,
+    username:      document.getElementById('f-username').value.trim(),
+    display_name:  document.getElementById('f-display-name').value.trim(),
+    location:      document.getElementById('f-location').value.trim(),
+    bio:           document.getElementById('f-bio').value.trim(),
+    quote:         document.getElementById('f-quote').value.trim(),
+    email_contact: document.getElementById('f-email').value.trim(),
+    phone:         document.getElementById('f-phone').value.trim(),
+    website:       document.getElementById('f-website').value.trim(),
+    avatar_url:    document.getElementById('f-avatar').value.trim(),
+    logo_url:      document.getElementById('f-logo').value.trim(),
+  };
+  const { error } = await sb.from('profiles').upsert(payload);
+  if (!error) { state.profile = { ...state.profile, ...payload }; showStatus('profile-status'); }
+}
+
+// ── CAREER TOGGLES ──────────────────────────────────────
+function renderCareerList() {
+  const el = document.getElementById('toggle-list');
+  if (!state.toggles.length) {
+    el.innerHTML = '<div class="empty-state">No roles yet. Add your first career toggle.</div>';
+    return;
+  }
+  el.innerHTML = state.toggles.map(t => `
+    <div class="item-row">
+      <div>
+        <div class="item-name">${t.role_name}</div>
+        <div class="item-meta">${t.service_section} · ${countProjects(t.id)} project${countProjects(t.id) === 1 ? '' : 's'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="item-edit" onclick="viewProjects('${t.id}')">Projects</button>
+        <button class="item-edit" onclick="openToggleModal('${t.id}')">Edit</button>
+        <button class="item-delete" onclick="deleteToggle('${t.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function countProjects(toggleId) {
+  return state.projects.filter(p => p.toggle_id === toggleId).length;
+}
+
+function showCareerList() {
+  document.getElementById('career-list-view').style.display = '';
+  document.getElementById('career-project-view').style.display = 'none';
+  state.activeToggleId = null;
+}
+
+function viewProjects(toggleId) {
+  state.activeToggleId = toggleId;
+  const toggle = state.toggles.find(t => t.id === toggleId);
+  document.getElementById('career-list-view').style.display = 'none';
+  document.getElementById('career-project-view').style.display = '';
+  document.getElementById('project-view-title').textContent = toggle.role_name;
+  document.getElementById('project-view-heading').textContent = toggle.role_name + ' — Projects';
+  renderProjectList();
+}
+
+function openToggleModal(id) {
+  const existing = id ? state.toggles.find(t => t.id === id) : null;
+  document.getElementById('modal-title').textContent = existing ? 'Edit Role' : 'Add Role';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="field"><label>Role Name</label>
+      <input id="m-role-name" type="text" placeholder="Software Engineer" value="${existing?.role_name || ''}">
+    </div>
+    <div class="field"><label>Role Key <span style="font-weight:300;text-transform:none;letter-spacing:0">— used internally</span></label>
+      <input id="m-role-key" type="text" placeholder="engineer" value="${existing?.role_key || ''}">
+    </div>
+    <div class="field"><label>Overview</label>
+      <textarea id="m-overview" placeholder="One or two lines describing what you do in this role.">${existing?.overview || ''}</textarea>
+    </div>
+    <div class="field"><label>Hire Button Label</label>
+      <input id="m-hire-label" type="text" placeholder="Hire me to build" value="${existing?.hire_label || ''}">
+    </div>
+    <div class="field"><label>Service Section</label>
+      <select id="m-svc-section">
+        <option value="work"      ${existing?.service_section === 'work'      ? 'selected' : ''}>Work</option>
+        <option value="presence"  ${existing?.service_section === 'presence'  ? 'selected' : ''}>Presence</option>
+        <option value="knowledge" ${existing?.service_section === 'knowledge' ? 'selected' : ''}>Knowledge</option>
+      </select>
+    </div>
+    <div class="field"><label>Accordion ID <span style="font-weight:300;text-transform:none;letter-spacing:0">— links to services page (e.g. acc-software)</span></label>
+      <input id="m-accordion-id" type="text" placeholder="acc-software" value="${existing?.accordion_id || ''}">
+    </div>
+    <div class="field" style="display:flex;align-items:center;gap:10px;">
+      <input id="m-commission" type="checkbox" style="width:auto;" ${existing?.show_commission ? 'checked' : ''}>
+      <label style="margin-bottom:0;text-transform:none;letter-spacing:0;font-size:12px;">Show commission sub-label</label>
+    </div>
+  `;
+  state.modalSaveFn = () => saveToggle(id);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveToggle(existingId) {
+  const payload = {
+    user_id:         state.user.id,
+    role_name:       document.getElementById('m-role-name').value.trim(),
+    role_key:        document.getElementById('m-role-key').value.trim(),
+    overview:        document.getElementById('m-overview').value.trim(),
+    hire_label:      document.getElementById('m-hire-label').value.trim(),
+    service_section: document.getElementById('m-svc-section').value,
+    accordion_id:    document.getElementById('m-accordion-id').value.trim(),
+    show_commission: document.getElementById('m-commission').checked,
+  };
+  if (existingId) {
+    const { error } = await sb.from('career_toggles').update(payload).eq('id', existingId);
+    if (!error) { state.toggles = state.toggles.map(t => t.id === existingId ? { ...t, ...payload } : t); }
+  } else {
+    const { data, error } = await sb.from('career_toggles').insert({ ...payload, sort_order: state.toggles.length }).select().single();
+    if (!error) state.toggles.push(data);
+  }
+  renderCareerList();
+  showStatus('modal-status');
+  setTimeout(closeModal, 800);
+}
+
+async function deleteToggle(id) {
+  if (!confirm('Delete this role and all its projects?')) return;
+  const { error } = await sb.from('career_toggles').delete().eq('id', id);
+  if (!error) {
+    state.toggles  = state.toggles.filter(t => t.id !== id);
+    state.projects = state.projects.filter(p => p.toggle_id !== id);
+    renderCareerList();
+  }
+}
+
+// ── PROJECTS ────────────────────────────────────────────
+function renderProjectList() {
+  const list = state.projects.filter(p => p.toggle_id === state.activeToggleId);
+  const el   = document.getElementById('project-list');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state">No projects yet for this role.</div>';
+    return;
+  }
+  el.innerHTML = list.map(p => `
+    <div class="item-row">
+      <div>
+        <div class="item-name">${p.title}</div>
+        <div class="item-meta">${p.category || ''}${p.badge ? ' · ' + p.badge : ''}</div>
+      </div>
+      <div class="item-actions">
+        <button class="item-edit" onclick="openProjectModal('${p.id}')">Edit</button>
+        <button class="item-delete" onclick="deleteProject('${p.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openProjectModal(id) {
+  const existing = id ? state.projects.find(p => p.id === id) : null;
+  document.getElementById('modal-title').textContent = existing ? 'Edit Project' : 'Add Project';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="field"><label>Title</label>
+      <input id="m-title" type="text" placeholder="Project name" value="${existing?.title || ''}">
+    </div>
+    <div class="field"><label>Category</label>
+      <input id="m-category" type="text" placeholder="Full-Stack · SaaS" value="${existing?.category || ''}">
+    </div>
+    <div class="field"><label>Description</label>
+      <textarea id="m-desc" placeholder="What it is, what you built, why it matters.">${existing?.description || ''}</textarea>
+    </div>
+    <div class="field"><label>URL <span style="font-weight:300;text-transform:none;letter-spacing:0">— leave blank if private</span></label>
+      <input id="m-url" type="url" placeholder="https://..." value="${existing?.url || ''}">
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Badge</label>
+        <input id="m-badge" type="text" placeholder="In Development" value="${existing?.badge || ''}">
+      </div>
+      <div class="field"><label>Image URL</label>
+        <input id="m-img" type="url" placeholder="https://..." value="${existing?.image_url || ''}">
+      </div>
+    </div>
+    <div class="field"><label>Tags <span style="font-weight:300;text-transform:none;letter-spacing:0">— comma separated</span></label>
+      <input id="m-tags" type="text" placeholder="React, Supabase, JavaScript" value="${(existing?.tags || []).join(', ')}">
+    </div>
+    <div style="margin-top:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-mid);">Case Study</div>
+    <div class="field"><label>The Problem</label>
+      <textarea id="m-case-problem" placeholder="What need or gap prompted this work.">${existing?.case_problem || ''}</textarea>
+    </div>
+    <div class="field"><label>The Process</label>
+      <textarea id="m-case-process" placeholder="How it was built or made.">${existing?.case_process || ''}</textarea>
+    </div>
+    <div class="field"><label>The Outcome</label>
+      <textarea id="m-case-outcome" placeholder="Result, impact, or current status.">${existing?.case_outcome || ''}</textarea>
+    </div>
+    <div class="field"><label>Credits</label>
+      <input id="m-credits" type="text" placeholder="Collaborators, credits, or client name" value="${existing?.credits || ''}">
+    </div>
+    <div class="field"><label>Gallery URLs <span style="font-weight:300;text-transform:none;letter-spacing:0">— one per line</span></label>
+      <textarea id="m-gallery" placeholder="https://...">${(existing?.gallery_urls || []).join('\n')}</textarea>
+    </div>
+  `;
+  state.modalSaveFn = () => saveProject(id);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveProject(existingId) {
+  const payload = {
+    user_id:     state.user.id,
+    toggle_id:   state.activeToggleId,
+    title:       document.getElementById('m-title').value.trim(),
+    category:    document.getElementById('m-category').value.trim(),
+    description: document.getElementById('m-desc').value.trim(),
+    url:         document.getElementById('m-url').value.trim() || null,
+    badge:       document.getElementById('m-badge').value.trim() || null,
+    image_url:   document.getElementById('m-img').value.trim() || null,
+    tags:         document.getElementById('m-tags').value.split(',').map(s => s.trim()).filter(Boolean),
+    case_problem: document.getElementById('m-case-problem').value.trim() || null,
+    case_process: document.getElementById('m-case-process').value.trim() || null,
+    case_outcome: document.getElementById('m-case-outcome').value.trim() || null,
+    credits:      document.getElementById('m-credits').value.trim() || null,
+    gallery_urls: document.getElementById('m-gallery').value.split('\n').map(s => s.trim()).filter(Boolean),
+  };
+  if (existingId) {
+    const { error } = await sb.from('projects').update(payload).eq('id', existingId);
+    if (!error) state.projects = state.projects.map(p => p.id === existingId ? { ...p, ...payload } : p);
+  } else {
+    const { data, error } = await sb.from('projects').insert({ ...payload, sort_order: state.projects.length }).select().single();
+    if (!error) state.projects.push(data);
+  }
+  renderProjectList();
+  renderCareerList();
+  showStatus('modal-status');
+  setTimeout(closeModal, 800);
+}
+
+async function deleteProject(id) {
+  if (!confirm('Delete this project?')) return;
+  const { error } = await sb.from('projects').delete().eq('id', id);
+  if (!error) {
+    state.projects = state.projects.filter(p => p.id !== id);
+    renderProjectList();
+    renderCareerList();
+  }
+}
+
+// ── SERVICES ────────────────────────────────────────────
+function setSvcTab(tab) {
+  state.activeSvcTab = tab;
+  document.querySelectorAll('.svc-tab').forEach(t => t.classList.toggle('active', t.dataset.svc === tab));
+  renderAccordionList();
+}
+
+function renderAccordionList() {
+  const el   = document.getElementById('accordion-list');
+  const accs = state.accordions.filter(a => a.section === state.activeSvcTab);
+  if (!accs.length) {
+    el.innerHTML = '<div class="empty-state">No accordion groups yet for this section.</div>';
+    return;
+  }
+  el.innerHTML = accs.map(a => {
+    const its = state.items.filter(i => i.accordion_id === a.id);
+    return `
+      <div class="item-row" style="flex-direction:column;align-items:flex-start;gap:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+          <div>
+            <div class="item-name">${a.name}</div>
+            <div class="item-meta" style="margin-top:2px;">${a.accordion_id} · ${its.length} item${its.length === 1 ? '' : 's'}</div>
+          </div>
+          <div class="item-actions">
+            <button class="item-edit" onclick="openItemModal(null,'${a.id}')">+ Item</button>
+            <button class="item-edit" onclick="openAccordionModal('${a.id}')">Edit</button>
+            <button class="item-delete" onclick="deleteAccordion('${a.id}')">Delete</button>
+          </div>
+        </div>
+        ${its.length ? `<div class="acc-items">${its.map(i => `
+          <div class="item-row" style="padding:7px 0;">
+            <div class="item-name" style="font-size:12px;">${i.name}</div>
+            <div class="item-actions">
+              <button class="item-edit" onclick="openItemModal('${i.id}','${a.id}')">Edit</button>
+              <button class="item-delete" onclick="deleteItem('${i.id}')">×</button>
+            </div>
+          </div>`).join('')}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function openAccordionModal(id) {
+  const existing = id ? state.accordions.find(a => a.id === id) : null;
+  document.getElementById('modal-title').textContent = existing ? 'Edit Accordion Group' : 'Add Accordion Group';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="field"><label>Group Name</label>
+      <input id="m-acc-name" type="text" placeholder="Software Systems" value="${existing?.name || ''}">
+    </div>
+    <div class="field"><label>Accordion ID <span style="font-weight:300;text-transform:none;letter-spacing:0">— used in career toggle linkage</span></label>
+      <input id="m-acc-id" type="text" placeholder="acc-software" value="${existing?.accordion_id || ''}">
+      <div class="hint">Use the format acc-[keyword]. This links from career toggle settings.</div>
+    </div>
+  `;
+  state.modalSaveFn = () => saveAccordion(id);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveAccordion(existingId) {
+  const payload = {
+    user_id:      state.user.id,
+    section:      state.activeSvcTab,
+    name:         document.getElementById('m-acc-name').value.trim(),
+    accordion_id: document.getElementById('m-acc-id').value.trim(),
+  };
+  if (existingId) {
+    const { error } = await sb.from('service_accordions').update(payload).eq('id', existingId);
+    if (!error) state.accordions = state.accordions.map(a => a.id === existingId ? { ...a, ...payload } : a);
+  } else {
+    const { data, error } = await sb.from('service_accordions').insert({ ...payload, sort_order: state.accordions.length }).select().single();
+    if (!error) state.accordions.push(data);
+  }
+  renderAccordionList();
+  showStatus('modal-status');
+  setTimeout(closeModal, 800);
+}
+
+async function deleteAccordion(id) {
+  if (!confirm('Delete this group and all its items?')) return;
+  const { error } = await sb.from('service_accordions').delete().eq('id', id);
+  if (!error) {
+    state.accordions = state.accordions.filter(a => a.id !== id);
+    state.items      = state.items.filter(i => i.accordion_id !== id);
+    renderAccordionList();
+  }
+}
+
+function openItemModal(id, accordionId) {
+  const existing = id ? state.items.find(i => i.id === id) : null;
+  document.getElementById('modal-title').textContent = existing ? 'Edit Item' : 'Add Item';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="field"><label>Service Name</label>
+      <input id="m-item-name" type="text" placeholder="Web Design — Ground Up" value="${existing?.name || ''}">
+    </div>
+  `;
+  state.modalSaveFn = () => saveItem(id, accordionId);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveItem(existingId, accordionId) {
+  const payload = {
+    user_id:      state.user.id,
+    accordion_id: accordionId,
+    name:         document.getElementById('m-item-name').value.trim(),
+  };
+  if (existingId) {
+    const { error } = await sb.from('service_items').update(payload).eq('id', existingId);
+    if (!error) state.items = state.items.map(i => i.id === existingId ? { ...i, ...payload } : i);
+  } else {
+    const { data, error } = await sb.from('service_items').insert({ ...payload, sort_order: state.items.length }).select().single();
+    if (!error) state.items.push(data);
+  }
+  renderAccordionList();
+  showStatus('modal-status');
+  setTimeout(closeModal, 800);
+}
+
+async function deleteItem(id) {
+  const { error } = await sb.from('service_items').delete().eq('id', id);
+  if (!error) {
+    state.items = state.items.filter(i => i.id !== id);
+    renderAccordionList();
+  }
+}
+
+// ── LINKS ───────────────────────────────────────────────
+function renderLinksList() {
+  const el = document.getElementById('links-list');
+  if (!state.links.length) {
+    el.innerHTML = '<div class="empty-state">No links yet.</div>';
+    return;
+  }
+  el.innerHTML = state.links.map(l => `
+    <div class="item-row">
+      <div>
+        <div class="item-name">${l.platform}</div>
+        <div class="item-meta">${l.url}</div>
+      </div>
+      <div class="item-actions">
+        <button class="item-edit" onclick="openLinkModal('${l.id}')">Edit</button>
+        <button class="item-delete" onclick="deleteLink('${l.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openLinkModal(id) {
+  const existing = id ? state.links.find(l => l.id === id) : null;
+  document.getElementById('modal-title').textContent = existing ? 'Edit Link' : 'Add Link';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="field"><label>Platform / Label</label>
+      <input id="m-platform" type="text" placeholder="Instagram" value="${existing?.platform || ''}">
+    </div>
+    <div class="field"><label>URL</label>
+      <input id="m-link-url" type="url" placeholder="https://instagram.com/yourhandle" value="${existing?.url || ''}">
+    </div>
+  `;
+  state.modalSaveFn = () => saveLink(id);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveLink(existingId) {
+  const payload = {
+    user_id:  state.user.id,
+    platform: document.getElementById('m-platform').value.trim(),
+    url:      document.getElementById('m-link-url').value.trim(),
+  };
+  if (existingId) {
+    const { error } = await sb.from('social_links').update(payload).eq('id', existingId);
+    if (!error) state.links = state.links.map(l => l.id === existingId ? { ...l, ...payload } : l);
+  } else {
+    const { data, error } = await sb.from('social_links').insert({ ...payload, sort_order: state.links.length }).select().single();
+    if (!error) state.links.push(data);
+  }
+  renderLinksList();
+  showStatus('modal-status');
+  setTimeout(closeModal, 800);
+}
+
+async function deleteLink(id) {
+  const { error } = await sb.from('social_links').delete().eq('id', id);
+  if (!error) {
+    state.links = state.links.filter(l => l.id !== id);
+    renderLinksList();
+  }
+}
+
+// ── PRODUCTS ────────────────────────────────────────────
+async function loadProducts() {
+  const { data } = await sb.from('archive_products').select('*').eq('user_id', state.user.id).order('sort_order');
+  state.products = data || [];
+}
+
+function renderProductsList() {
+  const el = document.getElementById('products-list');
+  if (!state.products.length) {
+    el.innerHTML = '<div class="list-empty">No products yet. Add one to get listed in The Archive.</div>';
+    return;
+  }
+  el.innerHTML = state.products.map(p => `
+    <div class="item-row">
+      <div class="item-info">
+        <div class="item-primary">${p.title}</div>
+        <div class="item-meta">${p.type} · ${p.price_display || 'No price'} · ${p.published ? '<span style="color:var(--success)">Published</span>' : 'Draft'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn-ghost" onclick="openProductModal('${p.id}')">Edit</button>
+        <button class="btn-danger" onclick="deleteProduct('${p.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openProductModal(id) {
+  const p = id ? state.products.find(x => x.id === id) : null;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">${p ? 'Edit' : 'Add'} Product</div>
+    <div class="field"><label>Title</label><input id="mp-title" type="text" value="${p?.title || ''}"></div>
+    <div class="field"><label>Description</label><textarea id="mp-desc">${p?.description || ''}</textarea></div>
+    <div class="field">
+      <label>Type</label>
+      <select id="mp-type">
+        <option value="Digital Products" ${(p?.type||'Digital Products')==='Digital Products'?'selected':''}>Digital Products</option>
+        <option value="Curriculum"       ${p?.type==='Curriculum'?'selected':''}>Curriculum</option>
+        <option value="Residencies"      ${p?.type==='Residencies'?'selected':''}>Residencies</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Price Display</label><input id="mp-price" type="text" placeholder="$47 · Free · From $99" value="${p?.price_display || ''}"></div>
+      <div class="field"><label>Purchase URL</label><input id="mp-url" type="url" placeholder="https://..." value="${p?.purchase_url || ''}"></div>
+    </div>
+    <div class="field"><label>Image URL</label><input id="mp-img" type="url" placeholder="https://..." value="${p?.image_url || ''}"></div>
+    <div style="display:flex;gap:24px;margin-bottom:16px;">
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:12px;font-weight:300;">
+        <input type="checkbox" id="mp-free" ${p?.is_free?'checked':''}> Free
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:12px;font-weight:300;">
+        <input type="checkbox" id="mp-featured" ${p?.is_featured?'checked':''}> Featured
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:12px;font-weight:300;">
+        <input type="checkbox" id="mp-published" ${p?.published?'checked':''}> Published
+      </label>
+    </div>
+  `;
+  state.modalSaveFn = () => saveProduct(id || null);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveProduct(existingId) {
+  const payload = {
+    user_id:      state.user.id,
+    title:        document.getElementById('mp-title').value.trim(),
+    description:  document.getElementById('mp-desc').value.trim(),
+    type:         document.getElementById('mp-type').value,
+    price_display:document.getElementById('mp-price').value.trim(),
+    purchase_url: document.getElementById('mp-url').value.trim(),
+    image_url:    document.getElementById('mp-img').value.trim(),
+    is_free:      document.getElementById('mp-free').checked,
+    is_featured:  document.getElementById('mp-featured').checked,
+    published:    document.getElementById('mp-published').checked,
+  };
+  if (!payload.title) return;
+  let error;
+  if (existingId) {
+    ({ error } = await sb.from('archive_products').update(payload).eq('id', existingId));
+  } else {
+    ({ error } = await sb.from('archive_products').insert(payload));
+  }
+  if (!error) {
+    closeModal();
+    await loadProducts();
+    renderProductsList();
+  }
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Delete this product?')) return;
+  const { error } = await sb.from('archive_products').delete().eq('id', id);
+  if (!error) {
+    state.products = state.products.filter(p => p.id !== id);
+    renderProductsList();
+  }
+}
+
+// ── STUDIO — CLIENTS ────────────────────────────────────
+async function loadClients() {
+  const { data } = await sb.from('client_contacts').select('*').eq('user_id', state.user.id).order('name');
+  state.clients = data || [];
+}
+
+function renderClientList() {
+  const el = document.getElementById('client-list');
+  if (!state.clients.length) {
+    el.innerHTML = '<div class="list-empty">No clients yet. Add one to start a project portal.</div>';
+    return;
+  }
+  el.innerHTML = state.clients.map(c => `
+    <div class="item-row">
+      <div class="item-info">
+        <div class="item-primary">${c.name}</div>
+        <div class="item-meta">${[c.company, c.email].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn-ghost" onclick="viewClientProjects('${c.id}')">Projects</button>
+        <button class="btn-ghost" onclick="openClientModal('${c.id}')">Edit</button>
+        <button class="btn-danger" onclick="deleteClient('${c.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openClientModal(id) {
+  const c = id ? state.clients.find(x => x.id === id) : null;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">${c ? 'Edit' : 'Add'} Client</div>
+    <div class="field-row">
+      <div class="field"><label>Name</label><input id="mc-name" type="text" value="${c?.name || ''}"></div>
+      <div class="field"><label>Company</label><input id="mc-company" type="text" value="${c?.company || ''}"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Email</label><input id="mc-email" type="email" value="${c?.email || ''}"></div>
+      <div class="field"><label>Phone</label><input id="mc-phone" type="tel" value="${c?.phone || ''}"></div>
+    </div>
+    <div class="field"><label>Notes</label><textarea id="mc-notes">${c?.notes || ''}</textarea></div>
+  `;
+  state.modalSaveFn = () => saveClient(id || null);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveClient(existingId) {
+  const payload = {
+    user_id: state.user.id,
+    name:    document.getElementById('mc-name').value.trim(),
+    company: document.getElementById('mc-company').value.trim(),
+    email:   document.getElementById('mc-email').value.trim(),
+    phone:   document.getElementById('mc-phone').value.trim(),
+    notes:   document.getElementById('mc-notes').value.trim(),
+  };
+  if (!payload.name) return;
+  let error;
+  if (existingId) {
+    ({ error } = await sb.from('client_contacts').update(payload).eq('id', existingId));
+  } else {
+    ({ error } = await sb.from('client_contacts').insert(payload));
+  }
+  if (!error) {
+    closeModal();
+    await loadClients();
+    renderClientList();
+  }
+}
+
+async function deleteClient(id) {
+  if (!confirm('Delete this client and all their projects?')) return;
+  const { error } = await sb.from('client_contacts').delete().eq('id', id);
+  if (!error) {
+    state.clients = state.clients.filter(c => c.id !== id);
+    renderClientList();
+  }
+}
+
+// ── STUDIO — PROJECT LIST ───────────────────────────────
+async function viewClientProjects(clientId) {
+  state.activeClientId = clientId;
+  const client = state.clients.find(c => c.id === clientId);
+  document.getElementById('studio-project-title').textContent = client?.name || '';
+  document.getElementById('studio-project-heading').textContent = (client?.name || '') + "'s Projects";
+
+  const { data } = await sb.from('client_projects').select('*').eq('client_id', clientId).order('created_at');
+  state.studioProjects = data || [];
+  renderStudioProjectList();
+  showStudioProjectList();
+}
+
+function renderStudioProjectList() {
+  const el = document.getElementById('studio-project-list');
+  if (!state.studioProjects.length) {
+    el.innerHTML = '<div class="list-empty">No projects yet for this client.</div>';
+    return;
+  }
+  el.innerHTML = state.studioProjects.map(p => `
+    <div class="item-row">
+      <div class="item-info">
+        <div class="item-primary">${p.name}</div>
+        <div class="item-meta">${p.status || 'Active'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn-ghost" onclick="viewProjectDetail('${p.id}')">Open</button>
+        <button class="btn-ghost" onclick="openClientProjectModal('${p.id}')">Edit</button>
+        <button class="btn-ghost" onclick="copyPortalLinkFor('${p.portal_token}')">Copy link</button>
+        <button class="btn-danger" onclick="deleteClientProject('${p.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showStudioClientList() {
+  document.getElementById('studio-client-view').style.display  = '';
+  document.getElementById('studio-project-view').style.display = 'none';
+  document.getElementById('studio-detail-view').style.display  = 'none';
+}
+
+function showStudioProjectList() {
+  document.getElementById('studio-client-view').style.display  = 'none';
+  document.getElementById('studio-project-view').style.display = '';
+  document.getElementById('studio-detail-view').style.display  = 'none';
+}
+
+function openClientProjectModal(id) {
+  const p = id ? state.studioProjects.find(x => x.id === id) : null;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">${p ? 'Edit' : 'Add'} Project</div>
+    <div class="field"><label>Project Name</label><input id="mcp-name" type="text" value="${p?.name || ''}"></div>
+    <div class="field"><label>Status</label><input id="mcp-status" type="text" placeholder="Active" value="${p?.status || ''}"></div>
+    <div class="field"><label>Tagline</label><input id="mcp-tagline" type="text" placeholder="One line about this project" value="${p?.tagline || ''}"></div>
+  `;
+  state.modalSaveFn = () => saveClientProject(id || null);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveClientProject(existingId) {
+  const payload = {
+    user_id:   state.user.id,
+    client_id: state.activeClientId,
+    name:      document.getElementById('mcp-name').value.trim(),
+    status:    document.getElementById('mcp-status').value.trim() || 'Active',
+    tagline:   document.getElementById('mcp-tagline').value.trim(),
+  };
+  if (!payload.name) return;
+  let data, error;
+  if (existingId) {
+    ({ data, error } = await sb.from('client_projects').update(payload).eq('id', existingId).select().single());
+    if (!error) state.studioProjects = state.studioProjects.map(p => p.id === existingId ? data : p);
+  } else {
+    ({ data, error } = await sb.from('client_projects').insert(payload).select().single());
+    if (!error) state.studioProjects.push(data);
+  }
+  if (!error) {
+    closeModal();
+    renderStudioProjectList();
+  }
+}
+
+async function deleteClientProject(id) {
+  if (!confirm('Delete this project and all its milestones and updates?')) return;
+  const { error } = await sb.from('client_projects').delete().eq('id', id);
+  if (!error) {
+    state.studioProjects = state.studioProjects.filter(p => p.id !== id);
+    renderStudioProjectList();
+  }
+}
+
+// ── STUDIO — PROJECT DETAIL ─────────────────────────────
+async function viewProjectDetail(projectId) {
+  state.activeProjectId = projectId;
+  const proj = state.studioProjects.find(p => p.id === projectId);
+  document.getElementById('studio-detail-title').textContent   = proj?.name || '';
+  document.getElementById('studio-detail-heading').textContent = proj?.name || '';
+
+  // populate fields
+  document.getElementById('d-status').value  = proj?.status  || '';
+  document.getElementById('d-tagline').value = proj?.tagline || '';
+  document.getElementById('d-cover').value   = proj?.cover_url    || '';
+  document.getElementById('d-accent').value  = proj?.accent_color || '';
+  document.getElementById('d-contract').value      = proj?.contract_html       || '';
+  document.getElementById('d-show-contract').checked = proj?.show_contract     || false;
+  document.getElementById('d-deposit').value       = proj?.invoice_deposit_html || '';
+  document.getElementById('d-show-deposit').checked  = proj?.show_invoice_deposit || false;
+  document.getElementById('d-final').value         = proj?.invoice_final_html   || '';
+  document.getElementById('d-show-final').checked   = proj?.show_invoice_final  || false;
+
+  // load milestones + updates in parallel
+  const [msRes, upRes] = await Promise.all([
+    sb.from('project_milestones').select('*').eq('project_id', projectId).order('sort_order'),
+    sb.from('project_updates').select('*').eq('project_id', projectId).order('created_at', { ascending: false }),
+  ]);
+  state.milestones    = msRes.data || [];
+  state.studioUpdates = upRes.data || [];
+  renderMilestoneList();
+  renderUpdateList();
+
+  document.getElementById('studio-client-view').style.display  = 'none';
+  document.getElementById('studio-project-view').style.display = 'none';
+  document.getElementById('studio-detail-view').style.display  = '';
+}
+
+function renderMilestoneList() {
+  const el = document.getElementById('milestone-list');
+  if (!state.milestones.length) {
+    el.innerHTML = '<div class="list-empty">No milestones yet.</div>';
+    return;
+  }
+  el.innerHTML = state.milestones.map(m => `
+    <div class="item-row" style="padding:8px 0;">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;">
+        <input type="checkbox" ${m.done ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)" style="width:auto;">
+        <span style="font-size:13px;font-weight:300;${m.done ? 'text-decoration:line-through;color:var(--gray-mid)' : ''}">${m.label}</span>
+      </div>
+      <button class="btn-danger" onclick="deleteMilestone('${m.id}')">Delete</button>
+    </div>
+  `).join('');
+}
+
+function renderUpdateList() {
+  const el = document.getElementById('update-list');
+  if (!state.studioUpdates.length) {
+    el.innerHTML = '<div class="list-empty">No updates posted yet.</div>';
+    return;
+  }
+  el.innerHTML = state.studioUpdates.map(u => `
+    <div class="item-row" style="align-items:flex-start;padding:10px 0;">
+      <div class="item-info">
+        <div class="item-primary" style="font-weight:300;">${u.message}</div>
+        ${u.date ? `<div class="item-meta">${u.date}</div>` : ''}
+      </div>
+      <button class="btn-danger" onclick="deleteUpdate('${u.id}')">Delete</button>
+    </div>
+  `).join('');
+}
+
+async function addMilestone() {
+  const label = prompt('Milestone label:');
+  if (!label) return;
+  const { data, error } = await sb.from('project_milestones').insert({
+    project_id: state.activeProjectId,
+    label:      label.trim(),
+    sort_order: state.milestones.length,
+  }).select().single();
+  if (!error) {
+    state.milestones.push(data);
+    renderMilestoneList();
+  }
+}
+
+async function toggleMilestone(id, done) {
+  const { error } = await sb.from('project_milestones').update({ done }).eq('id', id);
+  if (!error) {
+    const m = state.milestones.find(x => x.id === id);
+    if (m) m.done = done;
+    renderMilestoneList();
+  }
+}
+
+async function deleteMilestone(id) {
+  const { error } = await sb.from('project_milestones').delete().eq('id', id);
+  if (!error) {
+    state.milestones = state.milestones.filter(m => m.id !== id);
+    renderMilestoneList();
+  }
+}
+
+async function addUpdate() {
+  const msg = document.getElementById('d-update-msg').value.trim();
+  if (!msg) return;
+  const now = new Date();
+  const date = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const { data, error } = await sb.from('project_updates').insert({
+    project_id: state.activeProjectId,
+    user_id:    state.user.id,
+    message:    msg,
+    date,
+  }).select().single();
+  if (!error) {
+    document.getElementById('d-update-msg').value = '';
+    state.studioUpdates.unshift(data);
+    renderUpdateList();
+  }
+}
+
+async function deleteUpdate(id) {
+  const { error } = await sb.from('project_updates').delete().eq('id', id);
+  if (!error) {
+    state.studioUpdates = state.studioUpdates.filter(u => u.id !== id);
+    renderUpdateList();
+  }
+}
+
+function autoSaveDetail() {
+  clearTimeout(state.detailSaveTimer);
+  // 800ms debounce — saves silently while you type
+  state.detailSaveTimer = setTimeout(flushDetailSave, 800);
+}
+
+async function flushDetailSave() {
+  const payload = {
+    status:               document.getElementById('d-status').value.trim(),
+    tagline:              document.getElementById('d-tagline').value.trim(),
+    cover_url:            document.getElementById('d-cover').value.trim(),
+    accent_color:         document.getElementById('d-accent').value.trim(),
+    contract_html:        document.getElementById('d-contract').value,
+    show_contract:        document.getElementById('d-show-contract').checked,
+    invoice_deposit_html: document.getElementById('d-deposit').value,
+    show_invoice_deposit: document.getElementById('d-show-deposit').checked,
+    invoice_final_html:   document.getElementById('d-final').value,
+    show_invoice_final:   document.getElementById('d-show-final').checked,
+  };
+  const { error } = await sb.from('client_projects').update(payload).eq('id', state.activeProjectId);
+  if (!error) {
+    // update local state so going back to project list reflects new status
+    const p = state.studioProjects.find(x => x.id === state.activeProjectId);
+    if (p) Object.assign(p, payload);
+    showStatus('detail-save-status');
+  }
+}
+
+function copyPortalLink() {
+  const proj = state.studioProjects.find(p => p.id === state.activeProjectId);
+  if (proj?.portal_token) copyPortalLinkFor(proj.portal_token);
+}
+
+function copyPortalLinkFor(token) {
+  const url = `${window.location.origin}${window.location.pathname.replace('dashboard.html', '')}portal.html?token=${token}`;
+  navigator.clipboard.writeText(url).then(() => alert('Portal link copied!'));
+}
+
+// ── DOMAIN ──────────────────────────────────────────────
+function renderDomain() {
+  const d = state.domain;
+  if (!d) return;
+  document.getElementById('f-domain').value = d.domain || '';
+  if (d.domain) showCNAMEBlock(d);
+}
+
+function showCNAMEBlock(d) {
+  const block = document.getElementById('domain-cname-block');
+  block.style.display = '';
+  document.getElementById('cname-host').textContent = d.domain.startsWith('www.') ? 'www' : '@';
+  document.getElementById('cname-target').textContent = d.cname_target || 'profiles.libraryofmorenita.org';
+  document.getElementById('domain-verified-status').textContent = d.verified ? '✓ Verified' : 'Pending';
+  document.getElementById('domain-verified-status').style.color  = d.verified ? 'var(--success)' : 'var(--gray-mid)';
+}
+
+async function saveDomain() {
+  const domain = document.getElementById('f-domain').value.trim().toLowerCase();
+  if (!domain) return;
+  const payload = {
+    user_id:      state.user.id,
+    domain,
+    cname_target: 'profiles.libraryofmorenita.org',
+    verified:     false,
+  };
+  const { data, error } = await sb.from('custom_domains').upsert(payload, { onConflict: 'user_id' }).select().single();
+  if (!error) {
+    state.domain = data;
+    showCNAMEBlock(data);
+    showStatus('domain-status');
+  }
+}
+
+// ── MODAL ───────────────────────────────────────────────
+function modalSave() {
+  if (state.modalSaveFn) state.modalSaveFn();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('modal-body').innerHTML = '';
+  state.modalSaveFn = null;
+}
+
+// close on backdrop click, not on modal card click
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+// ── INIT ────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

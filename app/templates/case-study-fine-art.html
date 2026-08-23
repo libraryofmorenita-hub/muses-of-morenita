@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study — Amelia Arabe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root {
+  --black:       #0A0A0A;
+  --black-mid:   #1A1A1A;
+  --black-soft:  #2A2A2A;
+  --gray-dark:   #555555;
+  --gray-mid:    #999999;
+  --gray-light:  #CCCCCC;
+  --gray-faint:  #E8E8E8;
+  --white:       #FAFAFA;
+  --pure-white:  #FFFFFF;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body:    "Inter", sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); color: var(--black); background: var(--white); }
+
+.cs-back {
+  position: absolute;
+  top: 24px; left: 24px;
+  z-index: 2;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pure-white);
+  text-decoration: none;
+}
+
+.cs-hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--gray-faint);
+  overflow: hidden;
+}
+
+.cs-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.45) 38%, rgba(10,10,10,0) 65%);
+  pointer-events: none;
+}
+
+.cs-hero-content {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 40px 56px;
+  z-index: 1;
+}
+
+.cs-category {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 10px;
+}
+
+.cs-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(32px, 5vw, 56px);
+  color: var(--pure-white);
+  line-height: 1.05;
+}
+
+.cs-body {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+.cs-pill {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 32px;
+}
+.cs-pill-medium {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+}
+.cs-pill-badge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--black-mid);
+  border: 0.5px solid var(--gray-light);
+  padding: 4px 10px;
+}
+
+.cs-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+  margin-bottom: 48px;
+}
+.cs-gallery-item {
+  aspect-ratio: 4 / 3;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--gray-faint);
+}
+
+.cs-section { margin-bottom: 40px; }
+.cs-section-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 10px;
+}
+.cs-section-text {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 15px;
+  color: var(--black-mid);
+  line-height: 1.85;
+}
+
+.cs-cta { margin-top: 8px; }
+.cs-link {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--black);
+  border-bottom: 1px solid var(--black);
+  padding-bottom: 2px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.cs-error {
+  padding: 96px 24px;
+  text-align: center;
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--gray-mid);
+}
+.cs-error a { color: var(--black); }
+
+@media (max-width: 640px) {
+  .cs-hero-content { padding: 24px; }
+  .cs-body { padding: 32px 20px 64px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cs-root">
+  <a class="cs-back" href="../amelia-arabe-portfolio.html">&larr; Back to Portfolio</a>
+
+  <div class="cs-hero" id="cs-hero">
+    <div class="cs-scrim"></div>
+    <div class="cs-hero-content">
+      <div class="cs-category" id="cs-category"></div>
+      <div class="cs-title" id="cs-title"></div>
+    </div>
+  </div>
+
+  <div class="cs-body">
+    <div class="cs-pill">
+      <span class="cs-pill-medium" id="cs-pill-medium"></span>
+      <span class="cs-pill-badge" id="cs-pill-badge" style="display:none;"></span>
+    </div>
+
+    <div class="cs-gallery" id="cs-gallery" style="display:none;"></div>
+
+    <div class="cs-section" id="cs-problem-wrap">
+      <div class="cs-section-label">The Problem</div>
+      <div class="cs-section-text" id="cs-problem-text"></div>
+    </div>
+
+    <div class="cs-section" id="cs-process-wrap">
+      <div class="cs-section-label">The Process</div>
+      <div class="cs-section-text" id="cs-process-text"></div>
+    </div>
+
+    <div class="cs-section" id="cs-outcome-wrap">
+      <div class="cs-section-label">The Outcome</div>
+      <div class="cs-section-text" id="cs-outcome-text"></div>
+    </div>
+
+    <div class="cs-section" id="cs-credits-wrap">
+      <div class="cs-section-label">Credits</div>
+      <div class="cs-section-text" id="cs-credits-text"></div>
+    </div>
+
+    <div class="cs-cta" id="cs-cta"></div>
+  </div>
+</div>
+
+<script>
+const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
+const sb = supabase.createClient(SB_URL, SB_ANON);
+const CTA_LABEL = 'Inquire About This Piece';
+
+const id = new URLSearchParams(window.location.search).get('id');
+
+// image_url is stored relative to the repo root — this file lives two
+// levels down (app/templates/), so local paths need '../../' prepended.
+// External URLs pass through unchanged.
+function resolveImageUrl(url) {
+  if (!url) return '';
+  return /^https?:\/\//.test(url) ? url : '../../' + url;
+}
+
+function toggleSection(wrapId, textId, value) {
+  const wrap = document.getElementById(wrapId);
+  if (value) {
+    wrap.style.display = '';
+    document.getElementById(textId).textContent = value;
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function showError() {
+  document.getElementById('cs-root').innerHTML =
+    '<div class="cs-error">Project not found.<br><a href="../amelia-arabe-portfolio.html">&larr; Back to Portfolio</a></div>';
+}
+
+function render(p) {
+  document.title = p.title + ' — Amelia Arabe';
+
+  const hero = document.getElementById('cs-hero');
+  if (p.image_url) hero.style.backgroundImage = `url(${resolveImageUrl(p.image_url)})`;
+
+  document.getElementById('cs-category').textContent = p.category || '';
+  document.getElementById('cs-title').textContent = p.title;
+
+  document.getElementById('cs-pill-medium').textContent = p.category || '';
+  const badgeEl = document.getElementById('cs-pill-badge');
+  if (p.badge) {
+    badgeEl.style.display = '';
+    badgeEl.textContent = p.badge;
+  }
+
+  const galleryWrap = document.getElementById('cs-gallery');
+  const galleryImages = [p.image_url, ...(p.gallery_urls || [])].filter(Boolean);
+  if (galleryImages.length) {
+    galleryWrap.style.display = '';
+    galleryWrap.innerHTML = galleryImages.map(url => `<div class="cs-gallery-item" style="background-image:url(${resolveImageUrl(url)})"></div>`).join('');
+  }
+
+  toggleSection('cs-problem-wrap', 'cs-problem-text', p.case_problem);
+  toggleSection('cs-process-wrap', 'cs-process-text', p.case_process);
+  toggleSection('cs-outcome-wrap', 'cs-outcome-text', p.case_outcome);
+  toggleSection('cs-credits-wrap', 'cs-credits-text', p.credits);
+
+  const ctaWrap = document.getElementById('cs-cta');
+  if (p.url) {
+    ctaWrap.innerHTML = `<a class="cs-link" href="${p.url}" target="_blank" rel="noopener">${CTA_LABEL}</a>`;
+  }
+}
+
+async function load() {
+  if (!id) { showError(); return; }
+  const { data, error } = await sb.from('projects').select('*').eq('id', id).maybeSingle();
+  if (error || !data) { showError(); return; }
+  render(data);
+}
+
+document.addEventListener('DOMContentLoaded', load);
+</script>
+</body>
+</html>
