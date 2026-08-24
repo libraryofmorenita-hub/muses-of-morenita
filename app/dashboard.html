@@ -808,6 +808,12 @@ function openToggleModal(id) {
     <div class="field"><label>Hire Button Label</label>
       <input id="m-hire-label" type="text" placeholder="Hire me to build" value="${existing?.hire_label || ''}">
     </div>
+    <div class="field"><label>CTA Mode <span style="font-weight:300;text-transform:none;letter-spacing:0">— Interest routes the button to the inquiry modal instead of Services</span></label>
+      <select id="m-cta-mode">
+        <option value="hire"     ${existing?.cta_mode !== 'interest' ? 'selected' : ''}>Hire</option>
+        <option value="interest" ${existing?.cta_mode === 'interest' ? 'selected' : ''}>Express Interest</option>
+      </select>
+    </div>
     <div class="field"><label>Service Section</label>
       <select id="m-svc-section">
         <option value="work"      ${existing?.service_section === 'work'      ? 'selected' : ''}>Work</option>
@@ -834,6 +840,7 @@ async function saveToggle(existingId) {
     role_key:        document.getElementById('m-role-key').value.trim(),
     overview:        document.getElementById('m-overview').value.trim(),
     hire_label:      document.getElementById('m-hire-label').value.trim(),
+    cta_mode:        document.getElementById('m-cta-mode').value,
     service_section: document.getElementById('m-svc-section').value,
     accordion_id:    document.getElementById('m-accordion-id').value.trim(),
     show_commission: document.getElementById('m-commission').checked,

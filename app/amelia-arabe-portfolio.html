@@ -1552,6 +1552,7 @@ async function loadPortfolioData() {
       hireLabel: t.hire_label,
       serviceSection: t.service_section,
       accordion: t.accordion_id,
+      ctaMode: t.cta_mode,
     };
     PROJECTS[t.role_key] = [];
   });
@@ -1801,9 +1802,22 @@ function submitContact() {
 }
 
 // ── HIRE BUTTON ────────────────────────────────────────
+// toggles with cta_mode 'interest' (currently Software/Hardware — display-only
+// for now) route into the existing wishlist/inquiry modal instead of the
+// Services page, so visitors can start a conversation without implying they
+// can actually book/hire for that discipline yet.
+function expressInterest(name) {
+  if (!state.wishlist.includes(name)) {
+    state.wishlist.push(name);
+    updateWishlistDisplay();
+  }
+  openConsultationModal();
+}
+
 function hireClick() {
   if (!state.activeToggle) { navigateTo('services'); return; }
   const data = TOGGLE_DATA[state.activeToggle];
+  if (data.ctaMode === 'interest') { expressInterest(data.name); return; }
   navigateTo('services');
   setServiceSection(data.serviceSection);
   if (data.accordion) toggleAccordion(data.accordion);
