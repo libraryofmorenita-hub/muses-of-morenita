@@ -1544,6 +1544,10 @@ function resolveImageUrl(url) {
 // populated from Supabase on load — see loadPortfolioData() below
 let PROJECTS = {};
 let TOGGLE_DATA = {};
+// Fine Art only — collections grid (see showToggleView's 'painter' branch
+// and renderCollectionsGrid()) instead of the flat project grid every
+// other toggle uses.
+let COLLECTIONS = [];
 
 let dataReadyResolve;
 const dataReady = new Promise(resolve => { dataReadyResolve = resolve; });
@@ -1552,10 +1556,12 @@ async function loadPortfolioData() {
   const { data: profile } = await sb.from('profiles').select('id').eq('email', 'missameliava@gmail.com').single();
   if (!profile) { dataReadyResolve(); return; }
 
-  const [{ data: toggles }, { data: projects }] = await Promise.all([
+  const [{ data: toggles }, { data: projects }, { data: collections }] = await Promise.all([
     sb.from('career_toggles').select('*').eq('user_id', profile.id).order('sort_order'),
     sb.from('projects').select('*').eq('user_id', profile.id).order('sort_order'),
+    sb.from('art_collections').select('*').eq('user_id', profile.id).order('sort_order'),
   ]);
+  COLLECTIONS = collections || [];
 
   (toggles || []).forEach(t => {
     TOGGLE_DATA[t.role_key] = {
@@ -1654,46 +1660,49 @@ function showToggleView(id) {
   document.getElementById('commission-sub').style.display = data.showCommission ? 'block' : 'none';
   document.getElementById('hire-btn').textContent = data.hireLabel;
 
-  // Build project grid
+  // Build project grid — Fine Art is a special case: a collections grid
+  // (see renderCollectionsGrid()) instead of the flat project cards every
+  // other toggle uses. Same #project-grid container either way.
   const grid = document.getElementById('project-grid');
   grid.innerHTML = '';
+  grid.classList.remove('overflow-x');
 
-  const useOverflow = projects.length > 6;
-  if (useOverflow) {
-    grid.classList.add('overflow-x');
+  if (id === 'painter') {
+    renderCollectionsGrid(grid);
   } else {
-    grid.classList.remove('overflow-x');
+    const useOverflow = projects.length > 6;
+    if (useOverflow) grid.classList.add('overflow-x');
+
+    projects.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'project-card';
+      card.onclick = () => { window.location.href = buildCaseStudyUrl(p, id); };
+
+      let tagsHtml = '';
+      if (p.tags && p.tags.length) {
+        tagsHtml = '<div class="card-tags">' + p.tags.map(t => `<span class="card-tag">${t}</span>`).join('') + '</div>';
+      }
+      if (p.badge) {
+        tagsHtml += `<span class="status-badge">${p.badge}</span>`;
+      }
+
+      const hasImage = !!p.image_url;
+      const placeholderHtml = hasImage ? '' : `<div class="card-placeholder-mark">${(p.title || '?').charAt(0)}</div>`;
+
+      card.innerHTML = `
+        <div class="card-img${hasImage ? '' : ' no-image'}">
+          ${placeholderHtml}
+          <div class="card-scrim"></div>
+          <div class="card-body">
+            <div class="card-category">${p.category || ''}</div>
+            <div class="card-title">${p.title}</div>
+            ${tagsHtml}
+          </div>
+        </div>`;
+      if (hasImage) card.querySelector('.card-img').style.backgroundImage = `url(${resolveImageUrl(p.image_url)})`;
+      grid.appendChild(card);
+    });
   }
-
-  projects.forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'project-card';
-    card.onclick = () => { window.location.href = buildCaseStudyUrl(p, id); };
-
-    let tagsHtml = '';
-    if (p.tags && p.tags.length) {
-      tagsHtml = '<div class="card-tags">' + p.tags.map(t => `<span class="card-tag">${t}</span>`).join('') + '</div>';
-    }
-    if (p.badge) {
-      tagsHtml += `<span class="status-badge">${p.badge}</span>`;
-    }
-
-    const hasImage = !!p.image_url;
-    const placeholderHtml = hasImage ? '' : `<div class="card-placeholder-mark">${(p.title || '?').charAt(0)}</div>`;
-
-    card.innerHTML = `
-      <div class="card-img${hasImage ? '' : ' no-image'}">
-        ${placeholderHtml}
-        <div class="card-scrim"></div>
-        <div class="card-body">
-          <div class="card-category">${p.category || ''}</div>
-          <div class="card-title">${p.title}</div>
-          ${tagsHtml}
-        </div>
-      </div>`;
-    if (hasImage) card.querySelector('.card-img').style.backgroundImage = `url(${resolveImageUrl(p.image_url)})`;
-    grid.appendChild(card);
-  });
 
   const tv = document.getElementById('toggle-view');
   const tvi = document.getElementById('toggle-view-inner');
@@ -1705,6 +1714,28 @@ function showToggleView(id) {
     requestAnimationFrame(() => {
       tvi.classList.add('shown');
     });
+  });
+}
+
+// Fine Art's collections grid — reuses the exact same card markup/CSS as
+// the flat project grid (.project-card/.card-img.no-image/etc.) since
+// collections don't have their own cover image yet; each tile just shows
+// a monogram of the collection name, same as any other no-image card.
+function renderCollectionsGrid(grid) {
+  COLLECTIONS.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.onclick = () => { window.location.href = `templates/collection.html?id=${c.id}`; };
+    card.innerHTML = `
+      <div class="card-img no-image">
+        <div class="card-placeholder-mark">${(c.name || '?').charAt(0)}</div>
+        <div class="card-scrim"></div>
+        <div class="card-body">
+          <div class="card-category">Collection</div>
+          <div class="card-title">${c.name}</div>
+        </div>
+      </div>`;
+    grid.appendChild(card);
   });
 }
 

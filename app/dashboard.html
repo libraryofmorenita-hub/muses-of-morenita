@@ -248,6 +248,7 @@ a { text-decoration: none; color: inherit; }
       <div class="sidebar-section">
         <div class="section-link active" data-section="profile"  onclick="goSection('profile')">Profile</div>
         <div class="section-link"        data-section="career"   onclick="goSection('career')">Career</div>
+        <div class="section-link"        data-section="art"      onclick="goSection('art')">Fine Art</div>
         <div class="section-link"        data-section="services" onclick="goSection('services')">Services</div>
         <div class="section-link"        data-section="links"    onclick="goSection('links')">Links</div>
         <div class="section-link"        data-section="products" onclick="goSection('products')">Products</div>
@@ -357,6 +358,36 @@ a { text-decoration: none; color: inherit; }
             <button class="list-add" onclick="openProjectModal()">+ Add project</button>
           </div>
           <div id="project-list"></div>
+        </div>
+      </div>
+
+      <!-- FINE ART MUSEUM ─────────────────────── -->
+      <div class="section" id="section-art">
+        <div id="art-collection-list-view">
+          <div class="section-heading">Fine Art</div>
+          <div class="section-sub">Collections are the "rooms" visitors browse under Fine Art. Each holds its own artworks.</div>
+
+          <div class="list-header">
+            <span class="list-label">Collections</span>
+            <button class="list-add" onclick="openCollectionModal()">+ Add collection</button>
+          </div>
+          <div id="collection-list"></div>
+        </div>
+
+        <div id="art-artwork-view" style="display:none;">
+          <div class="breadcrumb">
+            <button class="breadcrumb-back" onclick="showCollectionList()">← Fine Art</button>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current" id="artwork-view-title"></span>
+          </div>
+          <div class="section-heading" id="artwork-view-heading"></div>
+          <div class="section-sub">Each piece appears in this collection's grid, in order.</div>
+
+          <div class="list-header">
+            <span class="list-label">Artworks</span>
+            <button class="list-add" onclick="openArtworkModal()">+ Add artwork</button>
+          </div>
+          <div id="artwork-list"></div>
         </div>
       </div>
 
@@ -601,6 +632,9 @@ const state = {
   section:         'profile',
   toggles:         [],
   projects:        [],      // all projects for this user
+  collections:     [],      // Fine Art museum collections
+  artworks:        [],      // all artworks for this user
+  activeCollectionId: null, // which collection's artworks are being viewed
   accordions:      [],      // all service_accordions for this user
   items:           [],      // all service_items for this user
   links:           [],
@@ -634,6 +668,8 @@ async function init() {
     loadProfile(),
     loadToggles(),
     loadProjects(),
+    loadCollections(),
+    loadArtworks(),
     loadAccordions(),
     loadItems(),
     loadLinks(),
@@ -644,6 +680,7 @@ async function init() {
 
   renderProfile();
   renderCareerList();
+  renderCollectionList();
   renderAccordionList();
   renderLinksList();
   renderDomain();
@@ -670,6 +707,16 @@ async function loadToggles() {
 async function loadProjects() {
   const { data } = await sb.from('projects').select('*').eq('user_id', state.user.id).order('sort_order');
   state.projects = data || [];
+}
+
+async function loadCollections() {
+  const { data } = await sb.from('art_collections').select('*').eq('user_id', state.user.id).order('sort_order');
+  state.collections = data || [];
+}
+
+async function loadArtworks() {
+  const { data } = await sb.from('artworks').select('*').eq('user_id', state.user.id).order('sort_order');
+  state.artworks = data || [];
 }
 
 async function loadAccordions() {
@@ -995,6 +1042,189 @@ async function deleteProject(id) {
     state.projects = state.projects.filter(p => p.id !== id);
     renderProjectList();
     renderCareerList();
+  }
+}
+
+// ── FINE ART MUSEUM (collections → artworks) ────────────
+// Mirrors the Career/Projects pattern above exactly — a two-level
+// breadcrumb view, same modal/save/delete shape.
+function renderCollectionList() {
+  const el = document.getElementById('collection-list');
+  if (!state.collections.length) {
+    el.innerHTML = '<div class="empty-state">No collections yet. Add your first one.</div>';
+    return;
+  }
+  el.innerHTML = state.collections.map(c => `
+    <div class="item-row">
+      <div>
+        <div class="item-name">${c.name}</div>
+        <div class="item-meta">${countArtworks(c.id)} artwork${countArtworks(c.id) === 1 ? '' : 's'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="item-edit" onclick="viewArtworks('${c.id}')">Artworks</button>
+        <button class="item-edit" onclick="openCollectionModal('${c.id}')">Edit</button>
+        <button class="item-delete" onclick="deleteCollection('${c.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function countArtworks(collectionId) {
+  return state.artworks.filter(a => a.collection_id === collectionId).length;
+}
+
+function showCollectionList() {
+  document.getElementById('art-collection-list-view').style.display = '';
+  document.getElementById('art-artwork-view').style.display = 'none';
+  state.activeCollectionId = null;
+}
+
+function viewArtworks(collectionId) {
+  state.activeCollectionId = collectionId;
+  const collection = state.collections.find(c => c.id === collectionId);
+  document.getElementById('art-collection-list-view').style.display = 'none';
+  document.getElementById('art-artwork-view').style.display = '';
+  document.getElementById('artwork-view-title').textContent = collection.name;
+  document.getElementById('artwork-view-heading').textContent = collection.name;
+  renderArtworkList();
+}
+
+function openCollectionModal(id) {
+  const existing = id ? state.collections.find(c => c.id === id) : null;
+  document.getElementById('modal-title').textContent = existing ? 'Edit Collection' : 'Add Collection';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="field"><label>Name</label>
+      <input id="m-col-name" type="text" placeholder="Oro Vista" value="${existing?.name || ''}">
+    </div>
+    <div class="field"><label>Slug</label>
+      <input id="m-col-slug" type="text" placeholder="oro-vista" value="${existing?.slug || ''}">
+    </div>
+    <div class="field"><label>Description</label>
+      <textarea id="m-col-description" placeholder="What this collection is, in a sentence or two.">${existing?.description || ''}</textarea>
+    </div>
+  `;
+  state.modalSaveFn = () => saveCollection(id);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveCollection(existingId) {
+  const payload = {
+    user_id:     state.user.id,
+    name:        document.getElementById('m-col-name').value.trim(),
+    slug:        document.getElementById('m-col-slug').value.trim(),
+    description: document.getElementById('m-col-description').value.trim() || null,
+  };
+  if (existingId) {
+    const { error } = await sb.from('art_collections').update(payload).eq('id', existingId);
+    if (!error) state.collections = state.collections.map(c => c.id === existingId ? { ...c, ...payload } : c);
+  } else {
+    const { data, error } = await sb.from('art_collections').insert({ ...payload, sort_order: state.collections.length }).select().single();
+    if (!error) state.collections.push(data);
+  }
+  renderCollectionList();
+  showStatus('modal-status');
+  setTimeout(closeModal, 800);
+}
+
+async function deleteCollection(id) {
+  if (!confirm('Delete this collection and all its artworks?')) return;
+  const { error } = await sb.from('art_collections').delete().eq('id', id);
+  if (!error) {
+    state.collections = state.collections.filter(c => c.id !== id);
+    state.artworks = state.artworks.filter(a => a.collection_id !== id);
+    renderCollectionList();
+  }
+}
+
+function renderArtworkList() {
+  const list = state.artworks.filter(a => a.collection_id === state.activeCollectionId);
+  const el   = document.getElementById('artwork-list');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state">No artworks yet in this collection.</div>';
+    return;
+  }
+  el.innerHTML = list.map(a => `
+    <div class="item-row">
+      <div>
+        <div class="item-name">${a.title}</div>
+        <div class="item-meta">${a.year || ''}${a.medium ? ' · ' + a.medium : ''}</div>
+      </div>
+      <div class="item-actions">
+        <button class="item-edit" onclick="openArtworkModal('${a.id}')">Edit</button>
+        <button class="item-delete" onclick="deleteArtwork('${a.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openArtworkModal(id) {
+  const existing = id ? state.artworks.find(a => a.id === id) : null;
+  document.getElementById('modal-title').textContent = existing ? 'Edit Artwork' : 'Add Artwork';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="field"><label>Title</label>
+      <input id="m-art-title" type="text" placeholder="Vienna Rooftops" value="${existing?.title || ''}">
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Year</label>
+        <input id="m-art-year" type="text" placeholder="2026" value="${existing?.year || ''}">
+      </div>
+      <div class="field"><label>Medium</label>
+        <input id="m-art-medium" type="text" placeholder="Oil on canvas" value="${existing?.medium || ''}">
+      </div>
+    </div>
+    <div class="field"><label>Dimensions</label>
+      <input id="m-art-dimensions" type="text" placeholder="24 x 36 in" value="${existing?.dimensions || ''}">
+    </div>
+    <div class="field"><label>Image URL</label>
+      <input id="m-art-img" type="url" placeholder="https://..." value="${existing?.image_url || ''}">
+    </div>
+    <div class="field"><label>Artist Statement</label>
+      <textarea id="m-art-statement" placeholder="What this piece is about.">${existing?.artist_statement || ''}</textarea>
+    </div>
+    <div class="field"><label>The Story</label>
+      <textarea id="m-art-story" placeholder="Context — how it came to be.">${existing?.context_story || ''}</textarea>
+    </div>
+    <div class="field"><label>Process Gallery <span style="font-weight:300;text-transform:none;letter-spacing:0">— one URL per line, sketch → in-progress → detail → final</span></label>
+      <textarea id="m-art-gallery" placeholder="https://...">${(existing?.gallery_urls || []).join('\n')}</textarea>
+    </div>
+  `;
+  state.modalSaveFn = () => saveArtwork(id);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+async function saveArtwork(existingId) {
+  const payload = {
+    user_id:          state.user.id,
+    collection_id:    state.activeCollectionId,
+    title:            document.getElementById('m-art-title').value.trim(),
+    year:             document.getElementById('m-art-year').value.trim() || null,
+    medium:           document.getElementById('m-art-medium').value.trim() || null,
+    dimensions:       document.getElementById('m-art-dimensions').value.trim() || null,
+    image_url:        document.getElementById('m-art-img').value.trim() || null,
+    artist_statement: document.getElementById('m-art-statement').value.trim() || null,
+    context_story:    document.getElementById('m-art-story').value.trim() || null,
+    gallery_urls:     document.getElementById('m-art-gallery').value.split('\n').map(s => s.trim()).filter(Boolean),
+  };
+  if (existingId) {
+    const { error } = await sb.from('artworks').update(payload).eq('id', existingId);
+    if (!error) state.artworks = state.artworks.map(a => a.id === existingId ? { ...a, ...payload } : a);
+  } else {
+    const { data, error } = await sb.from('artworks').insert({ ...payload, sort_order: countArtworks(state.activeCollectionId) }).select().single();
+    if (!error) state.artworks.push(data);
+  }
+  renderArtworkList();
+  renderCollectionList();
+  showStatus('modal-status');
+  setTimeout(closeModal, 800);
+}
+
+async function deleteArtwork(id) {
+  if (!confirm('Delete this artwork?')) return;
+  const { error } = await sb.from('artworks').delete().eq('id', id);
+  if (!error) {
+    state.artworks = state.artworks.filter(a => a.id !== id);
+    renderArtworkList();
+    renderCollectionList();
   }
 }
 

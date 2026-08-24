@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collection — Amelia Arabe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root {
+  --black:       #0A0A0A;
+  --black-mid:   #1A1A1A;
+  --gray-dark:   #555555;
+  --gray-mid:    #999999;
+  --gray-light:  #CCCCCC;
+  --gray-faint:  #E8E8E8;
+  --white:       #FAFAFA;
+  --pure-white:  #FFFFFF;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body:    "Inter", sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  color: var(--black);
+  background: var(--white);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+body.loaded { opacity: 1; }
+
+.col-back {
+  position: absolute;
+  top: 24px; left: 24px;
+  z-index: 2;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--black);
+  text-decoration: none;
+}
+
+.col-header {
+  padding: 72px 44px 32px;
+  max-width: 640px;
+}
+
+.col-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 12px;
+}
+.col-eyebrow svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+.col-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(32px, 5vw, 48px);
+  color: var(--black);
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.col-description {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--gray-dark);
+}
+
+.col-body { padding: 0 44px 96px; }
+
+.art-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+}
+.art-grid .art-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.art-grid .art-card:last-child:nth-child(odd) .art-img { aspect-ratio: 3 / 1; }
+
+.art-card { position: relative; cursor: pointer; overflow: hidden; }
+.art-card:hover .art-img { filter: brightness(1.08); }
+
+.art-img {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--gray-faint);
+  overflow: hidden;
+  transition: filter 0.2s ease;
+}
+.art-img.no-image { display: flex; align-items: center; justify-content: center; }
+.art-mark {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 56px;
+  color: var(--gray-light);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+.art-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.45) 38%, rgba(10,10,10,0) 65%);
+  pointer-events: none;
+}
+.art-body {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 14px 16px;
+  z-index: 1;
+}
+.art-year {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 4px;
+}
+.art-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--pure-white);
+  line-height: 1.2;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 96px 24px;
+  text-align: center;
+}
+.empty-state svg { width: 20px; height: 20px; color: var(--gray-light); }
+.empty-state-text {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--gray-mid);
+}
+
+.col-error {
+  padding: 96px 24px;
+  text-align: center;
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--gray-mid);
+}
+.col-error a { color: var(--black); }
+
+@media (max-width: 640px) {
+  .col-header { padding: 64px 20px 24px; }
+  .col-body { padding: 0 20px 64px; }
+}
+</style>
+</head>
+<body>
+
+<div id="col-root">
+  <a class="col-back" href="../amelia-arabe-portfolio.html#painter">&larr; Back to Fine Art</a>
+
+  <div class="col-header">
+    <div class="col-eyebrow">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l2.3 8.2L22 12l-7.7 3.8L12 24l-2.3-8.2L2 12l7.7-3.8z"/></svg>
+      <span>Collection</span>
+    </div>
+    <div class="col-title" id="col-title"></div>
+    <div class="col-description" id="col-description"></div>
+  </div>
+
+  <div class="col-body">
+    <div class="art-grid" id="art-grid"></div>
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0l2.3 8.2L22 12l-7.7 3.8L12 24l-2.3-8.2L2 12l7.7-3.8z"/></svg>
+      <div class="empty-state-text">No artworks in this collection yet — check back soon.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
+const sb = supabase.createClient(SB_URL, SB_ANON);
+
+const id = new URLSearchParams(window.location.search).get('id');
+
+// image_url is stored relative to the repo root — this file lives two
+// levels down (app/templates/), so local paths need '../../' prepended.
+function resolveImageUrl(url) {
+  if (!url) return '';
+  return /^https?:\/\//.test(url) ? url : '../../' + url;
+}
+
+function showError() {
+  document.getElementById('col-root').innerHTML =
+    '<div class="col-error">Collection not found.<br><a href="../amelia-arabe-portfolio.html#painter">&larr; Back to Fine Art</a></div>';
+}
+
+function renderArtworks(artworks) {
+  const grid = document.getElementById('art-grid');
+  const empty = document.getElementById('empty-state');
+  if (!artworks.length) {
+    grid.style.display = 'none';
+    empty.style.display = 'flex';
+    return;
+  }
+  grid.innerHTML = artworks.map(a => {
+    const hasImage = !!a.image_url;
+    const imgStyle = hasImage ? ` style="background-image:url(${resolveImageUrl(a.image_url)})"` : '';
+    const mark = hasImage ? '' : `<div class="art-mark">${(a.title || '?').charAt(0)}</div>`;
+    return `
+      <div class="art-card" onclick="window.location.href='artwork.html?id=${a.id}'">
+        <div class="art-img${hasImage ? '' : ' no-image'}"${imgStyle}>
+          ${mark}
+          <div class="art-scrim"></div>
+          <div class="art-body">
+            <div class="art-year">${a.year || ''}</div>
+            <div class="art-title">${a.title}</div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function load() {
+  requestAnimationFrame(() => document.body.classList.add('loaded'));
+  if (!id) { showError(); return; }
+  const [{ data: collection, error: colError }, { data: artworks, error: artError }] = await Promise.all([
+    sb.from('art_collections').select('*').eq('id', id).maybeSingle(),
+    sb.from('artworks').select('*').eq('collection_id', id).order('sort_order'),
+  ]);
+  if (colError || !collection) { showError(); return; }
+  document.title = collection.name + ' — Amelia Arabe';
+  document.getElementById('col-title').textContent = collection.name;
+  document.getElementById('col-description').textContent = collection.description || '';
+  renderArtworks(artworks || []);
+}
+
+document.addEventListener('DOMContentLoaded', load);
+</script>
+</body>
+</html>

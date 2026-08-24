@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artwork — Amelia Arabe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root {
+  --black:       #0A0A0A;
+  --black-mid:   #1A1A1A;
+  --black-soft:  #2A2A2A;
+  --gray-dark:   #555555;
+  --gray-mid:    #999999;
+  --gray-light:  #CCCCCC;
+  --gray-faint:  #E8E8E8;
+  --white:       #FAFAFA;
+  --pure-white:  #FFFFFF;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body:    "Inter", sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  color: var(--black);
+  background: var(--white);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+body.cs-loaded { opacity: 1; }
+
+.cs-back {
+  position: absolute;
+  top: 24px; left: 24px;
+  z-index: 2;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pure-white);
+  text-decoration: none;
+}
+
+.cs-position {
+  position: absolute;
+  top: 24px; right: 24px;
+  z-index: 2;
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  display: none;
+}
+
+.cs-nav-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.92);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--black);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.cs-nav-arrow:hover { background: var(--pure-white); }
+.cs-nav-prev { left: 16px; }
+.cs-nav-next { right: 16px; }
+@media (max-width: 640px) {
+  .cs-nav-arrow { width: 34px; height: 34px; font-size: 16px; }
+  .cs-nav-prev { left: 8px; }
+  .cs-nav-next { right: 8px; }
+}
+
+.cs-hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--gray-faint);
+  overflow: hidden;
+  cursor: zoom-in;
+}
+.cs-hero.no-image { cursor: default; display: flex; align-items: center; justify-content: center; }
+
+.cs-hero-mark {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 96px;
+  color: var(--gray-light);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+.cs-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.45) 38%, rgba(10,10,10,0) 65%);
+  pointer-events: none;
+}
+
+.cs-hero-content {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 40px 56px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.cs-category {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 10px;
+}
+
+.cs-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(32px, 5vw, 56px);
+  color: var(--pure-white);
+  line-height: 1.05;
+}
+
+/* click-to-zoom lightbox — no library, just an overlay showing the same
+   image larger, on-brand with the rest of this file's minimal aesthetic */
+.zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: rgba(10,10,10,0.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.zoom-overlay.open { display: flex; opacity: 1; }
+.zoom-overlay img {
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
+}
+.zoom-hint {
+  position: absolute;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+}
+
+.cs-body {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+.cs-gallery { display: none; }
+.cs-gallery.has-items {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+  margin-bottom: 40px;
+}
+.cs-gallery-item {
+  aspect-ratio: 4 / 3;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--gray-faint);
+}
+
+.cs-section { margin-bottom: 40px; }
+.cs-section-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 10px;
+}
+.cs-section-text {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 15px;
+  color: var(--black-mid);
+  line-height: 1.85;
+}
+
+.cs-meta {
+  display: none;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 40px;
+  padding-top: 24px;
+  border-top: 0.5px solid var(--gray-faint);
+}
+.cs-meta-item { display: none; min-width: 100px; }
+.cs-meta-label {
+  font-family: var(--font-body);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 4px;
+}
+.cs-meta-value {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--black-mid);
+  line-height: 1.5;
+}
+
+.cs-error {
+  padding: 96px 24px;
+  text-align: center;
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--gray-mid);
+}
+.cs-error a { color: var(--black); }
+
+@media (max-width: 640px) {
+  .cs-hero-content { padding: 24px; }
+  .cs-body { padding: 32px 20px 64px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cs-root">
+  <a class="cs-back" href="../amelia-arabe-portfolio.html#painter" id="cs-back">&larr; Back to Collection</a>
+  <div class="cs-position" id="cs-position"></div>
+  <a class="cs-nav-arrow cs-nav-prev" id="cs-nav-prev" href="#" aria-label="Previous artwork">&larr;</a>
+  <a class="cs-nav-arrow cs-nav-next" id="cs-nav-next" href="#" aria-label="Next artwork">&rarr;</a>
+
+  <div class="cs-hero" id="cs-hero">
+    <div class="cs-hero-mark" id="cs-hero-mark" style="display:none;"></div>
+    <div class="cs-scrim"></div>
+    <div class="cs-hero-content">
+      <div class="cs-category" id="cs-category"></div>
+      <div class="cs-title" id="cs-title"></div>
+    </div>
+  </div>
+
+  <div class="cs-body">
+    <div class="cs-gallery" id="cs-gallery"></div>
+
+    <div class="cs-section" id="statement-wrap">
+      <div class="cs-section-label">Artist Statement</div>
+      <div class="cs-section-text" id="statement-text"></div>
+    </div>
+
+    <div class="cs-section" id="story-wrap">
+      <div class="cs-section-label">The Story</div>
+      <div class="cs-section-text" id="story-text"></div>
+    </div>
+
+    <div class="cs-meta" id="cs-meta">
+      <div class="cs-meta-item" id="meta-year-wrap"><div class="cs-meta-label">Year</div><div class="cs-meta-value" id="meta-year"></div></div>
+      <div class="cs-meta-item" id="meta-medium-wrap"><div class="cs-meta-label">Medium</div><div class="cs-meta-value" id="meta-medium"></div></div>
+      <div class="cs-meta-item" id="meta-dimensions-wrap"><div class="cs-meta-label">Dimensions</div><div class="cs-meta-value" id="meta-dimensions"></div></div>
+      <div class="cs-meta-item" id="meta-collection-wrap"><div class="cs-meta-label">Collection</div><div class="cs-meta-value" id="meta-collection"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="zoom-overlay" id="zoom-overlay">
+  <img id="zoom-img" alt="">
+  <div class="zoom-hint">Click to close</div>
+</div>
+
+<script>
+const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
+const sb = supabase.createClient(SB_URL, SB_ANON);
+
+const id = new URLSearchParams(window.location.search).get('id');
+
+// image_url is stored relative to the repo root — this file lives two
+// levels down (app/templates/), so local paths need '../../' prepended.
+// External URLs pass through unchanged.
+function resolveImageUrl(url) {
+  if (!url) return '';
+  return /^https?:\/\//.test(url) ? url : '../../' + url;
+}
+
+function toggleSection(wrapId, textId, value) {
+  const wrap = document.getElementById(wrapId);
+  if (value) {
+    wrap.style.display = '';
+    document.getElementById(textId).textContent = value;
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function showError() {
+  document.getElementById('cs-root').innerHTML =
+    '<div class="cs-error">Artwork not found.<br><a href="../amelia-arabe-portfolio.html#painter">&larr; Back to Fine Art</a></div>';
+}
+
+function setupZoom(imageUrl) {
+  const hero = document.getElementById('cs-hero');
+  const overlay = document.getElementById('zoom-overlay');
+  const zoomImg = document.getElementById('zoom-img');
+  if (!imageUrl) return;
+  hero.addEventListener('click', () => {
+    zoomImg.src = resolveImageUrl(imageUrl);
+    overlay.classList.add('open');
+  });
+  overlay.addEventListener('click', () => overlay.classList.remove('open'));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') overlay.classList.remove('open');
+  });
+}
+
+function render(a) {
+  document.title = a.title + ' — Amelia Arabe';
+
+  const hero = document.getElementById('cs-hero');
+  const heroMark = document.getElementById('cs-hero-mark');
+  if (a.image_url) {
+    hero.style.backgroundImage = `url(${resolveImageUrl(a.image_url)})`;
+    setupZoom(a.image_url);
+  } else {
+    hero.classList.add('no-image');
+    heroMark.textContent = (a.title || '?').charAt(0);
+    heroMark.style.display = '';
+  }
+
+  document.getElementById('cs-category').textContent = a.art_collections ? a.art_collections.name : '';
+  document.getElementById('cs-title').textContent = a.title;
+
+  const galleryWrap = document.getElementById('cs-gallery');
+  if (a.gallery_urls && a.gallery_urls.length) {
+    galleryWrap.classList.add('has-items');
+    galleryWrap.innerHTML = a.gallery_urls.map(url => `<div class="cs-gallery-item" style="background-image:url(${resolveImageUrl(url)})"></div>`).join('');
+  }
+
+  toggleSection('statement-wrap', 'statement-text', a.artist_statement);
+  toggleSection('story-wrap', 'story-text', a.context_story);
+
+  const metaFields = [
+    ['year', 'meta-year-wrap', 'meta-year'],
+    ['medium', 'meta-medium-wrap', 'meta-medium'],
+    ['dimensions', 'meta-dimensions-wrap', 'meta-dimensions'],
+  ];
+  let hasMeta = false;
+  metaFields.forEach(([key, wrapId, valId]) => {
+    const wrap = document.getElementById(wrapId);
+    if (a[key]) {
+      wrap.style.display = '';
+      document.getElementById(valId).textContent = a[key];
+      hasMeta = true;
+    } else {
+      wrap.style.display = 'none';
+    }
+  });
+  const collectionWrap = document.getElementById('meta-collection-wrap');
+  if (a.art_collections) {
+    collectionWrap.style.display = '';
+    document.getElementById('meta-collection').textContent = a.art_collections.name;
+    hasMeta = true;
+  } else {
+    collectionWrap.style.display = 'none';
+  }
+  document.getElementById('cs-meta').style.display = hasMeta ? 'flex' : 'none';
+
+  // back link derived from the artwork's own collection_id — no need to
+  // carry it through the URL
+  document.getElementById('cs-back').href = `collection.html?id=${a.collection_id}`;
+}
+
+// prev/next navigation between sibling artworks in the same collection,
+// ordered by sort_order — identical pattern to the case-study templates.
+function setupNav(a) {
+  const prevBtn = document.getElementById('cs-nav-prev');
+  const nextBtn = document.getElementById('cs-nav-next');
+
+  function goTo(targetId) {
+    document.body.classList.remove('cs-loaded');
+    setTimeout(() => { window.location.href = '?id=' + targetId; }, 180);
+  }
+
+  if (!a.collection_id) return;
+  sb.from('artworks').select('id,title').eq('collection_id', a.collection_id).order('sort_order')
+    .then(({ data: siblings }) => {
+      if (!siblings || siblings.length < 2) return;
+      const idx = siblings.findIndex(s => s.id === a.id);
+      if (idx === -1) return;
+
+      const collectionName = a.art_collections ? a.art_collections.name : '';
+      document.getElementById('cs-position').textContent =
+        `${collectionName} — ${idx + 1} / ${siblings.length}`.trim();
+      document.getElementById('cs-position').style.display = '';
+
+      const prevId = idx > 0 ? siblings[idx - 1].id : null;
+      const nextId = idx < siblings.length - 1 ? siblings[idx + 1].id : null;
+
+      if (prevId) {
+        prevBtn.style.display = 'flex';
+        prevBtn.onclick = e => { e.preventDefault(); goTo(prevId); };
+      }
+      if (nextId) {
+        nextBtn.style.display = 'flex';
+        nextBtn.onclick = e => { e.preventDefault(); goTo(nextId); };
+      }
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft' && prevId) goTo(prevId);
+        if (e.key === 'ArrowRight' && nextId) goTo(nextId);
+      });
+
+      let touchStartX = null;
+      document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+      document.addEventListener('touchend', e => {
+        if (touchStartX === null) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        touchStartX = null;
+        if (Math.abs(dx) < 60) return;
+        if (dx > 0 && prevId) goTo(prevId);
+        else if (dx < 0 && nextId) goTo(nextId);
+      }, { passive: true });
+    });
+}
+
+async function load() {
+  requestAnimationFrame(() => document.body.classList.add('cs-loaded'));
+  if (!id) { showError(); return; }
+  const { data, error } = await sb.from('artworks').select('*, art_collections(id,name)').eq('id', id).maybeSingle();
+  if (error || !data) { showError(); return; }
+  render(data);
+  setupNav(data);
+}
+
+document.addEventListener('DOMContentLoaded', load);
+</script>
+</body>
+</html>
