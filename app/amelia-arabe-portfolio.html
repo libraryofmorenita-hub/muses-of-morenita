@@ -474,7 +474,16 @@ a { text-decoration: none; color: inherit; }
 .project-grid-wrap {
   flex: 1;
   padding: 24px 44px;
-  overflow: hidden;
+  /* the scroll container lives here now, not on .project-grid itself —
+     giving .project-grid a definite height (via flex:1) while it's
+     ALSO a CSS Grid with auto-sized rows created a circular sizing
+     conflict: rows got compressed to evenly divide the fixed height
+     instead of sizing to each card's real aspect-ratio height, which
+     cut off (and even overlapped) card text. Letting .project-grid
+     size to its natural content height, inside a plain scrollable
+     wrapper, avoids that conflict entirely. */
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -484,9 +493,6 @@ a { text-decoration: none; color: inherit; }
   grid-template-columns: repeat(2, 1fr);
   gap: 0;
   align-content: start;
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex: 1;
 }
 
 .project-grid.overflow-x {
@@ -496,10 +502,14 @@ a { text-decoration: none; color: inherit; }
   overflow-x: auto;
   overflow-y: hidden;
   align-content: unset;
+  flex: 1;
 }
 
+.project-grid-wrap::-webkit-scrollbar,
 .project-grid::-webkit-scrollbar { height: 3px; width: 3px; }
+.project-grid-wrap::-webkit-scrollbar-track,
 .project-grid::-webkit-scrollbar-track { background: var(--gray-faint); }
+.project-grid-wrap::-webkit-scrollbar-thumb,
 .project-grid::-webkit-scrollbar-thumb { background: var(--gray-light); }
 
 /* Project card */
@@ -510,9 +520,16 @@ a { text-decoration: none; color: inherit; }
   flex-shrink: 0;
 }
 /* odd project count in the 2-col grid — the last card alone in a row
-   spans full width instead of sitting at half-width next to dead space */
+   spans full width instead of sitting at half-width next to dead space.
+   Its .card-img gets a wider aspect-ratio too — at double width, the
+   normal 4:3 ratio doubles its height as well, which overflows the
+   scroll container badly enough that the bottom-anchored text ends up
+   rendered below the visible/scrollable area entirely. */
 .project-grid:not(.overflow-x) .project-card:last-child:nth-child(odd) {
   grid-column: 1 / -1;
+}
+.project-grid:not(.overflow-x) .project-card:last-child:nth-child(odd) .card-img {
+  aspect-ratio: 3 / 1;
 }
 .project-grid.overflow-x .project-card {
   min-width: 200px;
@@ -1031,6 +1048,7 @@ a { text-decoration: none; color: inherit; }
   .page.active { display: flex; flex-direction: column; }
   #about-view { height: auto; padding: 32px 20px; justify-content: flex-start; }
   #toggle-view { height: auto; }
+  .project-grid-wrap { overflow-y: visible; flex: none; }
   .project-grid { grid-template-columns: 1fr 1fr; overflow-y: visible; height: auto; }
   .project-grid.overflow-x { flex-wrap: wrap; overflow-x: visible; }
   .project-grid.overflow-x .project-card { min-width: unset; max-width: unset; flex: 1 1 50%; }
