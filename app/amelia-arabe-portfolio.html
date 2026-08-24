@@ -305,6 +305,12 @@ a { text-decoration: none; color: inherit; }
   overflow: hidden;
 }
 
+/* while a #hash route is being resolved on initial load (e.g. returning
+   from a case study), keep the default About view invisible instead of
+   flashing it before snapping to the correct toggle a moment later —
+   see the inline script right after <body> and the INIT block below */
+html.route-pending #about-view { visibility: hidden; }
+
 /* Default "About" view */
 #about-view {
   padding: 40px 44px;
@@ -1109,6 +1115,13 @@ a { text-decoration: none; color: inherit; }
 </style>
 </head>
 <body>
+<script>
+  // runs synchronously before first paint — if a #hash is present (e.g.
+  // returning from a case study), mark route-pending so CSS keeps the
+  // default About view hidden until applyHashRoute() resolves it below,
+  // instead of flashing About then snapping to the right toggle.
+  if (window.location.hash) document.documentElement.classList.add('route-pending');
+</script>
 
 <div class="shell">
 
@@ -1850,7 +1863,13 @@ function applyHashRoute() {
 // ── INIT ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   navigateTo('portfolio');
-  loadPortfolioData().then(applyHashRoute);
+  loadPortfolioData().then(() => {
+    applyHashRoute();
+    // release the route-pending hold (no-op if it was never set) — always
+    // runs, even if the hash didn't match anything, so the page can never
+    // get stuck blank.
+    document.documentElement.classList.remove('route-pending');
+  });
 });
 </script>
 </body>
