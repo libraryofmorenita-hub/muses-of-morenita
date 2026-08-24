@@ -250,7 +250,7 @@ body.cs-loaded { opacity: 1; }
 <body>
 
 <div id="cs-root">
-  <a class="cs-back" href="../amelia-arabe-portfolio.html#painter" id="cs-back">&larr; Back to Collection</a>
+  <a class="cs-back" href="../amelia-arabe-portfolio.html" id="cs-back">&larr; Back to Collection</a>
   <div class="cs-position" id="cs-position"></div>
   <a class="cs-nav-arrow cs-nav-prev" id="cs-nav-prev" href="#" aria-label="Previous artwork">&larr;</a>
   <a class="cs-nav-arrow cs-nav-next" id="cs-nav-next" href="#" aria-label="Next artwork">&rarr;</a>
@@ -297,6 +297,10 @@ const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsIn
 const sb = supabase.createClient(SB_URL, SB_ANON);
 
 const id = new URLSearchParams(window.location.search).get('id');
+// safe default (Fine Art is the only consumer) until render() overwrites
+// this with the real collection.html?id=... link — appended via JS so the
+// deploy script's href="../amelia-arabe-portfolio.html" rewrite still matches
+document.getElementById('cs-back').href += '#painter';
 
 // image_url is stored relative to the repo root — this file lives two
 // levels down (app/templates/), so local paths need '../../' prepended.
@@ -318,7 +322,8 @@ function toggleSection(wrapId, textId, value) {
 
 function showError() {
   document.getElementById('cs-root').innerHTML =
-    '<div class="cs-error">Artwork not found.<br><a href="../amelia-arabe-portfolio.html#painter">&larr; Back to Fine Art</a></div>';
+    '<div class="cs-error">Artwork not found.<br><a href="../amelia-arabe-portfolio.html" id="cs-error-back">&larr; Back to Fine Art</a></div>';
+  document.getElementById('cs-error-back').href += '#painter';
 }
 
 function setupZoom(imageUrl) {

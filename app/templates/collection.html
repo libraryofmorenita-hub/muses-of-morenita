@@ -175,7 +175,7 @@ body.loaded { opacity: 1; }
 <body>
 
 <div id="col-root">
-  <a class="col-back" href="../amelia-arabe-portfolio.html#painter">&larr; Back to Fine Art</a>
+  <a class="col-back" href="../amelia-arabe-portfolio.html" id="col-back">&larr; Back to Fine Art</a>
 
   <div class="col-header">
     <div class="col-eyebrow">
@@ -201,6 +201,10 @@ const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsIn
 const sb = supabase.createClient(SB_URL, SB_ANON);
 
 const id = new URLSearchParams(window.location.search).get('id');
+// Fine Art is the only consumer of this page, so the return hash is fixed —
+// appended via JS (not baked into the HTML attribute) so the deploy
+// script's href="../amelia-arabe-portfolio.html" rewrite still matches.
+document.getElementById('col-back').href += '#painter';
 
 // image_url is stored relative to the repo root — this file lives two
 // levels down (app/templates/), so local paths need '../../' prepended.
@@ -211,7 +215,8 @@ function resolveImageUrl(url) {
 
 function showError() {
   document.getElementById('col-root').innerHTML =
-    '<div class="col-error">Collection not found.<br><a href="../amelia-arabe-portfolio.html#painter">&larr; Back to Fine Art</a></div>';
+    '<div class="col-error">Collection not found.<br><a href="../amelia-arabe-portfolio.html" id="col-error-back">&larr; Back to Fine Art</a></div>';
+  document.getElementById('col-error-back').href += '#painter';
 }
 
 function renderArtworks(artworks) {
