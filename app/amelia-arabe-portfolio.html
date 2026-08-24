@@ -1516,7 +1516,7 @@ const sb = supabase.createClient(SB_URL, SB_ANON);
 // role_key -> which of the 5 case-study templates a project routes to
 const ROLE_TEMPLATE_MAP = { engineer: 'technical', inventor: 'creative', painter: 'fine-art', cellist: 'music', actress: 'performance' };
 function buildCaseStudyUrl(p, roleKey) {
-  return `templates/case-study-${ROLE_TEMPLATE_MAP[roleKey] || 'technical'}.html?id=${p.id}`;
+  return `templates/case-study-${ROLE_TEMPLATE_MAP[roleKey] || 'technical'}.html?id=${p.id}&from=${roleKey}`;
 }
 
 // image_url is stored relative to the repo root (e.g. 'bouquet.jpeg') so both
@@ -1836,8 +1836,12 @@ const HASH_TOGGLE_MAP = {
 function applyHashRoute() {
   const hash = window.location.hash.slice(1);
   if (!hash) return;
-  if (HASH_TOGGLE_MAP[hash]) {
-    setToggle(HASH_TOGGLE_MAP[hash]);
+  // accepts either a friendly external-link slug (HASH_TOGGLE_MAP) or a raw
+  // role_key directly — case-study pages link back with #<role_key> so the
+  // same toggle is already selected when you land back on the portfolio.
+  const roleKey = HASH_TOGGLE_MAP[hash] || (TOGGLE_DATA[hash] ? hash : null);
+  if (roleKey) {
+    setToggle(roleKey);
   } else if (hash === 'services' || hash === 'contact') {
     navigateTo(hash);
   }

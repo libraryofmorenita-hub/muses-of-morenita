@@ -312,6 +312,13 @@ const sb = supabase.createClient(SB_URL, SB_ANON);
 const CTA_LABEL = 'Inquire About This Piece';
 
 const id = new URLSearchParams(window.location.search).get('id');
+// which career toggle this project was opened from — carried through so
+// "Back to Portfolio" reopens the same toggle instead of resetting to About
+const from = new URLSearchParams(window.location.search).get('from');
+if (from) {
+  const backLink = document.querySelector('.cs-back');
+  if (backLink) backLink.href += '#' + from;
+}
 
 // image_url is stored relative to the repo root — this file lives two
 // levels down (app/templates/), so local paths need '../../' prepended.
@@ -333,7 +340,8 @@ function toggleSection(wrapId, textId, value) {
 
 function showError() {
   document.getElementById('cs-root').innerHTML =
-    '<div class="cs-error">Project not found.<br><a href="../amelia-arabe-portfolio.html">&larr; Back to Portfolio</a></div>';
+    '<div class="cs-error">Project not found.<br><a href="../amelia-arabe-portfolio.html" id="cs-error-back">&larr; Back to Portfolio</a></div>';
+  if (from) document.getElementById('cs-error-back').href += '#' + from;
 }
 
 function render(p) {
