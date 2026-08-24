@@ -509,6 +509,11 @@ a { text-decoration: none; color: inherit; }
   overflow: hidden;
   flex-shrink: 0;
 }
+/* odd project count in the 2-col grid — the last card alone in a row
+   spans full width instead of sitting at half-width next to dead space */
+.project-grid:not(.overflow-x) .project-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
 .project-grid.overflow-x .project-card {
   min-width: 200px;
   max-width: 240px;
