@@ -925,6 +925,23 @@ function openProjectModal(id) {
     <div class="field"><label>Gallery URLs <span style="font-weight:300;text-transform:none;letter-spacing:0">— one per line</span></label>
       <textarea id="m-gallery" placeholder="https://...">${(existing?.gallery_urls || []).join('\n')}</textarea>
     </div>
+    <div style="margin-top:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-mid);">Metadata Footer</div>
+    <div class="field-row">
+      <div class="field"><label>Role</label>
+        <input id="m-role" type="text" placeholder="Founder & Lead Engineer" value="${existing?.role || ''}">
+      </div>
+      <div class="field"><label>Team</label>
+        <input id="m-team" type="text" placeholder="Collaborator — their role" value="${existing?.team || ''}">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Status</label>
+        <input id="m-status" type="text" placeholder="Prototype complete, documentation in progress" value="${existing?.status || ''}">
+      </div>
+      <div class="field"><label>Year</label>
+        <input id="m-year" type="text" placeholder="2026" value="${existing?.year || ''}">
+      </div>
+    </div>
   `;
   state.modalSaveFn = () => saveProject(id);
   document.getElementById('modal-overlay').classList.add('open');
@@ -946,6 +963,10 @@ async function saveProject(existingId) {
     case_outcome: document.getElementById('m-case-outcome').value.trim() || null,
     credits:      document.getElementById('m-credits').value.trim() || null,
     gallery_urls: document.getElementById('m-gallery').value.split('\n').map(s => s.trim()).filter(Boolean),
+    role:         document.getElementById('m-role').value.trim() || null,
+    team:         document.getElementById('m-team').value.trim() || null,
+    status:       document.getElementById('m-status').value.trim() || null,
+    year:         document.getElementById('m-year').value.trim() || null,
   };
   if (existingId) {
     const { error } = await sb.from('projects').update(payload).eq('id', existingId);

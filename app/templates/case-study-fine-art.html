@@ -24,7 +24,14 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font-body); color: var(--black); background: var(--white); }
+body {
+  font-family: var(--font-body);
+  color: var(--black);
+  background: var(--white);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+body.cs-loaded { opacity: 1; }
 
 .cs-back {
   position: absolute;
@@ -36,6 +43,46 @@ body { font-family: var(--font-body); color: var(--black); background: var(--whi
   text-transform: uppercase;
   color: var(--pure-white);
   text-decoration: none;
+}
+
+.cs-position {
+  position: absolute;
+  top: 24px; right: 24px;
+  z-index: 2;
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  display: none;
+}
+
+.cs-nav-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.92);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--black);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.cs-nav-arrow:hover { background: var(--pure-white); }
+.cs-nav-prev { left: 16px; }
+.cs-nav-next { right: 16px; }
+@media (max-width: 640px) {
+  .cs-nav-arrow { width: 34px; height: 34px; font-size: 16px; }
+  .cs-nav-prev { left: 8px; }
+  .cs-nav-next { right: 8px; }
 }
 
 .cs-hero {
@@ -77,6 +124,17 @@ body { font-family: var(--font-body); color: var(--black); background: var(--whi
   font-size: clamp(32px, 5vw, 56px);
   color: var(--pure-white);
   line-height: 1.05;
+}
+
+.cs-hero-subhead {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.85);
+  max-width: 560px;
+  margin-top: 12px;
+  display: none;
 }
 
 .cs-body {
@@ -160,6 +218,31 @@ body { font-family: var(--font-body); color: var(--black); background: var(--whi
 }
 .cs-error a { color: var(--black); }
 
+.cs-meta {
+  display: none;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 40px;
+  padding-top: 24px;
+  border-top: 0.5px solid var(--gray-faint);
+}
+.cs-meta-item { display: none; min-width: 100px; }
+.cs-meta-label {
+  font-family: var(--font-body);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 4px;
+}
+.cs-meta-value {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--black-mid);
+  line-height: 1.5;
+}
+
 @media (max-width: 640px) {
   .cs-hero-content { padding: 24px; }
   .cs-body { padding: 32px 20px 64px; }
@@ -170,12 +253,16 @@ body { font-family: var(--font-body); color: var(--black); background: var(--whi
 
 <div id="cs-root">
   <a class="cs-back" href="../amelia-arabe-portfolio.html">&larr; Back to Portfolio</a>
+  <div class="cs-position" id="cs-position"></div>
+  <a class="cs-nav-arrow cs-nav-prev" id="cs-nav-prev" href="#" aria-label="Previous project">&larr;</a>
+  <a class="cs-nav-arrow cs-nav-next" id="cs-nav-next" href="#" aria-label="Next project">&rarr;</a>
 
   <div class="cs-hero" id="cs-hero">
     <div class="cs-scrim"></div>
     <div class="cs-hero-content">
       <div class="cs-category" id="cs-category"></div>
       <div class="cs-title" id="cs-title"></div>
+      <div class="cs-hero-subhead" id="cs-hero-subhead"></div>
     </div>
   </div>
 
@@ -205,6 +292,13 @@ body { font-family: var(--font-body); color: var(--black); background: var(--whi
     <div class="cs-section" id="cs-credits-wrap">
       <div class="cs-section-label">Credits</div>
       <div class="cs-section-text" id="cs-credits-text"></div>
+    </div>
+
+    <div class="cs-meta" id="cs-meta">
+      <div class="cs-meta-item" id="cs-meta-role-wrap"><div class="cs-meta-label">Role</div><div class="cs-meta-value" id="cs-meta-role"></div></div>
+      <div class="cs-meta-item" id="cs-meta-team-wrap"><div class="cs-meta-label">Team</div><div class="cs-meta-value" id="cs-meta-team"></div></div>
+      <div class="cs-meta-item" id="cs-meta-status-wrap"><div class="cs-meta-label">Status</div><div class="cs-meta-value" id="cs-meta-status"></div></div>
+      <div class="cs-meta-item" id="cs-meta-year-wrap"><div class="cs-meta-label">Year</div><div class="cs-meta-value" id="cs-meta-year"></div></div>
     </div>
 
     <div class="cs-cta" id="cs-cta"></div>
@@ -251,6 +345,10 @@ function render(p) {
   document.getElementById('cs-category').textContent = p.category || '';
   document.getElementById('cs-title').textContent = p.title;
 
+  const subhead = document.getElementById('cs-hero-subhead');
+  if (p.description) { subhead.textContent = p.description; subhead.style.display = ''; }
+  else { subhead.style.display = 'none'; }
+
   document.getElementById('cs-pill-medium').textContent = p.category || '';
   const badgeEl = document.getElementById('cs-pill-badge');
   if (p.badge) {
@@ -270,17 +368,91 @@ function render(p) {
   toggleSection('cs-outcome-wrap', 'cs-outcome-text', p.case_outcome);
   toggleSection('cs-credits-wrap', 'cs-credits-text', p.credits);
 
+  const metaFields = [
+    ['role', 'cs-meta-role-wrap', 'cs-meta-role'],
+    ['team', 'cs-meta-team-wrap', 'cs-meta-team'],
+    ['status', 'cs-meta-status-wrap', 'cs-meta-status'],
+    ['year', 'cs-meta-year-wrap', 'cs-meta-year'],
+  ];
+  let hasMeta = false;
+  metaFields.forEach(([key, wrapId, valId]) => {
+    const wrap = document.getElementById(wrapId);
+    if (p[key]) {
+      wrap.style.display = '';
+      document.getElementById(valId).textContent = p[key];
+      hasMeta = true;
+    } else {
+      wrap.style.display = 'none';
+    }
+  });
+  document.getElementById('cs-meta').style.display = hasMeta ? 'flex' : 'none';
+
   const ctaWrap = document.getElementById('cs-cta');
   if (p.url) {
     ctaWrap.innerHTML = `<a class="cs-link" href="${p.url}" target="_blank" rel="noopener">${CTA_LABEL}</a>`;
   }
 }
 
+// prev/next navigation between sibling projects (same toggle_id, ordered by
+// sort_order) — arrows, keyboard, and touch-swipe all funnel through goTo(),
+// which fades the page out before swapping ?id= on this same template file.
+function setupNav(p) {
+  const prevBtn = document.getElementById('cs-nav-prev');
+  const nextBtn = document.getElementById('cs-nav-next');
+
+  function goTo(targetId) {
+    document.body.classList.remove('cs-loaded');
+    setTimeout(() => { window.location.href = '?id=' + targetId; }, 180);
+  }
+
+  if (!p.toggle_id) return;
+  sb.from('projects').select('id,category').eq('toggle_id', p.toggle_id).order('sort_order')
+    .then(({ data: siblings }) => {
+      if (!siblings || siblings.length < 2) return;
+      const idx = siblings.findIndex(s => s.id === p.id);
+      if (idx === -1) return;
+
+      document.getElementById('cs-position').textContent =
+        `${p.category || ''} — ${idx + 1} / ${siblings.length}`.trim();
+      document.getElementById('cs-position').style.display = '';
+
+      const prevId = idx > 0 ? siblings[idx - 1].id : null;
+      const nextId = idx < siblings.length - 1 ? siblings[idx + 1].id : null;
+
+      if (prevId) {
+        prevBtn.style.display = 'flex';
+        prevBtn.onclick = e => { e.preventDefault(); goTo(prevId); };
+      }
+      if (nextId) {
+        nextBtn.style.display = 'flex';
+        nextBtn.onclick = e => { e.preventDefault(); goTo(nextId); };
+      }
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft' && prevId) goTo(prevId);
+        if (e.key === 'ArrowRight' && nextId) goTo(nextId);
+      });
+
+      let touchStartX = null;
+      document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+      document.addEventListener('touchend', e => {
+        if (touchStartX === null) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        touchStartX = null;
+        if (Math.abs(dx) < 60) return;
+        if (dx > 0 && prevId) goTo(prevId);
+        else if (dx < 0 && nextId) goTo(nextId);
+      }, { passive: true });
+    });
+}
+
 async function load() {
+  requestAnimationFrame(() => document.body.classList.add('cs-loaded'));
   if (!id) { showError(); return; }
   const { data, error } = await sb.from('projects').select('*').eq('id', id).maybeSingle();
   if (error || !data) { showError(); return; }
   render(data);
+  setupNav(data);
 }
 
 document.addEventListener('DOMContentLoaded', load);
