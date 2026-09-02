@@ -515,6 +515,14 @@ create policy "job_movement: owner only"
 --  supabase-live-state memory) without depending on its shape.
 --  RLS is intentionally wide open (demo build) — tighten before
 --  the platform launches to other users.
+--  SECURITY (confirmed live 2026-08-25): this "using(true)/with check(true)"
+--  policy is deployed as-is. The STUDIO_PASSWORD prompt() in
+--  bulletin-board.html/archive-stack.html is UI-only — it does not appear
+--  in this policy at all, so anyone with the (intentionally public) anon
+--  key can read/write/delete any card or object directly via the REST API,
+--  bypassing the password entirely. Fine while it's just Amelia's own
+--  board; must be scoped to auth.uid() (or at minimum check muse_id
+--  against a real owner) before any other Muse's board uses this table.
 -- ═══════════════════════════════════════════════════════
 create table if not exists public.bulletin_board_cards (
   id uuid primary key default gen_random_uuid(),

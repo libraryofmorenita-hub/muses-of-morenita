@@ -156,9 +156,12 @@ body.cs-loaded { opacity: 1; }
   text-transform: uppercase;
   border: 0.5px solid var(--gray-light);
   color: var(--gray-mid);
-  padding: 3px 10px;
-  border-radius: 999px;
+  padding: 3px 8px;
 }
+/* Music/Performance get a softer, pill-shaped tag — everyone else (and
+   the default when ?from= is absent, e.g. archive-stack/bulletin-board's
+   hardcoded links) keeps the sharp rectangle above. See ROLE_CONFIG. */
+body.cs-round-tags .cs-tag { padding: 3px 10px; border-radius: 999px; }
 
 .cs-section { margin-bottom: 40px; }
 .cs-section-label {
@@ -308,16 +311,33 @@ body.cs-loaded { opacity: 1; }
 const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
 const sb = supabase.createClient(SB_URL, SB_ANON);
-const CTA_LABEL = 'Book a Performance';
+
+// Replaces case-study-{technical,creative,music,performance}.html — those
+// four files were 95%+ identical (see the 2026-08-25 site review). The
+// only real differences were the CTA label and whether tags render as
+// sharp rectangles or soft pills, both keyed off the role (?from=) this
+// case study was opened from. fine-art never used this template (painter
+// routes through collection.html/artwork.html instead).
+const ROLE_CONFIG = {
+  engineer: { ctaLabel: 'View Live Project', roundTags: false },
+  inventor: { ctaLabel: 'View Project',      roundTags: false },
+  cellist:  { ctaLabel: 'Book a Performance', roundTags: true },
+  actress:  { ctaLabel: 'Request Portfolio',  roundTags: true },
+};
 
 const id = new URLSearchParams(window.location.search).get('id');
 // which career toggle this project was opened from — carried through so
-// "Back to Portfolio" reopens the same toggle instead of resetting to About
+// "Back to Portfolio" reopens the same toggle instead of resetting to
+// About, and so we know which ROLE_CONFIG to render with.
 const from = new URLSearchParams(window.location.search).get('from');
 if (from) {
   const backLink = document.querySelector('.cs-back');
   if (backLink) backLink.href += '#' + from;
 }
+
+const cfg = ROLE_CONFIG[from] || ROLE_CONFIG.engineer;
+const CTA_LABEL = cfg.ctaLabel;
+if (cfg.roundTags) document.body.classList.add('cs-round-tags');
 
 // image_url is stored relative to the repo root — this file lives two
 // levels down (app/templates/), so local paths need '../../' prepended.
@@ -406,7 +426,9 @@ function setupNav(p) {
 
   function goTo(targetId) {
     document.body.classList.remove('cs-loaded');
-    setTimeout(() => { window.location.href = '?id=' + targetId; }, 180);
+    const params = new URLSearchParams(window.location.search);
+    params.set('id', targetId);
+    setTimeout(() => { window.location.href = '?' + params.toString(); }, 180);
   }
 
   if (!p.toggle_id) return;

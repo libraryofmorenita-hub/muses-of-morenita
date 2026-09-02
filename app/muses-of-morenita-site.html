@@ -1490,39 +1490,17 @@ body { padding-top: 52px; }
   border: none;
 }
 
-.login-divider {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 24px 0;
-}
-
-.login-divider-line {
-  flex: 1;
-  height: 0.5px;
-  background: #3A3A3A;
-}
-
-.login-divider-text {
+.login-status {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 10px;
-  color: #777777;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-align: center;
+  margin-top: 16px;
+  line-height: 1.6;
 }
-
-.login-alt {
-  width: 100%;
-  background: transparent;
-  border: 0.5px solid #555555;
-  color: #AAAAAA;
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  padding: 11px;
-  cursor: pointer;
-}
+.login-status.ok { color: var(--sage, #7AAF8A); }
+.login-status.error { color: #C0392B; }
 
 .login-footer {
   font-family: var(--font-body);
@@ -2525,25 +2503,19 @@ body { padding-top: 52px; }
 
       <div class="form-field">
         <label class="form-label">Email</label>
-        <input type="email" class="form-input" placeholder="your@email.com">
-      </div>
-      <div class="form-field">
-        <label class="form-label">Password</label>
-        <input type="password" class="form-input" placeholder="Password">
+        <input type="email" class="form-input" id="login-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')sendMagicLink()">
       </div>
 
-      <button class="login-submit">Sign In</button>
-
-      <div class="login-divider">
-        <div class="login-divider-line"></div>
-        <span class="login-divider-text">or</span>
-        <div class="login-divider-line"></div>
-      </div>
-
-      <button class="login-alt" onclick="navigate('/join')">Create an account</button>
+      <!-- 2026-08-28: wired to real Supabase auth — magic link, not a
+           password. sendMagicLink() below calls sb.auth.signInWithOtp();
+           Supabase JS auto-detects the returned #access_token on
+           dashboard.html and establishes the session, no extra code
+           needed there. -->
+      <button class="login-submit" id="login-submit-btn" onclick="sendMagicLink()">Email me a sign-in link</button>
+      <div class="login-status" id="login-status" style="display:none;"></div>
     </div>
 
-    <div class="login-footer">Forgot your password?</div>
+    <div class="login-footer">No password to remember &mdash; we'll email you a one-time link.</div>
   </div>
 </div>
 
@@ -2867,6 +2839,50 @@ function showPage(route) {
   currentRoute = route;
 }
 
+// ── AUTH — magic link (2026-08-28) ───────────────────────────────────
+// signInWithOtp both signs in an existing user and creates one for a new
+// email — Amelia's account already exists (auth.users, confirmed), so
+// this signs her straight in. dashboard.html needs no extra code: the
+// Supabase JS client auto-detects the #access_token this link returns
+// with and establishes the session on load.
+async function sendMagicLink() {
+  const emailEl = document.getElementById('login-email');
+  const btn = document.getElementById('login-submit-btn');
+  const status = document.getElementById('login-status');
+  const email = emailEl.value.trim();
+
+  status.style.display = 'none';
+  status.className = 'login-status';
+
+  if (!email || !email.includes('@')) {
+    status.textContent = 'Enter a valid email first.';
+    status.classList.add('error');
+    status.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.textContent = 'Sending…';
+
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + 'dashboard.html' }
+  });
+
+  btn.disabled = false;
+  btn.textContent = originalLabel;
+
+  if (error) {
+    status.textContent = 'Something went wrong: ' + error.message;
+    status.classList.add('error');
+  } else {
+    status.textContent = 'Check ' + email + ' for a sign-in link.';
+    status.classList.add('ok');
+  }
+  status.style.display = 'block';
+}
+
 // ─── NAV TRANSPARENCY ──────────────────────────────────
 // IntersectionObserver watches the hero div — nav goes transparent only while the hero is in view.
 // Observer is disconnected on every route change so it doesn't fire on other pages.
@@ -2932,6 +2948,12 @@ function injectFooters() {
 }
 
 // ─── JOIN FLOW ─────────────────────────────────────────
+// TODO (2026-08-25 review): this whole 6-step flow is UI mockup only —
+// goToStep() just toggles DOM visibility, nothing here ever calls
+// sb.auth.signUp() or writes a profile row. Also two dead buttons in the
+// steps below: "Skip" (step 2) and "Set up my profile" (step 6, next to
+// the working "Go to dashboard") have no onclick at all. Needs real
+// signup + profile creation before this join flow does anything.
 let currentStep = 1;
 const totalSteps = 6;
 const stepProgress = [0, 0, 16, 33, 50, 83, 100];

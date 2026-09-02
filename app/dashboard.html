@@ -68,11 +68,35 @@ a { text-decoration: none; color: inherit; }
   font-family: var(--font-body); font-weight: 400; font-size: 11px;
   letter-spacing: 0.06em; color: var(--gray-dark);
   padding: 9px 12px; cursor: pointer;
-  border-left: 2px solid transparent;
+  border-left: 2px solid var(--gray-light);
   transition: color 0.15s, border-color 0.15s;
 }
 .section-link:hover { color: var(--black); }
 .section-link.active { color: var(--black); border-left-color: var(--black); font-weight: 400; }
+
+/* ── SIDEBAR TREE (VS Code-style explorer) ──────── */
+/* Every row — page, role/collection, or project/artwork leaf — carries its
+   own line: light gray at rest, black when that row is the current
+   selection. Each line belongs to its row only (row height, with the
+   normal row gap between them) — there's no shared/continuous line
+   running through an open group. Expand/collapse is shown purely by the
+   children appearing or not; the line's only job is "is this selected." */
+.tree-item {
+  font-family: var(--font-body); font-weight: 300; font-size: 10.5px;
+  letter-spacing: 0.02em; color: var(--gray-dark);
+  padding: 7px 12px; cursor: pointer;
+  border-left: 2px solid var(--gray-light);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tree-item:hover { color: var(--black); }
+.tree-item.active { color: var(--black); border-left-color: var(--black); font-weight: 400; }
+
+/* Accordion container — height animates 0 → content on open/close.
+   No border/margin of its own; indent is a text padding only. */
+.tree-children { height: 0; overflow: hidden; padding-left: 14px; }
+
+.tree-empty { font-family: var(--font-body); font-size: 10px; color: var(--gray-light); font-style: italic; padding: 6px 12px; }
 
 .sidebar-bottom { padding: 16px 28px; border-top: 1px solid var(--gray-faint); margin-top: auto; }
 .preview-link { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gray-mid); display: block; }
@@ -168,6 +192,65 @@ a { text-decoration: none; color: inherit; }
 
 .empty-state { font-family: var(--font-body); font-weight: 300; font-size: 12px; color: var(--gray-light); padding: 24px 0; }
 
+/* ── PORTFOLIO-MATCHED CARD GRID (Career projects / Fine Art artworks) ──
+   Same classes/markup as amelia-arabe-portfolio.html's .project-card and
+   templates/collection.html's .art-card — this is meant to look like the
+   live page, just with small hover controls added for editing. */
+.project-grid, .art-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin-bottom: 8px; }
+.project-grid:not(.overflow-x) .project-card:last-child:nth-child(odd),
+.art-grid .art-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.project-grid:not(.overflow-x) .project-card:last-child:nth-child(odd) .card-img,
+.art-grid .art-card:last-child:nth-child(odd) .art-img { aspect-ratio: 3 / 1; }
+
+.project-card, .art-card { position: relative; cursor: pointer; overflow: hidden; }
+.project-card:hover .card-img, .art-card:hover .art-img { filter: brightness(1.08); }
+
+.card-img, .art-img {
+  position: relative; aspect-ratio: 4 / 3;
+  background-size: cover; background-position: center; background-color: var(--gray-faint);
+  overflow: hidden; transition: filter 0.2s ease;
+}
+.card-img.no-image, .art-img.no-image { display: flex; align-items: center; justify-content: center; }
+.card-placeholder-mark, .art-mark {
+  font-family: var(--font-display); font-weight: 300; font-size: 56px;
+  color: var(--gray-light); line-height: 1; user-select: none; pointer-events: none;
+}
+.card-scrim, .art-scrim {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.45) 38%, rgba(10,10,10,0) 65%);
+}
+.card-body, .art-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px; z-index: 1; }
+.card-category, .art-year {
+  font-family: var(--font-body); font-weight: 400; font-size: 9px;
+  letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.75); margin-bottom: 4px;
+}
+.card-title, .art-title { font-family: var(--font-display); font-weight: 400; font-size: 16px; color: var(--pure-white); line-height: 1.2; margin-bottom: 4px; }
+.card-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+.card-tag {
+  font-family: var(--font-body); font-weight: 400; font-size: 8px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  border: 0.5px solid rgba(255,255,255,0.5); color: rgba(255,255,255,0.85); padding: 2px 6px;
+}
+.status-badge {
+  display: inline-block; font-family: var(--font-body); font-weight: 300; font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.85);
+  border: 0.5px solid rgba(255,255,255,0.5); padding: 2px 8px; margin-top: 6px;
+}
+
+/* Dashboard-only addition — the live site doesn't have these. Reorder/delete
+   tucked in the corner so the card face stays an honest preview; clicking
+   the card itself (see above) is what opens the editor. */
+.dash-card-controls { position: absolute; top: 8px; right: 8px; z-index: 2; display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+.project-card:hover .dash-card-controls, .art-card:hover .dash-card-controls { opacity: 1; }
+.dash-card-btn {
+  width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.92); border: none; cursor: pointer;
+  font-family: var(--font-body); font-size: 11px; color: var(--black);
+}
+.dash-card-btn:hover { background: var(--pure-white); }
+.dash-card-btn:disabled { opacity: 0.3; cursor: default; }
+.dash-card-btn-danger:hover { color: var(--error); }
+
 /* ── BREADCRUMB ─────────────────────────────────── */
 .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; }
 .breadcrumb-back { font-family: var(--font-body); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gray-mid); cursor: pointer; background: none; border: none; padding: 0; }
@@ -188,6 +271,35 @@ a { text-decoration: none; color: inherit; }
 
 /* ── ACCORDION ITEMS INDENT ─────────────────────── */
 .acc-items { padding-left: 20px; border-left: 1px solid var(--gray-faint); margin: 8px 0 12px; }
+
+/* ── CASE STUDY EDITOR ──────────────────────────── */
+.cs-editor-label { font-family: var(--font-body); font-weight: 400; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-mid); margin: 28px 0 14px; }
+.cs-editor-label:first-of-type { margin-top: 0; }
+.cs-editor-hint { font-weight: 300; text-transform: none; letter-spacing: 0; color: var(--gray-light); }
+
+.img-upload-row { display: flex; gap: 14px; align-items: flex-start; }
+.img-thumb { width: 64px; height: 64px; object-fit: cover; background: var(--gray-faint); flex-shrink: 0; display: none; }
+
+.file-btn {
+  position: relative; display: inline-block; margin-top: 8px;
+  font-family: var(--font-body); font-weight: 400; font-size: 9px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--gray-dark);
+  border: 1px solid var(--gray-faint); padding: 8px 14px; cursor: pointer;
+}
+.file-btn:hover { border-color: var(--black); color: var(--black); }
+.file-btn.uploading { opacity: 0.4; pointer-events: none; }
+.file-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+.gallery-item-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--gray-faint); }
+.gallery-item-row:first-of-type { border-top: 1px solid var(--gray-faint); }
+.gallery-thumb { width: 48px; height: 48px; object-fit: cover; background: var(--gray-faint); flex-shrink: 0; }
+.gallery-item-url { flex: 1; font-family: var(--font-body); font-size: 11px; color: var(--gray-dark); word-break: break-all; }
+.gallery-item-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+
+.order-btn { font-size: 12px; color: var(--gray-mid); cursor: pointer; background: none; border: none; padding: 2px 5px; line-height: 1; }
+.order-btn:hover { color: var(--black); }
+.order-btn:disabled { opacity: 0.2; cursor: default; }
+.order-btn:disabled:hover { color: var(--gray-mid); }
 
 /* ── DOMAIN BLOCK ───────────────────────────────── */
 .domain-cname-block {
@@ -247,8 +359,13 @@ a { text-decoration: none; color: inherit; }
     <div id="sidebar">
       <div class="sidebar-section">
         <div class="section-link active" data-section="profile"  onclick="goSection('profile')">Profile</div>
-        <div class="section-link"        data-section="career"   onclick="goSection('career')">Career</div>
-        <div class="section-link"        data-section="art"      onclick="goSection('art')">Fine Art</div>
+
+        <div class="section-link tree-row" data-section="career" onclick="toggleTreeSection('career')">Career</div>
+        <div id="tree-career" class="tree-children"></div>
+
+        <div class="section-link tree-row" data-section="art" onclick="toggleTreeSection('art')">Fine Art</div>
+        <div id="tree-art" class="tree-children"></div>
+
         <div class="section-link"        data-section="services" onclick="goSection('services')">Services</div>
         <div class="section-link"        data-section="links"    onclick="goSection('links')">Links</div>
         <div class="section-link"        data-section="products" onclick="goSection('products')">Products</div>
@@ -351,13 +468,112 @@ a { text-decoration: none; color: inherit; }
             <span class="breadcrumb-current" id="project-view-title"></span>
           </div>
           <div class="section-heading" id="project-view-heading"></div>
-          <div class="section-sub">Each card appears in the project grid when this role is selected.</div>
+          <div class="section-sub">Each card appears in the project grid when this role is selected. Reorder with the arrows, or open one to build out its full case study.</div>
 
           <div class="list-header">
             <span class="list-label">Projects</span>
-            <button class="list-add" onclick="openProjectModal()">+ Add project</button>
+            <button class="list-add" onclick="openProjectEditor()">+ Add project</button>
           </div>
           <div id="project-list"></div>
+        </div>
+
+        <!-- Case study editor — full page, mirrors the live template section-by-section -->
+        <div id="career-editor-view" style="display:none;">
+          <div class="breadcrumb">
+            <button class="breadcrumb-back" onclick="showProjectList()">← Projects</button>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current" id="editor-view-title"></span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="section-heading" id="editor-view-heading" style="margin-bottom:6px;"></div>
+            <a class="btn-ghost" id="editor-preview-link" href="#" target="_blank" style="display:none;">Preview live page →</a>
+          </div>
+          <div class="section-sub">Fill in each section below — it mirrors exactly what visitors see on the case study page. A section left blank is simply hidden there.</div>
+
+          <div class="cs-editor-label">Hero</div>
+          <div class="field"><label>Title</label>
+            <input id="e-title" type="text" placeholder="Project name">
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Category</label>
+              <input id="e-category" type="text" placeholder="Full-Stack · SaaS">
+            </div>
+            <div class="field"><label>Tags <span class="cs-editor-hint">— comma separated</span></label>
+              <input id="e-tags" type="text" placeholder="React, Supabase, JavaScript">
+            </div>
+          </div>
+          <div class="field"><label>Description <span class="cs-editor-hint">— appears as the hero subhead</span></label>
+            <textarea id="e-desc" placeholder="What it is, what you built, why it matters."></textarea>
+          </div>
+          <div class="field">
+            <label>Hero Image</label>
+            <div class="img-upload-row">
+              <img class="img-thumb" id="e-img-preview">
+              <div style="flex:1;">
+                <input id="e-img" type="url" placeholder="https://..." oninput="updateThumb('e-img','e-img-preview')">
+                <label class="file-btn">Upload<input type="file" accept="image/*" onchange="uploadImage(event,'e-img','e-img-preview')"></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="cs-editor-label">The Problem <span class="cs-editor-hint">— hidden on the page if left blank</span></div>
+          <div class="field"><textarea id="e-case-problem" placeholder="What need or gap prompted this work."></textarea></div>
+          <div class="cs-editor-label">The Process <span class="cs-editor-hint">— hidden on the page if left blank</span></div>
+          <div class="field"><textarea id="e-case-process" placeholder="How it was built or made."></textarea></div>
+          <div class="cs-editor-label">The Outcome <span class="cs-editor-hint">— hidden on the page if left blank</span></div>
+          <div class="field"><textarea id="e-case-outcome" placeholder="Result, impact, or current status."></textarea></div>
+
+          <div class="divider"></div>
+
+          <div class="list-header">
+            <span class="list-label">Gallery</span>
+            <div style="display:flex;gap:18px;align-items:center;">
+              <button class="list-add" onclick="addGalleryImageUrl()">+ Paste URL</button>
+              <label class="file-btn" style="margin-top:0;">+ Upload<input type="file" accept="image/*" onchange="addGalleryImage(event)"></label>
+            </div>
+          </div>
+          <div id="e-gallery-list"></div>
+
+          <div class="divider"></div>
+
+          <div class="field"><label>Credits</label>
+            <input id="e-credits" type="text" placeholder="Collaborators, credits, or client name">
+          </div>
+
+          <div class="cs-editor-label">Metadata Footer</div>
+          <div class="field-row">
+            <div class="field"><label>Role</label>
+              <input id="e-role" type="text" placeholder="Founder & Lead Engineer">
+            </div>
+            <div class="field"><label>Team</label>
+              <input id="e-team" type="text" placeholder="Collaborator — their role">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Status</label>
+              <input id="e-status" type="text" placeholder="Prototype complete, documentation in progress">
+            </div>
+            <div class="field"><label>Year</label>
+              <input id="e-year" type="text" placeholder="2026">
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="cs-editor-label">Call To Action</div>
+          <div class="field"><label>Live URL <span class="cs-editor-hint">— shown as a "View Live Project" button</span></label>
+            <input id="e-url" type="url" placeholder="https://...">
+          </div>
+          <div class="field"><label>Badge <span class="cs-editor-hint">— shown instead, only if there's no live URL</span></label>
+            <input id="e-badge" type="text" placeholder="In Development">
+          </div>
+
+          <div style="display:flex;align-items:center;margin-top:8px;">
+            <button class="btn-save" onclick="saveProjectEditor()">Save Case Study</button>
+            <span class="save-status" id="editor-status">Saved</span>
+          </div>
         </div>
       </div>
 
@@ -625,6 +841,21 @@ const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
 const sb = supabase.createClient(SB_URL, SB_ANON);
 
+// Mirrors amelia-arabe-portfolio.html. One shared case-study template
+// (2026-08-25: collapsed from 4 near-identical files) — it reads
+// ?from=<role_key> itself and picks CTA label/tag style from its own
+// ROLE_CONFIG.
+function buildCaseStudyUrl(p, roleKey) {
+  return `templates/case-study.html?id=${p.id}&from=${roleKey}`;
+}
+
+// image_url is stored relative to the repo root — this file lives in app/,
+// same as amelia-arabe-portfolio.html, so the same '../' prefix applies.
+function resolveImageUrl(url) {
+  if (!url) return '';
+  return /^https?:\/\//.test(url) ? url : '../' + url;
+}
+
 // ── STATE ───────────────────────────────────────────────
 const state = {
   user:            null,
@@ -640,6 +871,12 @@ const state = {
   links:           [],
   domain:          null,
   activeToggleId:  null,    // which toggle's projects are being viewed
+  editingProjectId: null,   // project being edited in the case study editor (null = new)
+  editorGallery:   [],      // gallery_urls being built up while the editor is open
+  // Sidebar tree (Career/Fine Art explorer)
+  treeOpen:           { career: false, art: false },
+  expandedToggles:    new Set(),  // toggle ids expanded in the sidebar tree
+  expandedCollections: new Set(), // collection ids expanded in the sidebar tree
   activeSvcTab:    'work',
   modalSaveFn:     null,    // set per modal open, called on Save
   // Products
@@ -747,6 +984,145 @@ function goSection(name) {
   document.querySelectorAll('.section-link').forEach(l => {
     l.classList.toggle('active', l.dataset.section === name);
   });
+  syncSidebarActive();
+}
+
+// ── SIDEBAR TREE (Career / Fine Art explorer) ────────────
+// VS Code-style: click a top-level row to open its section + expand its
+// children; click a child role/collection to drill in; click a leaf
+// project/artwork to jump straight into its editor. No twisty arrows —
+// the accent line itself grows/retracts to show open vs. closed.
+const TREE_ANIM_MS = 600;
+
+// Animates a .tree-children container's height 0 ↔ its natural content
+// height, so the black border-left "grows"/"retracts" along with it.
+function animateTreeChildren(el, opening) {
+  if (!el) return;
+  el.style.transition = 'none';
+  if (opening) {
+    const target = el.scrollHeight;
+    el.style.height = '0px';
+    void el.offsetHeight; // force reflow so the 0px takes before animating
+    el.style.transition = `height ${TREE_ANIM_MS}ms ease`;
+    el.style.height = target + 'px';
+    el.addEventListener('transitionend', function done(e) {
+      if (e.propertyName !== 'height') return;
+      el.style.height = 'auto'; // let it breathe if content changes later
+      el.style.transition = '';
+      el.removeEventListener('transitionend', done);
+    });
+  } else {
+    el.style.height = el.scrollHeight + 'px'; // lock the 'auto' height first
+    void el.offsetHeight;
+    el.style.transition = `height ${TREE_ANIM_MS}ms ease`;
+    el.style.height = '0px';
+  }
+}
+
+function toggleTreeSection(name) {
+  state.treeOpen[name] = !state.treeOpen[name];
+  animateTreeChildren(document.getElementById('tree-' + name), state.treeOpen[name]);
+  goSection(name);
+  if (name === 'career') showCareerList();
+  if (name === 'art')    showCollectionList();
+}
+
+function toggleRoleTree(id) {
+  const opening = !state.expandedToggles.has(id);
+  if (opening) state.expandedToggles.add(id); else state.expandedToggles.delete(id);
+  state.treeOpen.career = true;
+  animateTreeChildren(document.getElementById('tree-children-role-' + id), opening);
+  goSection('career');
+  viewProjects(id);
+}
+
+function openProjectFromTree(toggleId, projectId) {
+  state.expandedToggles.add(toggleId);
+  state.treeOpen.career = true;
+  goSection('career');
+  viewProjects(toggleId);
+  openProjectEditor(projectId);
+}
+
+function toggleCollectionTree(id) {
+  const opening = !state.expandedCollections.has(id);
+  if (opening) state.expandedCollections.add(id); else state.expandedCollections.delete(id);
+  state.treeOpen.art = true;
+  animateTreeChildren(document.getElementById('tree-children-col-' + id), opening);
+  goSection('art');
+  viewArtworks(id);
+}
+
+function openArtworkFromTree(collectionId, artworkId) {
+  state.expandedCollections.add(collectionId);
+  state.treeOpen.art = true;
+  goSection('art');
+  viewArtworks(collectionId);
+  openArtworkModal(artworkId);
+}
+
+// Full structural rebuild — call only when the underlying data changes
+// (roles/projects/collections/artworks added, edited, deleted, reordered).
+// A plain expand/collapse click never calls this — it would blow away the
+// element mid-transition. Nodes that are already open render pre-expanded,
+// instantly, with no transition.
+function renderSidebarTree() {
+  renderCareerTree();
+  renderArtTree();
+}
+
+// Lightweight — call after pure navigation (no data change) to keep every
+// row's line (page, role/collection, or leaf) reflecting current selection.
+// Only ever toggles a class (never height/innerHTML), so it's always safe
+// to call mid-animation without interrupting the transition in progress.
+function syncSidebarActive() {
+  document.querySelectorAll('#tree-career [data-toggle-id]').forEach(el => {
+    el.classList.toggle('active', state.section === 'career' && state.activeToggleId === el.dataset.toggleId);
+  });
+  document.querySelectorAll('#tree-career [data-project-id]').forEach(el => {
+    el.classList.toggle('active', state.section === 'career' && state.editingProjectId === el.dataset.projectId);
+  });
+  document.querySelectorAll('#tree-art [data-collection-id]').forEach(el => {
+    el.classList.toggle('active', state.section === 'art' && state.activeCollectionId === el.dataset.collectionId);
+  });
+}
+
+function renderCareerTree() {
+  const wrap = document.getElementById('tree-career');
+  wrap.innerHTML = !state.toggles.length ? '<div class="tree-empty">No roles yet</div>' : [...state.toggles]
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    .map(t => {
+      const isOpen = state.expandedToggles.has(t.id);
+      const projects = state.projects.filter(p => p.toggle_id === t.id).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+      const childrenHtml = projects.length
+        ? projects.map(p => `<div class="tree-item tree-leaf" data-project-id="${p.id}" title="${p.title}" onclick="event.stopPropagation(); openProjectFromTree('${t.id}','${p.id}')">${p.title}</div>`).join('')
+        : '<div class="tree-empty">No projects</div>';
+      return `
+        <div class="tree-item" data-toggle-id="${t.id}" title="${t.role_name}" onclick="toggleRoleTree('${t.id}')">${t.role_name}</div>
+        <div class="tree-children" id="tree-children-role-${t.id}" style="height:${isOpen ? 'auto' : '0px'};">${childrenHtml}</div>
+      `;
+    }).join('');
+  wrap.style.height = state.treeOpen.career ? 'auto' : '0px';
+  syncSidebarActive();
+}
+
+function renderArtTree() {
+  const wrap = document.getElementById('tree-art');
+  wrap.innerHTML = !state.collections.length ? '<div class="tree-empty">No collections yet</div>' : [...state.collections]
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    .map(c => {
+      const isOpen = state.expandedCollections.has(c.id);
+      const artworks = state.artworks.filter(a => a.collection_id === c.id).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+      const childrenHtml = artworks.length
+        ? artworks.map(a => `<div class="tree-item tree-leaf" title="${a.title}" onclick="event.stopPropagation(); openArtworkFromTree('${c.id}','${a.id}')">${a.title}</div>`).join('')
+        : '<div class="tree-empty">No artworks</div>';
+      return `
+        <div class="tree-item" data-collection-id="${c.id}" title="${c.name}" onclick="toggleCollectionTree('${c.id}')">${c.name}</div>
+        <div class="tree-children" id="tree-children-col-${c.id}" style="height:${isOpen ? 'auto' : '0px'};">${childrenHtml}</div>
+      `;
+    }).join('');
+  wrap.style.height = state.treeOpen.art ? 'auto' : '0px';
+  syncSidebarActive();
 }
 
 // ── SAVE STATUS ─────────────────────────────────────────
@@ -802,21 +1178,22 @@ function renderCareerList() {
   const el = document.getElementById('toggle-list');
   if (!state.toggles.length) {
     el.innerHTML = '<div class="empty-state">No roles yet. Add your first career toggle.</div>';
-    return;
+  } else {
+    el.innerHTML = state.toggles.map(t => `
+      <div class="item-row">
+        <div>
+          <div class="item-name">${t.role_name}</div>
+          <div class="item-meta">${t.service_section} · ${countProjects(t.id)} project${countProjects(t.id) === 1 ? '' : 's'}</div>
+        </div>
+        <div class="item-actions">
+          <button class="item-edit" onclick="viewProjects('${t.id}')">Projects</button>
+          <button class="item-edit" onclick="openToggleModal('${t.id}')">Edit</button>
+          <button class="item-delete" onclick="deleteToggle('${t.id}')">Delete</button>
+        </div>
+      </div>
+    `).join('');
   }
-  el.innerHTML = state.toggles.map(t => `
-    <div class="item-row">
-      <div>
-        <div class="item-name">${t.role_name}</div>
-        <div class="item-meta">${t.service_section} · ${countProjects(t.id)} project${countProjects(t.id) === 1 ? '' : 's'}</div>
-      </div>
-      <div class="item-actions">
-        <button class="item-edit" onclick="viewProjects('${t.id}')">Projects</button>
-        <button class="item-edit" onclick="openToggleModal('${t.id}')">Edit</button>
-        <button class="item-delete" onclick="deleteToggle('${t.id}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
+  renderSidebarTree();
 }
 
 function countProjects(toggleId) {
@@ -826,17 +1203,23 @@ function countProjects(toggleId) {
 function showCareerList() {
   document.getElementById('career-list-view').style.display = '';
   document.getElementById('career-project-view').style.display = 'none';
+  document.getElementById('career-editor-view').style.display = 'none';
   state.activeToggleId = null;
+  state.editingProjectId = null;
+  syncSidebarActive();
 }
 
 function viewProjects(toggleId) {
   state.activeToggleId = toggleId;
+  state.editingProjectId = null;
   const toggle = state.toggles.find(t => t.id === toggleId);
   document.getElementById('career-list-view').style.display = 'none';
   document.getElementById('career-project-view').style.display = '';
+  document.getElementById('career-editor-view').style.display = 'none';
   document.getElementById('project-view-title').textContent = toggle.role_name;
   document.getElementById('project-view-heading').textContent = toggle.role_name + ' — Projects';
   renderProjectList();
+  syncSidebarActive();
 }
 
 function openToggleModal(id) {
@@ -880,6 +1263,12 @@ function openToggleModal(id) {
   document.getElementById('modal-overlay').classList.add('open');
 }
 
+// BUG PATTERN (2026-08-25 review, repeats in saveCollection/saveArtwork/
+// saveAccordion/saveItem/saveLink below): showStatus + closeModal fire
+// unconditionally, even when `error` is truthy — a failed write shows
+// "Saved" and closes the modal as if it worked, silently discarding the
+// edit. saveProject() and saveDomain() below do this right (gate on
+// `!error`, alert on failure) — copy that pattern here.
 async function saveToggle(existingId) {
   const payload = {
     user_id:         state.user.id,
@@ -915,124 +1304,244 @@ async function deleteToggle(id) {
 }
 
 // ── PROJECTS ────────────────────────────────────────────
+// SECURITY (2026-08-25 review): every render function in this file (and
+// in amelia-arabe-portfolio.html / templates/case-study-*.html /
+// muses-of-morenita-site.html) drops title/description/tags/etc. straight
+// into innerHTML with no escaping — no esc() helper exists anywhere in
+// this file. Harmless today (only Amelia writes this content), but once
+// other Muses can write their own projects/products/bios, this is stored
+// XSS against every visitor to their public pages. Add one shared esc()
+// and use it everywhere DB text hits innerHTML before opening write access
+// to other users.
+//
+// Renders the exact card the public portfolio uses (.project-card et al,
+// see amelia-arabe-portfolio.html) so this reads as the live grid, not a
+// separate admin view. Reorder/delete are corner controls, not extra rows —
+// clicking the card itself opens the case study editor.
 function renderProjectList() {
-  const list = state.projects.filter(p => p.toggle_id === state.activeToggleId);
-  const el   = document.getElementById('project-list');
+  const list = state.projects
+    .filter(p => p.toggle_id === state.activeToggleId)
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const el = document.getElementById('project-list');
+  el.className = 'project-grid';
   if (!list.length) {
+    el.className = '';
     el.innerHTML = '<div class="empty-state">No projects yet for this role.</div>';
     return;
   }
-  el.innerHTML = list.map(p => `
-    <div class="item-row">
-      <div>
-        <div class="item-name">${p.title}</div>
-        <div class="item-meta">${p.category || ''}${p.badge ? ' · ' + p.badge : ''}</div>
+  el.innerHTML = list.map((p, i) => {
+    const hasImage = !!p.image_url;
+    const imgStyle = hasImage ? ` style="background-image:url(${resolveImageUrl(p.image_url)})"` : '';
+    const mark = hasImage ? '' : `<div class="card-placeholder-mark">${(p.title || '?').charAt(0)}</div>`;
+    let tagsHtml = '';
+    if (p.tags && p.tags.length) tagsHtml = '<div class="card-tags">' + p.tags.map(t => `<span class="card-tag">${t}</span>`).join('') + '</div>';
+    if (p.badge) tagsHtml += `<span class="status-badge">${p.badge}</span>`;
+    return `
+      <div class="project-card" onclick="openProjectEditor('${p.id}')">
+        <div class="dash-card-controls">
+          <button class="dash-card-btn" onclick="event.stopPropagation(); moveProject('${p.id}',-1)" ${i === 0 ? 'disabled' : ''} title="Move up">↑</button>
+          <button class="dash-card-btn" onclick="event.stopPropagation(); moveProject('${p.id}',1)" ${i === list.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
+          <button class="dash-card-btn dash-card-btn-danger" onclick="event.stopPropagation(); deleteProject('${p.id}')" title="Delete">×</button>
+        </div>
+        <div class="card-img${hasImage ? '' : ' no-image'}"${imgStyle}>
+          ${mark}
+          <div class="card-scrim"></div>
+          <div class="card-body">
+            <div class="card-category">${p.category || ''}</div>
+            <div class="card-title">${p.title}</div>
+            ${tagsHtml}
+          </div>
+        </div>
       </div>
-      <div class="item-actions">
-        <button class="item-edit" onclick="openProjectModal('${p.id}')">Edit</button>
-        <button class="item-delete" onclick="deleteProject('${p.id}')">Delete</button>
+    `;
+  }).join('');
+}
+
+async function moveProject(id, dir) {
+  const list = state.projects
+    .filter(p => p.toggle_id === state.activeToggleId)
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const i = list.findIndex(p => p.id === id);
+  const j = i + dir;
+  if (j < 0 || j >= list.length) return;
+  const a = list[i], b = list[j];
+  const [aOrder, bOrder] = [a.sort_order ?? 0, b.sort_order ?? 0];
+  await Promise.all([
+    sb.from('projects').update({ sort_order: bOrder }).eq('id', a.id),
+    sb.from('projects').update({ sort_order: aOrder }).eq('id', b.id),
+  ]);
+  state.projects = state.projects.map(p => {
+    if (p.id === a.id) return { ...p, sort_order: bOrder };
+    if (p.id === b.id) return { ...p, sort_order: aOrder };
+    return p;
+  });
+  renderProjectList();
+}
+
+// ── CASE STUDY EDITOR — full page, mirrors the live template section-by-section
+function showProjectList() {
+  document.getElementById('career-editor-view').style.display = 'none';
+  document.getElementById('career-project-view').style.display = '';
+  state.editingProjectId = null;
+  syncSidebarActive();
+}
+
+function openProjectEditor(id) {
+  const existing = id ? state.projects.find(p => p.id === id) : null;
+  state.editingProjectId = id || null;
+  state.editorGallery = [...(existing?.gallery_urls || [])];
+
+  document.getElementById('career-project-view').style.display = 'none';
+  document.getElementById('career-editor-view').style.display = '';
+  document.getElementById('editor-view-title').textContent = existing ? existing.title : 'New Project';
+  document.getElementById('editor-view-heading').textContent = existing ? 'Edit Case Study' : 'New Case Study';
+
+  document.getElementById('e-title').value        = existing?.title || '';
+  document.getElementById('e-category').value     = existing?.category || '';
+  document.getElementById('e-tags').value         = (existing?.tags || []).join(', ');
+  document.getElementById('e-desc').value         = existing?.description || '';
+  document.getElementById('e-img').value          = existing?.image_url || '';
+  document.getElementById('e-case-problem').value = existing?.case_problem || '';
+  document.getElementById('e-case-process').value = existing?.case_process || '';
+  document.getElementById('e-case-outcome').value = existing?.case_outcome || '';
+  document.getElementById('e-credits').value      = existing?.credits || '';
+  document.getElementById('e-role').value         = existing?.role || '';
+  document.getElementById('e-team').value         = existing?.team || '';
+  document.getElementById('e-status').value       = existing?.status || '';
+  document.getElementById('e-year').value         = existing?.year || '';
+  document.getElementById('e-url').value          = existing?.url || '';
+  document.getElementById('e-badge').value        = existing?.badge || '';
+  updateThumb('e-img', 'e-img-preview');
+  renderGalleryEditor();
+  updatePreviewLink(existing);
+  syncSidebarActive();
+}
+
+function updatePreviewLink(project) {
+  const link = document.getElementById('editor-preview-link');
+  if (project) {
+    const toggle = state.toggles.find(t => t.id === state.activeToggleId);
+    link.href = buildCaseStudyUrl(project, toggle?.role_key || '');
+    link.style.display = '';
+  } else {
+    link.style.display = 'none';
+  }
+}
+
+function updateThumb(inputId, thumbId) {
+  const url = document.getElementById(inputId).value.trim();
+  const img = document.getElementById(thumbId);
+  if (url) { img.src = url; img.style.display = ''; } else { img.style.display = 'none'; }
+}
+
+async function uploadImage(e, inputId, thumbId) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const label = e.target.closest('.file-btn');
+  label.classList.add('uploading');
+  const path = `${state.user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`;
+  const { error } = await sb.storage.from('project-images').upload(path, file, { upsert: true });
+  label.classList.remove('uploading');
+  e.target.value = '';
+  if (error) { alert('Upload failed: ' + error.message); return; }
+  const { data } = sb.storage.from('project-images').getPublicUrl(path);
+  document.getElementById(inputId).value = data.publicUrl;
+  updateThumb(inputId, thumbId);
+}
+
+function renderGalleryEditor() {
+  const el = document.getElementById('e-gallery-list');
+  if (!state.editorGallery.length) {
+    el.innerHTML = '<div class="empty-state">No gallery images yet.</div>';
+    return;
+  }
+  el.innerHTML = state.editorGallery.map((url, i) => `
+    <div class="gallery-item-row">
+      <img class="gallery-thumb" src="${url}">
+      <span class="gallery-item-url">${url}</span>
+      <div class="gallery-item-actions">
+        <button class="order-btn" onclick="moveGalleryImage(${i},-1)" ${i === 0 ? 'disabled' : ''}>↑</button>
+        <button class="order-btn" onclick="moveGalleryImage(${i},1)" ${i === state.editorGallery.length - 1 ? 'disabled' : ''}>↓</button>
+        <button class="item-delete" onclick="removeGalleryImage(${i})">Remove</button>
       </div>
     </div>
   `).join('');
 }
 
-function openProjectModal(id) {
-  const existing = id ? state.projects.find(p => p.id === id) : null;
-  document.getElementById('modal-title').textContent = existing ? 'Edit Project' : 'Add Project';
-  document.getElementById('modal-body').innerHTML = `
-    <div class="field"><label>Title</label>
-      <input id="m-title" type="text" placeholder="Project name" value="${existing?.title || ''}">
-    </div>
-    <div class="field"><label>Category</label>
-      <input id="m-category" type="text" placeholder="Full-Stack · SaaS" value="${existing?.category || ''}">
-    </div>
-    <div class="field"><label>Description</label>
-      <textarea id="m-desc" placeholder="What it is, what you built, why it matters.">${existing?.description || ''}</textarea>
-    </div>
-    <div class="field"><label>URL <span style="font-weight:300;text-transform:none;letter-spacing:0">— leave blank if private</span></label>
-      <input id="m-url" type="url" placeholder="https://..." value="${existing?.url || ''}">
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Badge</label>
-        <input id="m-badge" type="text" placeholder="In Development" value="${existing?.badge || ''}">
-      </div>
-      <div class="field"><label>Image URL</label>
-        <input id="m-img" type="url" placeholder="https://..." value="${existing?.image_url || ''}">
-      </div>
-    </div>
-    <div class="field"><label>Tags <span style="font-weight:300;text-transform:none;letter-spacing:0">— comma separated</span></label>
-      <input id="m-tags" type="text" placeholder="React, Supabase, JavaScript" value="${(existing?.tags || []).join(', ')}">
-    </div>
-    <div style="margin-top:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-mid);">Case Study</div>
-    <div class="field"><label>The Problem</label>
-      <textarea id="m-case-problem" placeholder="What need or gap prompted this work.">${existing?.case_problem || ''}</textarea>
-    </div>
-    <div class="field"><label>The Process</label>
-      <textarea id="m-case-process" placeholder="How it was built or made.">${existing?.case_process || ''}</textarea>
-    </div>
-    <div class="field"><label>The Outcome</label>
-      <textarea id="m-case-outcome" placeholder="Result, impact, or current status.">${existing?.case_outcome || ''}</textarea>
-    </div>
-    <div class="field"><label>Credits</label>
-      <input id="m-credits" type="text" placeholder="Collaborators, credits, or client name" value="${existing?.credits || ''}">
-    </div>
-    <div class="field"><label>Gallery URLs <span style="font-weight:300;text-transform:none;letter-spacing:0">— one per line</span></label>
-      <textarea id="m-gallery" placeholder="https://...">${(existing?.gallery_urls || []).join('\n')}</textarea>
-    </div>
-    <div style="margin-top:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-mid);">Metadata Footer</div>
-    <div class="field-row">
-      <div class="field"><label>Role</label>
-        <input id="m-role" type="text" placeholder="Founder & Lead Engineer" value="${existing?.role || ''}">
-      </div>
-      <div class="field"><label>Team</label>
-        <input id="m-team" type="text" placeholder="Collaborator — their role" value="${existing?.team || ''}">
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Status</label>
-        <input id="m-status" type="text" placeholder="Prototype complete, documentation in progress" value="${existing?.status || ''}">
-      </div>
-      <div class="field"><label>Year</label>
-        <input id="m-year" type="text" placeholder="2026" value="${existing?.year || ''}">
-      </div>
-    </div>
-  `;
-  state.modalSaveFn = () => saveProject(id);
-  document.getElementById('modal-overlay').classList.add('open');
+async function addGalleryImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const label = e.target.closest('.file-btn');
+  label.classList.add('uploading');
+  const path = `${state.user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`;
+  const { error } = await sb.storage.from('project-images').upload(path, file, { upsert: true });
+  label.classList.remove('uploading');
+  e.target.value = '';
+  if (error) { alert('Upload failed: ' + error.message); return; }
+  const { data } = sb.storage.from('project-images').getPublicUrl(path);
+  state.editorGallery.push(data.publicUrl);
+  renderGalleryEditor();
 }
 
-async function saveProject(existingId) {
+function addGalleryImageUrl() {
+  const url = prompt('Image URL');
+  if (url && url.trim()) { state.editorGallery.push(url.trim()); renderGalleryEditor(); }
+}
+
+function removeGalleryImage(i) {
+  state.editorGallery.splice(i, 1);
+  renderGalleryEditor();
+}
+
+function moveGalleryImage(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= state.editorGallery.length) return;
+  [state.editorGallery[i], state.editorGallery[j]] = [state.editorGallery[j], state.editorGallery[i]];
+  renderGalleryEditor();
+}
+
+async function saveProjectEditor() {
   const payload = {
-    user_id:     state.user.id,
-    toggle_id:   state.activeToggleId,
-    title:       document.getElementById('m-title').value.trim(),
-    category:    document.getElementById('m-category').value.trim(),
-    description: document.getElementById('m-desc').value.trim(),
-    url:         document.getElementById('m-url').value.trim() || null,
-    badge:       document.getElementById('m-badge').value.trim() || null,
-    image_url:   document.getElementById('m-img').value.trim() || null,
-    tags:         document.getElementById('m-tags').value.split(',').map(s => s.trim()).filter(Boolean),
-    case_problem: document.getElementById('m-case-problem').value.trim() || null,
-    case_process: document.getElementById('m-case-process').value.trim() || null,
-    case_outcome: document.getElementById('m-case-outcome').value.trim() || null,
-    credits:      document.getElementById('m-credits').value.trim() || null,
-    gallery_urls: document.getElementById('m-gallery').value.split('\n').map(s => s.trim()).filter(Boolean),
-    role:         document.getElementById('m-role').value.trim() || null,
-    team:         document.getElementById('m-team').value.trim() || null,
-    status:       document.getElementById('m-status').value.trim() || null,
-    year:         document.getElementById('m-year').value.trim() || null,
+    user_id:      state.user.id,
+    toggle_id:    state.activeToggleId,
+    title:        document.getElementById('e-title').value.trim(),
+    category:     document.getElementById('e-category').value.trim() || null,
+    description:  document.getElementById('e-desc').value.trim() || null,
+    url:          document.getElementById('e-url').value.trim() || null,
+    badge:        document.getElementById('e-badge').value.trim() || null,
+    image_url:    document.getElementById('e-img').value.trim() || null,
+    tags:         document.getElementById('e-tags').value.split(',').map(s => s.trim()).filter(Boolean),
+    case_problem: document.getElementById('e-case-problem').value.trim() || null,
+    case_process: document.getElementById('e-case-process').value.trim() || null,
+    case_outcome: document.getElementById('e-case-outcome').value.trim() || null,
+    credits:      document.getElementById('e-credits').value.trim() || null,
+    gallery_urls: [...state.editorGallery],
+    role:         document.getElementById('e-role').value.trim() || null,
+    team:         document.getElementById('e-team').value.trim() || null,
+    status:       document.getElementById('e-status').value.trim() || null,
+    year:         document.getElementById('e-year').value.trim() || null,
   };
-  if (existingId) {
-    const { error } = await sb.from('projects').update(payload).eq('id', existingId);
-    if (!error) state.projects = state.projects.map(p => p.id === existingId ? { ...p, ...payload } : p);
+  if (!payload.title) { alert('Title is required.'); return; }
+
+  let saved;
+  if (state.editingProjectId) {
+    const { error } = await sb.from('projects').update(payload).eq('id', state.editingProjectId);
+    if (error) { alert('Save failed: ' + error.message); return; }
+    state.projects = state.projects.map(p => p.id === state.editingProjectId ? { ...p, ...payload } : p);
+    saved = state.projects.find(p => p.id === state.editingProjectId);
   } else {
-    const { data, error } = await sb.from('projects').insert({ ...payload, sort_order: state.projects.length }).select().single();
-    if (!error) state.projects.push(data);
+    const siblingCount = state.projects.filter(p => p.toggle_id === state.activeToggleId).length;
+    const { data, error } = await sb.from('projects').insert({ ...payload, sort_order: siblingCount }).select().single();
+    if (error) { alert('Save failed: ' + error.message); return; }
+    state.projects.push(data);
+    state.editingProjectId = data.id;
+    saved = data;
   }
+  document.getElementById('editor-view-title').textContent = saved.title;
+  updatePreviewLink(saved);
   renderProjectList();
   renderCareerList();
-  showStatus('modal-status');
-  setTimeout(closeModal, 800);
+  showStatus('editor-status');
 }
 
 async function deleteProject(id) {
@@ -1052,21 +1561,22 @@ function renderCollectionList() {
   const el = document.getElementById('collection-list');
   if (!state.collections.length) {
     el.innerHTML = '<div class="empty-state">No collections yet. Add your first one.</div>';
-    return;
+  } else {
+    el.innerHTML = state.collections.map(c => `
+      <div class="item-row">
+        <div>
+          <div class="item-name">${c.name}</div>
+          <div class="item-meta">${countArtworks(c.id)} artwork${countArtworks(c.id) === 1 ? '' : 's'}</div>
+        </div>
+        <div class="item-actions">
+          <button class="item-edit" onclick="viewArtworks('${c.id}')">Artworks</button>
+          <button class="item-edit" onclick="openCollectionModal('${c.id}')">Edit</button>
+          <button class="item-delete" onclick="deleteCollection('${c.id}')">Delete</button>
+        </div>
+      </div>
+    `).join('');
   }
-  el.innerHTML = state.collections.map(c => `
-    <div class="item-row">
-      <div>
-        <div class="item-name">${c.name}</div>
-        <div class="item-meta">${countArtworks(c.id)} artwork${countArtworks(c.id) === 1 ? '' : 's'}</div>
-      </div>
-      <div class="item-actions">
-        <button class="item-edit" onclick="viewArtworks('${c.id}')">Artworks</button>
-        <button class="item-edit" onclick="openCollectionModal('${c.id}')">Edit</button>
-        <button class="item-delete" onclick="deleteCollection('${c.id}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
+  renderSidebarTree();
 }
 
 function countArtworks(collectionId) {
@@ -1077,6 +1587,7 @@ function showCollectionList() {
   document.getElementById('art-collection-list-view').style.display = '';
   document.getElementById('art-artwork-view').style.display = 'none';
   state.activeCollectionId = null;
+  syncSidebarActive();
 }
 
 function viewArtworks(collectionId) {
@@ -1087,6 +1598,7 @@ function viewArtworks(collectionId) {
   document.getElementById('artwork-view-title').textContent = collection.name;
   document.getElementById('artwork-view-heading').textContent = collection.name;
   renderArtworkList();
+  syncSidebarActive();
 }
 
 function openCollectionModal(id) {
@@ -1136,25 +1648,39 @@ async function deleteCollection(id) {
   }
 }
 
+// Same idea as renderProjectList() — mirrors templates/collection.html's
+// .art-card exactly, so this is what the live Fine Art grid looks like.
 function renderArtworkList() {
-  const list = state.artworks.filter(a => a.collection_id === state.activeCollectionId);
-  const el   = document.getElementById('artwork-list');
+  const list = state.artworks
+    .filter(a => a.collection_id === state.activeCollectionId)
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const el = document.getElementById('artwork-list');
+  el.className = 'art-grid';
   if (!list.length) {
+    el.className = '';
     el.innerHTML = '<div class="empty-state">No artworks yet in this collection.</div>';
     return;
   }
-  el.innerHTML = list.map(a => `
-    <div class="item-row">
-      <div>
-        <div class="item-name">${a.title}</div>
-        <div class="item-meta">${a.year || ''}${a.medium ? ' · ' + a.medium : ''}</div>
+  el.innerHTML = list.map(a => {
+    const hasImage = !!a.image_url;
+    const imgStyle = hasImage ? ` style="background-image:url(${resolveImageUrl(a.image_url)})"` : '';
+    const mark = hasImage ? '' : `<div class="art-mark">${(a.title || '?').charAt(0)}</div>`;
+    return `
+      <div class="art-card" onclick="openArtworkModal('${a.id}')">
+        <div class="dash-card-controls">
+          <button class="dash-card-btn dash-card-btn-danger" onclick="event.stopPropagation(); deleteArtwork('${a.id}')" title="Delete">×</button>
+        </div>
+        <div class="art-img${hasImage ? '' : ' no-image'}"${imgStyle}>
+          ${mark}
+          <div class="art-scrim"></div>
+          <div class="art-body">
+            <div class="art-year">${a.year || ''}</div>
+            <div class="art-title">${a.title}</div>
+          </div>
+        </div>
       </div>
-      <div class="item-actions">
-        <button class="item-edit" onclick="openArtworkModal('${a.id}')">Edit</button>
-        <button class="item-delete" onclick="deleteArtwork('${a.id}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 function openArtworkModal(id) {
@@ -1513,6 +2039,17 @@ async function deleteProduct(id) {
 }
 
 // ── STUDIO — CLIENTS ────────────────────────────────────
+// BROKEN (confirmed 2026-08-25): client_contacts, client_projects,
+// project_milestones, project_updates don't exist on the live Supabase
+// project — only career_toggles/projects/art_collections/artworks were
+// ever actually deployed from schema.sql (see supabase/schema.sql's own
+// header note). Every Studio query below fails silently (data comes back
+// undefined, `|| []` masks it) — Studio has been non-functional in
+// production this whole time. Also: portal.html's real client-portal
+// mechanism is a *different*, already-live table (client_portals, keyed
+// by user_id/email + magic-link auth), not this portal_token/client_projects
+// design — the two were never reconciled. Either deploy these 4 tables for
+// real, or rip Studio out and point "Copy portal link" at client_portals.
 async function loadClients() {
   const { data } = await sb.from('client_contacts').select('*').eq('user_id', state.user.id).order('name');
   state.clients = data || [];

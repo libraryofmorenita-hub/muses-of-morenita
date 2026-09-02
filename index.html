@@ -2044,6 +2044,14 @@ const SB_URL = 'https://agekvrkqrwepdoeetpbx.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
 const SB_ROW = 'muses-morenita';
 
+// SECURITY (2026-08-25 review): this one row mixes public portfolio
+// content with private data — D.clients (contracts/invoices), D.jobs,
+// drafts — in a single JSON blob, and this fetch runs on every page load
+// (public visitors included, see DOMContentLoaded below) with only the
+// anon key. The Studio password gate only hides the UI; the private data
+// is already in the browser, and anyone can pull the same row directly
+// via the anon key with no auth at all. Needs splitting into a public row
+// + an owner-only table before this is safe multi-tenant.
 async function sbLoad() {
   try {
     const res = await fetch(SB_URL + '/rest/v1/portfolio_data?id=eq.' + SB_ROW, {
@@ -2074,6 +2082,12 @@ async function sbSave(data) {
 // PORTAL_ADMIN_TOKEN must match the ADMIN_TOKEN secret set in the
 // portal-sync Edge Function (Supabase Dashboard → Edge Functions → Secrets).
 // Replace the placeholder below with your actual secret before deploying.
+// SECURITY (2026-08-25 review): this token ships in plain JS to every page
+// visitor and grants a privileged server action (the Edge Function runs
+// service-role, bypassing RLS, to write client_portals + send invite
+// emails). Anyone who views source gets it. Rotate this + the Edge
+// Function secret, and move the call server-side (or behind real auth)
+// before this is exposed beyond just Amelia's own use.
 const PORTAL_ADMIN_TOKEN = 'morenitadesign';
 const PORTAL_SYNC_FN     = SB_URL + '/functions/v1/portal-sync';
 const PORTAL_URL         = 'https://libraryofmorenita-hub.github.io/amelia-arabe/portal.html';
