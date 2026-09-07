@@ -2006,7 +2006,8 @@ body { padding-top: 52px; }
   .name-row { grid-template-columns: 1fr; }
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js"></script>
+<script src="../shared/app-shell.js"></script>
 </head>
 <body>
 
@@ -2768,9 +2769,15 @@ body { padding-top: 52px; }
       </div>
       <div>
         <div class="footer-col-label">Connect</div>
-        <a class="footer-link">Instagram</a>
-        <a class="footer-link">LinkedIn</a>
-        <a class="footer-link">GitHub</a>
+        <a class="footer-link" href="https://instagram.com/ameliavarabe" target="_blank" rel="noopener">Instagram</a>
+        <a class="footer-link" href="https://linkedin.com/in/ameliaarabe" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="footer-link" href="https://github.com/libraryofmorenita-hub" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div>
+        <div class="footer-col-label">Legal</div>
+        <a class="footer-link" href="../legal/privacy-policy.pdf" target="_blank">Privacy Policy</a>
+        <a class="footer-link" href="../legal/terms-of-service.pdf" target="_blank">Terms of Service</a>
+        <a class="footer-link" href="../legal/cookie-notice.pdf" target="_blank">Cookie Notice</a>
       </div>
     </div>
     <div class="footer-row2">
@@ -2782,9 +2789,7 @@ body { padding-top: 52px; }
 
 <script>
 // ─── SUPABASE ──────────────────────────────────────────
-const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
-const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
-const sb = supabase.createClient(SB_URL, SB_ANON);
+// sb/esc/requireAuth/getProfileByHandle/currentHandle come from shared/app-shell.js
 
 // track whether archive has been fetched this session — avoid refetching on every route visit
 let archiveLoaded = false;

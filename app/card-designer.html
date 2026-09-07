@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js"></script>
+<script src="../shared/app-shell.js"></script>
 <style>
 :root {
   --black:       #0A0A0A;
@@ -174,7 +175,7 @@ body {
 .preview-stage { display: flex; align-items: center; justify-content: center; padding: 40px; }
 .live-preview-label { font-family: var(--font-body); font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-mid); margin-top: 12px; }
 
-/* ── PREVIEW CARD (bulletin) — same visual rules as bulletin-board.html ── */
+/* ── PREVIEW CARD (bulletin) — same visual rules as board.html's bulletin template ── */
 .preview-item { position: relative !important; left: auto !important; top: auto !important; }
 
 .board-card {
@@ -214,7 +215,7 @@ body {
 .card-audio-embed { width: 100%; border: none; margin-top: 10px; }
 .card-audio-link { font-family: var(--font-body); font-weight: 300; font-size: 10px; color: var(--gray-dark); margin-top: 8px; display: inline-block; }
 
-/* ── PREVIEW OBJECT (archive) — same visual rules as archive-stack.html ── */
+/* ── PREVIEW OBJECT (archive) — same visual rules as board.html's archive template ── */
 .stack-object { transition: none; }
 .photo-object { width: 200px; height: 240px; background: var(--pure-white); border: 6px solid var(--pure-white); box-shadow: 3px 4px 16px rgba(0,0,0,0.12); display: flex; flex-direction: column; }
 .photo-object.portrait { width: 240px; height: 200px; }
@@ -266,18 +267,20 @@ body {
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────
-const SUPABASE_URL = 'https://agekvrkqrwepdoeetpbx.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// sb/esc come from shared/app-shell.js
 
 const params = new URLSearchParams(window.location.search);
 const template = params.get('template') === 'archive' ? 'archive' : 'bulletin';
 const ARCHIVE_TYPES = ['photo', 'document', 'sketch', 'ticket', 'note'];
 let cardType = params.get('type') || (template === 'archive' ? 'photo' : 'text');
-const MUSE_ID = params.get('muse_id') || 'amelia-arabe';
 const editId = params.get('id');
 const isArchive = ARCHIVE_TYPES.includes(cardType);
-const tableName = template === 'archive' ? 'archive_stack_objects' : 'bulletin_board_cards';
+// One shared table (board_items, discriminated by `template`) replacing the
+// old per-template table switch — see the "structural rebuild" plan, Phase
+// 3. Editing requires real auth now: RLS is owner-write, so `currentUser`
+// (not a URL param) determines whose board a save lands on — a card-designer
+// link can no longer be pointed at someone else's board by editing the URL.
+let currentUser = null;
 
 const PROJECT_LINKS = {
   'muses-platform':     'Muses of Morenita Platform',
@@ -342,7 +345,7 @@ let existingRow = null;
 // ── LOAD (edit mode) ─────────────────────────────────────
 async function loadExisting() {
   if (!editId) return;
-  const { data, error } = await sb.from(tableName).select('*').eq('id', editId).maybeSingle();
+  const { data, error } = await sb.from('board_items').select('*').eq('id', editId).maybeSingle();
   if (error || !data) return;
   existingRow = data;
   cardType = data.type || cardType;
@@ -374,7 +377,7 @@ async function loadExisting() {
 }
 
 // ── CONTROLS RENDERING ───────────────────────────────────
-function esc(s) { return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+// esc() now comes from shared/app-shell.js
 
 function renderControls() {
   const cfg = TYPE_CONFIG[cardType] || {};
@@ -705,7 +708,7 @@ function renderArchivePreviewBody(displayImage) {
 // ── SAVE ───────────────────────────────────────────────
 async function uploadImage(file, cardId) {
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-  const path = `${MUSE_ID}/${cardId}/image.${ext}`;
+  const path = `${currentUser.id}/${cardId}/image.${ext}`;
   const { error } = await sb.storage.from('card-images').upload(path, file, { upsert: true });
   if (error) throw error;
   const { data } = sb.storage.from('card-images').getPublicUrl(path);
@@ -715,7 +718,8 @@ async function uploadImage(file, cardId) {
 function buildBaseData() {
   const cfg = TYPE_CONFIG[cardType] || {};
   const data = {
-    muse_id: MUSE_ID,
+    user_id: currentUser.id,
+    template: template,
     type: cardType,
     title: cfg.colorSwatch ? state.title : (cfg.title ? state.title : null),
     body: cfg.ticket ? state.ticketStrip : (cfg.body ? state.body : null),
@@ -750,7 +754,7 @@ async function saveCard() {
     if (existingRow) {
       if (cfg.image && state.imageFile) imageUrl = await uploadImage(state.imageFile, existingRow.id);
       data.image_url = imageUrl;
-      const { error } = await sb.from(tableName).update({ ...data, updated_at: new Date() }).eq('id', existingRow.id);
+      const { error } = await sb.from('board_items').update({ ...data, updated_at: new Date() }).eq('id', existingRow.id);
       if (error) throw error;
     } else {
       const newId = (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + '-' + Math.random().toString(16).slice(2));
@@ -760,11 +764,11 @@ async function saveCard() {
       data.z_index = 1;
       data.x = 200;
       data.y = 200;
-      const { error } = await sb.from(tableName).insert([data]);
+      const { error } = await sb.from('board_items').insert([data]);
       if (error) throw error;
     }
 
-    window.location.href = template === 'archive' ? 'archive-stack.html' : 'bulletin-board.html';
+    window.location.href = `board.html?template=${template}`;
   } catch (err) {
     console.error(err);
     errorEl.classList.add('visible');
@@ -772,11 +776,13 @@ async function saveCard() {
 }
 
 function cancelDesign() {
-  window.location.href = template === 'archive' ? 'archive-stack.html' : 'bulletin-board.html';
+  window.location.href = `board.html?template=${template}`;
 }
 
 // ── INIT ───────────────────────────────────────────────
 (async function init() {
+  currentUser = await requireAuth('muses-of-morenita-site.html#/login');
+  if (!currentUser) return;
   await loadExisting();
   renderControls();
   updatePreview();

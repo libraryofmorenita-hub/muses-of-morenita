@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js"></script>
+<script src="../../shared/app-shell.js"></script>
 <style>
 :root {
   --black:       #0A0A0A;
@@ -196,15 +197,27 @@ body.loaded { opacity: 1; }
 </div>
 
 <script>
-const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
-const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
-const sb = supabase.createClient(SB_URL, SB_ANON);
+// sb/esc come from shared/app-shell.js
 
 const id = new URLSearchParams(window.location.search).get('id');
-// Fine Art is the only consumer of this page, so the return hash is fixed —
-// appended via JS (not baked into the HTML attribute) so the deploy
-// script's href="../amelia-arabe-portfolio.html" rewrite still matches.
-document.getElementById('col-back').href += '#painter';
+// set when reached via an isolated share link (amelia-arabe-portfolio.html
+// ?share=painter) — carried forward so "Back to Fine Art" returns to that
+// same isolated view instead of the full profile with every hat visible.
+const isolated = new URLSearchParams(window.location.search).get('share') === '1';
+// The tenant this collection belongs to isn't known yet at this point (only
+// load() below fetches the collection row) — backLink() below rebuilds the
+// href once it is, using this as the base.
+function backLink(handle) {
+  let href = '../amelia-arabe-portfolio.html' + (isolated ? '?share=painter' : '#painter');
+  if (handle && handle !== 'amelia-arabe') {
+    const sep = href.includes('?') ? '&' : '?';
+    const hashIdx = href.indexOf('#');
+    href = hashIdx === -1 ? `${href}${sep}u=${encodeURIComponent(handle)}`
+      : `${href.slice(0, hashIdx)}${sep}u=${encodeURIComponent(handle)}${href.slice(hashIdx)}`;
+  }
+  return href;
+}
+document.getElementById('col-back').href = backLink(null);
 
 // image_url is stored relative to the repo root — this file lives two
 // levels down (app/templates/), so local paths need '../../' prepended.
@@ -216,10 +229,10 @@ function resolveImageUrl(url) {
 function showError() {
   document.getElementById('col-root').innerHTML =
     '<div class="col-error">Collection not found.<br><a href="../amelia-arabe-portfolio.html" id="col-error-back">&larr; Back to Fine Art</a></div>';
-  document.getElementById('col-error-back').href += '#painter';
+  document.getElementById('col-error-back').href = backLink(null);
 }
 
-function renderArtworks(artworks) {
+function renderArtworks(artworks, handle) {
   const grid = document.getElementById('art-grid');
   const empty = document.getElementById('empty-state');
   if (!artworks.length) {
@@ -227,18 +240,19 @@ function renderArtworks(artworks) {
     empty.style.display = 'flex';
     return;
   }
+  const handleParam = handle && handle !== 'amelia-arabe' ? `&u=${encodeURIComponent(handle)}` : '';
   grid.innerHTML = artworks.map(a => {
     const hasImage = !!a.image_url;
     const imgStyle = hasImage ? ` style="background-image:url(${resolveImageUrl(a.image_url)})"` : '';
-    const mark = hasImage ? '' : `<div class="art-mark">${(a.title || '?').charAt(0)}</div>`;
+    const mark = hasImage ? '' : `<div class="art-mark">${esc((a.title || '?').charAt(0))}</div>`;
     return `
-      <div class="art-card" onclick="window.location.href='artwork.html?id=${a.id}'">
+      <div class="art-card" onclick="window.location.href='artwork.html?id=${a.id}${isolated ? '&share=1' : ''}${handleParam}'">
         <div class="art-img${hasImage ? '' : ' no-image'}"${imgStyle}>
           ${mark}
           <div class="art-scrim"></div>
           <div class="art-body">
-            <div class="art-year">${a.year || ''}</div>
-            <div class="art-title">${a.title}</div>
+            <div class="art-year">${esc(a.year || '')}</div>
+            <div class="art-title">${esc(a.title)}</div>
           </div>
         </div>
       </div>`;
@@ -249,14 +263,16 @@ async function load() {
   requestAnimationFrame(() => document.body.classList.add('loaded'));
   if (!id) { showError(); return; }
   const [{ data: collection, error: colError }, { data: artworks, error: artError }] = await Promise.all([
-    sb.from('art_collections').select('*').eq('id', id).maybeSingle(),
+    sb.from('art_collections').select('*, profiles(display_name,handle)').eq('id', id).maybeSingle(),
     sb.from('artworks').select('*').eq('collection_id', id).order('sort_order'),
   ]);
   if (colError || !collection) { showError(); return; }
-  document.title = collection.name + ' — Amelia Arabe';
+  const ownerHandle = collection.profiles && collection.profiles.handle;
+  document.getElementById('col-back').href = backLink(ownerHandle);
+  document.title = collection.name + ' — ' + (collection.profiles && collection.profiles.display_name || 'Amelia Arabe');
   document.getElementById('col-title').textContent = collection.name;
   document.getElementById('col-description').textContent = collection.description || '';
-  renderArtworks(artworks || []);
+  renderArtworks(artworks || [], ownerHandle);
 }
 
 document.addEventListener('DOMContentLoaded', load);

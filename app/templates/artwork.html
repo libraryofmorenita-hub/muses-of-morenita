@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js"></script>
+<script src="../../shared/app-shell.js"></script>
 <style>
 :root {
   --black:       #0A0A0A;
@@ -292,15 +293,18 @@ body.cs-loaded { opacity: 1; }
 </div>
 
 <script>
-const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
-const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
-const sb = supabase.createClient(SB_URL, SB_ANON);
+// sb/esc come from shared/app-shell.js
 
 const id = new URLSearchParams(window.location.search).get('id');
+// set when reached via an isolated share link — carried forward through
+// collection.html so the eventual "Back to Fine Art" fallback (and
+// showError() below) returns to that same isolated view, not the full
+// profile with every hat visible.
+const isolated = new URLSearchParams(window.location.search).get('share') === '1';
 // safe default (Fine Art is the only consumer) until render() overwrites
 // this with the real collection.html?id=... link — appended via JS so the
 // deploy script's href="../amelia-arabe-portfolio.html" rewrite still matches
-document.getElementById('cs-back').href += '#painter';
+document.getElementById('cs-back').href += isolated ? '?share=painter' : '#painter';
 
 // image_url is stored relative to the repo root — this file lives two
 // levels down (app/templates/), so local paths need '../../' prepended.
@@ -323,7 +327,7 @@ function toggleSection(wrapId, textId, value) {
 function showError() {
   document.getElementById('cs-root').innerHTML =
     '<div class="cs-error">Artwork not found.<br><a href="../amelia-arabe-portfolio.html" id="cs-error-back">&larr; Back to Fine Art</a></div>';
-  document.getElementById('cs-error-back').href += '#painter';
+  document.getElementById('cs-error-back').href += isolated ? '?share=painter' : '#painter';
 }
 
 function setupZoom(imageUrl) {
@@ -342,7 +346,8 @@ function setupZoom(imageUrl) {
 }
 
 function render(a) {
-  document.title = a.title + ' — Amelia Arabe';
+  const owner = a.profiles || {};
+  document.title = a.title + ' — ' + (owner.display_name || 'Amelia Arabe');
 
   const hero = document.getElementById('cs-hero');
   const heroMark = document.getElementById('cs-hero-mark');
@@ -361,7 +366,17 @@ function render(a) {
   const galleryWrap = document.getElementById('cs-gallery');
   if (a.gallery_urls && a.gallery_urls.length) {
     galleryWrap.classList.add('has-items');
-    galleryWrap.innerHTML = a.gallery_urls.map(url => `<div class="cs-gallery-item" style="background-image:url(${resolveImageUrl(url)})"></div>`).join('');
+    galleryWrap.innerHTML = '';
+    // Set via the DOM property, not a template-string style attribute — a
+    // URL containing a stray `"` would otherwise break out of the attribute
+    // and inject arbitrary HTML (this table has been open-write in the past;
+    // see the "Morenita Structure Audit" review).
+    a.gallery_urls.forEach(url => {
+      const item = document.createElement('div');
+      item.className = 'cs-gallery-item';
+      item.style.backgroundImage = `url(${resolveImageUrl(url)})`;
+      galleryWrap.appendChild(item);
+    });
   }
 
   toggleSection('statement-wrap', 'statement-text', a.artist_statement);
@@ -394,8 +409,11 @@ function render(a) {
   document.getElementById('cs-meta').style.display = hasMeta ? 'flex' : 'none';
 
   // back link derived from the artwork's own collection_id — no need to
-  // carry it through the URL
-  document.getElementById('cs-back').href = `collection.html?id=${a.collection_id}`;
+  // carry it through the URL. The owner's handle does need to be forwarded
+  // though, or a second tenant's artwork sends visitors into
+  // collection.html with no ?u=, which then falls back to Amelia's data.
+  const handleParam = owner.handle && owner.handle !== 'amelia-arabe' ? `&u=${encodeURIComponent(owner.handle)}` : '';
+  document.getElementById('cs-back').href = `collection.html?id=${a.collection_id}${isolated ? '&share=1' : ''}${handleParam}`;
 }
 
 // prev/next navigation between sibling artworks in the same collection,
@@ -454,7 +472,7 @@ function setupNav(a) {
 async function load() {
   requestAnimationFrame(() => document.body.classList.add('cs-loaded'));
   if (!id) { showError(); return; }
-  const { data, error } = await sb.from('artworks').select('*, art_collections(id,name)').eq('id', id).maybeSingle();
+  const { data, error } = await sb.from('artworks').select('*, art_collections(id,name), profiles(display_name,handle)').eq('id', id).maybeSingle();
   if (error || !data) { showError(); return; }
   render(data);
   setupNav(data);

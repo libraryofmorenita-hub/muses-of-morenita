@@ -12,21 +12,27 @@ Static HTML/CSS/JS pages (no build step) backed by [Supabase](https://supabase.c
 
 ```
 app/
-  amelia-arabe-portfolio.html   Amelia's portfolio — role toggles (engineer/inventor/painter/cellist/visual),
-                                 project grid, services, wishlist/inquiry flow. Reads career_toggles + projects
-                                 from Supabase.
-  templates/                    5 case-study page templates (technical/creative/fine-art/music/performance),
-                                 one per career toggle. Each fetches its own project row by ?id= at load time.
+  amelia-arabe-portfolio.html   The live portfolio template — role toggles (engineer/inventor/painter/cellist/visual),
+                                 project grid, services, wishlist/inquiry flow. Resolves whose portfolio via
+                                 ?u=<handle> (default 'amelia-arabe'), not a hardcoded email — any Muse's
+                                 portfolio renders from this one file.
+  templates/                    case-study.html / artwork.html / collection.html — one shared case-study
+                                 template (parameterized by ?from=<role>) plus the Fine Art artwork/collection
+                                 pair. Each fetches its own row by ?id= and joins the owning profile.
   dashboard.html                Auth-gated member dashboard — CRUD for profile, career toggles, projects,
-                                 services, links, products.
+                                 services, links, products, and Studio (clients/projects/milestones/updates).
   muses-of-morenita-site.html   The platform's public marketing/directory SPA (hash-routed).
-  archive-stack.html            Standalone archive/muse browsing page.
-  bulletin-board.html           Standalone bulletin/board page.
-  card-designer.html            Card design tool.
+  board.html                    One pinboard editor, two visual templates (?template=bulletin|archive) —
+                                 replaces the old bulletin-board.html/archive-stack.html fork. Editing requires
+                                 being signed in as the board's owner (real RLS, not a shared password).
+  card-designer.html            Shared sub-editor board.html redirects to for adding/editing a single item.
 
-portal.html          Client-facing project portal (magic link or portal_token auth) — milestones,
-                      updates, contracts, invoices.
+portal.html          Client-facing, read-only project status page — no account, a ?token= link is the
+                      access control (resolved via the get_portal_project() database function).
 job-tracker.html      Amelia's own job-application pipeline tracker (Supabase-connected, auth-gated).
+shared/
+  app-shell.js         The one Supabase client + esc()/requireAuth()/getProfileByHandle() helper, loaded by
+                        every page above instead of each hand-typing its own createClient().
 supabase/
   schema.sql           Forward-designed schema. NOTE: not fully representative of the live database —
                         the live project evolved some tables independently. Check live schema before

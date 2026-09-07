@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js"></script>
+<script src="../../shared/app-shell.js"></script>
 <style>
 :root {
   --black:       #0A0A0A;
@@ -308,9 +309,7 @@ body.cs-round-tags .cs-tag { padding: 3px 10px; border-radius: 999px; }
 </div>
 
 <script>
-const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
-const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
-const sb = supabase.createClient(SB_URL, SB_ANON);
+// sb/esc come from shared/app-shell.js
 
 // Replaces case-study-{technical,creative,music,performance}.html — those
 // four files were 95%+ identical (see the 2026-08-25 site review). The
@@ -330,9 +329,27 @@ const id = new URLSearchParams(window.location.search).get('id');
 // "Back to Portfolio" reopens the same toggle instead of resetting to
 // About, and so we know which ROLE_CONFIG to render with.
 const from = new URLSearchParams(window.location.search).get('from');
-if (from) {
+// set when this project was reached via an isolated share link (see
+// buildCaseStudyUrl()/applyShareParam() in amelia-arabe-portfolio.html) —
+// "Back to Portfolio" needs to return to that same isolated view (?share=),
+// not the hash route (#), which shows the full switcher and every hat.
+const isolated = new URLSearchParams(window.location.search).get('share') === '1';
+const backHref = from ? '../amelia-arabe-portfolio.html' + (isolated ? `?share=${from}` : `#${from}`) : null;
+if (backHref) {
   const backLink = document.querySelector('.cs-back');
-  if (backLink) backLink.href += '#' + from;
+  if (backLink) backLink.href = backHref;
+}
+
+// Once the project's owner is known (render(), below), the back-link needs
+// their handle too — otherwise a second Muse's project would send visitors
+// back to Amelia's portfolio instead of hers. Default handle is omitted so
+// every existing link (none of which carry a handle) is untouched.
+function backHrefWithHandle(handle) {
+  if (!backHref || !handle || handle === 'amelia-arabe') return backHref;
+  const sep = backHref.includes('?') ? '&' : '?';
+  const hashIdx = backHref.indexOf('#');
+  if (hashIdx === -1) return `${backHref}${sep}u=${encodeURIComponent(handle)}`;
+  return `${backHref.slice(0, hashIdx)}${sep}u=${encodeURIComponent(handle)}${backHref.slice(hashIdx)}`;
 }
 
 const cfg = ROLE_CONFIG[from] || ROLE_CONFIG.engineer;
@@ -360,11 +377,14 @@ function toggleSection(wrapId, textId, value) {
 function showError() {
   document.getElementById('cs-root').innerHTML =
     '<div class="cs-error">Project not found.<br><a href="../amelia-arabe-portfolio.html" id="cs-error-back">&larr; Back to Portfolio</a></div>';
-  if (from) document.getElementById('cs-error-back').href += '#' + from;
+  if (backHref) document.getElementById('cs-error-back').href = backHref;
 }
 
 function render(p) {
-  document.title = p.title + ' — Amelia Arabe';
+  const owner = p.profiles || {};
+  document.title = p.title + ' — ' + (owner.display_name || 'Amelia Arabe');
+  const backLink = document.querySelector('.cs-back');
+  if (backLink && backHref) backLink.href = backHrefWithHandle(owner.handle);
 
   const hero = document.getElementById('cs-hero');
   if (p.image_url) hero.style.backgroundImage = `url(${resolveImageUrl(p.image_url)})`;
@@ -475,7 +495,7 @@ function setupNav(p) {
 async function load() {
   requestAnimationFrame(() => document.body.classList.add('cs-loaded'));
   if (!id) { showError(); return; }
-  const { data, error } = await sb.from('projects').select('*').eq('id', id).maybeSingle();
+  const { data, error } = await sb.from('projects').select('*, profiles(display_name,handle)').eq('id', id).maybeSingle();
   if (error || !data) { showError(); return; }
   render(data);
   setupNav(data);

@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js"></script>
+<script src="../shared/app-shell.js"></script>
 <style>
 /* ── VARIABLES ─────────────────────────────────── */
 :root {
@@ -312,10 +313,28 @@ a { text-decoration: none; color: inherit; }
    see the inline script right after <body> and the INIT block below */
 html.route-pending #about-view { visibility: hidden; }
 
+/* Isolated share link (?share=<role>) — one discipline only, no way to a
+   visitor's other hats. See applyShareParam()/navLogoClick() in the script
+   below. */
+html.isolated-share .toggle-list,
+html.isolated-share #mobile-toggle-strip { display: none !important; }
+html.isolated-share .nav-logo { cursor: default; }
+
 /* Default "About" view */
 #about-view {
   padding: 40px 44px;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* shown instead of #about-view when ?u=<handle> doesn't resolve — see
+   showProfileNotFound() */
+#profile-not-found {
+  display: none;
+  padding: 40px 44px;
   flex-direction: column;
   justify-content: center;
   height: 100%;
@@ -1036,6 +1055,17 @@ html.route-pending #about-view { visibility: hidden; }
   padding-bottom: 1px;
   transition: color 0.2s, border-color 0.2s;
 }
+.footer-legal { display: flex; gap: 14px; }
+.footer-legal a {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  text-decoration: none;
+}
+.footer-legal a:hover { color: var(--black); }
 .footer-tag:hover {
   color: var(--black);
   border-bottom-color: var(--black);
@@ -1121,7 +1151,9 @@ html.route-pending #about-view { visibility: hidden; }
   // returning from a case study), mark route-pending so CSS keeps the
   // default About view hidden until applyHashRoute() resolves it below,
   // instead of flashing About then snapping to the right toggle.
-  if (window.location.hash) document.documentElement.classList.add('route-pending');
+  if (window.location.hash || new URLSearchParams(window.location.search).has('share')) {
+    document.documentElement.classList.add('route-pending');
+  }
 </script>
 
 <div class="shell">
@@ -1134,7 +1166,7 @@ html.route-pending #about-view { visibility: hidden; }
       <span class="nav-link" data-page="services" onclick="navigateTo('services')">Services</span>
       <span class="nav-link" data-page="contact" onclick="navigateTo('contact')">Contact</span>
     </div>
-    <div class="nav-avatar">A</div>
+    <div class="nav-avatar" id="nav-avatar">A</div>
   </nav>
 
   <!-- ── MAIN ROW ── -->
@@ -1213,29 +1245,29 @@ html.route-pending #about-view { visibility: hidden; }
       <div class="sidebar-panel" id="sidebar-contact">
         <div class="sidebar-label">Connect</div>
 
-        <div class="contact-info-block">
+        <div class="contact-info-block" id="contact-email-block">
           <div class="contact-info-label">Email</div>
           <div class="contact-info-value">
-            <a href="mailto:missameliava@gmail.com">missameliava@gmail.com</a>
+            <a id="contact-email-link" href="mailto:missameliava@gmail.com">missameliava@gmail.com</a>
           </div>
         </div>
 
-        <div class="contact-info-block">
+        <div class="contact-info-block" id="contact-phone-block">
           <div class="contact-info-label">Phone</div>
           <div class="contact-info-value">
-            <a href="tel:+19518095841">951-809-5841</a>
+            <a id="contact-phone-link" href="tel:+19518095841">951-809-5841</a>
           </div>
         </div>
 
-        <div class="contact-info-block">
+        <div class="contact-info-block" id="contact-location-block">
           <div class="contact-info-label">Location</div>
-          <div class="contact-info-value">Los Angeles, CA<br>Manila, PH</div>
+          <div class="contact-info-value" id="contact-location-value">Los Angeles, CA<br>Manila, PH</div>
         </div>
 
         <div class="sidebar-divider"></div>
         <div class="sidebar-label">Social</div>
 
-        <div>
+        <div id="contact-social-list">
           <div class="contact-link-row" onclick="window.open('https://instagram.com/ameliavarabe','_blank')">
             <span class="contact-link-name">Instagram</span>
             <span class="contact-link-arrow">&#8599;</span>
@@ -1282,6 +1314,16 @@ html.route-pending #about-view { visibility: hidden; }
             <div class="about-divider"></div>
             <p class="about-bio">Computer and electrical engineer. Founder of Morenita Technology. I build tools, systems, and platforms at the intersection of engineering and culture. Five careers, one practice.</p>
             <div class="about-location">Los Angeles, CA &middot; Manila, PH</div>
+          </div>
+        </div>
+
+        <!-- Shown when ?u=<handle> doesn't resolve to any profile — see
+             showProfileNotFound() in the script below. -->
+        <div id="profile-not-found">
+          <div class="about-inner">
+            <div class="about-name">Portfolio not found</div>
+            <p class="about-bio">There's no Muse at this link. Check the URL, or head back to the platform.</p>
+            <a class="about-location" href="muses-of-morenita-site.html" style="text-decoration:underline;">← Muses of Morenita</a>
           </div>
         </div>
 
@@ -1488,6 +1530,11 @@ html.route-pending #about-view { visibility: hidden; }
   <footer id="footer">
     <span class="footer-name">Amelia Arabe</span>
     <span class="footer-contact">missameliava@gmail.com &middot; 951-809-5841</span>
+    <span class="footer-legal">
+      <a href="../legal/privacy-policy.pdf" target="_blank">Privacy</a>
+      <a href="../legal/terms-of-service.pdf" target="_blank">Terms</a>
+      <a href="../legal/cookie-notice.pdf" target="_blank">Cookies</a>
+    </span>
     <a class="footer-tag" href="muses-of-morenita-site.html#/muses">Meet the Muses</a>
   </footer>
 
@@ -1520,19 +1567,32 @@ const state = {
   activeServiceSection: 'work',
   wishlist: [],
   activeAccordion: null,
+  // true when this page was opened via an isolated share link (?share=<role_key>)
+  // — hides the toggle switcher so a visitor only ever sees the one discipline
+  // the link was scoped to, not the other hats. See applyShareParam().
+  isolated: false,
 };
 
 // ── SUPABASE ───────────────────────────────────────────
-const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
-const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
-const sb = supabase.createClient(SB_URL, SB_ANON);
+// sb/esc/requireAuth/getProfileByHandle/currentHandle come from shared/app-shell.js
 
 // One shared case-study template (2026-08-25: collapsed from 4 near-
 // identical files) — it reads ?from=<role_key> itself and picks CTA
 // label/tag style from its own ROLE_CONFIG. painter never reaches this;
 // it routes through collection.html/artwork.html instead.
 function buildCaseStudyUrl(p, roleKey) {
-  return `templates/case-study.html?id=${p.id}&from=${roleKey}`;
+  let url = `templates/case-study.html?id=${p.id}&from=${roleKey}`;
+  // Carry isolation through — otherwise "Back to Portfolio" from the case
+  // study would land on the full, un-isolated profile and undo the whole
+  // point of an isolated share link.
+  if (state.isolated) url += '&share=1';
+  // Carry the current tenant's handle through too — currentHandle() reads
+  // this very page's own ?u=, so this is just forwarding it, not resolving
+  // anything new. Omitted for the default handle so every existing link
+  // (none of which ever pass ?u=) is untouched.
+  const handle = currentHandle();
+  if (handle !== 'amelia-arabe') url += `&u=${encodeURIComponent(handle)}`;
+  return url;
 }
 
 // image_url is stored relative to the repo root (e.g. 'bouquet.jpeg') so both
@@ -1547,6 +1607,10 @@ function resolveImageUrl(url) {
 // populated from Supabase on load — see loadPortfolioData() below
 let PROJECTS = {};
 let TOGGLE_DATA = {};
+// The resolved profile row for whoever ?u=<handle> points at — kept around
+// so hireClick()/expressInterest() (below) can build a working mailto: link
+// for any Muse, not just Amelia.
+let CURRENT_PROFILE = null;
 // Fine Art only — collections grid (see showToggleView's 'painter' branch
 // and renderCollectionsGrid()) instead of the flat project grid every
 // other toggle uses.
@@ -1556,13 +1620,19 @@ let dataReadyResolve;
 const dataReady = new Promise(resolve => { dataReadyResolve = resolve; });
 
 async function loadPortfolioData() {
-  const { data: profile } = await sb.from('profiles').select('id').eq('email', 'missameliava@gmail.com').single();
-  if (!profile) { dataReadyResolve(); return; }
+  // Resolved by handle (?u=<handle>, default 'amelia-arabe') instead of a
+  // hardcoded email — this file is now the shared portfolio template for
+  // any Muse, not a file that only works for one person. See
+  // shared/app-shell.js's currentHandle()/getProfileByHandle().
+  const profile = await getProfileByHandle(currentHandle());
+  if (!profile) { showProfileNotFound(); dataReadyResolve(); return; }
+  CURRENT_PROFILE = profile;
 
-  const [{ data: toggles }, { data: projects }, { data: collections }] = await Promise.all([
+  const [{ data: toggles }, { data: projects }, { data: collections }, { data: links }] = await Promise.all([
     sb.from('career_toggles').select('*').eq('user_id', profile.id).order('sort_order'),
     sb.from('projects').select('*').eq('user_id', profile.id).order('sort_order'),
     sb.from('art_collections').select('*').eq('user_id', profile.id).order('sort_order'),
+    sb.from('social_links').select('*').eq('user_id', profile.id).order('sort_order'),
   ]);
   COLLECTIONS = collections || [];
 
@@ -1585,7 +1655,134 @@ async function loadPortfolioData() {
     PROJECTS[toggle.role_key].push(p);
   });
 
+  // The About view's name/titles/bio/location were pure static HTML — never
+  // wired to `profile` at all, even for Amelia. Harmless while she was the
+  // only reachable profile; a real bug now that ?u=<handle> makes a second
+  // Muse's page reachable (found via a browser smoke test, 2026-09-07).
+  populateAboutView(profile, toggles || []);
+  applyShellFromProfile(profile, toggles || [], links || []);
+
   dataReadyResolve();
+}
+
+// A handle that doesn't resolve to any profile used to silently leave
+// Amelia's static About markup on screen (found via a browser smoke test,
+// 2026-09-07) — this is the actual "not found" state instead.
+function showProfileNotFound() {
+  document.getElementById('about-view').style.display = 'none';
+  document.getElementById('toggle-view').classList.remove('visible');
+  document.getElementById('profile-not-found').style.display = 'flex';
+}
+
+function populateAboutView(profile, toggles) {
+  const nameEl = document.querySelector('.about-name');
+  if (nameEl) nameEl.textContent = profile.display_name || 'Muse';
+
+  const bioEl = document.querySelector('.about-bio');
+  if (bioEl) bioEl.style.display = profile.bio ? '' : 'none';
+  if (bioEl && profile.bio) bioEl.textContent = profile.bio;
+
+  const locEl = document.querySelector('.about-location');
+  if (locEl) locEl.style.display = profile.location ? '' : 'none';
+  if (locEl && profile.location) locEl.textContent = profile.location;
+
+  const titlesEl = document.querySelector('.about-titles');
+  if (titlesEl) {
+    titlesEl.style.display = toggles.length ? '' : 'none';
+    titlesEl.innerHTML = toggles
+      .map(t => `<span class="about-title">${esc(t.role_name)}</span>`)
+      .join('<div class="title-sep"></div>');
+  }
+}
+
+// Icon markup per known platform (case-insensitive match on social_links.platform).
+// Anything unrecognized (a Muse can type any label into the dashboard's Links
+// section) falls back to the same generic external-link glyph the Contact
+// page already uses for its one non-social link.
+const SOCIAL_ICONS = {
+  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1"/></svg>',
+  linkedin: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.94 6 2.5 6S0 4.88 0 3.5 1.04 1 2.48 1s2.5 1.12 2.5 2.5zM.5 8h4V23h-4V8zm7.5 0h3.8v2.05h.06c.53-1 1.83-2.05 3.77-2.05C19.9 8 21 10.1 21 13.6V23h-4v-8.4c0-2-.04-4.6-2.8-4.6-2.8 0-3.2 2.2-3.2 4.5V23h-4V8z"/></svg>',
+  github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 015.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.4-5.25 5.68.41.36.78 1.07.78 2.16 0 1.56-.01 2.82-.01 3.2 0 .3.2.66.79.55A10.52 10.52 0 0023.5 12c0-6.27-5.23-11.5-11.5-11.5z"/></svg>',
+  website: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20 15 15 0 010-20z"/></svg>',
+};
+const SOCIAL_ICON_FALLBACK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>';
+
+// Everything in the shell that isn't the About view or the project grid
+// (nav, footer, sidebar quote/location, toggle buttons, social links,
+// contact info) was pure static HTML — never wired to `profile` at all,
+// even for Amelia. Same root cause and same discovery moment as
+// populateAboutView() above; this is the rest of it.
+function applyShellFromProfile(profile, toggles, links) {
+  const name = profile.display_name || 'Muse';
+  document.title = `${name} — Muses of Morenita`;
+  document.querySelector('.nav-logo').textContent = name;
+  const avatar = document.getElementById('nav-avatar');
+  if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
+
+  document.querySelector('.footer-name').textContent = name;
+  const footerContact = document.querySelector('.footer-contact');
+  const contactLine = [profile.email_contact, profile.phone].filter(Boolean).join(' · ');
+  footerContact.textContent = contactLine;
+  footerContact.style.display = contactLine ? '' : 'none';
+
+  document.querySelector('.sidebar-quote').textContent =
+    profile.quote || 'Portfolio powered by Muses of Morenita.';
+
+  document.querySelectorAll('.sidebar-location').forEach(el => {
+    el.style.display = profile.location ? '' : 'none';
+    if (profile.location) el.textContent = profile.location;
+  });
+
+  // Toggle buttons — mobile strip + desktop sidebar list — generated from
+  // this Muse's actual toggles instead of 5 hardcoded roles. setToggle()/
+  // updateAllToggles() already key off data-toggle/.career-toggle generically,
+  // so nothing downstream needs to change.
+  const toggleButtonsHtml = toggles
+    .map(t => `<div class="career-toggle" data-toggle="${esc(t.role_key)}" onclick="setToggle('${esc(t.role_key)}')">${esc(t.role_name)}</div>`)
+    .join('');
+  const mobileStrip = document.getElementById('mobile-toggle-strip');
+  if (mobileStrip) mobileStrip.innerHTML = toggleButtonsHtml;
+  const desktopList = document.querySelector('#sidebar-portfolio .toggle-list');
+  if (desktopList) desktopList.innerHTML = toggleButtonsHtml;
+
+  // Social icons — sidebar (both panels) + the Contact page's link list.
+  const iconsHtml = links.map(l => {
+    const icon = SOCIAL_ICONS[(l.platform || '').toLowerCase()] || SOCIAL_ICON_FALLBACK;
+    return `<a class="social-link" href="${esc(l.url)}" target="_blank" rel="noopener" aria-label="${esc(l.platform)}">${icon}</a>`;
+  }).join('');
+  document.querySelectorAll('.sidebar-socials').forEach(el => { el.innerHTML = iconsHtml; });
+
+  const contactList = document.getElementById('contact-social-list');
+  if (contactList) {
+    contactList.innerHTML = links.map(l => `
+      <div class="contact-link-row" onclick="window.open('${esc(l.url)}','_blank')">
+        <span class="contact-link-name">${esc(l.platform)}</span>
+        <span class="contact-link-arrow">&#8599;</span>
+      </div>`).join('');
+  }
+
+  // Contact page email/phone/location — same hide-if-empty pattern, with
+  // profile.email (the real auth email, always present) as a last resort so
+  // the email row is never just gone for a brand-new Muse.
+  const email = profile.email_contact || profile.email;
+  const emailBlock = document.getElementById('contact-email-block');
+  if (emailBlock) {
+    emailBlock.style.display = email ? '' : 'none';
+    const link = document.getElementById('contact-email-link');
+    if (link && email) { link.href = 'mailto:' + email; link.textContent = email; }
+  }
+  const phoneBlock = document.getElementById('contact-phone-block');
+  if (phoneBlock) {
+    phoneBlock.style.display = profile.phone ? '' : 'none';
+    const link = document.getElementById('contact-phone-link');
+    if (link && profile.phone) { link.href = 'tel:' + profile.phone.replace(/[^\d+]/g, ''); link.textContent = profile.phone; }
+  }
+  const locationBlock = document.getElementById('contact-location-block');
+  if (locationBlock) {
+    locationBlock.style.display = profile.location ? '' : 'none';
+    const val = document.getElementById('contact-location-value');
+    if (val && profile.location) val.textContent = profile.location;
+  }
 }
 
 // ── NAVIGATION ─────────────────────────────────────────
@@ -1617,6 +1814,9 @@ function navigateTo(page) {
 }
 
 function navLogoClick() {
+  // Isolated share links (?share=<role>) never expose the other hats —
+  // the logo is branding only here, not a way back to the full profile.
+  if (state.isolated) return;
   state.activeToggle = null;
   updateAllToggles();
   showAboutView();
@@ -1728,7 +1928,11 @@ function renderCollectionsGrid(grid) {
   COLLECTIONS.forEach(c => {
     const card = document.createElement('div');
     card.className = 'project-card';
-    card.onclick = () => { window.location.href = `templates/collection.html?id=${c.id}`; };
+    card.onclick = () => {
+      const handle = currentHandle();
+      const handleParam = handle !== 'amelia-arabe' ? `&u=${encodeURIComponent(handle)}` : '';
+      window.location.href = `templates/collection.html?id=${c.id}${state.isolated ? '&share=1' : ''}${handleParam}`;
+    };
     card.innerHTML = `
       <div class="card-img no-image">
         <div class="card-placeholder-mark">${(c.name || '?').charAt(0)}</div>
@@ -1829,9 +2033,15 @@ function closeConsultationModal() {
   document.getElementById('modal-overlay').classList.remove('open');
 }
 
+// The auth email (profile.email) always exists, so this never comes back
+// empty even for a brand-new Muse who hasn't set a separate contact email.
+function ownerEmail() {
+  return (CURRENT_PROFILE && (CURRENT_PROFILE.email_contact || CURRENT_PROFILE.email)) || '';
+}
+
 function sendInquiry() {
   const body = encodeURIComponent('Service Inquiry\n\nSelected services:\n' + state.wishlist.join('\n'));
-  window.location.href = `mailto:missameliava@gmail.com?subject=Service%20Inquiry&body=${body}`;
+  window.location.href = `mailto:${ownerEmail()}?subject=Service%20Inquiry&body=${body}`;
   closeConsultationModal();
 }
 
@@ -1843,7 +2053,7 @@ function submitContact() {
   const message = document.getElementById('c-message').value.trim();
   if (!name || !email || !subject || !message) return;
   const body = encodeURIComponent(`From: ${name}\nEmail: ${email}\n\n${message}`);
-  window.location.href = `mailto:missameliava@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+  window.location.href = `mailto:${ownerEmail()}?subject=${encodeURIComponent(subject)}&body=${body}`;
   document.getElementById('contact-form-wrap').style.display = 'none';
   document.getElementById('contact-success').style.display = 'block';
 }
@@ -1871,8 +2081,8 @@ function hireClick() {
 }
 
 // ── HASH ROUTING ───────────────────────────────────────
-// lets other standalone pages (bulletin-board.html, archive-stack.html)
-// link back here with e.g. #software-engineer and land on that toggle
+// lets other standalone pages (board.html) link back here with e.g.
+// #software-engineer and land on that toggle
 const HASH_TOGGLE_MAP = {
   'software-engineer': 'engineer',
   'visual': 'actress',
@@ -1894,14 +2104,40 @@ function applyHashRoute() {
   }
 }
 
+// ── ISOLATED SHARE LINKS ────────────────────────────────
+// A muse can be strategic about which hat a given room sees: the dashboard's
+// Career section generates a link like amelia-arabe-portfolio.html?share=engineer
+// (see copyShareLink() in dashboard.html) that opens straight into that one
+// role's project grid with the toggle switcher hidden — no path to the other
+// disciplines. Separate from applyHashRoute()'s #role deep-links, which are
+// meant for internal same-profile navigation and still show the full switcher.
+function applyShareParam() {
+  const role = new URLSearchParams(window.location.search).get('share');
+  if (!role) return false;
+  state.isolated = true;
+  document.documentElement.classList.add('isolated-share');
+  dataReady.then(() => {
+    if (TOGGLE_DATA[role]) {
+      setToggle(role);
+    } else {
+      // Unknown/removed role — fail into the normal full profile rather
+      // than a dead blank page.
+      document.documentElement.classList.remove('isolated-share');
+      state.isolated = false;
+    }
+  });
+  return true;
+}
+
 // ── INIT ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   navigateTo('portfolio');
   loadPortfolioData().then(() => {
-    applyHashRoute();
+    // A share link always wins over a #hash — they'd otherwise both try to
+    // set the active toggle on load.
+    if (!applyShareParam()) applyHashRoute();
     // release the route-pending hold (no-op if it was never set) — always
-    // runs, even if the hash didn't match anything, so the page can never
-    // get stuck blank.
+    // runs, even if neither route matched, so the page can never get stuck blank.
     document.documentElement.classList.remove('route-pending');
   });
 });

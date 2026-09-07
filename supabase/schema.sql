@@ -3,19 +3,28 @@
 --  Run this in the Supabase SQL editor (project: agekvrkqrwepdoeetpbx)
 --  Order matters — referenced tables must exist before dependents.
 --
---  NOTE: this file was never actually deployed as a whole.
---  The live project already has its own `profiles` table
---  (columns: id, email, display_name, handle, bio, avatar_url,
---  location, role, scroll_count_this_week, scroll_reset_date,
---  created_at — no `username`) plus a differently-shaped
---  `job_applications` table and other unrelated live tables
---  (articles, client_portals, maxine_hardware, curriculum_tracks,
---  collections, contact_submissions, etc.) from other work.
---  Only `career_toggles` and `projects` (below) have actually
---  been created live, adapted to reference the real `profiles`
---  table by id and looked up by `email`, not `username`. Treat
---  the rest of this file as an unimplemented design doc until
---  reconciled with what's actually live.
+--  STATUS as of 2026-09-07 (after the "structural rebuild" plan, all 3
+--  phases): this file now matches the live database for everything it
+--  defines — verified section by section against list_tables, not assumed.
+--  `career_toggles`, `projects`, `service_accordions`, `service_items`,
+--  `social_links`, `custom_domains`, `archive_products`, `board_items`,
+--  `client_contacts`, `client_projects`, `project_milestones`,
+--  `project_updates` are all live and match this file. `profiles` is live
+--  with a few extra columns this file doesn't declare (added directly via
+--  migration as they were needed: `handle`, `quote`, `email_contact`,
+--  `phone`, `website`, `logo_url`) — looked up by `handle`, not `email` or
+--  `username`.
+--  Two old tables were dropped along the way, both with 0 rows at the time
+--  (nothing lost): `client_portals` (Phase 2 — a JSON-blob-per-client design
+--  only ever written to by index.html's legacy admin-token/Edge-Function
+--  pipeline) and `bulletin_board_cards`/`archive_stack_objects` (Phase 3 —
+--  merged into `board_items`).
+--  `art_collections`/`artworks`/`tags`/`track_lessons` are live but not
+--  declared here; they belong to other parts of the platform.
+--  Tables named only in comments below as "other unrelated live tables"
+--  (articles, maxine_hardware, curriculum_tracks, collections,
+--  contact_submissions, etc.) belong to other tools outside this repo's
+--  scope and are intentionally not reconciled here.
 -- ═══════════════════════════════════════════════════════
 
 -- ─── EXTENSIONS ─────────────────────────────────────────
@@ -29,9 +38,15 @@ create extension if not exists "pg_trgm";
 --  One row per user. Extends auth.users via the id foreign key.
 --  This is the root of every muse's public identity.
 -- ═══════════════════════════════════════════════════════
+-- `if not exists` here is a no-op against the live `profiles` table, which
+-- already existed with its own columns before this file was written. This
+-- block is historical/documentation-only — see the file header for the
+-- real live column list. The URL-slug column is `handle` (already unique),
+-- not `username`; `quote`/`email_contact`/`phone`/`website`/`logo_url` were
+-- added directly via migration in Phase 1 of the "structural rebuild" plan.
 create table if not exists profiles (
   id            uuid primary key references auth.users(id) on delete cascade,
-  username      text unique not null,          -- URL slug: libraryofmorenita.org/muses/username
+  handle        text unique,                   -- URL slug: amelia-arabe-portfolio.html?u=handle
   display_name  text,
   bio           text,
   quote         text,                          -- the sidebar quote on the portfolio page
@@ -44,11 +59,6 @@ create table if not exists profiles (
   created_at    timestamptz default now(),
   updated_at    timestamptz default now()
 );
-
--- username must be lowercase, alphanumeric + hyphens only
-alter table profiles
-  add constraint username_format
-  check (username ~ '^[a-z0-9][a-z0-9\-]{1,38}[a-z0-9]$');
 
 -- auto-update updated_at on any row change
 create or replace function set_updated_at()
@@ -295,8 +305,20 @@ create index archive_products_published on archive_products(published);
 --  Muses manage their client relationships here.
 --  Each Muse has their own isolated client list.
 -- ═══════════════════════════════════════════════════════
+-- 2026-09-07 (Phase 2 of the "structural rebuild" plan): this whole block is
+-- now deployed and LIVE, matching the code exactly — verified against the
+-- live schema via list_tables. It replaces an earlier version of this same
+-- design that included contract/invoice/cover/accent-color columns and a
+-- `text`-typed portal_token; those columns never shipped in the deployed
+-- version (client-portal v1 is core tracking only — status/tagline/
+-- milestones/updates + a read-only client link; contracts/invoices/
+-- e-signature/intake are a separate later pass) and portal_token is now a
+-- real `uuid`. It also replaces the previously-undocumented, now-DROPPED
+-- `client_portals` table (a JSON-blob-per-client design that only
+-- index.html's legacy Edge-Function pipeline ever wrote to, and had 0 rows
+-- at the time it was retired).
 create table if not exists client_contacts (
-  id         uuid primary key default uuid_generate_v4(),
+  id         uuid primary key default gen_random_uuid(),
   user_id    uuid not null references profiles(id) on delete cascade,
   name       text not null,
   email      text,
@@ -306,58 +328,47 @@ create table if not exists client_contacts (
   created_at timestamptz default now()
 );
 
-create index client_contacts_user_id on client_contacts(user_id);
+create index if not exists client_contacts_user_id_idx on client_contacts(user_id);
 
 
 -- ═══════════════════════════════════════════════════════
 --  STUDIO — CLIENT PROJECTS
 --  One row per project engagement with a client.
---  portal_token is the UUID used in the shareable portal URL:
+--  portal_token is the uuid used in the shareable status link:
 --    portal.html?token=<portal_token>
---  This lets a client access their portal without a Supabase account.
+--  A client never gets an account — the link is read entirely through
+--  get_portal_project() below, which is the only thing anon can call.
 -- ═══════════════════════════════════════════════════════
 create table if not exists client_projects (
-  id                    uuid primary key default uuid_generate_v4(),
-  user_id               uuid not null references profiles(id) on delete cascade,
-  client_id             uuid references client_contacts(id) on delete set null,
-  name                  text not null,
-  status                text default 'Active',
-  tagline               text,
-  cover_url             text,
-  accent_color          text default '#888888',
-  -- contracts & invoices (HTML strings, rendered in portal.html)
-  contract_html         text,
-  contract_signed_at    timestamptz,
-  contract_signed_name  text,
-  show_contract         boolean default false,
-  invoice_deposit_html  text,
-  show_invoice_deposit  boolean default false,
-  invoice_final_html    text,
-  show_invoice_final    boolean default false,
-  -- portal access token — generated once, never rotated without explicit action
-  portal_token          text unique default gen_random_uuid()::text,
-  created_at            timestamptz default now()
+  id            uuid primary key default gen_random_uuid(),
+  user_id       uuid not null references profiles(id) on delete cascade,
+  client_id     uuid references client_contacts(id) on delete set null,
+  name          text not null,
+  status        text default 'Active',
+  tagline       text,
+  portal_token  uuid unique not null default gen_random_uuid(),
+  created_at    timestamptz default now()
 );
 
-create index client_projects_user_id   on client_projects(user_id);
-create index client_projects_client_id on client_projects(client_id);
-create index client_projects_token     on client_projects(portal_token);
+create index if not exists client_projects_user_id_idx   on client_projects(user_id);
+create index if not exists client_projects_client_id_idx on client_projects(client_id);
+create index if not exists client_projects_portal_token_idx on client_projects(portal_token);
 
 
 -- ═══════════════════════════════════════════════════════
 --  STUDIO — PROJECT UPDATES
---  Creator writes update entries; client reads them in portal.html.
+--  Creator writes update entries; a client reads them via
+--  get_portal_project(), never this table directly.
 -- ═══════════════════════════════════════════════════════
 create table if not exists project_updates (
-  id         uuid primary key default uuid_generate_v4(),
+  id         uuid primary key default gen_random_uuid(),
   project_id uuid not null references client_projects(id) on delete cascade,
   user_id    uuid not null references profiles(id) on delete cascade,
   message    text not null,
-  date       text,              -- display date string, e.g. 'July 8, 2026'
   created_at timestamptz default now()
 );
 
-create index project_updates_project_id on project_updates(project_id);
+create index if not exists project_updates_project_id_idx on project_updates(project_id);
 
 
 -- ═══════════════════════════════════════════════════════
@@ -365,24 +376,24 @@ create index project_updates_project_id on project_updates(project_id);
 --  Ordered checklist of deliverables per project.
 -- ═══════════════════════════════════════════════════════
 create table if not exists project_milestones (
-  id         uuid primary key default uuid_generate_v4(),
+  id         uuid primary key default gen_random_uuid(),
   project_id uuid not null references client_projects(id) on delete cascade,
   label      text not null,
   done       boolean default false,
   sort_order integer default 0
 );
 
-create index project_milestones_project_id on project_milestones(project_id);
+create index if not exists project_milestones_project_id_idx on project_milestones(project_id);
 
 
 -- ═══════════════════════════════════════════════════════
 --  RLS — NEW TABLES
 -- ═══════════════════════════════════════════════════════
 
-alter table archive_products  enable row level security;
-alter table client_contacts   enable row level security;
-alter table client_projects   enable row level security;
-alter table project_updates   enable row level security;
+alter table archive_products   enable row level security;
+alter table client_contacts    enable row level security;
+alter table client_projects    enable row level security;
+alter table project_updates    enable row level security;
 alter table project_milestones enable row level security;
 
 -- ── archive_products ─────────────────────────────────────
@@ -396,50 +407,60 @@ create policy "archive_products: owner write"
   using  (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
--- ── client_contacts ──────────────────────────────────────
+-- ── client_contacts / client_projects / project_updates / project_milestones ──
+-- Owner-scoped only, same pattern as career_toggles/projects — no blanket
+-- using(true) anywhere, unlike the earlier version of this design. A client
+-- with a portal link never queries these tables directly; they only ever
+-- call get_portal_project(token) below, which is SECURITY DEFINER and
+-- returns just the one project the token names.
 create policy "client_contacts: owner only"
   on client_contacts for all
   using  (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
--- ── client_projects ──────────────────────────────────────
--- owner full access; portal token access handled in app code (anon select by token)
-create policy "client_projects: owner write"
+create policy "client_projects: owner only"
   on client_projects for all
   using  (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
--- portal.html reads project by token without auth — allow anon select
-create policy "client_projects: token read"
-  on client_projects for select
-  using (true);
-
--- ── project_updates ──────────────────────────────────────
-create policy "project_updates: owner write"
+create policy "project_updates: owner only"
   on project_updates for all
-  using  (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+  using  (auth.uid() = (select user_id from client_projects where id = project_id))
+  with check (auth.uid() = (select user_id from client_projects where id = project_id));
 
-create policy "project_updates: public read"
-  on project_updates for select using (true);
-
--- ── project_milestones ───────────────────────────────────
--- milestones are writable by the project owner; readable by anyone (portal)
-create policy "project_milestones: owner write"
+create policy "project_milestones: owner only"
   on project_milestones for all
-  using  (
-    auth.uid() = (
-      select user_id from client_projects where id = project_id
-    )
-  )
-  with check (
-    auth.uid() = (
-      select user_id from client_projects where id = project_id
-    )
-  );
+  using  (auth.uid() = (select user_id from client_projects where id = project_id))
+  with check (auth.uid() = (select user_id from client_projects where id = project_id));
 
-create policy "project_milestones: public read"
-  on project_milestones for select using (true);
+-- The one, deliberately narrow, way a client (no account) reads their
+-- project — see portal.html.
+create or replace function public.get_portal_project(p_token uuid)
+returns table (
+  project_name text,
+  status text,
+  tagline text,
+  milestones jsonb,
+  updates jsonb
+)
+language sql
+security definer
+set search_path = public
+as $$
+  select
+    cp.name,
+    cp.status,
+    cp.tagline,
+    (select coalesce(jsonb_agg(jsonb_build_object('label', m.label, 'done', m.done) order by m.sort_order), '[]'::jsonb)
+       from project_milestones m where m.project_id = cp.id),
+    (select coalesce(jsonb_agg(jsonb_build_object('message', u.message, 'created_at', u.created_at) order by u.created_at desc), '[]'::jsonb)
+       from project_updates u where u.project_id = cp.id)
+  from client_projects cp
+  where cp.portal_token = p_token;
+$$;
+
+revoke all on function public.get_portal_project(uuid) from public;
+grant execute on function public.get_portal_project(uuid) to anon, authenticated;
 
 
 -- ═══════════════════════════════════════════════════════
@@ -507,79 +528,64 @@ create policy "job_movement: owner only"
 
 
 -- ═══════════════════════════════════════════════════════
---  BULLETIN BOARD + ARCHIVE STACK
---  Muse profile templates (bulletin-board.html, archive-stack.html,
---  card-designer.html). NOTE: these are keyed by a plain-text
---  muse_id, not a profiles(id) foreign key — they were built to
---  work against the live project's actual profiles table (see
---  supabase-live-state memory) without depending on its shape.
---  RLS is intentionally wide open (demo build) — tighten before
---  the platform launches to other users.
---  SECURITY (confirmed live 2026-08-25): this "using(true)/with check(true)"
---  policy is deployed as-is. The STUDIO_PASSWORD prompt() in
---  bulletin-board.html/archive-stack.html is UI-only — it does not appear
---  in this policy at all, so anyone with the (intentionally public) anon
---  key can read/write/delete any card or object directly via the REST API,
---  bypassing the password entirely. Fine while it's just Amelia's own
---  board; must be scoped to auth.uid() (or at minimum check muse_id
---  against a real owner) before any other Muse's board uses this table.
+--  BOARD ITEMS
+--  board.html (one file, two visual templates: ?template=bulletin|archive)
+--  and its sub-editor card-designer.html.
+--
+--  2026-09-07 (Phase 3 of the "structural rebuild" plan): replaces the old
+--  bulletin_board_cards/archive_stack_objects pair — two tables, keyed by a
+--  plain-text muse_id, with RLS wide open ("using(true)/with check(true)",
+--  confirmed live 2026-08-25 as a real vulnerability: the STUDIO_PASSWORD
+--  prompt() gating the old UI never appeared in the RLS policy at all, so
+--  the anon key could read/write/delete any card directly via the REST API).
+--  Both old tables had 0 rows — dropped, nothing lost. `board_items` is one
+--  table for both templates (a `template` discriminator column instead of
+--  two schemas), a real `user_id` FK instead of a text slug, and owner-write
+--  RLS like every other per-Muse table — editing now requires actually
+--  being signed in as the board's owner, not knowing a shared password.
 -- ═══════════════════════════════════════════════════════
-create table if not exists public.bulletin_board_cards (
+create table if not exists public.board_items (
   id uuid primary key default gen_random_uuid(),
-  muse_id text not null,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  template text not null check (template in ('bulletin', 'archive')),
   type text not null,
   title text,
   body text,
   image_url text,
   link_url text,
   project_id text,
-  color text,
-  x float not null default 100,
-  y float not null default 100,
-  width float not null default 200,
-  height float not null default 160,
-  rotation float default 0,
-  z_index integer default 1,
-  bg_color text default '#ffffff',
-  text_color text default '#0A0A0A',
-  font_size text default 'md',
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-create index if not exists bulletin_board_cards_muse_id on public.bulletin_board_cards(muse_id);
-
-create table if not exists public.archive_stack_objects (
-  id uuid primary key default gen_random_uuid(),
-  muse_id text not null,
-  type text not null,
-  title text,
-  body text,
-  image_url text,
-  link_url text,
-  project_id text,
+  color text,                             -- bulletin 'color' cards only
   x float not null default 200,
   y float not null default 200,
+  width float,                            -- bulletin cards only
+  height float,                           -- bulletin cards only
   rotation float default 0,
   z_index integer default 1,
   bg_color text default '#ffffff',
-  orientation text default 'landscape',   -- 'landscape' | 'portrait' — flips the type's natural width/height
+  text_color text default '#0A0A0A',      -- bulletin cards only
+  font_size text default 'md',            -- bulletin cards only
+  orientation text default 'landscape',   -- archive objects only — 'landscape' | 'portrait'
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
-create index if not exists archive_stack_objects_muse_id on public.archive_stack_objects(muse_id);
+create index if not exists board_items_user_id_idx  on public.board_items(user_id);
+create index if not exists board_items_template_idx on public.board_items(template);
 
-alter table public.bulletin_board_cards enable row level security;
-alter table public.archive_stack_objects enable row level security;
+alter table public.board_items enable row level security;
 
-create policy "bulletin_board_cards: allow all demo"
-  on public.bulletin_board_cards for all
-  using (true) with check (true);
+create policy "board_items: owner write"
+  on public.board_items for all
+  using  (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
-create policy "archive_stack_objects: allow all demo"
-  on public.archive_stack_objects for all
-  using (true) with check (true);
+create policy "board_items: public read"
+  on public.board_items for select
+  using (true);
 
--- storage bucket for card/object images, uploaded via card-designer.html
+-- storage bucket for board item images, uploaded via card-designer.html.
+-- Path convention is <uploader's auth.uid()>/<item id>/image.<ext> — the
+-- storage.foldername() check below is the standard Supabase per-user-folder
+-- RLS idiom, replacing the old bucket's "allow all demo write" policy.
 insert into storage.buckets (id, name, public)
 values ('card-images', 'card-images', true)
 on conflict (id) do nothing;
@@ -588,10 +594,10 @@ create policy "card-images: public read"
   on storage.objects for select
   using (bucket_id = 'card-images');
 
-create policy "card-images: allow all demo write"
+create policy "card-images: owner write"
   on storage.objects for all
-  using (bucket_id = 'card-images')
-  with check (bucket_id = 'card-images');
+  using      (bucket_id = 'card-images' and auth.uid()::text = (storage.foldername(name))[1])
+  with check (bucket_id = 'card-images' and auth.uid()::text = (storage.foldername(name))[1]);
 
 
 -- ═══════════════════════════════════════════════════════
@@ -601,7 +607,7 @@ create policy "card-images: allow all demo write"
 -- ═══════════════════════════════════════════════════════
 
 /*
-insert into profiles (id, username, display_name, bio, quote, location, email_contact, website)
+insert into profiles (id, handle, display_name, bio, quote, location, email_contact, website)
 values (
   'YOUR_AUTH_UUID',
   'amelia-arabe',
