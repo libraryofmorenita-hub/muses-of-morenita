@@ -1712,8 +1712,15 @@ function openArtworkModal(id) {
     <div class="field"><label>Dimensions</label>
       <input id="m-art-dimensions" type="text" placeholder="24 x 36 in" value="${existing?.dimensions || ''}">
     </div>
-    <div class="field"><label>Image URL</label>
-      <input id="m-art-img" type="url" placeholder="https://..." value="${existing?.image_url || ''}">
+    <div class="field">
+      <label>Image</label>
+      <div class="img-upload-row">
+        <img class="img-thumb" id="m-art-img-preview">
+        <div style="flex:1;">
+          <input id="m-art-img" type="url" placeholder="https://..." value="${existing?.image_url || ''}" oninput="updateThumb('m-art-img','m-art-img-preview')">
+          <label class="file-btn">Upload<input type="file" accept="image/*" onchange="uploadImage(event,'m-art-img','m-art-img-preview')"></label>
+        </div>
+      </div>
     </div>
     <div class="field"><label>Artist Statement</label>
       <textarea id="m-art-statement" placeholder="What this piece is about.">${existing?.artist_statement || ''}</textarea>
@@ -1727,6 +1734,7 @@ function openArtworkModal(id) {
   `;
   state.modalSaveFn = () => saveArtwork(id);
   document.getElementById('modal-overlay').classList.add('open');
+  updateThumb('m-art-img', 'm-art-img-preview');
 }
 
 async function saveArtwork(existingId) {
