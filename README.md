@@ -2,7 +2,7 @@
 
 Amelia Arabe's personal platform: a portfolio, a client-facing project portal, and the early build-out of Muses of Morenita — a directory/platform for multi-hyphenate creatives to hold every career under one roof.
 
-This is the working codebase. It is private because it holds client-adjacent files and personal data (see [Structure](#structure)). The public-facing piece — Amelia's portfolio — is deployed separately from [`amelia-arabe`](https://github.com/libraryofmorenita-hub/amelia-arabe), live at **https://libraryofmorenita-hub.github.io/amelia-arabe/**.
+This repo is public and deployed via GitHub Pages at **https://libraryofmorenita-hub.github.io/muses-of-morenita/**, which redirects to the platform site (`app/muses-of-morenita-site.html`). Amelia's own portfolio lives at `app/amelia-arabe-portfolio.html` and is linked from there. `index.html` at the repo root is a legacy build kept for reference — not part of the live site.
 
 ## Stack
 
@@ -40,7 +40,8 @@ supabase/
   seed-pipeline.sql     Seeds job-application pipeline data.
   seed-portfolio.sql    Seeds career_toggles + projects for the portfolio.
 legal/                Cookie notice, privacy policy, terms of service (PDFs).
-index.html             Older/legacy portfolio version, kept for reference.
+index.html             Redirects to app/muses-of-morenita-site.html — the actual legacy build this used
+                        to be lives in git history, not the current file (see the 2026-09-08 commit).
 morenita-pitch-deck.html   Pitch deck for Muses of Morenita as a product.
 ```
 
