@@ -29,7 +29,10 @@ app/
 
 portal.html          Client-facing, read-only project status page — no account, a ?token= link is the
                       access control (resolved via the get_portal_project() database function).
-job-tracker.html      Amelia's own job-application pipeline tracker (Supabase-connected, auth-gated).
+partnerships.html     Amelia's Potential Partnerships Dashboard — evolved from a job-application tracker into a
+                      broader pipeline covering tech, modeling, and other creative partnerships/collaborators
+                      (Supabase-connected, auth-gated). Backed by the `partnerships` table (formerly
+                      job_applications).
 shared/
   app-shell.js         The one Supabase client + esc()/requireAuth()/getProfileByHandle() helper, loaded by
                         every page above instead of each hand-typing its own createClient().
@@ -55,4 +58,6 @@ The public portfolio site is a trimmed export of `app/amelia-arabe-portfolio.htm
 
 Supabase project: `kebmscbmfzpvcqrvvpul` ("muses-of-morenita") — its own dedicated project as of Sept 2026. Previously this repo unknowingly shared Library of Morenita's project (`agekvrkqrwepdoeetpbx`); that entanglement is why an unrelated change to Library of Morenita once broke this app. Key tables: `profiles`, `career_toggles`, `projects`, `social_links`, `job_applications`, plus the rest of `supabase/schema.sql`. `job_applications` (67 rows) is fully migrated; `profiles`/`career_toggles`/`projects`/`social_links` are staged pending a fresh sign-up on the new project (Supabase auth doesn't carry over between projects). Always check `information_schema` against the live project before assuming `schema.sql` is current.
 
-**Known overlap, not yet resolved:** `job-tracker.html` (Amelia's personal job search) and `portal.html` + dashboard.html's "Studio" panel (client CRM for freelance work) live in this repo/database but aren't really part of the Muses of Morenita talent-agency product — they're Morenita Technology's own tools that ended up here historically. Flagged in the internal dashboard's Projects registry; not split out yet.
+**Known overlap, not yet resolved:** `partnerships.html` (Amelia's Potential Partnerships Dashboard, formerly job-tracker.html) and `portal.html` + dashboard.html's "Studio" panel (client CRM for freelance work) live in this repo/database but aren't really part of the Muses of Morenita talent-agency product — they're Morenita Technology's own tools that ended up here historically. Flagged in the internal dashboard's Projects registry; not split out yet.
+
+**Studio as future-product inspiration:** the client CRM + read-only `portal.html` pattern built for Amelia's own Studio work (client_contacts/client_projects/project_updates/project_milestones) is intentionally being kept as a working prototype for a *future* Muses of Morenita product feature — any creator on the platform collaborating with clients and sharing a trackable project dashboard with them. Not built yet; a direction, not a task.
