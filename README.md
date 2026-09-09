@@ -53,4 +53,6 @@ The public portfolio site is a trimmed export of `app/amelia-arabe-portfolio.htm
 
 ## Database
 
-Supabase project: `agekvrkqrwepdoeetpbx` ("Library of Morenita"). Key tables: `profiles`, `career_toggles`, `projects`, `job_applications`, plus several tables from earlier prototyping not yet documented in `schema.sql`. Always check `information_schema` against the live project before assuming `schema.sql` is current.
+Supabase project: `kebmscbmfzpvcqrvvpul` ("muses-of-morenita") — its own dedicated project as of Sept 2026. Previously this repo unknowingly shared Library of Morenita's project (`agekvrkqrwepdoeetpbx`); that entanglement is why an unrelated change to Library of Morenita once broke this app. Key tables: `profiles`, `career_toggles`, `projects`, `social_links`, `job_applications`, plus the rest of `supabase/schema.sql`. `job_applications` (67 rows) is fully migrated; `profiles`/`career_toggles`/`projects`/`social_links` are staged pending a fresh sign-up on the new project (Supabase auth doesn't carry over between projects). Always check `information_schema` against the live project before assuming `schema.sql` is current.
+
+**Known overlap, not yet resolved:** `job-tracker.html` (Amelia's personal job search) and `portal.html` + dashboard.html's "Studio" panel (client CRM for freelance work) live in this repo/database but aren't really part of the Muses of Morenita talent-agency product — they're Morenita Technology's own tools that ended up here historically. Flagged in the internal dashboard's Projects registry; not split out yet.
