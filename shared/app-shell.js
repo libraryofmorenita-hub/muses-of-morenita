@@ -16,8 +16,8 @@
 (function () {
   'use strict';
 
-  const SB_URL  = 'https://agekvrkqrwepdoeetpbx.supabase.co';
-  const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZWt2cmtxcndlcGRvZWV0cGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTIyNzcsImV4cCI6MjA4OTg2ODI3N30.u4aiolovNsIbLRtuYrjOeADv7k2rBY3wVRN1m10OFoU';
+  const SB_URL  = 'https://kebmscbmfzpvcqrvvpul.supabase.co';
+  const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlYm1zY2JtZnpwdmNxcnZ2cHVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5OTE0MDEsImV4cCI6MjEwNDU2NzQwMX0.eebSYqn0aadkRG0xLxmu7Lir1QaS3A7uc-fFVpPzxsg';
 
   window.sb = supabase.createClient(SB_URL, SB_ANON);
 

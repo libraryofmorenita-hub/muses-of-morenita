@@ -1,30 +1,38 @@
 -- ═══════════════════════════════════════════════════════
 --  Muses of Morenita — Database Schema
---  Run this in the Supabase SQL editor (project: agekvrkqrwepdoeetpbx)
+--  Run this in the Supabase SQL editor (project: kebmscbmfzpvcqrvvpul)
 --  Order matters — referenced tables must exist before dependents.
 --
---  STATUS as of 2026-09-07 (after the "structural rebuild" plan, all 3
---  phases): this file now matches the live database for everything it
---  defines — verified section by section against list_tables, not assumed.
+--  STATUS as of 2026-09-09: Muses of Morenita now has its OWN dedicated
+--  Supabase project (kebmscbmfzpvcqrvvpul), split out from what had been an
+--  accidental shared arrangement with Library of Morenita's project
+--  (agekvrkqrwepdoeetpbx, still referenced by old copies of this file).
 --  `career_toggles`, `projects`, `service_accordions`, `service_items`,
 --  `social_links`, `custom_domains`, `archive_products`, `board_items`,
 --  `client_contacts`, `client_projects`, `project_milestones`,
---  `project_updates` are all live and match this file. `profiles` is live
---  with a few extra columns this file doesn't declare (added directly via
---  migration as they were needed: `handle`, `quote`, `email_contact`,
---  `phone`, `website`, `logo_url`) — looked up by `handle`, not `email` or
---  `username`.
---  Two old tables were dropped along the way, both with 0 rows at the time
---  (nothing lost): `client_portals` (Phase 2 — a JSON-blob-per-client design
---  only ever written to by index.html's legacy admin-token/Edge-Function
---  pipeline) and `bulletin_board_cards`/`archive_stack_objects` (Phase 3 —
---  merged into `board_items`).
---  `art_collections`/`artworks`/`tags`/`track_lessons` are live but not
---  declared here; they belong to other parts of the platform.
---  Tables named only in comments below as "other unrelated live tables"
---  (articles, maxine_hardware, curriculum_tracks, collections,
---  contact_submissions, etc.) belong to other tools outside this repo's
---  scope and are intentionally not reconciled here.
+--  `project_updates` are declared here and deployed live in the new
+--  project, but are currently EMPTY there — the real rows for these tables
+--  are extracted and staged, waiting on a fresh sign-up on the new project
+--  (auth.users isn't portable across projects) before they can be restored
+--  with the new user id. `profiles` in the new project is a clean column
+--  set (id, handle, display_name, bio, quote, location, avatar_url,
+--  logo_url, email_contact, phone, website, created_at, updated_at) —
+--  looked up by `handle`, not `email` or `username`.
+--  `job_applications` is different: the live table never had a `user_id`
+--  column (unlike this file's older declaration below, kept for history),
+--  so its 67 real rows were migrated immediately and are already live in
+--  the new project. Its RLS was deliberately tightened to
+--  authenticated-only for both read and write (not the public-read pattern
+--  used elsewhere in this file) since it holds sensitive job-search content
+--  — named warm contacts, salary targets, private strategy notes.
+--  `job_queue_items` and `job_movement`, declared below, were never
+--  actually live in either project — dropped from the new project's
+--  deployed schema; kept here only as historical context until this file
+--  is cleaned up.
+--  `art_collections`/`artworks`/`tags`/`track_lessons` and other tables
+--  named only in comments (articles, maxine_hardware, curriculum_tracks,
+--  collections, contact_submissions, etc.) belong to other tools/projects
+--  outside this repo's scope and are intentionally not reconciled here.
 -- ═══════════════════════════════════════════════════════
 
 -- ─── EXTENSIONS ─────────────────────────────────────────
@@ -465,66 +473,48 @@ grant execute on function public.get_portal_project(uuid) to anon, authenticated
 
 -- ═══════════════════════════════════════════════════════
 --  PIPELINE — JOB APPLICATIONS
---  Private to each user. The live data source for job-tracker.html.
+--  The live data source for job-tracker.html. LIVE in the new dedicated
+--  project (kebmscbmfzpvcqrvvpul) as of 2026-09-09, with its 67 real rows
+--  migrated verbatim. NOTE: no user_id column — this table was never
+--  per-user in the live database, unlike its older declaration (kept
+--  below, commented out, for history). RLS is authenticated-only for both
+--  read and write (not owner-only, not public) — a deliberate tightening
+--  since this table holds named warm contacts, salary targets, and private
+--  outreach strategy notes.
 -- ═══════════════════════════════════════════════════════
 create table if not exists job_applications (
-  id           uuid primary key default uuid_generate_v4(),
-  user_id      uuid not null references profiles(id) on delete cascade,
-  company      text not null,
-  role         text not null,
-  tier         text check (tier in ('T1','T2','T3')) default 'T2',
-  status       text check (status in ('Research','Applied','Interview','Offer','Rejected')) default 'Research',
-  priority     int  default 3,
-  commute_min  int,
-  contact      text,
-  notes        text,
-  track        text,
-  applied_at   date,
-  created_at   timestamptz default now(),
-  updated_at   timestamptz default now()
+  id            uuid primary key default gen_random_uuid(),
+  company       text not null,
+  role          text not null,
+  tier          text check (tier in ('T1','T2','T3')),
+  status        text not null default 'Research'
+                  check (status in ('Research','Applied','Interview','Offer','Rejected','Withdrawn')),
+  priority      int check (priority >= 1 and priority <= 5),
+  warm_contact  text,
+  notes         text,
+  url           text,
+  applied_date  date,
+  commute_min   int, -- typical one-way rush-hour drive in minutes from Elysian Valley/Frogtown
+  created_at    timestamptz default now(),
+  updated_at    timestamptz default now()
 );
-create index job_applications_user_id on job_applications(user_id);
 create trigger job_applications_updated_at
   before update on job_applications
   for each row execute function set_updated_at();
 
-create table if not exists job_queue_items (
-  id         uuid primary key default uuid_generate_v4(),
-  user_id    uuid not null references profiles(id) on delete cascade,
-  text       text not null,
-  tag        text,
-  done       boolean default false,
-  done_at    timestamptz,
-  sort_order int default 0,
-  created_at timestamptz default now()
-);
-create index job_queue_items_user_id on job_queue_items(user_id);
+alter table job_applications enable row level security;
 
-create table if not exists job_movement (
-  id          uuid primary key default uuid_generate_v4(),
-  user_id     uuid not null references profiles(id) on delete cascade,
-  text        text not null,
-  date_label  text,
-  created_at  timestamptz default now()
-);
-create index job_movement_user_id on job_movement(user_id);
+create policy "job_applications: authenticated read"
+  on job_applications for select
+  using (auth.role() = 'authenticated');
 
--- all three are private — owner only
-alter table job_applications  enable row level security;
-alter table job_queue_items   enable row level security;
-alter table job_movement      enable row level security;
-
-create policy "job_applications: owner only"
+create policy "job_applications: authenticated write"
   on job_applications for all
-  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 
-create policy "job_queue_items: owner only"
-  on job_queue_items for all
-  using (auth.uid() = user_id) with check (auth.uid() = user_id);
-
-create policy "job_movement: owner only"
-  on job_movement for all
-  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+-- job_queue_items and job_movement were declared in an earlier version of
+-- this file but were never actually live in either project — not deployed
+-- to the new project. Left out here; ask before reintroducing them.
 
 
 -- ═══════════════════════════════════════════════════════
