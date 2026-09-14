@@ -370,7 +370,6 @@ a { text-decoration: none; color: inherit; }
         <div class="section-link"        data-section="services" onclick="goSection('services')">Services</div>
         <div class="section-link"        data-section="links"    onclick="goSection('links')">Links</div>
         <div class="section-link"        data-section="products" onclick="goSection('products')">Products</div>
-        <div class="section-link"        data-section="studio"   onclick="goSection('studio')">Studio</div>
         <div class="section-link"        data-section="domain"   onclick="goSection('domain')">Domain</div>
       </div>
       <div class="sidebar-bottom">
@@ -653,96 +652,6 @@ a { text-decoration: none; color: inherit; }
         <div id="products-list"></div>
       </div>
 
-      <!-- STUDIO ──────────────────────────────── -->
-      <div class="section" id="section-studio">
-
-        <!-- Client list -->
-        <div id="studio-client-view">
-          <div class="section-heading">Studio</div>
-          <div class="section-sub">Manage your clients and their projects. Each project generates a shareable link your client uses to check status, milestones, and updates — no account required.</div>
-
-          <div class="list-header">
-            <span class="list-label">Clients</span>
-            <button class="list-add" onclick="openClientModal()">+ Add client</button>
-          </div>
-          <div id="client-list"></div>
-        </div>
-
-        <!-- Project list (per client) -->
-        <div id="studio-project-view" style="display:none;">
-          <div class="breadcrumb">
-            <button class="breadcrumb-back" onclick="showStudioClientList()">← Studio</button>
-            <span class="breadcrumb-sep">/</span>
-            <span class="breadcrumb-current" id="studio-project-title"></span>
-          </div>
-          <div class="section-heading" id="studio-project-heading"></div>
-          <div class="section-sub">Each project generates a portal your client can access without an account.</div>
-
-          <div class="list-header">
-            <span class="list-label">Projects</span>
-            <button class="list-add" onclick="openClientProjectModal()">+ Add project</button>
-          </div>
-          <div id="studio-project-list"></div>
-        </div>
-
-        <!-- Project detail (milestones, updates, docs) -->
-        <div id="studio-detail-view" style="display:none;">
-          <div class="breadcrumb">
-            <button class="breadcrumb-back" onclick="showStudioProjectList()">← Projects</button>
-            <span class="breadcrumb-sep">/</span>
-            <span class="breadcrumb-current" id="studio-detail-title"></span>
-          </div>
-
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
-            <div class="section-heading" id="studio-detail-heading" style="margin-bottom:0;"></div>
-            <button class="btn-ghost" id="studio-copy-link-btn" onclick="copyPortalLink()">Copy portal link</button>
-          </div>
-
-          <!-- Status + tagline -->
-          <div class="field-row">
-            <div class="field">
-              <label>Project Status</label>
-              <input id="d-status" type="text" placeholder="Active" oninput="autoSaveDetail()">
-            </div>
-            <div class="field">
-              <label>Tagline</label>
-              <input id="d-tagline" type="text" placeholder="One line describing the project" oninput="autoSaveDetail()">
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <!-- Milestones -->
-          <div class="list-header">
-            <span class="list-label">Milestones</span>
-            <button class="list-add" onclick="addMilestone()">+ Add</button>
-          </div>
-          <div id="milestone-list"></div>
-
-          <div class="divider"></div>
-
-          <!-- Updates -->
-          <div class="list-header">
-            <span class="list-label">Updates</span>
-          </div>
-          <div style="display:flex;gap:10px;margin-bottom:16px;">
-            <input id="d-update-msg" type="text" placeholder="Write an update for your client…" style="flex:1;padding:9px 12px;border:1px solid var(--gray-faint);font-family:var(--font-body);font-size:13px;font-weight:300;outline:none;" onfocus="this.style.borderColor='var(--black)'" onblur="this.style.borderColor='var(--gray-faint)'">
-            <button class="btn-save" onclick="addUpdate()">Post</button>
-          </div>
-          <div id="update-list"></div>
-
-          <!-- Contracts, invoices, e-signature, and intake are a separate
-               later pass (2026-09-06 scope decision) — this is core project
-               tracking (status, milestones, updates) + a read-only client
-               link only. See the "Structural rebuild" plan, Phase 2. -->
-
-          <div style="display:flex;align-items:center;margin-top:8px;">
-            <span class="save-status visible" id="detail-save-status" style="opacity:0;">Saved</span>
-          </div>
-        </div>
-
-      </div>
-
       <!-- DOMAIN ──────────────────────────────── -->
       <div class="section" id="section-domain">
         <div class="section-heading">Domain</div>
@@ -860,14 +769,6 @@ const state = {
   modalSaveFn:     null,    // set per modal open, called on Save
   // Products
   products:        [],
-  // Studio
-  clients:         [],
-  studioProjects:  [],      // projects for the active client
-  milestones:      [],      // milestones for active project
-  studioUpdates:   [],      // updates for active project
-  activeClientId:  null,
-  activeProjectId: null,
-  detailSaveTimer: null,
 };
 
 // ── AUTH ────────────────────────────────────────────────
@@ -888,7 +789,6 @@ async function init() {
     loadLinks(),
     loadDomain(),
     loadProducts(),
-    loadClients(),
   ]);
 
   renderProfile();
@@ -898,7 +798,6 @@ async function init() {
   renderLinksList();
   renderDomain();
   renderProductsList();
-  renderClientList();
 }
 
 async function signOut() {
@@ -1109,9 +1008,8 @@ function showStatus(id) {
 }
 
 // A failed save/delete used to be indistinguishable from a successful one —
-// the UI just quietly didn't update. Every write in the Studio section below
-// calls this on failure instead of the old `if (!error) { ... }`-only
-// pattern.
+// the UI just quietly didn't update. Every write below calls this on
+// failure instead of the old `if (!error) { ... }`-only pattern.
 function reportError(action, error) {
   console.error(action, error);
   alert(`Couldn't ${action}: ${error.message || 'unknown error'}`);
@@ -2055,319 +1953,6 @@ async function deleteProduct(id) {
     state.products = state.products.filter(p => p.id !== id);
     renderProductsList();
   }
-}
-
-// ── STUDIO — CLIENTS ────────────────────────────────────
-// BROKEN (confirmed 2026-08-25): client_contacts, client_projects,
-// project_milestones, project_updates don't exist on the live Supabase
-// project — only career_toggles/projects/art_collections/artworks were
-// ever actually deployed from schema.sql (see supabase/schema.sql's own
-// header note). Every Studio query below fails silently (data comes back
-// undefined, `|| []` masks it) — Studio has been non-functional in
-// production this whole time. Also: portal.html's real client-portal
-// mechanism is a *different*, already-live table (client_portals, keyed
-// by user_id/email + magic-link auth), not this portal_token/client_projects
-// design — the two were never reconciled. Either deploy these 4 tables for
-// real, or rip Studio out and point "Copy portal link" at client_portals.
-async function loadClients() {
-  const { data } = await sb.from('client_contacts').select('*').eq('user_id', state.user.id).order('name');
-  state.clients = data || [];
-}
-
-function renderClientList() {
-  const el = document.getElementById('client-list');
-  if (!state.clients.length) {
-    el.innerHTML = '<div class="list-empty">No clients yet. Add one to start a project portal.</div>';
-    return;
-  }
-  el.innerHTML = state.clients.map(c => `
-    <div class="item-row">
-      <div class="item-info">
-        <div class="item-primary">${esc(c.name)}</div>
-        <div class="item-meta">${esc([c.company, c.email].filter(Boolean).join(' · '))}</div>
-      </div>
-      <div class="item-actions">
-        <button class="btn-ghost" onclick="viewClientProjects('${c.id}')">Projects</button>
-        <button class="btn-ghost" onclick="openClientModal('${c.id}')">Edit</button>
-        <button class="btn-danger" onclick="deleteClient('${c.id}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function openClientModal(id) {
-  const c = id ? state.clients.find(x => x.id === id) : null;
-  document.getElementById('modal-body').innerHTML = `
-    <div class="modal-title">${c ? 'Edit' : 'Add'} Client</div>
-    <div class="field-row">
-      <div class="field"><label>Name</label><input id="mc-name" type="text" value="${esc(c?.name || '')}"></div>
-      <div class="field"><label>Company</label><input id="mc-company" type="text" value="${esc(c?.company || '')}"></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Email</label><input id="mc-email" type="email" value="${esc(c?.email || '')}"></div>
-      <div class="field"><label>Phone</label><input id="mc-phone" type="tel" value="${esc(c?.phone || '')}"></div>
-    </div>
-    <div class="field"><label>Notes</label><textarea id="mc-notes">${esc(c?.notes || '')}</textarea></div>
-  `;
-  state.modalSaveFn = () => saveClient(id || null);
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-async function saveClient(existingId) {
-  const payload = {
-    user_id: state.user.id,
-    name:    document.getElementById('mc-name').value.trim(),
-    company: document.getElementById('mc-company').value.trim(),
-    email:   document.getElementById('mc-email').value.trim(),
-    phone:   document.getElementById('mc-phone').value.trim(),
-    notes:   document.getElementById('mc-notes').value.trim(),
-  };
-  if (!payload.name) return;
-  let error;
-  if (existingId) {
-    ({ error } = await sb.from('client_contacts').update(payload).eq('id', existingId));
-  } else {
-    ({ error } = await sb.from('client_contacts').insert(payload));
-  }
-  if (error) { reportError('save client', error); return; }
-  closeModal();
-  await loadClients();
-  renderClientList();
-}
-
-async function deleteClient(id) {
-  if (!confirm('Delete this client and all their projects?')) return;
-  const { error } = await sb.from('client_contacts').delete().eq('id', id);
-  if (error) { reportError('delete client', error); return; }
-  state.clients = state.clients.filter(c => c.id !== id);
-  renderClientList();
-}
-
-// ── STUDIO — PROJECT LIST ───────────────────────────────
-async function viewClientProjects(clientId) {
-  state.activeClientId = clientId;
-  const client = state.clients.find(c => c.id === clientId);
-  document.getElementById('studio-project-title').textContent = client?.name || '';
-  document.getElementById('studio-project-heading').textContent = (client?.name || '') + "'s Projects";
-
-  const { data } = await sb.from('client_projects').select('*').eq('client_id', clientId).order('created_at');
-  state.studioProjects = data || [];
-  renderStudioProjectList();
-  showStudioProjectList();
-}
-
-function renderStudioProjectList() {
-  const el = document.getElementById('studio-project-list');
-  if (!state.studioProjects.length) {
-    el.innerHTML = '<div class="list-empty">No projects yet for this client.</div>';
-    return;
-  }
-  el.innerHTML = state.studioProjects.map(p => `
-    <div class="item-row">
-      <div class="item-info">
-        <div class="item-primary">${esc(p.name)}</div>
-        <div class="item-meta">${esc(p.status || 'Active')}</div>
-      </div>
-      <div class="item-actions">
-        <button class="btn-ghost" onclick="viewProjectDetail('${p.id}')">Open</button>
-        <button class="btn-ghost" onclick="openClientProjectModal('${p.id}')">Edit</button>
-        <button class="btn-ghost" onclick="copyPortalLinkFor('${p.portal_token}')">Copy link</button>
-        <button class="btn-danger" onclick="deleteClientProject('${p.id}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function showStudioClientList() {
-  document.getElementById('studio-client-view').style.display  = '';
-  document.getElementById('studio-project-view').style.display = 'none';
-  document.getElementById('studio-detail-view').style.display  = 'none';
-}
-
-function showStudioProjectList() {
-  document.getElementById('studio-client-view').style.display  = 'none';
-  document.getElementById('studio-project-view').style.display = '';
-  document.getElementById('studio-detail-view').style.display  = 'none';
-}
-
-function openClientProjectModal(id) {
-  const p = id ? state.studioProjects.find(x => x.id === id) : null;
-  document.getElementById('modal-body').innerHTML = `
-    <div class="modal-title">${p ? 'Edit' : 'Add'} Project</div>
-    <div class="field"><label>Project Name</label><input id="mcp-name" type="text" value="${esc(p?.name || '')}"></div>
-    <div class="field"><label>Status</label><input id="mcp-status" type="text" placeholder="Active" value="${esc(p?.status || '')}"></div>
-    <div class="field"><label>Tagline</label><input id="mcp-tagline" type="text" placeholder="One line about this project" value="${esc(p?.tagline || '')}"></div>
-  `;
-  state.modalSaveFn = () => saveClientProject(id || null);
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-async function saveClientProject(existingId) {
-  const payload = {
-    user_id:   state.user.id,
-    client_id: state.activeClientId,
-    name:      document.getElementById('mcp-name').value.trim(),
-    status:    document.getElementById('mcp-status').value.trim() || 'Active',
-    tagline:   document.getElementById('mcp-tagline').value.trim(),
-  };
-  if (!payload.name) return;
-  let data, error;
-  if (existingId) {
-    ({ data, error } = await sb.from('client_projects').update(payload).eq('id', existingId).select().single());
-    if (!error) state.studioProjects = state.studioProjects.map(p => p.id === existingId ? data : p);
-  } else {
-    ({ data, error } = await sb.from('client_projects').insert(payload).select().single());
-    if (!error) state.studioProjects.push(data);
-  }
-  if (error) { reportError('save project', error); return; }
-  closeModal();
-  renderStudioProjectList();
-}
-
-async function deleteClientProject(id) {
-  if (!confirm('Delete this project and all its milestones and updates?')) return;
-  const { error } = await sb.from('client_projects').delete().eq('id', id);
-  if (error) { reportError('delete project', error); return; }
-  state.studioProjects = state.studioProjects.filter(p => p.id !== id);
-  renderStudioProjectList();
-}
-
-// ── STUDIO — PROJECT DETAIL ─────────────────────────────
-async function viewProjectDetail(projectId) {
-  state.activeProjectId = projectId;
-  const proj = state.studioProjects.find(p => p.id === projectId);
-  document.getElementById('studio-detail-title').textContent   = proj?.name || '';
-  document.getElementById('studio-detail-heading').textContent = proj?.name || '';
-
-  // populate fields
-  document.getElementById('d-status').value  = proj?.status  || '';
-  document.getElementById('d-tagline').value = proj?.tagline || '';
-
-  // load milestones + updates in parallel
-  const [msRes, upRes] = await Promise.all([
-    sb.from('project_milestones').select('*').eq('project_id', projectId).order('sort_order'),
-    sb.from('project_updates').select('*').eq('project_id', projectId).order('created_at', { ascending: false }),
-  ]);
-  state.milestones    = msRes.data || [];
-  state.studioUpdates = upRes.data || [];
-  renderMilestoneList();
-  renderUpdateList();
-
-  document.getElementById('studio-client-view').style.display  = 'none';
-  document.getElementById('studio-project-view').style.display = 'none';
-  document.getElementById('studio-detail-view').style.display  = '';
-}
-
-function renderMilestoneList() {
-  const el = document.getElementById('milestone-list');
-  if (!state.milestones.length) {
-    el.innerHTML = '<div class="list-empty">No milestones yet.</div>';
-    return;
-  }
-  el.innerHTML = state.milestones.map(m => `
-    <div class="item-row" style="padding:8px 0;">
-      <div style="display:flex;align-items:center;gap:10px;flex:1;">
-        <input type="checkbox" ${m.done ? 'checked' : ''} onchange="toggleMilestone('${m.id}', this.checked)" style="width:auto;">
-        <span style="font-size:13px;font-weight:300;${m.done ? 'text-decoration:line-through;color:var(--gray-mid)' : ''}">${esc(m.label)}</span>
-      </div>
-      <button class="btn-danger" onclick="deleteMilestone('${m.id}')">Delete</button>
-    </div>
-  `).join('');
-}
-
-function renderUpdateList() {
-  const el = document.getElementById('update-list');
-  if (!state.studioUpdates.length) {
-    el.innerHTML = '<div class="list-empty">No updates posted yet.</div>';
-    return;
-  }
-  el.innerHTML = state.studioUpdates.map(u => `
-    <div class="item-row" style="align-items:flex-start;padding:10px 0;">
-      <div class="item-info">
-        <div class="item-primary" style="font-weight:300;">${esc(u.message)}</div>
-        <div class="item-meta">${esc(new Date(u.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }))}</div>
-      </div>
-      <button class="btn-danger" onclick="deleteUpdate('${u.id}')">Delete</button>
-    </div>
-  `).join('');
-}
-
-async function addMilestone() {
-  const label = prompt('Milestone label:');
-  if (!label) return;
-  const { data, error } = await sb.from('project_milestones').insert({
-    project_id: state.activeProjectId,
-    label:      label.trim(),
-    sort_order: state.milestones.length,
-  }).select().single();
-  if (error) { reportError('add milestone', error); return; }
-  state.milestones.push(data);
-  renderMilestoneList();
-}
-
-async function toggleMilestone(id, done) {
-  const { error } = await sb.from('project_milestones').update({ done }).eq('id', id);
-  if (error) { reportError('update milestone', error); return; }
-  const m = state.milestones.find(x => x.id === id);
-  if (m) m.done = done;
-  renderMilestoneList();
-}
-
-async function deleteMilestone(id) {
-  const { error } = await sb.from('project_milestones').delete().eq('id', id);
-  if (error) { reportError('delete milestone', error); return; }
-  state.milestones = state.milestones.filter(m => m.id !== id);
-  renderMilestoneList();
-}
-
-async function addUpdate() {
-  const msg = document.getElementById('d-update-msg').value.trim();
-  if (!msg) return;
-  const { data, error } = await sb.from('project_updates').insert({
-    project_id: state.activeProjectId,
-    user_id:    state.user.id,
-    message:    msg,
-  }).select().single();
-  if (error) { reportError('post update', error); return; }
-  document.getElementById('d-update-msg').value = '';
-  state.studioUpdates.unshift(data);
-  renderUpdateList();
-}
-
-async function deleteUpdate(id) {
-  const { error } = await sb.from('project_updates').delete().eq('id', id);
-  if (error) { reportError('delete update', error); return; }
-  state.studioUpdates = state.studioUpdates.filter(u => u.id !== id);
-  renderUpdateList();
-}
-
-function autoSaveDetail() {
-  clearTimeout(state.detailSaveTimer);
-  // 800ms debounce — saves silently while you type
-  state.detailSaveTimer = setTimeout(flushDetailSave, 800);
-}
-
-async function flushDetailSave() {
-  const payload = {
-    status:  document.getElementById('d-status').value.trim(),
-    tagline: document.getElementById('d-tagline').value.trim(),
-  };
-  const { error } = await sb.from('client_projects').update(payload).eq('id', state.activeProjectId);
-  if (error) { reportError('save project details', error); return; }
-  // update local state so going back to project list reflects new status
-  const p = state.studioProjects.find(x => x.id === state.activeProjectId);
-  if (p) Object.assign(p, payload);
-  showStatus('detail-save-status');
-}
-
-function copyPortalLink() {
-  const proj = state.studioProjects.find(p => p.id === state.activeProjectId);
-  if (proj?.portal_token) copyPortalLinkFor(proj.portal_token);
-}
-
-function copyPortalLinkFor(token) {
-  const url = `${window.location.origin}${window.location.pathname.replace('dashboard.html', '')}portal.html?token=${token}`;
-  navigator.clipboard.writeText(url).then(() => alert('Portal link copied!'));
 }
 
 // ── DOMAIN ──────────────────────────────────────────────

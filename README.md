@@ -1,6 +1,6 @@
 # Muses of Morenita
 
-Amelia Arabe's personal platform: a portfolio, a client-facing project portal, and the early build-out of Muses of Morenita — a directory/platform for multi-hyphenate creatives to hold every career under one roof.
+Amelia Arabe's personal platform: a portfolio and the early build-out of Muses of Morenita — a directory/platform for multi-hyphenate creatives to hold every career under one roof.
 
 This repo is public and deployed via GitHub Pages at **https://libraryofmorenita-hub.github.io/muses-of-morenita/**, which redirects to the platform site (`app/muses-of-morenita-site.html`). Amelia's own portfolio lives at `app/amelia-arabe-portfolio.html` and is linked from there. `index.html` at the repo root is a legacy build kept for reference — not part of the live site.
 
@@ -20,19 +20,13 @@ app/
                                  template (parameterized by ?from=<role>) plus the Fine Art artwork/collection
                                  pair. Each fetches its own row by ?id= and joins the owning profile.
   dashboard.html                Auth-gated member dashboard — CRUD for profile, career toggles, projects,
-                                 services, links, products, and Studio (clients/projects/milestones/updates).
+                                 services, links, and products.
   muses-of-morenita-site.html   The platform's public marketing/directory SPA (hash-routed).
   board.html                    One pinboard editor, two visual templates (?template=bulletin|archive) —
                                  replaces the old bulletin-board.html/archive-stack.html fork. Editing requires
                                  being signed in as the board's owner (real RLS, not a shared password).
   card-designer.html            Shared sub-editor board.html redirects to for adding/editing a single item.
 
-portal.html          Client-facing, read-only project status page — no account, a ?token= link is the
-                      access control (resolved via the get_portal_project() database function).
-partnerships.html     Amelia's Potential Partnerships Dashboard — evolved from a job-application tracker into a
-                      broader pipeline covering tech, modeling, and other creative partnerships/collaborators
-                      (Supabase-connected, auth-gated). Backed by the `partnerships` table (formerly
-                      job_applications).
 shared/
   app-shell.js         The one Supabase client + esc()/requireAuth()/getProfileByHandle() helper, loaded by
                         every page above instead of each hand-typing its own createClient().
@@ -56,8 +50,9 @@ The public portfolio site is a trimmed export of `app/amelia-arabe-portfolio.htm
 
 ## Database
 
-Supabase project: `kebmscbmfzpvcqrvvpul` ("muses-of-morenita") — its own dedicated project as of Sept 2026. Previously this repo unknowingly shared Library of Morenita's project (`agekvrkqrwepdoeetpbx`); that entanglement is why an unrelated change to Library of Morenita once broke this app. Key tables: `profiles`, `career_toggles`, `projects`, `social_links`, `job_applications`, plus the rest of `supabase/schema.sql`. `job_applications` (67 rows) is fully migrated; `profiles`/`career_toggles`/`projects`/`social_links` are staged pending a fresh sign-up on the new project (Supabase auth doesn't carry over between projects). Always check `information_schema` against the live project before assuming `schema.sql` is current.
+Supabase project: `kebmscbmfzpvcqrvvpul` ("muses-of-morenita") — its own dedicated project as of Sept 2026. Previously this repo unknowingly shared Library of Morenita's project (`agekvrkqrwepdoeetpbx`); that entanglement is why an unrelated change to Library of Morenita once broke this app. Key tables: `profiles`, `career_toggles`, `projects`, `social_links`, `board_items`, `archive_products`, plus the rest of `supabase/schema.sql`. `profiles`/`career_toggles`/`projects`/`social_links` are fully migrated onto Amelia's real auth id on this project. Always check `information_schema` against the live project before assuming `schema.sql` is current.
 
-**Known overlap, not yet resolved:** `partnerships.html` (Amelia's Potential Partnerships Dashboard, formerly job-tracker.html) and `portal.html` + dashboard.html's "Studio" panel (client CRM for freelance work) live in this repo/database but aren't really part of the Muses of Morenita talent-agency product — they're Morenita Technology's own tools that ended up here historically. Flagged in the internal dashboard's Projects registry; not split out yet.
+**Platform boundary (Sept 2026):** Muses of Morenita is portfolio- and marketplace-first — browsing, discovery, and (eventually) the creator course marketplace. Anything that's really internal *workspace* tooling belongs to Morenita Technology instead, not here. Two tools that had drifted into this repo historically have been moved out:
 
-**Studio as future-product inspiration:** the client CRM + read-only `portal.html` pattern built for Amelia's own Studio work (client_contacts/client_projects/project_updates/project_milestones) is intentionally being kept as a working prototype for a *future* Muses of Morenita product feature — any creator on the platform collaborating with clients and sharing a trackable project dashboard with them. Not built yet; a direction, not a task.
+- **Partnerships tracker** — formerly `partnerships.html` (before that, job-tracker.html) — now lives inside Morenita Technology's own internal dashboard (`morenita-dashboard`), backed by `internal.partnerships` in the Morenita Technology Supabase project. The 67 rows of real pipeline data moved with it. Nothing partnership-related remains in this repo or database.
+- **Studio (client CRM)** — the `portal.html` client-status page and dashboard.html's "Studio" panel (clients/projects/milestones/updates) were removed. They were unfinished prototypes with zero real client data — the underlying tables (`client_contacts`, `client_projects`, `project_updates`, `project_milestones`) held no rows, and the panel had been silently non-functional since at least Aug 2026 (per its own code comment). The *idea* survives as a future Muses of Morenita product feature (a Figma/Canva-style workspace where creators collaborate with clients and share a trackable project dashboard), but it will be prototyped inside Morenita Technology first, not rebuilt here until it's real.
