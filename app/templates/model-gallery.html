@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- viewport-fit=cover + user-scalable=no: this page is a full-screen,
+     scroll-locked swipe experience, not a normal scrolling document —
+     pinch-zoom and the browser's own scroll would both fight the custom
+     swipe handling below. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js"></script>
+<script src="../../shared/app-shell.js"></script>
+<style>
+:root {
+  --black:      #0A0A0A;
+  --gray-dark:  #555555;
+  --gray-mid:   #999999;
+  --gray-faint: #E8E8E8;
+  --white:      #FAFAFA;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body:    "Inter", sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+/* Scroll lock — this page IS the swipe gesture; there is nothing else on
+   it to scroll to. Matches dashboard.html's "this is an app shell" use of
+   the same rule. */
+html, body {
+  margin: 0; height: 100%; overflow: hidden;
+  overscroll-behavior: none; /* stops iOS/Android's own pull/bounce from fighting the swipe */
+  background: var(--black);
+  font-family: var(--font-body);
+}
+
+/* ── NOT FOUND ──────────────────────────────────── */
+#not-found {
+  display: none; position: fixed; inset: 0; z-index: 50;
+  align-items: center; justify-content: center; flex-direction: column; gap: 10px;
+  background: var(--white); color: var(--black); text-align: center; padding: 24px;
+}
+#not-found.visible { display: flex; }
+#not-found h1 { font-family: var(--font-display); font-weight: 400; font-size: 26px; margin: 0; }
+#not-found a { color: var(--gray-dark); font-size: 13px; text-decoration: underline; }
+
+/* ── VIEWER SHELL ───────────────────────────────── */
+#viewer { display: none; position: fixed; inset: 0; }
+#viewer.ready { display: block; }
+
+/* One slide per photo, stacked vertically; #track is moved with a single
+   transform instead of scrolling, so we control exactly how the "next
+   photo" transition feels (see JS: TRANSITION_MS). 100svh (small viewport
+   height) avoids the classic mobile-browser bug where 100vh includes space
+   the address bar is about to cover or reveal. */
+#track {
+  width: 100%;
+  transition: transform 550ms cubic-bezier(0.22, 0.61, 0.36, 1); /* the "slow" swipe transition */
+}
+#track.dragging { transition: none; } /* while a finger is down, follow it 1:1 — no lag, no overshoot */
+
+.slide {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  height: 100vh; /* fallback for older browsers that don't know svh — the modern rule above overrides it where supported */
+  overflow: hidden;
+  background: var(--black);
+}
+.slide img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  display: block; pointer-events: none; /* the slide itself owns the touch gesture, not the image */
+}
+
+/* ── CHROME (back link, slide label, progress dots) ────────────── */
+.chrome {
+  position: fixed; inset: 0; z-index: 10; pointer-events: none; /* click-through except for the controls below */
+}
+.chrome > * { pointer-events: auto; }
+
+.back-link {
+  position: absolute; top: max(18px, env(safe-area-inset-top)); left: 18px;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(10,10,10,0.45); backdrop-filter: blur(6px);
+  color: var(--white); text-decoration: none; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.slide-label {
+  position: absolute; top: max(20px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
+  color: var(--white); font-family: var(--font-body); font-weight: 500; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase; text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+
+/* one dot per slide, current one taller — a literal position marker, since
+   order is the whole point of this layout (see artifact-design "structure
+   is information" — this isn't decoration) */
+.progress {
+  position: absolute; top: 50%; right: 12px; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 6px; align-items: center;
+}
+.progress .dot {
+  width: 4px; height: 12px; border-radius: 2px;
+  background: rgba(255,255,255,0.35);
+  transition: height 250ms, background 250ms;
+}
+.progress .dot.active { height: 22px; background: var(--white); }
+
+.swipe-hint {
+  position: absolute; bottom: max(26px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
+  color: var(--white); font-family: var(--font-body); font-weight: 400; font-size: 10.5px;
+  letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.75;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  animation: hint-fade 4s ease forwards; /* only needed on first load — fades out on its own */
+}
+.swipe-hint .arrow { font-size: 16px; animation: hint-bob 1.6s ease-in-out infinite; }
+@keyframes hint-fade { 0%, 60% { opacity: 0.75; } 100% { opacity: 0; visibility: hidden; } }
+@keyframes hint-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+@media (prefers-reduced-motion: reduce) {
+  .swipe-hint .arrow { animation: none; }
+}
+
+/* ── MEASUREMENTS PANEL ─────────────────────────────
+   Shown only on the one slide with show_measurements=true — "stacked
+   beside" the photo, per the brief. Sits along the right edge so it reads
+   as a comp-card annotation, not a caption. */
+.measurements {
+  position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
+  background: rgba(10,10,10,0.55); backdrop-filter: blur(6px);
+  padding: 16px 14px; border-radius: 3px;
+  display: flex; flex-direction: column; gap: 10px;
+  max-width: 118px;
+}
+.measurements .stat-label {
+  font-family: var(--font-body); font-weight: 600; font-size: 8.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.55); margin-bottom: 1px;
+}
+.measurements .stat-value {
+  font-family: var(--font-display); font-weight: 400; font-size: 15px; color: var(--white); font-style: italic;
+}
+.measurements .stat.empty { display: none; } /* a stat left blank in the studio just doesn't render, rather than showing a bare label */
+</style>
+</head>
+<body>
+
+<div id="not-found">
+  <h1>Gallery not found</h1>
+  <a href="../amelia-arabe-portfolio.html">&larr; Back to Portfolio</a>
+</div>
+
+<div id="viewer">
+  <div id="track"></div>
+  <div class="chrome">
+    <a class="back-link" id="back-link" href="../amelia-arabe-portfolio.html" aria-label="Back to Portfolio">&larr;</a>
+    <div class="slide-label" id="slide-label"></div>
+    <div class="progress" id="progress"></div>
+    <div class="swipe-hint" id="swipe-hint"><span class="arrow">&uarr;</span>Swipe</div>
+  </div>
+</div>
+
+<script>
+// ── FULL-SCREEN MODEL GALLERY ──────────────────────────────────────────
+// A dedicated, mobile-first viewer for display_mode='gallery' projects:
+// one photo fills the screen at a time, a vertical swipe moves to the
+// next/previous one with a deliberately slow transition, and normal page
+// scroll is disabled entirely (see the html/body overflow:hidden rule).
+// Desktop isn't designed for yet — it still works (mouse-drag + arrow
+// keys + wheel below), it just isn't the focus of this pass.
+//
+// sb / esc / getProfileByHandle / currentHandle come from shared/app-shell.js
+
+const id = new URLSearchParams(window.location.search).get('id');
+const from = new URLSearchParams(window.location.search).get('from');
+const isolated = new URLSearchParams(window.location.search).get('share') === '1';
+
+// Same handle-aware "Back to Portfolio" construction as case-study.html —
+// duplicated rather than shared because these are two independent static
+// pages with no module system between them (see shared/app-shell.js's own
+// header note on why this app has no build step).
+function backHrefWithHandle(handle) {
+  let href = from ? '../amelia-arabe-portfolio.html' + (isolated ? `?share=${from}` : `#${from}`) : '../amelia-arabe-portfolio.html';
+  if (handle && handle !== 'amelia-arabe') {
+    const sep = href.includes('?') ? '&' : '?';
+    const hashIdx = href.indexOf('#');
+    href = hashIdx === -1 ? `${href}${sep}u=${encodeURIComponent(handle)}`
+      : `${href.slice(0, hashIdx)}${sep}u=${encodeURIComponent(handle)}${href.slice(hashIdx)}`;
+  }
+  return href;
+}
+
+// image_url is stored relative to the repo root — this file lives two
+// levels down (app/templates/), so local paths need '../../' prepended.
+// External URLs pass through unchanged.
+function resolveImageUrl(url) {
+  if (!url) return '';
+  return /^https?:\/\//.test(url) ? url : '../../' + url;
+}
+
+function showNotFound() {
+  document.getElementById('not-found').classList.add('visible');
+}
+
+// ── SLIDE STATE ──────────────────────────────────────────────────────
+let slides = [];       // [{label, image_url, show_measurements}]
+let measurements = {}; // {height, bust, cup, waist, hips, shoe_size, hair_color, eye_color}
+let current = 0;
+
+const track = document.getElementById('track');
+
+function render(project) {
+  const owner = project.profiles || {};
+  document.title = (project.title || 'Gallery') + ' — ' + (owner.display_name || 'Amelia Arabe');
+  document.getElementById('back-link').href = backHrefWithHandle(owner.handle);
+
+  slides = Array.isArray(project.model_slides) ? project.model_slides : [];
+  measurements = project.measurements || {};
+
+  if (!slides.length) { showNotFound(); return; }
+
+  // Build the track: one <section class="slide"> per photo. Built once,
+  // from trusted-shape data (jsonb from our own table) — but every piece
+  // of text still goes through esc()/textContent, never a raw template
+  // string into innerHTML, since this project's data can be edited by
+  // whoever owns the portfolio, not just Amelia, once other Muses use this
+  // same template for their own galleries.
+  const frag = document.createDocumentFragment();
+  slides.forEach((slide, i) => {
+    const section = document.createElement('section');
+    section.className = 'slide';
+
+    const img = document.createElement('img');
+    img.src = resolveImageUrl(slide.image_url);
+    img.alt = esc(slide.label || `Photo ${i + 1}`);
+    img.loading = i === 0 ? 'eager' : 'lazy';
+    section.appendChild(img);
+
+    if (slide.show_measurements) {
+      section.appendChild(buildMeasurementsPanel());
+    }
+
+    frag.appendChild(section);
+  });
+  track.innerHTML = '';
+  track.appendChild(frag);
+
+  buildProgressDots();
+  goTo(0, false);
+
+  document.getElementById('viewer').classList.add('ready');
+}
+
+function buildMeasurementsPanel() {
+  const panel = document.createElement('div');
+  panel.className = 'measurements';
+  const rows = [
+    ['Height', measurements.height],
+    ['Bust', measurements.bust],
+    ['Cup', measurements.cup],
+    ['Waist', measurements.waist],
+    ['Hips', measurements.hips],
+    ['Shoe', measurements.shoe_size],
+    ['Hair', measurements.hair_color],
+    ['Eyes', measurements.eye_color],
+  ];
+  rows.forEach(([label, value]) => {
+    const row = document.createElement('div');
+    row.className = 'stat' + (value ? '' : ' empty'); // blank fields in the studio just don't render
+    const l = document.createElement('div');
+    l.className = 'stat-label';
+    l.textContent = label;
+    const v = document.createElement('div');
+    v.className = 'stat-value';
+    v.textContent = value || '';
+    row.appendChild(l);
+    row.appendChild(v);
+    panel.appendChild(row);
+  });
+  return panel;
+}
+
+function buildProgressDots() {
+  const el = document.getElementById('progress');
+  el.innerHTML = '';
+  slides.forEach(() => {
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    el.appendChild(dot);
+  });
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────────────
+function goTo(index, animate) {
+  current = Math.max(0, Math.min(slides.length - 1, index));
+  track.classList.toggle('dragging', animate === false);
+  track.style.transform = `translateY(-${current * 100}svh)`;
+  document.getElementById('slide-label').textContent = esc(slides[current].label || '');
+  document.querySelectorAll('.progress .dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  // the "swipe to browse" hint only makes sense before anyone has swiped
+  if (current !== 0) {
+    const hint = document.getElementById('swipe-hint');
+    if (hint) hint.style.display = 'none';
+  }
+}
+
+// ── TOUCH SWIPE — the core interaction ────────────────────────────────
+// Vertical drag follows the finger 1:1 while it's down (no transition —
+// see #track.dragging), then either commits to the next/previous slide or
+// snaps back, both through the slow CSS transition defined above.
+let touchStartY = null;
+let dragOffsetSvh = 0; // current drag distance, expressed in svh units so it matches goTo()'s units
+
+function svh() { return window.innerHeight / 100; }
+
+function onDragStart(y) {
+  touchStartY = y;
+  track.classList.add('dragging');
+}
+function onDragMove(y) {
+  if (touchStartY === null) return;
+  const deltaPx = y - touchStartY;
+  dragOffsetSvh = deltaPx / svh();
+  track.style.transform = `translateY(${-(current * 100) + dragOffsetSvh * 1}svh)`;
+}
+function onDragEnd() {
+  if (touchStartY === null) return;
+  track.classList.remove('dragging');
+  const THRESHOLD_SVH = 12; // roughly an eighth of a screen height — a deliberate swipe, not a jitter
+  if (dragOffsetSvh < -THRESHOLD_SVH) goTo(current + 1);
+  else if (dragOffsetSvh > THRESHOLD_SVH) goTo(current - 1);
+  else goTo(current); // snap back to where we were
+  touchStartY = null;
+  dragOffsetSvh = 0;
+}
+
+document.getElementById('viewer').addEventListener('touchstart', e => onDragStart(e.touches[0].clientY), { passive: true });
+document.getElementById('viewer').addEventListener('touchmove', e => { onDragMove(e.touches[0].clientY); e.preventDefault(); }, { passive: false });
+document.getElementById('viewer').addEventListener('touchend', onDragEnd);
+document.getElementById('viewer').addEventListener('touchcancel', onDragEnd);
+
+// Desktop isn't the focus of this pass, but it shouldn't be broken either:
+// mouse-drag mirrors the touch gesture, and arrow keys / wheel are a
+// reasonable fallback for anyone previewing this on a laptop.
+let mouseDown = false;
+document.getElementById('viewer').addEventListener('mousedown', e => { mouseDown = true; onDragStart(e.clientY); });
+window.addEventListener('mousemove', e => { if (mouseDown) onDragMove(e.clientY); });
+window.addEventListener('mouseup', () => { if (mouseDown) { mouseDown = false; onDragEnd(); } });
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') goTo(current + 1);
+  if (e.key === 'ArrowUp') goTo(current - 1);
+});
+
+let wheelLock = false;
+document.getElementById('viewer').addEventListener('wheel', e => {
+  e.preventDefault();
+  if (wheelLock) return;
+  wheelLock = true;
+  goTo(current + (e.deltaY > 0 ? 1 : -1));
+  setTimeout(() => { wheelLock = false; }, 550); // matches the CSS transition length — one slide per gesture
+}, { passive: false });
+
+// ── LOAD ─────────────────────────────────────────────────────────────
+async function load() {
+  if (!id) { showNotFound(); return; }
+  const { data, error } = await sb.from('projects')
+    .select('*, profiles(display_name, handle)')
+    .eq('id', id)
+    .eq('display_mode', 'gallery') // this page only ever renders a gallery-mode project
+    .maybeSingle();
+  if (error || !data) { showNotFound(); return; }
+  render(data);
+}
+load();
+</script>
+</body>
+</html>

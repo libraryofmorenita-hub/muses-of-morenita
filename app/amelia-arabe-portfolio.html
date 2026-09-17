@@ -1581,7 +1581,12 @@ const state = {
 // label/tag style from its own ROLE_CONFIG. painter never reaches this;
 // it routes through collection.html/artwork.html instead.
 function buildCaseStudyUrl(p, roleKey) {
-  let url = `templates/case-study.html?id=${p.id}&from=${roleKey}`;
+  // display_mode='gallery' projects (the full-screen, mobile-first
+  // swipeable photo gallery — see templates/model-gallery.html) route to
+  // their own template instead of the standard case study. Same query
+  // params either way so isolation/handle carry through identically.
+  const template = p.display_mode === 'gallery' ? 'model-gallery.html' : 'case-study.html';
+  let url = `templates/${template}?id=${p.id}&from=${roleKey}`;
   // Carry isolation through — otherwise "Back to Portfolio" from the case
   // study would land on the full, un-isolated profile and undo the whole
   // point of an isolated share link.
