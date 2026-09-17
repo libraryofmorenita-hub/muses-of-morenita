@@ -519,62 +519,106 @@ a { text-decoration: none; color: inherit; }
             </div>
           </div>
 
-          <div class="divider"></div>
-
-          <div class="cs-editor-label">The Problem <span class="cs-editor-hint">— hidden on the page if left blank</span></div>
-          <div class="field"><textarea id="e-case-problem" placeholder="What need or gap prompted this work."></textarea></div>
-          <div class="cs-editor-label">The Process <span class="cs-editor-hint">— hidden on the page if left blank</span></div>
-          <div class="field"><textarea id="e-case-process" placeholder="How it was built or made."></textarea></div>
-          <div class="cs-editor-label">The Outcome <span class="cs-editor-hint">— hidden on the page if left blank</span></div>
-          <div class="field"><textarea id="e-case-outcome" placeholder="Result, impact, or current status."></textarea></div>
-
-          <div class="divider"></div>
-
-          <div class="list-header">
-            <span class="list-label">Gallery</span>
-            <div style="display:flex;gap:18px;align-items:center;">
-              <button class="list-add" onclick="addGalleryImageUrl()">+ Paste URL</button>
-              <label class="file-btn" style="margin-top:0;">+ Upload<input type="file" accept="image/*" onchange="addGalleryImage(event)"></label>
-            </div>
-          </div>
-          <div id="e-gallery-list"></div>
-
-          <div class="divider"></div>
-
-          <div class="field"><label>Credits</label>
-            <input id="e-credits" type="text" placeholder="Collaborators, credits, or client name">
-          </div>
-
-          <div class="cs-editor-label">Metadata Footer</div>
-          <div class="field-row">
-            <div class="field"><label>Role</label>
-              <input id="e-role" type="text" placeholder="Founder & Lead Engineer">
-            </div>
-            <div class="field"><label>Team</label>
-              <input id="e-team" type="text" placeholder="Collaborator — their role">
-            </div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label>Status</label>
-              <input id="e-status" type="text" placeholder="Prototype complete, documentation in progress">
-            </div>
-            <div class="field"><label>Year</label>
-              <input id="e-year" type="text" placeholder="2026">
-            </div>
+          <div class="field">
+            <label>Display Mode <span class="cs-editor-hint">— which template renders this project when opened</span></label>
+            <select id="e-display-mode" onchange="toggleDisplayModeUI()">
+              <option value="case-study">Standard Case Study</option>
+              <option value="gallery">Full-Screen Photo Gallery (mobile, swipeable)</option>
+            </select>
           </div>
 
           <div class="divider"></div>
 
-          <div class="cs-editor-label">Call To Action</div>
-          <div class="field"><label>Live URL <span class="cs-editor-hint">— shown as a "View Live Project" button</span></label>
-            <input id="e-url" type="url" placeholder="https://...">
+          <!-- CASE STUDY fields — shown when Display Mode = Standard Case Study -->
+          <div id="cs-fields-case-study">
+            <div class="cs-editor-label">The Problem <span class="cs-editor-hint">— hidden on the page if left blank</span></div>
+            <div class="field"><textarea id="e-case-problem" placeholder="What need or gap prompted this work."></textarea></div>
+            <div class="cs-editor-label">The Process <span class="cs-editor-hint">— hidden on the page if left blank</span></div>
+            <div class="field"><textarea id="e-case-process" placeholder="How it was built or made."></textarea></div>
+            <div class="cs-editor-label">The Outcome <span class="cs-editor-hint">— hidden on the page if left blank</span></div>
+            <div class="field"><textarea id="e-case-outcome" placeholder="Result, impact, or current status."></textarea></div>
+
+            <div class="divider"></div>
+
+            <div class="list-header">
+              <span class="list-label">Gallery</span>
+              <div style="display:flex;gap:18px;align-items:center;">
+                <button class="list-add" onclick="addGalleryImageUrl()">+ Paste URL</button>
+                <label class="file-btn" style="margin-top:0;">+ Upload<input type="file" accept="image/*" onchange="addGalleryImage(event)"></label>
+              </div>
+            </div>
+            <div id="e-gallery-list"></div>
+
+            <div class="divider"></div>
+
+            <div class="field"><label>Credits</label>
+              <input id="e-credits" type="text" placeholder="Collaborators, credits, or client name">
+            </div>
+
+            <div class="cs-editor-label">Metadata Footer</div>
+            <div class="field-row">
+              <div class="field"><label>Role</label>
+                <input id="e-role" type="text" placeholder="Founder & Lead Engineer">
+              </div>
+              <div class="field"><label>Team</label>
+                <input id="e-team" type="text" placeholder="Collaborator — their role">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Status</label>
+                <input id="e-status" type="text" placeholder="Prototype complete, documentation in progress">
+              </div>
+              <div class="field"><label>Year</label>
+                <input id="e-year" type="text" placeholder="2026">
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="cs-editor-label">Call To Action</div>
+            <div class="field"><label>Live URL <span class="cs-editor-hint">— shown as a "View Live Project" button</span></label>
+              <input id="e-url" type="url" placeholder="https://...">
+            </div>
+            <div class="field"><label>Badge <span class="cs-editor-hint">— shown instead, only if there's no live URL</span></label>
+              <input id="e-badge" type="text" placeholder="In Development">
+            </div>
           </div>
-          <div class="field"><label>Badge <span class="cs-editor-hint">— shown instead, only if there's no live URL</span></label>
-            <input id="e-badge" type="text" placeholder="In Development">
+
+          <!-- GALLERY fields — shown when Display Mode = Full-Screen Photo Gallery.
+               One slide per full-screen photo, in swipe order, plus one shared set
+               of measurements that can be flagged onto any single slide. -->
+          <div id="cs-fields-gallery" style="display:none;">
+            <div class="section-sub" style="margin-top:0;">Each slide is one full-screen photo in the mobile swipe viewer, top to bottom in this order. Check "Show measurements" on exactly one slide — usually a full-length shot — to overlay your stats beside it.</div>
+
+            <div class="list-header">
+              <span class="list-label">Slides</span>
+              <button class="list-add" onclick="addSlide()">+ Add slide</button>
+            </div>
+            <div id="e-slides-list"></div>
+
+            <div class="divider"></div>
+
+            <div class="cs-editor-label">Measurements <span class="cs-editor-hint">— shown on whichever slide has "Show measurements" checked; a blank field just doesn't render</span></div>
+            <div class="field-row">
+              <div class="field"><label>Height</label><input id="e-meas-height" type="text" placeholder="5'8&quot;"></div>
+              <div class="field"><label>Bust</label><input id="e-meas-bust" type="text" placeholder="34"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Cup</label><input id="e-meas-cup" type="text" placeholder="B"></div>
+              <div class="field"><label>Waist</label><input id="e-meas-waist" type="text" placeholder="26"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Hips</label><input id="e-meas-hips" type="text" placeholder="36"></div>
+              <div class="field"><label>Shoe Size</label><input id="e-meas-shoe_size" type="text" placeholder="8"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Hair Color</label><input id="e-meas-hair_color" type="text" placeholder="Brunette"></div>
+              <div class="field"><label>Eye Color</label><input id="e-meas-eye_color" type="text" placeholder="Brown"></div>
+            </div>
           </div>
 
           <div style="display:flex;align-items:center;margin-top:8px;">
-            <button class="btn-save" onclick="saveProjectEditor()">Save Case Study</button>
+            <button class="btn-save" onclick="saveProjectEditor()">Save Project</button>
             <span class="save-status" id="editor-status">Saved</span>
           </div>
         </div>
@@ -723,7 +767,11 @@ a { text-decoration: none; color: inherit; }
 // ?from=<role_key> itself and picks CTA label/tag style from its own
 // ROLE_CONFIG.
 function buildCaseStudyUrl(p, roleKey) {
-  return `templates/case-study.html?id=${p.id}&from=${roleKey}${handleQueryParam(true)}`;
+  // Mirrors amelia-arabe-portfolio.html's own buildCaseStudyUrl — kept as a
+  // separate copy since this app has no shared-module system for page logic
+  // (see shared/app-shell.js's header note), only for the sb/esc/auth core.
+  const template = p.display_mode === 'gallery' ? 'model-gallery.html' : 'case-study.html';
+  return `templates/${template}?id=${p.id}&from=${roleKey}${handleQueryParam(true)}`;
 }
 
 // Appends ?u=/&u=<handle> to a generated link when the signed-in muse's
@@ -761,6 +809,7 @@ const state = {
   activeToggleId:  null,    // which toggle's projects are being viewed
   editingProjectId: null,   // project being edited in the case study editor (null = new)
   editorGallery:   [],      // gallery_urls being built up while the editor is open
+  editorSlides:    [],      // model_slides ({label,image_url,show_measurements}) for display_mode='gallery' projects
   // Sidebar tree (Career/Fine Art explorer)
   treeOpen:           { career: false, art: false },
   expandedToggles:    new Set(),  // toggle ids expanded in the sidebar tree
@@ -1299,6 +1348,12 @@ function openProjectEditor(id) {
   const existing = id ? state.projects.find(p => p.id === id) : null;
   state.editingProjectId = id || null;
   state.editorGallery = [...(existing?.gallery_urls || [])];
+  // model_slides/measurements only exist on display_mode='gallery' projects, but
+  // every project row has the columns (default '[]'/null from the migration), so
+  // this is safe to read unconditionally rather than branching on display_mode.
+  state.editorSlides = (existing?.model_slides || []).map(s => ({
+    label: s.label || '', image_url: s.image_url || '', show_measurements: !!s.show_measurements,
+  }));
 
   document.getElementById('career-project-view').style.display = 'none';
   document.getElementById('career-editor-view').style.display = '';
@@ -1320,10 +1375,32 @@ function openProjectEditor(id) {
   document.getElementById('e-year').value         = existing?.year || '';
   document.getElementById('e-url').value          = existing?.url || '';
   document.getElementById('e-badge').value        = existing?.badge || '';
+  document.getElementById('e-display-mode').value = existing?.display_mode || 'case-study';
+  const m = existing?.measurements || {};
+  document.getElementById('e-meas-height').value     = m.height || '';
+  document.getElementById('e-meas-bust').value        = m.bust || '';
+  document.getElementById('e-meas-cup').value         = m.cup || '';
+  document.getElementById('e-meas-waist').value       = m.waist || '';
+  document.getElementById('e-meas-hips').value        = m.hips || '';
+  document.getElementById('e-meas-shoe_size').value   = m.shoe_size || '';
+  document.getElementById('e-meas-hair_color').value  = m.hair_color || '';
+  document.getElementById('e-meas-eye_color').value   = m.eye_color || '';
   updateThumb('e-img', 'e-img-preview');
   renderGalleryEditor();
+  renderSlidesEditor();
+  toggleDisplayModeUI();
   updatePreviewLink(existing);
   syncSidebarActive();
+}
+
+// Swaps which field block is visible based on the Display Mode select —
+// the two templates (case-study.html vs model-gallery.html) each read a
+// disjoint set of columns, so there's no reason to show fields that
+// wouldn't render anywhere.
+function toggleDisplayModeUI() {
+  const mode = document.getElementById('e-display-mode').value;
+  document.getElementById('cs-fields-case-study').style.display = mode === 'gallery' ? 'none' : '';
+  document.getElementById('cs-fields-gallery').style.display    = mode === 'gallery' ? '' : 'none';
 }
 
 function updatePreviewLink(project) {
@@ -1409,6 +1486,101 @@ function moveGalleryImage(i, dir) {
   renderGalleryEditor();
 }
 
+// ── MODEL GALLERY SLIDES ──────────────────────────────────────────────
+// Mirrors the gallery_urls editor above, but each item is a small object
+// (label + image_url + show_measurements) instead of a bare URL string, so
+// it gets its own render/mutate functions rather than reusing those.
+function renderSlidesEditor() {
+  const el = document.getElementById('e-slides-list');
+  if (!state.editorSlides.length) {
+    el.innerHTML = '<div class="empty-state">No slides yet — add one per full-screen photo, in swipe order.</div>';
+    return;
+  }
+  // esc() every DB-bound string before it goes into an HTML attribute —
+  // this editor is behind auth, but the values it writes are rendered
+  // unescaped-into-DOM-safe form later on the public model-gallery.html
+  // page, so bad input caught here never has to be caught twice.
+  el.innerHTML = state.editorSlides.map((slide, i) => `
+    <div class="gallery-item-row" style="align-items:flex-start;">
+      <img class="gallery-thumb" src="${esc(resolveEditorThumb(slide.image_url))}" onerror="this.style.visibility='hidden'">
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+        <input type="text" value="${esc(slide.label)}" placeholder="Slide label (e.g. Full Length)"
+               oninput="updateSlideField(${i},'label',this.value)">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="url" style="flex:1;" value="${esc(slide.image_url)}" placeholder="https://... or models/your-file.jpg"
+                 oninput="updateSlideField(${i},'image_url',this.value)">
+          <label class="file-btn" style="margin-top:0;">Upload<input type="file" accept="image/*" onchange="uploadSlideImage(event,${i})"></label>
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:400;">
+          <input type="checkbox" ${slide.show_measurements ? 'checked' : ''} onchange="toggleSlideMeasurements(${i})">
+          Show measurements on this slide
+        </label>
+      </div>
+      <div class="gallery-item-actions">
+        <button class="order-btn" onclick="moveSlide(${i},-1)" ${i === 0 ? 'disabled' : ''}>↑</button>
+        <button class="order-btn" onclick="moveSlide(${i},1)" ${i === state.editorSlides.length - 1 ? 'disabled' : ''}>↓</button>
+        <button class="item-delete" onclick="removeSlide(${i})">Remove</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Slide images may be a repo-relative path (e.g. "models/headshot.jpg", as
+// used by the placeholder SVGs and the real headshot) rather than a full
+// URL — resolve the same way model-gallery.html itself does, so the
+// editor's thumbnail actually matches what visitors will see.
+function resolveEditorThumb(url) {
+  if (!url) return '';
+  return /^https?:\/\//.test(url) ? url : '../' + url;
+}
+
+function addSlide() {
+  state.editorSlides.push({ label: '', image_url: '', show_measurements: false });
+  renderSlidesEditor();
+}
+
+function removeSlide(i) {
+  state.editorSlides.splice(i, 1);
+  renderSlidesEditor();
+}
+
+function moveSlide(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= state.editorSlides.length) return;
+  [state.editorSlides[i], state.editorSlides[j]] = [state.editorSlides[j], state.editorSlides[i]];
+  renderSlidesEditor();
+}
+
+function updateSlideField(i, field, value) {
+  state.editorSlides[i][field] = value;
+  // Only image_url changes the thumbnail — re-rendering on every label
+  // keystroke would blow away input focus, so only that field needs one.
+  if (field === 'image_url') renderSlidesEditor();
+}
+
+// Measurements are meant to appear once, beside a single photo — so
+// checking one slide's box clears every other slide's, rather than
+// letting the studio silently save a state the public page can't express.
+function toggleSlideMeasurements(i) {
+  state.editorSlides.forEach((s, idx) => { s.show_measurements = idx === i ? !s.show_measurements : false; });
+  renderSlidesEditor();
+}
+
+async function uploadSlideImage(e, i) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const label = e.target.closest('.file-btn');
+  label.classList.add('uploading');
+  const path = `${state.user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`;
+  const { error } = await sb.storage.from('project-images').upload(path, file, { upsert: true });
+  label.classList.remove('uploading');
+  e.target.value = '';
+  if (error) { alert('Upload failed: ' + error.message); return; }
+  const { data } = sb.storage.from('project-images').getPublicUrl(path);
+  state.editorSlides[i].image_url = data.publicUrl;
+  renderSlidesEditor();
+}
+
 async function saveProjectEditor() {
   const payload = {
     user_id:      state.user.id,
@@ -1429,6 +1601,20 @@ async function saveProjectEditor() {
     team:         document.getElementById('e-team').value.trim() || null,
     status:       document.getElementById('e-status').value.trim() || null,
     year:         document.getElementById('e-year').value.trim() || null,
+    display_mode: document.getElementById('e-display-mode').value,
+    model_slides: state.editorSlides
+      .filter(s => s.image_url.trim()) // an empty row is just an in-progress add, not a real slide — don't save it
+      .map(s => ({ label: s.label.trim(), image_url: s.image_url.trim(), show_measurements: !!s.show_measurements })),
+    measurements: {
+      height:     document.getElementById('e-meas-height').value.trim(),
+      bust:       document.getElementById('e-meas-bust').value.trim(),
+      cup:        document.getElementById('e-meas-cup').value.trim(),
+      waist:      document.getElementById('e-meas-waist').value.trim(),
+      hips:       document.getElementById('e-meas-hips').value.trim(),
+      shoe_size:  document.getElementById('e-meas-shoe_size').value.trim(),
+      hair_color: document.getElementById('e-meas-hair_color').value.trim(),
+      eye_color:  document.getElementById('e-meas-eye_color').value.trim(),
+    },
   };
   if (!payload.title) { alert('Title is required.'); return; }
 
