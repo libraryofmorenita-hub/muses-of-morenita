@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Placeholder photo — Editorial 3, not yet uploaded">
+  <rect width="1080" height="1920" fill="#F1EEE6"/>
+  <rect x="48" y="48" width="984" height="1824" fill="none" stroke="#0F0E0C" stroke-width="1.5" stroke-dasharray="10 8"/>
+  <!-- corner brackets, matching the site's established wireframe/pending-image convention -->
+  <g stroke="#0F0E0C" stroke-width="3" fill="none">
+    <path d="M48 108 V48 H108"/>
+    <path d="M972 48 H1032 V108"/>
+    <path d="M48 1812 V1872 H108"/>
+    <path d="M972 1872 H1032 V1812"/>
+  </g>
+  <line x1="500.0" y1="960.0" x2="580.0" y2="960.0" stroke="#0F0E0C" stroke-width="1"/>
+  <line x1="540.0" y1="920.0" x2="540.0" y2="1000.0" stroke="#0F0E0C" stroke-width="1"/>
+  <text x="540.0" y="960.0" text-anchor="middle" font-family="Georgia, serif" font-size="52" fill="#0F0E0C" dy="-14">Editorial 3</text>
+  <text x="540.0" y="960.0" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="22" letter-spacing="3" fill="#7A776E" dy="34">PLACEHOLDER — UPLOAD IN STUDIO</text>
+</svg>
