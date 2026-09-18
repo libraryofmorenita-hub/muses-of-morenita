@@ -90,9 +90,9 @@ html, body { margin: 0; background: var(--black); font-family: var(--font-body);
 
 .back-link {
   position: absolute; top: max(18px, env(safe-area-inset-top)); left: 18px;
-  width: 38px; height: 38px; border-radius: 50%;
-  background: rgba(10,10,10,0.45); backdrop-filter: blur(6px);
-  color: var(--white); text-decoration: none; font-size: 18px;
+  width: 38px; height: 38px; /* kept for a real tap target even with no visible pill */
+  color: var(--white); text-decoration: none; font-size: 20px;
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.7)); /* legibility over a light photo, without a background shape */
   display: flex; align-items: center; justify-content: center;
 }
 
@@ -196,38 +196,23 @@ html, body { margin: 0; background: var(--black); font-family: var(--font-body);
    (same toggle as clicking anywhere on the hero), since it sits inside
    .hero-marquee and the click simply bubbles up. Icons are drawn in CSS
    rather than a font glyph/emoji, so they render identically everywhere
-   instead of depending on the OS's emoji/symbol font. */
+   instead of depending on the OS's emoji/symbol font. No background pill —
+   a drop-shadow keeps the icon legible over a light photo instead. */
 .hero-status-btn {
   position: absolute; right: 18px; bottom: 18px; z-index: 2;
-  width: 40px; height: 40px; border-radius: 50%; padding: 0; border: none;
-  background: rgba(10,10,10,0.5); backdrop-filter: blur(6px);
+  width: 40px; height: 40px; padding: 0; border: none; background: none;
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.7));
   display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
 .hero-icon-play {
   width: 0; height: 0; margin-left: 3px; /* optical centering — a triangle's visual weight sits left of its box */
-  border-top: 7px solid transparent; border-bottom: 7px solid transparent;
-  border-left: 11px solid var(--white);
+  border-top: 8px solid transparent; border-bottom: 8px solid transparent;
+  border-left: 13px solid var(--white);
 }
-.hero-icon-pause { display: none; gap: 4px; }
-.hero-icon-pause span { width: 4px; height: 15px; background: var(--white); display: block; }
+.hero-icon-pause { display: none; gap: 5px; }
+.hero-icon-pause span { width: 5px; height: 18px; background: var(--white); display: block; }
 .hero-marquee.paused .hero-icon-play { display: none; }
 .hero-marquee.paused .hero-icon-pause { display: flex; }
-
-/* ── side arrows — nudge speed/direction; each click also resumes if
-   paused, since asking for "faster" only makes sense while moving. Sit
-   above the image but below the status button's stacking (both are
-   siblings inside .hero-marquee, order in the DOM controls paint order). */
-.hero-arrow {
-  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
-  width: 40px; height: 40px; border-radius: 50%; padding: 0; border: none;
-  background: rgba(10,10,10,0.4); backdrop-filter: blur(6px);
-  color: var(--white); font-size: 16px; line-height: 1;
-  display: flex; align-items: center; justify-content: center; cursor: pointer;
-  opacity: 0.75; transition: opacity 150ms ease, background 150ms ease;
-}
-.hero-arrow:hover { opacity: 1; background: rgba(10,10,10,0.6); }
-.hero-arrow-left { left: 18px; }
-.hero-arrow-right { right: 18px; }
 
 .scroll-hint {
   position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
@@ -280,10 +265,8 @@ html, body { margin: 0; background: var(--black); font-family: var(--font-body);
 <!-- DESKTOP -->
 <div id="desktop-viewer">
   <a class="back-link" id="back-link-desktop" href="../amelia-arabe-portfolio.html" aria-label="Back to Portfolio" style="position:fixed;z-index:10;"></a>
-  <div class="hero-marquee" id="hero-marquee" role="img" aria-label="Auto-scrolling photo gallery — click to pause or resume, side arrows to change speed or direction">
+  <div class="hero-marquee" id="hero-marquee" role="img" aria-label="Auto-scrolling photo gallery — click to pause or resume, left/right arrow keys to change speed or direction">
     <div class="hero-track" id="hero-track"></div>
-    <button class="hero-arrow hero-arrow-left" id="hero-arrow-left" type="button" aria-label="Reverse and speed up">&larr;</button>
-    <button class="hero-arrow hero-arrow-right" id="hero-arrow-right" type="button" aria-label="Speed up">&rarr;</button>
     <button class="hero-status-btn" id="hero-status-btn" type="button" aria-label="Pause">
       <span class="hero-icon-play"></span>
       <span class="hero-icon-pause"><span></span><span></span></span>
@@ -397,6 +380,11 @@ function buildMobileTrack() {
     img.src = resolveImageUrl(slide.image_url);
     img.alt = esc(slide.label || `Photo ${i + 1}`);
     img.loading = i === 0 ? 'eager' : 'lazy';
+    // Keeps a face (or whatever the studio marked as the focal point) in
+    // frame when object-fit:cover crops a photo to fill the screen — set
+    // via .style, a CSSOM property setter, so an invalid/malformed value
+    // is just silently ignored rather than any kind of injection risk.
+    if (slide.focal_point) img.style.objectPosition = slide.focal_point;
     section.appendChild(img);
 
     if (slide.show_measurements) {
@@ -606,21 +594,22 @@ heroMarquee.addEventListener('click', () => {
   heroMarquee.classList.toggle('paused', heroPaused);
 });
 
-// Side arrows step the speed one "gear" toward faster-forward (right) or
-// faster-reverse (left). stopPropagation keeps the click from also
-// bubbling to the hero's own pause/resume toggle above; asking for "faster"
-// implies motion, so an arrow click un-pauses if the hero was paused.
-document.getElementById('hero-arrow-right').addEventListener('click', e => {
-  e.stopPropagation();
-  heroSpeedIndex = Math.min(heroSpeedIndex + 1, HERO_SPEED_LEVELS.length - 1);
-  heroPaused = false;
-  heroMarquee.classList.remove('paused');
-});
-document.getElementById('hero-arrow-left').addEventListener('click', e => {
-  e.stopPropagation();
-  heroSpeedIndex = Math.max(heroSpeedIndex - 1, 0);
-  heroPaused = false;
-  heroMarquee.classList.remove('paused');
+// Left/right arrow KEYS (no on-screen buttons) step the speed one "gear"
+// toward faster-reverse (left) or faster-forward (right) — same
+// HERO_SPEED_LEVELS table the old side-arrow buttons used. Asking for
+// "faster" implies motion, so either key also un-pauses. Harmless to leave
+// bound at any viewport width — the desktop hero it controls simply isn't
+// visible below the 769px breakpoint.
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') {
+    heroSpeedIndex = Math.min(heroSpeedIndex + 1, HERO_SPEED_LEVELS.length - 1);
+    heroPaused = false;
+    heroMarquee.classList.remove('paused');
+  } else if (e.key === 'ArrowLeft') {
+    heroSpeedIndex = Math.max(heroSpeedIndex - 1, 0);
+    heroPaused = false;
+    heroMarquee.classList.remove('paused');
+  }
 });
 
 function fillDesktopSummary(project) {

@@ -2033,7 +2033,15 @@ function showToggleView(id) {
             ${tagsHtml}
           </div>
         </div>`;
-      if (hasImage) card.querySelector('.card-img').style.backgroundImage = `url(${resolveImageUrl(p.image_url)})`;
+      if (hasImage) {
+        const imgEl = card.querySelector('.card-img');
+        imgEl.style.backgroundImage = `url(${resolveImageUrl(p.image_url)})`;
+        // Keeps a face (or whatever the studio marked as the focal point) in
+        // frame when the card crops this image to its own aspect ratio.
+        // .style is a CSSOM setter, not innerHTML — an invalid value is just
+        // ignored, never executed.
+        if (p.image_focal_point) imgEl.style.backgroundPosition = p.image_focal_point;
+      }
       grid.appendChild(card);
     });
   }

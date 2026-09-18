@@ -518,6 +518,9 @@ a { text-decoration: none; color: inherit; }
               </div>
             </div>
           </div>
+          <div class="field"><label>Focal Point <span class="cs-editor-hint">— what stays in frame when this card crops the image (a face, usually)</span></label>
+            <select id="e-img-focal"></select>
+          </div>
 
           <div class="field">
             <label>Display Mode <span class="cs-editor-hint">— which template renders this project when opened</span></label>
@@ -1336,6 +1339,24 @@ async function moveProject(id, dir) {
   renderProjectList();
 }
 
+// ── FOCAL POINT ─────────────────────────────────────────────────────
+// The 9 standard CSS background-position/object-position keyword pairs,
+// used wherever a photo gets cover-cropped to a box that doesn't match
+// its own aspect ratio (project cards, mobile gallery slides) — picking
+// one of these keeps a face (or whatever matters in the shot) in frame
+// instead of a fixed "center" crop cutting it off. A closed set of exact
+// CSS keywords, not free text, so there's no way to save something that
+// doesn't just work when read back.
+const FOCAL_POINTS = [
+  ['left top', 'Top Left'], ['center top', 'Top Center'], ['right top', 'Top Right'],
+  ['left center', 'Middle Left'], ['center', 'Center'], ['right center', 'Middle Right'],
+  ['left bottom', 'Bottom Left'], ['center bottom', 'Bottom Center'], ['right bottom', 'Bottom Right'],
+];
+function focalPointOptionsHtml(selected) {
+  const value = selected || 'center';
+  return FOCAL_POINTS.map(([v, label]) => `<option value="${v}"${v === value ? ' selected' : ''}>${label}</option>`).join('');
+}
+
 // ── CASE STUDY EDITOR — full page, mirrors the live template section-by-section
 function showProjectList() {
   document.getElementById('career-editor-view').style.display = 'none';
@@ -1353,6 +1374,7 @@ function openProjectEditor(id) {
   // this is safe to read unconditionally rather than branching on display_mode.
   state.editorSlides = (existing?.model_slides || []).map(s => ({
     label: s.label || '', image_url: s.image_url || '', show_measurements: !!s.show_measurements,
+    focal_point: s.focal_point || 'center',
   }));
 
   document.getElementById('career-project-view').style.display = 'none';
@@ -1365,6 +1387,7 @@ function openProjectEditor(id) {
   document.getElementById('e-tags').value         = (existing?.tags || []).join(', ');
   document.getElementById('e-desc').value         = existing?.description || '';
   document.getElementById('e-img').value          = existing?.image_url || '';
+  document.getElementById('e-img-focal').innerHTML = focalPointOptionsHtml(existing?.image_focal_point);
   document.getElementById('e-case-problem').value = existing?.case_problem || '';
   document.getElementById('e-case-process').value = existing?.case_process || '';
   document.getElementById('e-case-outcome').value = existing?.case_outcome || '';
@@ -1511,10 +1534,16 @@ function renderSlidesEditor() {
                  oninput="updateSlideField(${i},'image_url',this.value)">
           <label class="file-btn" style="margin-top:0;">Upload<input type="file" accept="image/*" onchange="uploadSlideImage(event,${i})"></label>
         </div>
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:400;">
-          <input type="checkbox" ${slide.show_measurements ? 'checked' : ''} onchange="toggleSlideMeasurements(${i})">
-          Show measurements on this slide
-        </label>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:400;">
+            <input type="checkbox" ${slide.show_measurements ? 'checked' : ''} onchange="toggleSlideMeasurements(${i})">
+            Show measurements on this slide
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:400;">
+            Focal point
+            <select onchange="updateSlideField(${i},'focal_point',this.value)">${focalPointOptionsHtml(slide.focal_point)}</select>
+          </label>
+        </div>
       </div>
       <div class="gallery-item-actions">
         <button class="order-btn" onclick="moveSlide(${i},-1)" ${i === 0 ? 'disabled' : ''}>↑</button>
@@ -1591,6 +1620,7 @@ async function saveProjectEditor() {
     url:          document.getElementById('e-url').value.trim() || null,
     badge:        document.getElementById('e-badge').value.trim() || null,
     image_url:    document.getElementById('e-img').value.trim() || null,
+    image_focal_point: document.getElementById('e-img-focal').value,
     tags:         document.getElementById('e-tags').value.split(',').map(s => s.trim()).filter(Boolean),
     case_problem: document.getElementById('e-case-problem').value.trim() || null,
     case_process: document.getElementById('e-case-process').value.trim() || null,
@@ -1604,7 +1634,10 @@ async function saveProjectEditor() {
     display_mode: document.getElementById('e-display-mode').value,
     model_slides: state.editorSlides
       .filter(s => s.image_url.trim()) // an empty row is just an in-progress add, not a real slide — don't save it
-      .map(s => ({ label: s.label.trim(), image_url: s.image_url.trim(), show_measurements: !!s.show_measurements })),
+      .map(s => ({
+        label: s.label.trim(), image_url: s.image_url.trim(), show_measurements: !!s.show_measurements,
+        focal_point: s.focal_point || 'center',
+      })),
     measurements: {
       height:     document.getElementById('e-meas-height').value.trim(),
       bust:       document.getElementById('e-meas-bust').value.trim(),
