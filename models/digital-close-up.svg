@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1620 540" role="img" aria-label="Placeholder photo — Modeling Close Up, not yet uploaded">
+  <rect width="1620" height="540" fill="#F1EEE6"/>
+  <rect x="48" y="48" width="1524" height="444" fill="none" stroke="#0F0E0C" stroke-width="1.5" stroke-dasharray="10 8"/>
+  <!-- corner brackets, matching the site's established wireframe/pending-image convention -->
+  <g stroke="#0F0E0C" stroke-width="3" fill="none">
+    <path d="M48 108 V48 H108"/>
+    <path d="M1512 48 H1572 V108"/>
+    <path d="M48 432 V492 H108"/>
+    <path d="M1512 492 H1572 V432"/>
+  </g>
+  <line x1="770" y1="270" x2="850" y2="270" stroke="#0F0E0C" stroke-width="1"/>
+  <line x1="810" y1="230" x2="810" y2="310" stroke="#0F0E0C" stroke-width="1"/>
+  <text x="810" y="270" text-anchor="middle" font-family="Georgia, serif" font-size="46" fill="#0F0E0C" dy="-14">MODELING CLOSE UP</text>
+  <text x="810" y="270" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" letter-spacing="3" fill="#7A776E" dy="30">PLACEHOLDER — UPLOAD IN STUDIO</text>
+</svg>
