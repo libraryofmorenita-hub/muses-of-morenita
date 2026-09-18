@@ -439,16 +439,32 @@ html.isolated-share .nav-logo { cursor: default; }
   display: none;
   position: relative;
   flex-shrink: 0;
-  width: 100%;
-  height: 46vh;
-  min-height: 340px;
-  max-height: 540px;
+  /* Full-bleed within .project-grid-wrap's own padding (24px/44px) via
+     equal-and-opposite negative margins, rather than width:100% (which
+     would only reach the wrapper's padded content edge, not its actual
+     outer edge) — this is what makes it touch the nav bar above with no
+     gap, even though it now sits inside the scrollable wrapper instead of
+     being the page's first element. margin-bottom keeps that same 24px
+     as normal spacing before the grid, instead of collapsing to zero. */
+  margin: -24px -44px 24px;
+  /* Taller than the original 46vh so cover-cropping this landscape photo
+     shows most of the frame instead of a tight zoomed band — see the CSS
+     comment on .visual-hero img below for the math. No longer a
+     scroll-budget trade-off now that it scrolls away with the grid. */
+  height: 82vh;
+  min-height: 480px;
+  max-height: 760px;
   overflow: hidden;
   background: var(--black); /* shows through while the image loads */
 }
 .visual-hero.visible { display: block; }
 .visual-hero img {
-  width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; /* biased up — keeps the face in frame at short/wide crops */
+  width: 100%; height: 100%; object-fit: cover;
+  /* Slightly above true center — this photo is landscape (1600×1066), so
+     cover crops its height, not its width; a taller box needs much less
+     of that crop than before, and a small top bias just keeps eyes/face
+     in the upper-middle third rather than dead center. */
+  object-position: 50% 25%;
   display: block;
 }
 /* dark bands top and bottom only — keeps the middle of the photo clear
@@ -1393,21 +1409,10 @@ html.isolated-share .nav-logo { cursor: default; }
         <div id="toggle-view">
           <div class="toggle-view-inner" id="toggle-view-inner">
 
-            <!-- Visual-only photo hero — replaces the plain overview strip
-                 below just for the Visual toggle (see showToggleView()).
-                 Sits first in toggle-view-inner with zero top margin/padding
-                 so it butts directly against the nav bar above it. -->
-            <div class="visual-hero" id="visual-hero">
-              <img id="visual-hero-img" src="" alt="">
-              <div class="visual-hero-scrim"></div>
-              <div class="visual-hero-text">
-                <div class="visual-hero-title" id="visual-hero-title"></div>
-                <div class="visual-hero-sub" id="visual-hero-sub"></div>
-              </div>
-              <button class="visual-hero-book" id="visual-hero-book" onclick="hireClick()"></button>
-            </div>
-
-            <!-- Overview strip — every other toggle's plain text header -->
+            <!-- Overview strip — every other toggle's plain text header.
+                 Hidden (not just visually skipped) on Visual, since Visual's
+                 hero now lives inside the scrollable grid area below instead
+                 of this always-on-screen strip — see the HTML comment there. -->
             <div class="overview-strip" id="overview-strip">
               <div class="overview-left">
                 <div class="overview-title" id="overview-title"></div>
@@ -1421,6 +1426,24 @@ html.isolated-share .nav-logo { cursor: default; }
 
             <!-- Project grid -->
             <div class="project-grid-wrap">
+
+              <!-- Visual-only photo hero — lives INSIDE the scrollable grid
+                   wrapper, not the fixed header strip above, so it scrolls
+                   away with the rest of the content instead of staying
+                   pinned on screen while you browse the projects below it.
+                   Sits first, with the wrapper's own top padding zeroed out
+                   for just this toggle (see the .visual-hero CSS) so it
+                   still butts directly against the nav bar on first paint. -->
+              <div class="visual-hero" id="visual-hero">
+                <img id="visual-hero-img" src="" alt="">
+                <div class="visual-hero-scrim"></div>
+                <div class="visual-hero-text">
+                  <div class="visual-hero-title" id="visual-hero-title"></div>
+                  <div class="visual-hero-sub" id="visual-hero-sub"></div>
+                </div>
+                <button class="visual-hero-book" id="visual-hero-book" onclick="hireClick()"></button>
+              </div>
+
               <div class="project-grid" id="project-grid"></div>
             </div>
 
@@ -1675,6 +1698,11 @@ function buildCaseStudyUrl(p, roleKey) {
   if (handle !== 'amelia-arabe') url += `&u=${encodeURIComponent(handle)}`;
   return url;
 }
+
+// The Visual tab's photo hero (see showToggleView()) — a fixed choice,
+// not tied to any project's own image field, so it can't end up showing
+// the same photo as a project card right below it.
+const VISUAL_HERO_IMAGE = 'models/headshot.jpg';
 
 // image_url is stored relative to the repo root (e.g. 'bouquet.jpeg') so both
 // this file (one level down) and the case-study templates (two levels down)
@@ -1945,12 +1973,11 @@ function showToggleView(id) {
   document.getElementById('hire-btn').textContent = data.hireLabel;
 
   // Visual gets a full-bleed photo hero instead of the plain text strip —
-  // same title/subtext/Book-Me content, just overlaid on a photo. The
-  // image is whichever project sorts first for this toggle (today that's
-  // Digitals, whose Hero Image is the real headshot) rather than a
-  // hardcoded file, so it stays correct if the lineup ever changes and
-  // needs no dashboard work of its own — it's just that project's
-  // existing, already-editable Hero Image field.
+  // same title/subtext/Book-Me content, just overlaid on a photo. This is
+  // deliberately the fixed VISUAL_HERO_IMAGE constant below, not any
+  // project's own Hero Image field — Digitals' card image is its own,
+  // separate placeholder (see the studio), so the two can differ instead
+  // of showing the same photo twice in a row on this page.
   const isVisual = id === 'actress';
   document.getElementById('visual-hero').classList.toggle('visible', isVisual);
   document.getElementById('overview-strip').style.display = isVisual ? 'none' : '';
@@ -1958,9 +1985,7 @@ function showToggleView(id) {
     document.getElementById('visual-hero-title').textContent = data.name;
     document.getElementById('visual-hero-sub').textContent = data.overview;
     document.getElementById('visual-hero-book').textContent = data.hireLabel;
-    const heroImg = document.getElementById('visual-hero-img');
-    const heroUrl = projects[0]?.image_url;
-    heroImg.src = heroUrl ? resolveImageUrl(heroUrl) : '';
+    document.getElementById('visual-hero-img').src = resolveImageUrl(VISUAL_HERO_IMAGE);
   }
 
   // Build project grid — Fine Art is a special case: a collections grid
