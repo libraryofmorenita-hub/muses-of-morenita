@@ -432,6 +432,54 @@ html.isolated-share .nav-logo { cursor: default; }
 }
 .toggle-view-inner.shown { opacity: 1; }
 
+/* Visual-only photo hero — see the HTML comment above #visual-hero.
+   Hidden by default; showToggleView() reveals it (and hides
+   .overview-strip) only when id === 'actress'. */
+.visual-hero {
+  display: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+  height: 46vh;
+  min-height: 340px;
+  max-height: 540px;
+  overflow: hidden;
+  background: var(--black); /* shows through while the image loads */
+}
+.visual-hero.visible { display: block; }
+.visual-hero img {
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; /* biased up — keeps the face in frame at short/wide crops */
+  display: block;
+}
+/* dark bands top and bottom only — keeps the middle of the photo clear
+   while still guaranteeing contrast for the title (top-left) and the
+   Book Me button (bottom-right), whatever tone the photo itself is */
+.visual-hero-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(10,10,10,0.6) 0%, rgba(10,10,10,0) 32%,
+    rgba(10,10,10,0) 68%, rgba(10,10,10,0.6) 100%);
+  pointer-events: none;
+}
+.visual-hero-text {
+  position: absolute; top: 28px; left: 36px; right: 36px;
+}
+.visual-hero-title {
+  font-family: var(--font-display); font-weight: 400; font-size: 40px;
+  color: var(--pure-white); line-height: 1.05; margin-bottom: 8px;
+}
+.visual-hero-sub {
+  font-family: var(--font-body); font-weight: 300; font-size: 13px;
+  color: rgba(255,255,255,0.85); line-height: 1.6; max-width: 440px;
+}
+.visual-hero-book {
+  position: absolute; right: 32px; bottom: 24px;
+  font-family: var(--font-body); font-weight: 400; font-size: 9px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--black); background: var(--pure-white);
+  padding: 10px 22px; border: none; cursor: pointer;
+}
+
 /* Overview strip */
 .overview-strip {
   flex-shrink: 0;
@@ -551,10 +599,24 @@ html.isolated-share .nav-logo { cursor: default; }
    normal 4:3 ratio doubles its height as well, which overflows the
    scroll container badly enough that the bottom-anchored text ends up
    rendered below the visible/scrollable area entirely. */
-.project-grid:not(.overflow-x) .project-card:last-child:nth-child(odd) {
+/* .featured-grid (Visual) opts out of this auto rule — it picks its own
+   featured card explicitly (see .card-featured below) instead of
+   whichever card happens to land last, which on an odd-length Visual
+   would otherwise ALSO enlarge Self Portraits alongside Digitals. */
+.project-grid:not(.overflow-x):not(.featured-grid) .project-card:last-child:nth-child(odd) {
   grid-column: 1 / -1;
 }
-.project-grid:not(.overflow-x) .project-card:last-child:nth-child(odd) .card-img {
+.project-grid:not(.overflow-x):not(.featured-grid) .project-card:last-child:nth-child(odd) .card-img {
+  aspect-ratio: 3 / 1;
+}
+/* explicit "featured" card (currently just Digitals, first on Visual —
+   see showToggleView()) — same full-width treatment as the odd-card-out
+   rule above, just driven by an explicit flag instead of position, since
+   the featured card isn't necessarily the trailing one. */
+.project-grid:not(.overflow-x) .project-card.card-featured {
+  grid-column: 1 / -1;
+}
+.project-grid:not(.overflow-x) .project-card.card-featured .card-img {
   aspect-ratio: 3 / 1;
 }
 .project-grid.overflow-x .project-card {
@@ -1331,8 +1393,22 @@ html.isolated-share .nav-logo { cursor: default; }
         <div id="toggle-view">
           <div class="toggle-view-inner" id="toggle-view-inner">
 
-            <!-- Overview strip -->
-            <div class="overview-strip">
+            <!-- Visual-only photo hero — replaces the plain overview strip
+                 below just for the Visual toggle (see showToggleView()).
+                 Sits first in toggle-view-inner with zero top margin/padding
+                 so it butts directly against the nav bar above it. -->
+            <div class="visual-hero" id="visual-hero">
+              <img id="visual-hero-img" src="" alt="">
+              <div class="visual-hero-scrim"></div>
+              <div class="visual-hero-text">
+                <div class="visual-hero-title" id="visual-hero-title"></div>
+                <div class="visual-hero-sub" id="visual-hero-sub"></div>
+              </div>
+              <button class="visual-hero-book" id="visual-hero-book" onclick="hireClick()"></button>
+            </div>
+
+            <!-- Overview strip — every other toggle's plain text header -->
+            <div class="overview-strip" id="overview-strip">
               <div class="overview-left">
                 <div class="overview-title" id="overview-title"></div>
                 <div class="overview-text" id="overview-text"></div>
@@ -1868,12 +1944,32 @@ function showToggleView(id) {
   document.getElementById('commission-sub').style.display = data.showCommission ? 'block' : 'none';
   document.getElementById('hire-btn').textContent = data.hireLabel;
 
+  // Visual gets a full-bleed photo hero instead of the plain text strip —
+  // same title/subtext/Book-Me content, just overlaid on a photo. The
+  // image is whichever project sorts first for this toggle (today that's
+  // Digitals, whose Hero Image is the real headshot) rather than a
+  // hardcoded file, so it stays correct if the lineup ever changes and
+  // needs no dashboard work of its own — it's just that project's
+  // existing, already-editable Hero Image field.
+  const isVisual = id === 'actress';
+  document.getElementById('visual-hero').classList.toggle('visible', isVisual);
+  document.getElementById('overview-strip').style.display = isVisual ? 'none' : '';
+  if (isVisual) {
+    document.getElementById('visual-hero-title').textContent = data.name;
+    document.getElementById('visual-hero-sub').textContent = data.overview;
+    document.getElementById('visual-hero-book').textContent = data.hireLabel;
+    const heroImg = document.getElementById('visual-hero-img');
+    const heroUrl = projects[0]?.image_url;
+    heroImg.src = heroUrl ? resolveImageUrl(heroUrl) : '';
+  }
+
   // Build project grid — Fine Art is a special case: a collections grid
   // (see renderCollectionsGrid()) instead of the flat project cards every
   // other toggle uses. Same #project-grid container either way.
   const grid = document.getElementById('project-grid');
   grid.innerHTML = '';
   grid.classList.remove('overflow-x');
+  grid.classList.toggle('featured-grid', isVisual);
 
   if (id === 'painter') {
     renderCollectionsGrid(grid);
@@ -1881,9 +1977,14 @@ function showToggleView(id) {
     const useOverflow = projects.length > 6;
     if (useOverflow) grid.classList.add('overflow-x');
 
-    projects.forEach(p => {
+    projects.forEach((p, i) => {
       const card = document.createElement('div');
       card.className = 'project-card';
+      // Digitals is the deliberate lead/featured card on Visual — full-
+      // width instead of the grid's usual odd-card-out sizing, which is
+      // purely positional (last-card-if-total-is-odd) and would land on
+      // whichever project happens to be last, not this one specifically.
+      if (isVisual && i === 0) card.classList.add('card-featured');
       card.onclick = () => { window.location.href = buildCaseStudyUrl(p, id); };
 
       let tagsHtml = '';

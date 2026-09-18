@@ -177,42 +177,57 @@ html, body { margin: 0; background: var(--black); font-family: var(--font-body);
   display: flex;
   height: 100%;
   width: max-content; /* sized by its own (doubled) image content, not the viewport */
-  animation-name: marquee;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  /* animation-duration is set from JS once the real image widths are
-     known — see buildDesktopHero()'s speed calculation. This value is
-     just a sane fallback before that measurement lands. */
-  animation-duration: 60s;
+  will-change: transform;
+  /* transform is driven entirely from JS (see runHeroLoop()) rather than a
+     CSS @keyframes animation — a plain CSS animation can't be sped up,
+     reversed, or nudged by the side arrows without a visible jump (changing
+     animation-duration mid-flight recomputes progress as elapsed/duration,
+     which jumps the frame). A rAF loop advancing a plain translateX gives
+     exact, glitch-free control over speed and direction at all times. */
 }
-.hero-marquee.paused .hero-track { animation-play-state: paused; }
 .hero-track img {
   height: 100%; width: auto; /* natural aspect ratio — these are comp-card portraits, not a cropped strip */
   display: block; flex-shrink: 0;
   user-select: none; -webkit-user-drag: none; pointer-events: none;
 }
-/* the doubled image set loops seamlessly: translating exactly half the
-   (now double-width) track's width is exactly one full original set's
-   width, so frame N of the loop is pixel-identical to frame 0 */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-track { animation-play-state: paused; } /* still clickable to play, just doesn't move on its own */
-}
 
-/* explicit feedback on click — a paused CSS animation looks identical to
-   a broken one otherwise, and "nothing visibly happened" is exactly the
-   confusion this page exists to avoid */
-.hero-pause-indicator {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  background: rgba(10,10,10,0.18);
-  color: var(--white); font-family: var(--font-body); font-weight: 500; font-size: 12px;
-  letter-spacing: 0.16em; text-transform: uppercase;
-  opacity: 0; transition: opacity 200ms ease; pointer-events: none;
+/* ── bottom-right status button — shows PLAY while running (the default)
+   and swaps to PAUSE only while actually paused. Also directly clickable
+   (same toggle as clicking anywhere on the hero), since it sits inside
+   .hero-marquee and the click simply bubbles up. Icons are drawn in CSS
+   rather than a font glyph/emoji, so they render identically everywhere
+   instead of depending on the OS's emoji/symbol font. */
+.hero-status-btn {
+  position: absolute; right: 18px; bottom: 18px; z-index: 2;
+  width: 40px; height: 40px; border-radius: 50%; padding: 0; border: none;
+  background: rgba(10,10,10,0.5); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
-.hero-marquee.paused .hero-pause-indicator { opacity: 1; }
+.hero-icon-play {
+  width: 0; height: 0; margin-left: 3px; /* optical centering — a triangle's visual weight sits left of its box */
+  border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+  border-left: 11px solid var(--white);
+}
+.hero-icon-pause { display: none; gap: 4px; }
+.hero-icon-pause span { width: 4px; height: 15px; background: var(--white); display: block; }
+.hero-marquee.paused .hero-icon-play { display: none; }
+.hero-marquee.paused .hero-icon-pause { display: flex; }
+
+/* ── side arrows — nudge speed/direction; each click also resumes if
+   paused, since asking for "faster" only makes sense while moving. Sit
+   above the image but below the status button's stacking (both are
+   siblings inside .hero-marquee, order in the DOM controls paint order). */
+.hero-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 40px; height: 40px; border-radius: 50%; padding: 0; border: none;
+  background: rgba(10,10,10,0.4); backdrop-filter: blur(6px);
+  color: var(--white); font-size: 16px; line-height: 1;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  opacity: 0.75; transition: opacity 150ms ease, background 150ms ease;
+}
+.hero-arrow:hover { opacity: 1; background: rgba(10,10,10,0.6); }
+.hero-arrow-left { left: 18px; }
+.hero-arrow-right { right: 18px; }
 
 .scroll-hint {
   position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
@@ -265,9 +280,14 @@ html, body { margin: 0; background: var(--black); font-family: var(--font-body);
 <!-- DESKTOP -->
 <div id="desktop-viewer">
   <a class="back-link" id="back-link-desktop" href="../amelia-arabe-portfolio.html" aria-label="Back to Portfolio" style="position:fixed;z-index:10;"></a>
-  <div class="hero-marquee" id="hero-marquee" role="img" aria-label="Auto-scrolling photo gallery — click to pause or resume">
+  <div class="hero-marquee" id="hero-marquee" role="img" aria-label="Auto-scrolling photo gallery — click to pause or resume, side arrows to change speed or direction">
     <div class="hero-track" id="hero-track"></div>
-    <div class="hero-pause-indicator" id="hero-pause-indicator">Paused — click to resume</div>
+    <button class="hero-arrow hero-arrow-left" id="hero-arrow-left" type="button" aria-label="Reverse and speed up">&larr;</button>
+    <button class="hero-arrow hero-arrow-right" id="hero-arrow-right" type="button" aria-label="Speed up">&rarr;</button>
+    <button class="hero-status-btn" id="hero-status-btn" type="button" aria-label="Pause">
+      <span class="hero-icon-play"></span>
+      <span class="hero-icon-pause"><span></span><span></span></span>
+    </button>
     <div class="scroll-hint"><span>Scroll for more</span><span class="chevron">&darr;</span></div>
   </div>
   <div class="summary">
@@ -508,12 +528,28 @@ document.getElementById('viewer').addEventListener('wheel', e => {
 }, { passive: false });
 
 // ── DESKTOP HERO — auto-scrolling filmstrip ───────────────────────────
-// The image set is rendered twice, back-to-back, and the track animates
-// from translateX(0) to translateX(-50%) on a linear infinite loop — at
-// the halfway point the doubled track is pixel-identical to its start, so
-// the loop is seamless with no jump-cut or reset.
+// The image set is rendered twice, back-to-back; a requestAnimationFrame
+// loop (not a CSS animation) drives a plain translateX so the side arrows
+// can change speed/direction without the jump a CSS animation-duration
+// change would cause. Wrapping heroOffset back into [0, oneSetWidth) once
+// it passes the first set's width is what makes the loop seamless: the
+// doubled track is pixel-identical at that point, so nothing visibly resets.
+const heroMarquee = document.getElementById('hero-marquee');
+const heroTrack = document.getElementById('hero-track');
+let oneSetWidth = 0;    // px — real width of one (undoubled) image set, known once images load
+let heroOffset = 0;     // px — current scroll position within [0, oneSetWidth)
+let heroPaused = false;
+let heroLastFrameTime = null;
+
+// Discrete speed "gears" rather than open-ended acceleration — bounded,
+// predictable, and never lands on exactly 0 (which would look identical
+// to paused without actually being paused). Positive = the default
+// left-drift direction; negative = reversed. Index 5 (28px/s) is the
+// resting/default gear a project loads into.
+const HERO_SPEED_LEVELS = [-160, -110, -70, -40, -28, 28, 40, 70, 110, 160];
+let heroSpeedIndex = 5;
+
 function buildDesktopHero() {
-  const heroTrack = document.getElementById('hero-track');
   heroTrack.innerHTML = '';
   const doubled = slides.concat(slides);
   doubled.forEach(slide => {
@@ -524,27 +560,67 @@ function buildDesktopHero() {
     heroTrack.appendChild(img);
   });
 
-  // Speed the animation to the actual rendered width so a short project
-  // (fewer/narrower slides) drifts at the same visual pace as a long one,
-  // rather than a fixed duration making it look faster or slower. Needs
-  // every image loaded first — before that, scrollWidth is unreliable.
+  // Measure once every image has loaded — scrollWidth is unreliable before
+  // that. oneSetWidth only affects where the loop wraps, not the speed
+  // (speed is a plain px/s constant now, so it's already consistent across
+  // projects with different slide counts/widths without needing this).
   const imgs = Array.from(heroTrack.querySelectorAll('img'));
   Promise.all(imgs.map(img => new Promise(resolve => {
     if (img.complete) resolve();
     else { img.onload = resolve; img.onerror = resolve; }
   }))).then(() => {
-    const oneSetWidth = heroTrack.scrollWidth / 2; // the doubled track, halved back to one real set
-    const PX_PER_SECOND = 28; // deliberately unhurried — a slow drift, not a ticker
-    const duration = Math.max(oneSetWidth / PX_PER_SECOND, 25); // floor keeps a short (few-slide) project from whipping past
-    heroTrack.style.animationDuration = duration + 's';
+    oneSetWidth = heroTrack.scrollWidth / 2; // the doubled track, halved back to one real set
   });
+
+  // Respect the OS-level "reduce motion" preference by starting paused —
+  // still fully controllable via the status button/arrows, just not
+  // auto-playing on load.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    heroPaused = true;
+    heroMarquee.classList.add('paused');
+  }
+
+  heroLastFrameTime = null;
+  requestAnimationFrame(runHeroLoop);
 }
 
-// Click anywhere on the hero to pause it in place (CSS animation-play-state
-// natively freezes mid-transform and resumes from exactly there — no
-// manual position bookkeeping needed) — click again to resume.
-document.getElementById('hero-marquee').addEventListener('click', () => {
-  document.getElementById('hero-marquee').classList.toggle('paused');
+function runHeroLoop(now) {
+  if (heroLastFrameTime === null) heroLastFrameTime = now;
+  const dtSeconds = (now - heroLastFrameTime) / 1000;
+  heroLastFrameTime = now;
+
+  if (!heroPaused && oneSetWidth > 0) {
+    const velocity = HERO_SPEED_LEVELS[heroSpeedIndex];
+    heroOffset += velocity * dtSeconds;
+    heroOffset = ((heroOffset % oneSetWidth) + oneSetWidth) % oneSetWidth; // wrap both directions
+    heroTrack.style.transform = `translateX(${-heroOffset}px)`;
+  }
+  requestAnimationFrame(runHeroLoop);
+}
+
+// Click anywhere on the hero to pause it in place — the loop above simply
+// stops advancing heroOffset, so "resume from where you paused" needs no
+// extra bookkeeping. Click again to resume at the same speed/direction.
+heroMarquee.addEventListener('click', () => {
+  heroPaused = !heroPaused;
+  heroMarquee.classList.toggle('paused', heroPaused);
+});
+
+// Side arrows step the speed one "gear" toward faster-forward (right) or
+// faster-reverse (left). stopPropagation keeps the click from also
+// bubbling to the hero's own pause/resume toggle above; asking for "faster"
+// implies motion, so an arrow click un-pauses if the hero was paused.
+document.getElementById('hero-arrow-right').addEventListener('click', e => {
+  e.stopPropagation();
+  heroSpeedIndex = Math.min(heroSpeedIndex + 1, HERO_SPEED_LEVELS.length - 1);
+  heroPaused = false;
+  heroMarquee.classList.remove('paused');
+});
+document.getElementById('hero-arrow-left').addEventListener('click', e => {
+  e.stopPropagation();
+  heroSpeedIndex = Math.max(heroSpeedIndex - 1, 0);
+  heroPaused = false;
+  heroMarquee.classList.remove('paused');
 });
 
 function fillDesktopSummary(project) {
