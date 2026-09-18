@@ -127,7 +127,7 @@ html, body { margin: 0; background: var(--black); font-family: var(--font-body);
 @keyframes hint-fade { 0%, 60% { opacity: 0.75; } 100% { opacity: 0; visibility: hidden; } }
 @keyframes hint-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 @media (prefers-reduced-motion: reduce) {
-  .swipe-hint .arrow, .scroll-hint .chevron { animation: none; }
+  .swipe-hint .arrow { animation: none; }
 }
 
 /* ── MEASUREMENTS PANEL ─────────────────────────────
@@ -214,15 +214,6 @@ html, body { margin: 0; background: var(--black); font-family: var(--font-body);
 .hero-marquee.paused .hero-icon-play { display: none; }
 .hero-marquee.paused .hero-icon-pause { display: flex; }
 
-.scroll-hint {
-  position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
-  color: var(--white); font-family: var(--font-body); font-weight: 400; font-size: 10px;
-  letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.85;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.6); /* legible over a light-toned photo (or these placeholders), same as .slide-label */
-  display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none;
-}
-.scroll-hint .chevron { font-size: 14px; animation: hint-bob 1.8s ease-in-out infinite; }
-
 .summary {
   max-width: 640px; margin: 0 auto; padding: 72px 32px 110px; text-align: center;
 }
@@ -271,7 +262,6 @@ html, body { margin: 0; background: var(--black); font-family: var(--font-body);
       <span class="hero-icon-play"></span>
       <span class="hero-icon-pause"><span></span><span></span></span>
     </button>
-    <div class="scroll-hint"><span>Scroll for more</span><span class="chevron">&darr;</span></div>
   </div>
   <div class="summary">
     <div class="summary-eyebrow" id="d-category"></div>
