@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- viewport-fit=cover + user-scalable=no: this page is a full-screen,
-     scroll-locked swipe experience, not a normal scrolling document —
-     pinch-zoom and the browser's own scroll would both fight the custom
-     swipe handling below. -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<!-- No user-scalable=no here on purpose — pinch-zoom (mobile) and
+     ctrl/trackpad zoom (desktop) must always work, even though mobile's
+     swipe navigation still locks ordinary page *scroll* (see the
+     max-width:768px block below). Zoom and scroll are separate browser
+     mechanisms; restricting one never requires restricting the other. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Gallery</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,14 +25,18 @@
   --font-body:    "Inter", sans-serif;
 }
 *, *::before, *::after { box-sizing: border-box; }
-/* Scroll lock — this page IS the swipe gesture; there is nothing else on
-   it to scroll to. Matches dashboard.html's "this is an app shell" use of
-   the same rule. */
-html, body {
-  margin: 0; height: 100%; overflow: hidden;
-  overscroll-behavior: none; /* stops iOS/Android's own pull/bounce from fighting the swipe */
-  background: var(--black);
-  font-family: var(--font-body);
+html, body { margin: 0; background: var(--black); font-family: var(--font-body); }
+
+/* Mobile (≤768px, matching the breakpoint amelia-arabe-portfolio.html
+   already uses): the full-screen swipe carousel locks ordinary page
+   scroll, since swiping IS the navigation here — there's nothing else on
+   the page to scroll to. Desktop instead scrolls normally (hero, then a
+   summary below it), so the lock is scoped to mobile only. */
+@media (max-width: 768px) {
+  html, body {
+    height: 100%; overflow: hidden;
+    overscroll-behavior: none; /* stops iOS/Android's own pull/bounce from fighting the swipe */
+  }
 }
 
 /* ── NOT FOUND ──────────────────────────────────── */
@@ -44,9 +49,14 @@ html, body {
 #not-found h1 { font-family: var(--font-display); font-weight: 400; font-size: 26px; margin: 0; }
 #not-found a { color: var(--gray-dark); font-size: 13px; text-decoration: underline; }
 
-/* ── VIEWER SHELL ───────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════
+   MOBILE — full-screen, one-photo-at-a-time swipe carousel.
+   Shown ≤768px; #desktop-viewer (below) takes over above that.
+   ══════════════════════════════════════════════════════════════════════ */
 #viewer { display: none; position: fixed; inset: 0; }
-#viewer.ready { display: block; }
+@media (max-width: 768px) {
+  #viewer.ready { display: block; }
+}
 
 /* One slide per photo, stacked vertically; #track is moved with a single
    transform instead of scrolling, so we control exactly how the "next
@@ -117,7 +127,7 @@ html, body {
 @keyframes hint-fade { 0%, 60% { opacity: 0.75; } 100% { opacity: 0; visibility: hidden; } }
 @keyframes hint-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 @media (prefers-reduced-motion: reduce) {
-  .swipe-hint .arrow { animation: none; }
+  .swipe-hint .arrow, .scroll-hint .chevron { animation: none; }
 }
 
 /* ── MEASUREMENTS PANEL ─────────────────────────────
@@ -139,6 +149,99 @@ html, body {
   font-family: var(--font-display); font-weight: 400; font-size: 15px; color: var(--white); font-style: italic;
 }
 .measurements .stat.empty { display: none; } /* a stat left blank in the studio just doesn't render, rather than showing a bare label */
+
+/* ══════════════════════════════════════════════════════════════════════
+   DESKTOP (≥769px) — a horizontally auto-scrolling "hero" filmstrip
+   (click to pause/resume in place) with a normal, scrollable summary
+   underneath. A completely different interaction model from mobile's
+   swipe-lock, so it's a separate DOM subtree rather than a squeeze-fit of
+   the same markup.
+   ══════════════════════════════════════════════════════════════════════ */
+#desktop-viewer { display: none; background: var(--white); min-height: 100vh; }
+@media (min-width: 769px) {
+  #viewer { display: none !important; } /* mobile carousel never renders at this width, ready or not */
+  #desktop-viewer.ready { display: block; }
+  /* mobile-only chrome has no meaning here */
+  .slide-label, .progress, .swipe-hint { display: none !important; }
+}
+
+.hero-marquee {
+  position: relative;
+  width: 100%;
+  height: 82vh; /* a deliberate peek of the summary below invites scrolling, rather than reading as the whole page */
+  overflow: hidden;
+  background: var(--black);
+  cursor: pointer;
+}
+.hero-track {
+  display: flex;
+  height: 100%;
+  width: max-content; /* sized by its own (doubled) image content, not the viewport */
+  animation-name: marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  /* animation-duration is set from JS once the real image widths are
+     known — see buildDesktopHero()'s speed calculation. This value is
+     just a sane fallback before that measurement lands. */
+  animation-duration: 60s;
+}
+.hero-marquee.paused .hero-track { animation-play-state: paused; }
+.hero-track img {
+  height: 100%; width: auto; /* natural aspect ratio — these are comp-card portraits, not a cropped strip */
+  display: block; flex-shrink: 0;
+  user-select: none; -webkit-user-drag: none; pointer-events: none;
+}
+/* the doubled image set loops seamlessly: translating exactly half the
+   (now double-width) track's width is exactly one full original set's
+   width, so frame N of the loop is pixel-identical to frame 0 */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-track { animation-play-state: paused; } /* still clickable to play, just doesn't move on its own */
+}
+
+/* explicit feedback on click — a paused CSS animation looks identical to
+   a broken one otherwise, and "nothing visibly happened" is exactly the
+   confusion this page exists to avoid */
+.hero-pause-indicator {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(10,10,10,0.18);
+  color: var(--white); font-family: var(--font-body); font-weight: 500; font-size: 12px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  opacity: 0; transition: opacity 200ms ease; pointer-events: none;
+}
+.hero-marquee.paused .hero-pause-indicator { opacity: 1; }
+
+.scroll-hint {
+  position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+  color: var(--white); font-family: var(--font-body); font-weight: 400; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.85;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6); /* legible over a light-toned photo (or these placeholders), same as .slide-label */
+  display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none;
+}
+.scroll-hint .chevron { font-size: 14px; animation: hint-bob 1.8s ease-in-out infinite; }
+
+.summary {
+  max-width: 640px; margin: 0 auto; padding: 72px 32px 110px; text-align: center;
+}
+.summary-eyebrow {
+  font-family: var(--font-body); font-weight: 500; font-size: 11px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--gray-dark); margin-bottom: 10px;
+}
+.summary-title {
+  font-family: var(--font-display); font-weight: 400; font-size: 44px; color: var(--black);
+  line-height: 1.1; margin: 0 0 24px; text-wrap: balance;
+}
+.summary-desc {
+  font-family: var(--font-body); font-weight: 400; font-size: 15px; line-height: 1.7;
+  color: var(--gray-dark); margin: 0 0 20px; max-width: 52ch; margin-left: auto; margin-right: auto;
+}
+.summary-credits {
+  font-family: var(--font-body); font-weight: 500; font-size: 11px; letter-spacing: 0.08em;
+  color: var(--gray-mid); text-transform: uppercase;
+}
 </style>
 </head>
 <body>
@@ -148,6 +251,7 @@ html, body {
   <a href="../amelia-arabe-portfolio.html">&larr; Back to Portfolio</a>
 </div>
 
+<!-- MOBILE -->
 <div id="viewer">
   <div id="track"></div>
   <div class="chrome">
@@ -158,14 +262,42 @@ html, body {
   </div>
 </div>
 
+<!-- DESKTOP -->
+<div id="desktop-viewer">
+  <a class="back-link" id="back-link-desktop" href="../amelia-arabe-portfolio.html" aria-label="Back to Portfolio" style="position:fixed;z-index:10;"></a>
+  <div class="hero-marquee" id="hero-marquee" role="img" aria-label="Auto-scrolling photo gallery — click to pause or resume">
+    <div class="hero-track" id="hero-track"></div>
+    <div class="hero-pause-indicator" id="hero-pause-indicator">Paused — click to resume</div>
+    <div class="scroll-hint"><span>Scroll for more</span><span class="chevron">&darr;</span></div>
+  </div>
+  <div class="summary">
+    <div class="summary-eyebrow" id="d-category"></div>
+    <h1 class="summary-title" id="d-title"></h1>
+    <p class="summary-desc" id="d-desc"></p>
+    <div class="summary-credits" id="d-credits"></div>
+  </div>
+</div>
+
 <script>
 // ── FULL-SCREEN MODEL GALLERY ──────────────────────────────────────────
-// A dedicated, mobile-first viewer for display_mode='gallery' projects:
-// one photo fills the screen at a time, a vertical swipe moves to the
-// next/previous one with a deliberately slow transition, and normal page
-// scroll is disabled entirely (see the html/body overflow:hidden rule).
-// Desktop isn't designed for yet — it still works (mouse-drag + arrow
-// keys + wheel below), it just isn't the focus of this pass.
+// Two completely different viewers for the same display_mode='gallery'
+// project data, switched by CSS media query (≤768px vs ≥769px, matching
+// amelia-arabe-portfolio.html's own breakpoint):
+//
+//   MOBILE  (#viewer)          — one photo fills the screen at a time; a
+//                                 vertical swipe moves to the next/previous
+//                                 one with a deliberately slow transition;
+//                                 ordinary page scroll is disabled, since
+//                                 swiping IS the navigation.
+//   DESKTOP (#desktop-viewer)  — a horizontally auto-scrolling "hero"
+//                                 filmstrip (click pauses/resumes it in
+//                                 place) with a normal-flow summary
+//                                 underneath, reached by scrolling down.
+//
+// Both are built from the same fetched project row; only one is ever
+// visible at a time (see the CSS above), so building both costs nothing
+// the visitor notices. Pinch/trackpad zoom is left alone in both modes —
+// see the viewport meta tag's comment.
 //
 // sb / esc / getProfileByHandle / currentHandle come from shared/app-shell.js
 
@@ -211,18 +343,31 @@ function render(project) {
   const owner = project.profiles || {};
   document.title = (project.title || 'Gallery') + ' — ' + (owner.display_name || 'Amelia Arabe');
   document.getElementById('back-link').href = backHrefWithHandle(owner.handle);
+  document.getElementById('back-link-desktop').href = backHrefWithHandle(owner.handle);
+  document.getElementById('back-link-desktop').innerHTML = '&larr;';
 
   slides = Array.isArray(project.model_slides) ? project.model_slides : [];
   measurements = project.measurements || {};
 
   if (!slides.length) { showNotFound(); return; }
 
-  // Build the track: one <section class="slide"> per photo. Built once,
-  // from trusted-shape data (jsonb from our own table) — but every piece
-  // of text still goes through esc()/textContent, never a raw template
-  // string into innerHTML, since this project's data can be edited by
-  // whoever owns the portfolio, not just Amelia, once other Muses use this
-  // same template for their own galleries.
+  buildMobileTrack();
+  buildProgressDots();
+  goTo(0, false);
+  buildDesktopHero();
+  fillDesktopSummary(project);
+
+  document.getElementById('viewer').classList.add('ready');
+  document.getElementById('desktop-viewer').classList.add('ready');
+}
+
+// Build the mobile track: one <section class="slide"> per photo. Built
+// once, from trusted-shape data (jsonb from our own table) — but every
+// piece of text still goes through esc()/textContent, never a raw
+// template string into innerHTML, since this project's data can be
+// edited by whoever owns the portfolio, not just Amelia, once other
+// Muses use this same template for their own galleries.
+function buildMobileTrack() {
   const frag = document.createDocumentFragment();
   slides.forEach((slide, i) => {
     const section = document.createElement('section');
@@ -242,11 +387,6 @@ function render(project) {
   });
   track.innerHTML = '';
   track.appendChild(frag);
-
-  buildProgressDots();
-  goTo(0, false);
-
-  document.getElementById('viewer').classList.add('ready');
 }
 
 function buildMeasurementsPanel() {
@@ -288,7 +428,7 @@ function buildProgressDots() {
   });
 }
 
-// ── NAVIGATION ───────────────────────────────────────────────────────
+// ── MOBILE NAVIGATION ───────────────────────────────────────────────
 function goTo(index, animate) {
   current = Math.max(0, Math.min(slides.length - 1, index));
   track.classList.toggle('dragging', animate === false);
@@ -302,7 +442,7 @@ function goTo(index, animate) {
   }
 }
 
-// ── TOUCH SWIPE — the core interaction ────────────────────────────────
+// ── TOUCH SWIPE — the core mobile interaction ─────────────────────────
 // Vertical drag follows the finger 1:1 while it's down (no transition —
 // see #track.dragging), then either commits to the next/previous slide or
 // snaps back, both through the slow CSS transition defined above.
@@ -332,14 +472,22 @@ function onDragEnd() {
   dragOffsetSvh = 0;
 }
 
-document.getElementById('viewer').addEventListener('touchstart', e => onDragStart(e.touches[0].clientY), { passive: true });
-document.getElementById('viewer').addEventListener('touchmove', e => { onDragMove(e.touches[0].clientY); e.preventDefault(); }, { passive: false });
+document.getElementById('viewer').addEventListener('touchstart', e => {
+  if (e.touches.length !== 1) return; // a second finger means pinch-zoom, not a swipe — leave it to the browser
+  onDragStart(e.touches[0].clientY);
+}, { passive: true });
+document.getElementById('viewer').addEventListener('touchmove', e => {
+  if (e.touches.length !== 1) return; // ditto — never preventDefault a pinch gesture
+  onDragMove(e.touches[0].clientY);
+  e.preventDefault();
+}, { passive: false });
 document.getElementById('viewer').addEventListener('touchend', onDragEnd);
 document.getElementById('viewer').addEventListener('touchcancel', onDragEnd);
 
-// Desktop isn't the focus of this pass, but it shouldn't be broken either:
-// mouse-drag mirrors the touch gesture, and arrow keys / wheel are a
-// reasonable fallback for anyone previewing this on a laptop.
+// Mouse-drag/wheel/arrow-key fallbacks so the mobile viewer isn't
+// unusable if it's ever previewed on a narrow desktop window — the
+// ≥769px breakpoint hides #viewer entirely on real desktop, where the
+// hero/summary view below takes over instead.
 let mouseDown = false;
 document.getElementById('viewer').addEventListener('mousedown', e => { mouseDown = true; onDragStart(e.clientY); });
 window.addEventListener('mousemove', e => { if (mouseDown) onDragMove(e.clientY); });
@@ -358,6 +506,59 @@ document.getElementById('viewer').addEventListener('wheel', e => {
   goTo(current + (e.deltaY > 0 ? 1 : -1));
   setTimeout(() => { wheelLock = false; }, 550); // matches the CSS transition length — one slide per gesture
 }, { passive: false });
+
+// ── DESKTOP HERO — auto-scrolling filmstrip ───────────────────────────
+// The image set is rendered twice, back-to-back, and the track animates
+// from translateX(0) to translateX(-50%) on a linear infinite loop — at
+// the halfway point the doubled track is pixel-identical to its start, so
+// the loop is seamless with no jump-cut or reset.
+function buildDesktopHero() {
+  const heroTrack = document.getElementById('hero-track');
+  heroTrack.innerHTML = '';
+  const doubled = slides.concat(slides);
+  doubled.forEach(slide => {
+    const img = document.createElement('img');
+    img.src = resolveImageUrl(slide.image_url);
+    img.alt = esc(slide.label || '');
+    img.draggable = false;
+    heroTrack.appendChild(img);
+  });
+
+  // Speed the animation to the actual rendered width so a short project
+  // (fewer/narrower slides) drifts at the same visual pace as a long one,
+  // rather than a fixed duration making it look faster or slower. Needs
+  // every image loaded first — before that, scrollWidth is unreliable.
+  const imgs = Array.from(heroTrack.querySelectorAll('img'));
+  Promise.all(imgs.map(img => new Promise(resolve => {
+    if (img.complete) resolve();
+    else { img.onload = resolve; img.onerror = resolve; }
+  }))).then(() => {
+    const oneSetWidth = heroTrack.scrollWidth / 2; // the doubled track, halved back to one real set
+    const PX_PER_SECOND = 28; // deliberately unhurried — a slow drift, not a ticker
+    const duration = Math.max(oneSetWidth / PX_PER_SECOND, 25); // floor keeps a short (few-slide) project from whipping past
+    heroTrack.style.animationDuration = duration + 's';
+  });
+}
+
+// Click anywhere on the hero to pause it in place (CSS animation-play-state
+// natively freezes mid-transform and resumes from exactly there — no
+// manual position bookkeeping needed) — click again to resume.
+document.getElementById('hero-marquee').addEventListener('click', () => {
+  document.getElementById('hero-marquee').classList.toggle('paused');
+});
+
+function fillDesktopSummary(project) {
+  document.getElementById('d-category').textContent = project.category || '';
+  document.getElementById('d-title').textContent = project.title || '';
+
+  const desc = document.getElementById('d-desc');
+  desc.textContent = project.description || '';
+  desc.style.display = project.description ? '' : 'none';
+
+  const credits = document.getElementById('d-credits');
+  credits.textContent = project.credits || '';
+  credits.style.display = project.credits ? '' : 'none';
+}
 
 // ── LOAD ─────────────────────────────────────────────────────────────
 async function load() {
