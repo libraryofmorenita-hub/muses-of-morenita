@@ -519,13 +519,21 @@ let heroOffset = 0;     // px — current scroll position within [0, oneSetWidth
 let heroPaused = false;
 let heroLastFrameTime = null;
 
-// Discrete speed "gears" rather than open-ended acceleration — bounded,
-// predictable, and never lands on exactly 0 (which would look identical
-// to paused without actually being paused). Positive = the default
-// left-drift direction; negative = reversed. Index 5 (28px/s) is the
-// resting/default gear a project loads into.
-const HERO_SPEED_LEVELS = [-160, -110, -70, -40, -28, 28, 40, 70, 110, 160];
-let heroSpeedIndex = 5;
+// Continuous velocity rather than discrete "gears" — checked every
+// animation frame instead of once per keydown, so a held key starts
+// ramping the instant it goes down and keeps ramping smoothly for as
+// long as it's held. That's what actually makes this feel responsive:
+// the old step-per-keydown version depended on the OS's own key-repeat
+// timing (a real, often ~500ms, initial delay before repeats start),
+// which is exactly the kind of lag a press-and-hold control shouldn't have.
+// Positive = the default left-drift direction; negative = reversed.
+const HERO_BASE_SPEED = 28;  // px/s — the resting speed a project loads into
+const HERO_MAX_SPEED = 200;  // px/s, either direction — a ceiling, not a target
+const HERO_TAP_KICK = 16;    // px/s — instant nudge on key-down itself, so even a quick tap is felt right away
+const HERO_ACCEL = 140;      // px/s per second of holding
+let heroVelocity = HERO_BASE_SPEED;
+let heroRightHeld = false;
+let heroLeftHeld = false;
 
 function buildDesktopHero() {
   heroTrack.innerHTML = '';
@@ -567,9 +575,13 @@ function runHeroLoop(now) {
   const dtSeconds = (now - heroLastFrameTime) / 1000;
   heroLastFrameTime = now;
 
+  // Continuous ramp while a key is held — evaluated every frame, not tied
+  // to keydown events at all, so it can't stall waiting on OS key-repeat.
+  if (heroRightHeld) heroVelocity = Math.min(heroVelocity + HERO_ACCEL * dtSeconds, HERO_MAX_SPEED);
+  if (heroLeftHeld) heroVelocity = Math.max(heroVelocity - HERO_ACCEL * dtSeconds, -HERO_MAX_SPEED);
+
   if (!heroPaused && oneSetWidth > 0) {
-    const velocity = HERO_SPEED_LEVELS[heroSpeedIndex];
-    heroOffset += velocity * dtSeconds;
+    heroOffset += heroVelocity * dtSeconds;
     heroOffset = ((heroOffset % oneSetWidth) + oneSetWidth) % oneSetWidth; // wrap both directions
     heroTrack.style.transform = `translateX(${-heroOffset}px)`;
   }
@@ -584,23 +596,40 @@ heroMarquee.addEventListener('click', () => {
   heroMarquee.classList.toggle('paused', heroPaused);
 });
 
-// Left/right arrow KEYS (no on-screen buttons) step the speed one "gear"
-// toward faster-reverse (left) or faster-forward (right) — same
-// HERO_SPEED_LEVELS table the old side-arrow buttons used. Asking for
-// "faster" implies motion, so either key also un-pauses. Harmless to leave
-// bound at any viewport width — the desktop hero it controls simply isn't
-// visible below the 769px breakpoint.
+// Left/right arrow KEYS (no on-screen buttons) speed the hero up toward
+// forward (right) or reverse (left). Two effects, both immediate:
+// - an instant HERO_TAP_KICK on the down-stroke itself (only once per
+//   physical press — e.repeat is a synthetic OS auto-repeat keydown, not a
+//   new press, so it's excluded), so even a quick tap is felt right away;
+// - a held flag that runHeroLoop ramps continuously every frame for as
+//   long as the key stays down, for a smooth, immediately-starting
+//   acceleration on a sustained press.
+// Asking for "faster" implies motion, so either key also un-pauses.
+// Harmless to leave bound at any viewport width — the desktop hero it
+// controls simply isn't visible below the 769px breakpoint.
 window.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') {
-    heroSpeedIndex = Math.min(heroSpeedIndex + 1, HERO_SPEED_LEVELS.length - 1);
+    e.preventDefault();
+    if (!e.repeat) heroVelocity = Math.min(heroVelocity + HERO_TAP_KICK, HERO_MAX_SPEED);
+    heroRightHeld = true;
     heroPaused = false;
     heroMarquee.classList.remove('paused');
   } else if (e.key === 'ArrowLeft') {
-    heroSpeedIndex = Math.max(heroSpeedIndex - 1, 0);
+    e.preventDefault();
+    if (!e.repeat) heroVelocity = Math.max(heroVelocity - HERO_TAP_KICK, -HERO_MAX_SPEED);
+    heroLeftHeld = true;
     heroPaused = false;
     heroMarquee.classList.remove('paused');
   }
 });
+window.addEventListener('keyup', e => {
+  if (e.key === 'ArrowRight') heroRightHeld = false;
+  else if (e.key === 'ArrowLeft') heroLeftHeld = false;
+});
+// If focus leaves the window mid-press (alt-tab, DevTools, etc.), some
+// browsers never deliver the matching keyup — without this, a hero could
+// be left silently accelerating forever after you'd already let go.
+window.addEventListener('blur', () => { heroRightHeld = false; heroLeftHeld = false; });
 
 function fillDesktopSummary(project) {
   document.getElementById('d-category').textContent = project.category || '';
