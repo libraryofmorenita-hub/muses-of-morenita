@@ -19,8 +19,9 @@ app/
   templates/                    case-study.html / artwork.html / collection.html — one shared case-study
                                  template (parameterized by ?from=<role>) plus the Fine Art artwork/collection
                                  pair. Each fetches its own row by ?id= and joins the owning profile.
-  dashboard.html                Auth-gated member dashboard — CRUD for profile, career toggles, projects,
-                                 services, links, and products.
+  muses-portal.html             Auth-gated member portal (formerly dashboard.html, renamed to avoid
+                                 colliding with Morenita Technology's own internal dashboard) — CRUD for
+                                 profile, career toggles, projects, services, links, and products.
   muses-of-morenita-site.html   The platform's public marketing/directory SPA (hash-routed).
   board.html                    One pinboard editor, two visual templates (?template=bulletin|archive) —
                                  replaces the old bulletin-board.html/archive-stack.html fork. Editing requires
@@ -55,4 +56,4 @@ Supabase project: `kebmscbmfzpvcqrvvpul` ("muses-of-morenita") — its own dedic
 **Platform boundary (Sept 2026):** Muses of Morenita is portfolio- and marketplace-first — browsing, discovery, and (eventually) the creator course marketplace. Anything that's really internal *workspace* tooling belongs to Morenita Technology instead, not here. Two tools that had drifted into this repo historically have been moved out:
 
 - **Partnerships tracker** — formerly `partnerships.html` (before that, job-tracker.html) — now lives inside Morenita Technology's own internal dashboard (`morenita-dashboard`), backed by `internal.partnerships` in the Morenita Technology Supabase project. The 67 rows of real pipeline data moved with it. Nothing partnership-related remains in this repo or database.
-- **Studio (client CRM)** — the `portal.html` client-status page and dashboard.html's "Studio" panel (clients/projects/milestones/updates) were removed. They were unfinished prototypes with zero real client data — the underlying tables (`client_contacts`, `client_projects`, `project_updates`, `project_milestones`) held no rows, and the panel had been silently non-functional since at least Aug 2026 (per its own code comment). The *idea* survives as a future Muses of Morenita product feature (a Figma/Canva-style workspace where creators collaborate with clients and share a trackable project dashboard), but it will be prototyped inside Morenita Technology first, not rebuilt here until it's real.
+- **Studio (client CRM)** — the `portal.html` client-status page and muses-portal.html's "Studio" panel (clients/projects/milestones/updates) were removed. They were unfinished prototypes with zero real client data — the underlying tables (`client_contacts`, `client_projects`, `project_updates`, `project_milestones`) held no rows, and the panel had been silently non-functional since at least Aug 2026 (per its own code comment). The *idea* survives as a future Muses of Morenita product feature (a Figma/Canva-style workspace where creators collaborate with clients and share a trackable project dashboard), but it will be prototyped inside Morenita Technology first, not rebuilt here until it's real.

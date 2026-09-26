@@ -2511,7 +2511,7 @@ body { padding-top: 52px; }
       <!-- 2026-08-28: wired to real Supabase auth — magic link, not a
            password. sendMagicLink() below calls sb.auth.signInWithOtp();
            Supabase JS auto-detects the returned #access_token on
-           dashboard.html and establishes the session, no extra code
+           muses-portal.html and establishes the session, no extra code
            needed there. -->
       <button class="login-submit" id="login-submit-btn" onclick="sendMagicLink()">Email me a sign-in link</button>
       <div class="login-status" id="login-status" style="display:none;"></div>
@@ -2736,7 +2736,7 @@ body { padding-top: 52px; }
 
           <div class="final-btns">
             <button class="btn-outline-parchment">Set up my profile</button>
-            <button class="step-continue" onclick="window.location.href='dashboard.html'">Go to dashboard</button>
+            <button class="step-continue" onclick="window.location.href='muses-portal.html'">Go to portal</button>
           </div>
         </div>
         <div class="step-nav" style="border-top:none;margin-top:0;padding-top:0;"></div>
@@ -2848,7 +2848,7 @@ function showPage(route) {
 // ── AUTH — magic link (2026-08-28) ───────────────────────────────────
 // signInWithOtp both signs in an existing user and creates one for a new
 // email — Amelia's account already exists (auth.users, confirmed), so
-// this signs her straight in. dashboard.html needs no extra code: the
+// this signs her straight in. muses-portal.html needs no extra code: the
 // Supabase JS client auto-detects the #access_token this link returns
 // with and establishes the session on load.
 async function sendMagicLink() {
@@ -2873,7 +2873,7 @@ async function sendMagicLink() {
 
   const { error } = await sb.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + 'dashboard.html' }
+    options: { emailRedirectTo: window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + 'muses-portal.html' }
   });
 
   btn.disabled = false;
@@ -2958,7 +2958,7 @@ function injectFooters() {
 // goToStep() just toggles DOM visibility, nothing here ever calls
 // sb.auth.signUp() or writes a profile row. Also two dead buttons in the
 // steps below: "Skip" (step 2) and "Set up my profile" (step 6, next to
-// the working "Go to dashboard") have no onclick at all. Needs real
+// the working "Go to portal") have no onclick at all. Needs real
 // signup + profile creation before this join flow does anything.
 let currentStep = 1;
 const totalSteps = 6;
