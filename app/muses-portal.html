@@ -346,7 +346,7 @@ a { text-decoration: none; color: inherit; }
   <!-- ── NAV ────────────────────────────────────── -->
   <nav id="nav">
     <div style="display:flex;align-items:center;gap:20px;">
-      <span class="nav-logo" onclick="window.location.href='muses-of-morenita-site.html'">Muses of Morenita</span>
+      <span class="nav-logo" onclick="window.location.href='morenita-institute-public.html'">Muses of Morenita</span>
       <span class="nav-label">Profile Builder</span>
     </div>
     <div class="nav-right">
@@ -826,7 +826,7 @@ const state = {
 
 // ── AUTH ────────────────────────────────────────────────
 async function init() {
-  const user = await requireAuth('muses-of-morenita-site.html#/login');
+  const user = await requireAuth('morenita-institute-public.html#/login');
   if (!user) return;
   state.user = user;
   document.getElementById('nav-user').textContent = user.email;
@@ -855,7 +855,7 @@ async function init() {
 
 async function signOut() {
   await sb.auth.signOut();
-  window.location.href = 'muses-of-morenita-site.html#/login';
+  window.location.href = 'morenita-institute-public.html#/login';
 }
 
 // ── DATA LOADERS ────────────────────────────────────────
@@ -1268,7 +1268,7 @@ async function deleteToggle(id) {
 // ── PROJECTS ────────────────────────────────────────────
 // SECURITY (2026-08-25 review): every render function in this file (and
 // in amelia-arabe-portfolio.html / templates/case-study-*.html /
-// muses-of-morenita-site.html) drops title/description/tags/etc. straight
+// morenita-institute-public.html) drops title/description/tags/etc. straight
 // into innerHTML with no escaping — no esc() helper exists anywhere in
 // this file. Harmless today (only Amelia writes this content), but once
 // other Muses can write their own projects/products/bios, this is stored

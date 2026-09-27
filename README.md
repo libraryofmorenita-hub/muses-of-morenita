@@ -2,7 +2,7 @@
 
 Amelia Arabe's personal platform: a portfolio and the early build-out of Muses of Morenita — a directory/platform for multi-hyphenate creatives to hold every career under one roof.
 
-This repo is public and deployed via GitHub Pages at **https://libraryofmorenita-hub.github.io/muses-of-morenita/**, which redirects to the platform site (`app/muses-of-morenita-site.html`). Amelia's own portfolio lives at `app/amelia-arabe-portfolio.html` and is linked from there. `index.html` at the repo root is a legacy build kept for reference — not part of the live site.
+This repo is public and deployed via GitHub Pages at **https://libraryofmorenita-hub.github.io/muses-of-morenita/**, which redirects to the platform site (`app/morenita-institute-public.html`). Amelia's own portfolio lives at `app/amelia-arabe-portfolio.html` and is linked from there. `index.html` at the repo root is a legacy build kept for reference — not part of the live site.
 
 ## Stack
 
@@ -22,7 +22,7 @@ app/
   muses-portal.html             Auth-gated member portal (formerly dashboard.html, renamed to avoid
                                  colliding with Morenita Technology's own internal dashboard) — CRUD for
                                  profile, career toggles, projects, services, links, and products.
-  muses-of-morenita-site.html   The platform's public marketing/directory SPA (hash-routed).
+  morenita-institute-public.html   The platform's public marketing/directory SPA (hash-routed).
   board.html                    One pinboard editor, two visual templates (?template=bulletin|archive) —
                                  replaces the old bulletin-board.html/archive-stack.html fork. Editing requires
                                  being signed in as the board's owner (real RLS, not a shared password).
@@ -38,7 +38,7 @@ supabase/
   seed-pipeline.sql     Seeds job-application pipeline data.
   seed-portfolio.sql    Seeds career_toggles + projects for the portfolio.
 legal/                Cookie notice, privacy policy, terms of service (PDFs).
-index.html             Redirects to app/muses-of-morenita-site.html — the actual legacy build this used
+index.html             Redirects to app/morenita-institute-public.html — the actual legacy build this used
                         to be lives in git history, not the current file (see the 2026-09-08 commit).
 morenita-pitch-deck.html   Pitch deck for Muses of Morenita as a product.
 ```
