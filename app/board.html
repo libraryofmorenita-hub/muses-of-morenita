@@ -170,16 +170,20 @@ body.tpl-archive .canvas-col {
     repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(0,0,0,0.012) 24px, rgba(0,0,0,0.012) 25px),
     repeating-linear-gradient(90deg, transparent, transparent 24px, rgba(0,0,0,0.012) 24px, rgba(0,0,0,0.012) 25px);
 }
+/* vinyl is also a static, non-panning viewport — same dot grid as bulletin's
+   default is left as-is (it reads fine as a plain studio floor behind the
+   crate), it just doesn't pan/zoom. */
+body.tpl-vinyl .canvas-col { cursor: default; }
 
 /* #canvas-inner is the bulletin template's 4000px pan/zoom surface; the
-   archive template only ever needs a static, viewport-sized one. */
+   archive and vinyl templates only ever need a static, viewport-sized one. */
 #canvas-inner { position: absolute; }
 body.tpl-bulletin #canvas-inner {
   width: 4000px; height: 4000px; transform-origin: top left;
   transform: translate(-1600px, -1200px) scale(1);
 }
 body.tpl-bulletin #canvas-inner.smooth { transition: transform 0.05s ease-out; }
-body.tpl-archive #canvas-inner { width: 100%; height: 100%; }
+body.tpl-archive #canvas-inner, body.tpl-vinyl #canvas-inner { width: 100%; height: 100%; }
 
 /* ── BULLETIN CARDS ───────────────────────────────
    Same visual system as the old bulletin-board.html — nothing here changed,
@@ -254,6 +258,58 @@ body.tpl-archive #canvas-inner { width: 100%; height: 100%; }
 .note-object { width: 160px; height: 160px; box-shadow: 2px 3px 10px rgba(0,0,0,0.1); padding: 14px; position: relative; }
 .note-object::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 0; border-style: solid; border-width: 14px 14px 0 0; border-color: rgba(0,0,0,0.08) transparent transparent transparent; }
 .note-object .note-body { font-family: var(--font-body); font-weight: 300; font-size: 12px; color: var(--black); line-height: 1.65; }
+
+/* ── VINYL CRATE ────────────────────────────────────
+   Third card family: a horizontal crate of square sleeves, fanned and
+   overlapping, with the front/active one enlarged, centered, and
+   flippable to its liner-notes back. Position/scale come entirely from
+   the --offset custom property (distance from the active sleeve), not
+   from item x/y — this template never reads or writes those columns. */
+.vinyl-crate { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; perspective: 1400px; }
+.vinyl-stack { position: relative; width: 100%; height: 100%; }
+.vinyl-sleeve {
+  position: absolute; top: 50%; left: 50%;
+  width: 180px; height: 180px; margin: -90px 0 0 -90px;
+  transform: translateX(calc(var(--offset, 0) * 92px)) scale(0.72);
+  transition: transform 0.35s ease;
+  cursor: pointer;
+}
+.vinyl-sleeve.active {
+  width: 320px; height: 320px; margin: -160px 0 0 -160px;
+  transform: translateX(0) scale(1);
+}
+.sleeve-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4, 0.1, 0.2, 1); }
+.vinyl-sleeve.flipped .sleeve-inner { transform: rotateY(180deg); }
+.sleeve-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.sleeve-front { overflow: visible; }
+.sleeve-art { position: absolute; inset: 0; z-index: 1; overflow: hidden; background: var(--pure-white); border: 1px solid var(--gray-faint); box-shadow: 2px 3px 14px rgba(0,0,0,0.1); display: flex; align-items: flex-end; }
+.sleeve-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sleeve-disc-hint {
+  position: absolute; top: 50%; right: -16%; width: 85%; height: 85%; z-index: 0;
+  transform: translateY(-50%); border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle at center, var(--black-mid) 0 1px, transparent 1px 7px),
+    radial-gradient(circle at center, var(--black-soft) 0 5%, transparent 5.5%);
+}
+.sleeve-placeholder-title { position: relative; z-index: 2; padding: 18px; font-family: var(--font-display); font-weight: 400; font-size: 17px; color: var(--black); line-height: 1.3; }
+.vinyl-sleeve.active .sleeve-placeholder-title { font-size: 22px; padding: 24px; }
+.sleeve-back {
+  transform: rotateY(180deg);
+  background: var(--pure-white); border: 1px solid var(--gray-faint); box-shadow: 2px 3px 14px rgba(0,0,0,0.1);
+  padding: 22px; display: flex; flex-direction: column;
+}
+.sleeve-liner-title { font-family: var(--font-display); font-weight: 400; font-size: 19px; color: var(--black); margin-bottom: 10px; }
+.sleeve-liner-notes { font-family: var(--font-body); font-weight: 300; font-size: 12px; color: var(--gray-dark); line-height: 1.7; flex: 1; overflow: auto; }
+.sleeve-view-link { margin-top: 14px; }
+.vinyl-nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 600;
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gray-light);
+  background: var(--white); color: var(--black); font-size: 16px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+}
+.vinyl-nav:hover { background: var(--gray-faint); }
+.vinyl-nav-prev { left: 40px; }
+.vinyl-nav-next { right: 40px; }
 
 /* ── EMPTY STATE ────────────────────────────────── */
 #empty-state { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1; }
@@ -396,7 +452,8 @@ body.tpl-archive #canvas-inner { width: 100%; height: 100%; }
 // RLS now does the enforcing, so a shared password has nothing left to do.
 
 const params = new URLSearchParams(window.location.search);
-const template = params.get('template') === 'archive' ? 'archive' : 'bulletin';
+const templateParam = params.get('template');
+const template = templateParam === 'archive' ? 'archive' : (templateParam === 'vinyl' ? 'vinyl' : 'bulletin');
 document.body.classList.add('tpl-' + template);
 
 // slug -> case-study / portfolio destination for PROJECT items. Amelia's
@@ -416,8 +473,10 @@ const PROJECT_LINKS = {
 
 const TYPES = template === 'archive'
   ? ['photo', 'document', 'sketch', 'ticket', 'note']
+  : template === 'vinyl'
+  ? ['record']
   : ['image', 'text', 'project', 'link', 'color', 'audio'];
-const TYPE_LABELS = { image: 'Image', text: 'Text', project: 'Project', link: 'Link', color: 'Color', audio: 'Audio', photo: 'Photo', document: 'Document', sketch: 'Sketch', ticket: 'Ticket', note: 'Note' };
+const TYPE_LABELS = { image: 'Image', text: 'Text', project: 'Project', link: 'Link', color: 'Color', audio: 'Audio', photo: 'Photo', document: 'Document', sketch: 'Sketch', ticket: 'Ticket', note: 'Note', record: 'Record' };
 
 // ── STATE ──────────────────────────────────────────────
 let ownerProfile = null;
@@ -428,6 +487,11 @@ const itemEls = new Map();
 let dragItem = null;
 let dragStart = { x: 0, y: 0, itemX: 0, itemY: 0, moved: false };
 let contextTarget = null;
+
+// vinyl-only crate navigation state — which sleeve is active/front, and
+// whether that sleeve is currently showing its liner-notes back face.
+let vinylActiveIndex = 0;
+let vinylFlipped = false;
 
 // bulletin-only pan/zoom state
 const transform = { x: -1600, y: -1200, scale: 1 };
@@ -447,7 +511,7 @@ function handleParam(handle) {
 function applyProfileToShell(p) {
   const name = p.display_name || 'Muse';
   const hp = handleParam(p.handle);
-  document.title = `${template === 'archive' ? 'Archive' : 'Bulletin Board'} — ${name}`;
+  document.title = `${template === 'archive' ? 'Archive' : template === 'vinyl' ? 'Vinyl Crate' : 'Bulletin Board'} — ${name}`;
   document.getElementById('nav-logo').textContent = name;
   document.getElementById('nav-logo').onclick = () => window.location.href = 'amelia-arabe-portfolio.html' + hp;
   document.getElementById('nav-portfolio').onclick = () => window.location.href = 'amelia-arabe-portfolio.html' + hp;
@@ -456,7 +520,7 @@ function applyProfileToShell(p) {
   document.getElementById('sidebar-mobile-name').textContent = name;
   document.getElementById('sidebar-quote').textContent = p.quote || 'Building tools, systems, and platforms at the intersection of engineering and culture.';
   document.getElementById('footer-contact').textContent = [name, p.email_contact, p.phone].filter(Boolean).join(' · ');
-  document.getElementById('empty-title').textContent = template === 'archive' ? 'This archive is empty.' : 'This board is empty.';
+  document.getElementById('empty-title').textContent = template === 'archive' ? 'This archive is empty.' : template === 'vinyl' ? 'This crate is empty.' : 'This board is empty.';
   document.getElementById('nav-profile').textContent = name.charAt(0).toUpperCase();
 }
 
@@ -521,6 +585,10 @@ function toggleStudioMode() {
 
 function openCardDesigner() { window.location.href = `card-designer.html?template=${template}`; }
 function openAddItemModal() {
+  // vinyl only ever has one item type (record) — skip the type-picker modal
+  // entirely and go straight to the designer, same shortcut a single-type
+  // "+ Add" button would take.
+  if (template === 'vinyl') { addItemOfType('record'); return; }
   document.getElementById('add-item-title').textContent = template === 'archive' ? 'Add Object' : 'Add Card';
   document.getElementById('add-item-grid').innerHTML = TYPES.map(t =>
     `<button class="aim-type-btn" onclick="addItemOfType('${t}')">${TYPE_LABELS[t]}</button>`).join('');
@@ -536,6 +604,9 @@ async function loadItems() {
     .order('z_index', { ascending: true });
   if (error) { console.error(error); return; }
   items = data || [];
+  // front of the crate defaults to the highest z_index (the record most
+  // recently brought forward) rather than wherever it happened to load.
+  if (template === 'vinyl') vinylActiveIndex = Math.max(0, items.length - 1);
   renderItems();
   updateEmptyState();
 }
@@ -545,6 +616,7 @@ function updateEmptyState() {
 }
 
 function renderItems() {
+  if (template === 'vinyl') { renderVinylCrate(); return; }
   canvasInner.innerHTML = '';
   itemEls.clear();
   items.forEach(item => {
@@ -789,6 +861,148 @@ function attachObjectEvents(el, obj) {
   });
 }
 
+// ── VINYL CRATE RENDERING ─────────────────────────────────
+// The vinyl template is its own layout mechanic, not a free-placed card
+// family like bulletin/archive — items.x/y/rotation are ignored entirely.
+// Stack order comes from z_index (ascending, same sort loadItems() already
+// used), the front/active sleeve is centered + enlarged, and clicking a
+// non-active sleeve just moves the local "which one is front" pointer —
+// it doesn't rewrite z_index, so browsing the crate never writes to the DB.
+function renderVinylCrate() {
+  canvasInner.innerHTML = '';
+  itemEls.clear();
+  if (!items.length) return;
+  if (vinylActiveIndex > items.length - 1) vinylActiveIndex = items.length - 1;
+  if (vinylActiveIndex < 0) vinylActiveIndex = 0;
+
+  const crate = document.createElement('div');
+  crate.className = 'vinyl-crate';
+  const stack = document.createElement('div');
+  stack.className = 'vinyl-stack';
+
+  items.forEach((item, i) => {
+    const el = createSleeveEl(item, i - vinylActiveIndex, i);
+    stack.appendChild(el);
+    itemEls.set(item.id, el);
+  });
+  crate.appendChild(stack);
+
+  if (items.length > 1) {
+    const prevBtn = document.createElement('button');
+    prevBtn.type = 'button';
+    prevBtn.className = 'vinyl-nav vinyl-nav-prev';
+    prevBtn.setAttribute('aria-label', 'Previous record');
+    prevBtn.textContent = '‹';
+    prevBtn.onclick = (e) => { e.stopPropagation(); vinylMove(-1); };
+    const nextBtn = document.createElement('button');
+    nextBtn.type = 'button';
+    nextBtn.className = 'vinyl-nav vinyl-nav-next';
+    nextBtn.setAttribute('aria-label', 'Next record');
+    nextBtn.textContent = '›';
+    nextBtn.onclick = (e) => { e.stopPropagation(); vinylMove(1); };
+    crate.appendChild(prevBtn);
+    crate.appendChild(nextBtn);
+  }
+
+  canvasInner.appendChild(crate);
+}
+
+function createSleeveEl(item, offset, index) {
+  const isActive = offset === 0;
+  const el = document.createElement('div');
+  el.className = 'vinyl-sleeve' + (isActive ? ' active' : '') + (isActive && vinylFlipped ? ' flipped' : '');
+  el.dataset.id = item.id;
+  const clamped = Math.max(-4, Math.min(4, offset));
+  el.style.setProperty('--offset', clamped);
+  el.style.zIndex = isActive ? 500 : (300 - Math.abs(clamped) * 10);
+  el.innerHTML = `
+    <div class="sleeve-inner">
+      <div class="sleeve-face sleeve-front">${renderSleeveFront(item)}</div>
+      <div class="sleeve-face sleeve-back">${renderSleeveBack(item)}</div>
+    </div>
+  `;
+
+  el.addEventListener('click', (e) => {
+    if (e.target.closest('.sleeve-view-link')) return;
+    vinylGoTo(index);
+  });
+
+  const viewLink = el.querySelector('.sleeve-view-link');
+  if (viewLink) {
+    viewLink.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (item.project_id && PROJECT_LINKS[item.project_id]) {
+        window.location.href = PROJECT_LINKS[item.project_id].url;
+      } else if (item.link_url) {
+        window.open(item.link_url, '_blank', 'noopener');
+      }
+    });
+  }
+
+  el.addEventListener('contextmenu', (e) => {
+    if (!studioMode) return;
+    e.preventDefault();
+    showContextMenu(e, item, el);
+  });
+
+  return el;
+}
+
+function renderSleeveFront(item) {
+  if (item.image_url) {
+    return `<div class="sleeve-art"><img src="${esc(item.image_url)}" alt=""></div>`;
+  }
+  // No cover art set — a restrained monochrome placeholder: the title over
+  // paper-white, with a bare hint of the disc itself peeking from behind
+  // the sleeve's edge, rather than a generic/cartoonish fallback.
+  return `
+    <div class="sleeve-disc-hint"></div>
+    <div class="sleeve-art"><div class="sleeve-placeholder-title">${esc(item.title || '')}</div></div>
+  `;
+}
+
+function renderSleeveBack(item) {
+  const hasLink = (item.project_id && PROJECT_LINKS[item.project_id]) || item.link_url;
+  return `
+    <div class="sleeve-liner-title">${esc(item.title || '')}</div>
+    ${item.body ? `<div class="sleeve-liner-notes">${esc(item.body)}</div>` : ''}
+    ${hasLink ? `<div class="card-project-view sleeve-view-link">View Project</div>` : ''}
+  `;
+}
+
+function vinylMove(dir) {
+  if (!items.length) return;
+  vinylActiveIndex = Math.max(0, Math.min(items.length - 1, vinylActiveIndex + dir));
+  vinylFlipped = false;
+  renderVinylCrate();
+}
+
+function vinylGoTo(i) {
+  if (i === vinylActiveIndex) {
+    vinylFlipped = !vinylFlipped;
+  } else {
+    vinylActiveIndex = i;
+    vinylFlipped = false;
+  }
+  renderVinylCrate();
+}
+
+// Keeps the crate's visual order in sync with z_index after a context-menu
+// "Bring to Front" / "Send to Back" — those two are shared across all three
+// templates, but only vinyl's layout is order-driven, so only it needs to
+// re-sort + re-render here; bulletin/archive restack via plain CSS z-index.
+function resortVinylAfterZChange() {
+  if (template !== 'vinyl') return;
+  const activeItem = items[vinylActiveIndex];
+  const activeId = activeItem ? activeItem.id : null;
+  items.sort((a, b) => (a.z_index || 1) - (b.z_index || 1));
+  if (activeId) {
+    const idx = items.findIndex(i => i.id === activeId);
+    if (idx !== -1) vinylActiveIndex = idx;
+  }
+  renderVinylCrate();
+}
+
 // ── CONTEXT MENU (shared) ────────────────────────────────
 function showContextMenu(e, item, el) {
   contextTarget = { item, el };
@@ -828,7 +1042,11 @@ async function ctxDelete() {
   await sb.from('board_items').delete().eq('id', item.id);
   items = items.filter(i => i.id !== item.id);
   itemEls.delete(item.id);
-  el.remove();
+  if (template === 'vinyl') {
+    renderVinylCrate();
+  } else {
+    el.remove();
+  }
   updateEmptyState();
 }
 async function ctxBringFront() {
@@ -838,6 +1056,7 @@ async function ctxBringFront() {
   const maxZ = Math.max(1, ...items.map(i => i.z_index || 1));
   item.z_index = maxZ + 1;
   el.style.zIndex = item.z_index;
+  resortVinylAfterZChange();
   await sb.from('board_items').update({ z_index: item.z_index, updated_at: new Date() }).eq('id', item.id);
 }
 async function ctxSendBack() {
@@ -846,6 +1065,7 @@ async function ctxSendBack() {
   hideContextMenu();
   item.z_index = 1;
   el.style.zIndex = 1;
+  resortVinylAfterZChange();
   await sb.from('board_items').update({ z_index: 1, updated_at: new Date() }).eq('id', item.id);
 }
 async function ctxRotateLeft() {

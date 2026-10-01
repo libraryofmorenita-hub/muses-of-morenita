@@ -243,6 +243,23 @@ body {
 .note-object { width: 160px; height: 160px; box-shadow: 2px 3px 10px rgba(0,0,0,0.1); padding: 14px; position: relative; }
 .note-object::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 0; border-style: solid; border-width: 14px 14px 0 0; border-color: rgba(0,0,0,0.08) transparent transparent transparent; }
 .note-object .note-body { font-family: var(--font-body); font-weight: 300; font-size: 12px; color: var(--black); line-height: 1.65; }
+
+/* ── PREVIEW SLEEVE (vinyl) — same visual rules as board.html's vinyl template;
+   the designer only ever shows the active, front-facing sleeve ── */
+.vinyl-sleeve { width: 320px; height: 320px; }
+.sleeve-inner { position: relative; width: 100%; height: 100%; }
+.sleeve-face { position: absolute; inset: 0; }
+.sleeve-front { overflow: visible; }
+.sleeve-art { position: absolute; inset: 0; z-index: 1; overflow: hidden; background: var(--pure-white); border: 1px solid var(--gray-faint); box-shadow: 2px 3px 14px rgba(0,0,0,0.1); display: flex; align-items: flex-end; }
+.sleeve-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sleeve-disc-hint {
+  position: absolute; top: 50%; right: -16%; width: 85%; height: 85%; z-index: 0;
+  transform: translateY(-50%); border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle at center, var(--black-mid) 0 1px, transparent 1px 7px),
+    radial-gradient(circle at center, var(--black-soft) 0 5%, transparent 5.5%);
+}
+.sleeve-placeholder-title { position: relative; z-index: 2; padding: 24px; font-family: var(--font-display); font-weight: 400; font-size: 22px; color: var(--black); line-height: 1.3; }
 </style>
 </head>
 <body>
@@ -270,11 +287,16 @@ body {
 // sb/esc come from shared/app-shell.js
 
 const params = new URLSearchParams(window.location.search);
-const template = params.get('template') === 'archive' ? 'archive' : 'bulletin';
+const templateParam = params.get('template');
+const template = templateParam === 'archive' ? 'archive' : (templateParam === 'vinyl' ? 'vinyl' : 'bulletin');
 const ARCHIVE_TYPES = ['photo', 'document', 'sketch', 'ticket', 'note'];
-let cardType = params.get('type') || (template === 'archive' ? 'photo' : 'text');
+let cardType = params.get('type') || (template === 'archive' ? 'photo' : (template === 'vinyl' ? 'record' : 'text'));
 const editId = params.get('id');
 const isArchive = ARCHIVE_TYPES.includes(cardType);
+// vinyl only ever has the one type (record) — its own branch, distinct
+// from both the bulletin (free-placed, resizable) and archive (rotatable,
+// orientable) sizing/rotation controls below.
+const isVinyl = template === 'vinyl';
 // One shared table (board_items, discriminated by `template`) replacing the
 // old per-template table switch — see the "structural rebuild" plan, Phase
 // 3. Editing requires real auth now: RLS is owner-write, so `currentUser`
@@ -300,7 +322,7 @@ const SIZE_PRESETS = {
   wide: { label: 'Wide',   width: 360, height: 160 },
 };
 
-const TYPE_LABELS = { image: 'Image', text: 'Text', project: 'Project', link: 'Link', color: 'Color', audio: 'Audio', photo: 'Photo', document: 'Document', sketch: 'Sketch', ticket: 'Ticket', note: 'Note' };
+const TYPE_LABELS = { image: 'Image', text: 'Text', project: 'Project', link: 'Link', color: 'Color', audio: 'Audio', photo: 'Photo', document: 'Document', sketch: 'Sketch', ticket: 'Ticket', note: 'Note', record: 'Record' };
 
 // which fields apply per type
 const TYPE_CONFIG = {
@@ -315,6 +337,9 @@ const TYPE_CONFIG = {
   sketch:   { title: true,  body: false, link: true,  image: true },
   ticket:   { title: true,  body: false, link: false, ticket: true },
   note:     { title: false, body: true,  link: true,  noteBg: true },
+  // fixed-size sleeve — no fontSize (not user-resizable text) and no
+  // SIZE_PRESETS branch at all (see the isVinyl guards below).
+  record:   { title: true,  body: true,  link: true,  fontSize: false, image: true },
 };
 
 // ── STATE ──────────────────────────────────────────────
@@ -529,7 +554,7 @@ function renderControls() {
     `;
   }
 
-  if (!isArchive) {
+  if (!isArchive && !isVinyl) {
     html += `
       <div class="section-divider"></div>
       <div class="field">
@@ -541,8 +566,9 @@ function renderControls() {
     `;
   }
 
-  // square types (sketch, note) ignore orientation — swapping width/height is a no-op
-  const canOrient = !isArchive || ['photo', 'document', 'ticket'].includes(cardType);
+  // square types (sketch, note) ignore orientation — swapping width/height is a no-op.
+  // Vinyl sleeves are fixed square, so they skip orientation entirely too.
+  const canOrient = !isVinyl && (!isArchive || ['photo', 'document', 'ticket'].includes(cardType));
   if (canOrient) {
     html += `
       <div class="field">
@@ -605,6 +631,12 @@ function updatePreview() {
     el.style.transform = `rotate(${state.rotation}deg)`;
     if (cardType === 'note') el.style.background = state.bgColor || '#FFFEF0';
     el.innerHTML = renderArchivePreviewBody(displayImage);
+    stage.innerHTML = '';
+    stage.appendChild(el);
+  } else if (isVinyl) {
+    const el = document.createElement('div');
+    el.className = 'vinyl-sleeve active preview-item';
+    el.innerHTML = `<div class="sleeve-inner"><div class="sleeve-face sleeve-front">${renderVinylPreviewFront(displayImage)}</div></div>`;
     stage.innerHTML = '';
     stage.appendChild(el);
   } else {
@@ -702,6 +734,16 @@ function renderArchivePreviewBody(displayImage) {
   }
 }
 
+function renderVinylPreviewFront(displayImage) {
+  if (displayImage) {
+    return `<div class="sleeve-art"><img src="${esc(displayImage)}" alt=""></div>`;
+  }
+  return `
+    <div class="sleeve-disc-hint"></div>
+    <div class="sleeve-art"><div class="sleeve-placeholder-title">${esc(state.title || '')}</div></div>
+  `;
+}
+
 // ── SAVE ───────────────────────────────────────────────
 async function uploadImage(file, cardId) {
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
@@ -726,7 +768,10 @@ function buildBaseData() {
     rotation: isArchive ? state.rotation : 0,
     bg_color: state.bgColor || '#ffffff',
   };
-  if (!isArchive) {
+  if (isVinyl) {
+    // Fixed-size sleeve — no bulletin width/height/text_color/font_size,
+    // no archive orientation. Just the shared base fields above.
+  } else if (!isArchive) {
     const preset = SIZE_PRESETS[state.sizePreset];
     const [w, h] = state.orientation === 'portrait' ? [preset.height, preset.width] : [preset.width, preset.height];
     data.width = w;
