@@ -2593,7 +2593,7 @@ body { padding-top: 52px; }
         <div class="step-nav space-between">
           <button class="step-back" onclick="goToStep(1)">Back</button>
           <div style="display:flex;gap:12px;">
-            <button class="step-skip">Skip</button>
+            <button class="step-skip" onclick="goToStep(3)">Skip</button>
             <button class="step-continue" onclick="goToStep(3)">Continue</button>
           </div>
         </div>
@@ -2610,22 +2610,23 @@ body { padding-top: 52px; }
             <div class="form-field name-row">
               <div>
                 <label class="form-label">First Name</label>
-                <input type="text" class="form-input" placeholder="First">
+                <input type="text" class="form-input" id="join-first" placeholder="First">
               </div>
               <div>
                 <label class="form-label">Last Name</label>
-                <input type="text" class="form-input" placeholder="Last">
+                <input type="text" class="form-input" id="join-last" placeholder="Last">
               </div>
             </div>
             <div class="form-field">
               <label class="form-label">Email</label>
-              <input type="email" class="form-input" placeholder="your@email.com">
+              <input type="email" class="form-input" id="join-email" placeholder="your@email.com">
             </div>
+            <div class="join-field-error" id="join-step3-error" style="display:none;color:var(--terra,#b5543a);font-size:12px;margin-top:4px;"></div>
           </div>
         </div>
         <div class="step-nav space-between">
           <button class="step-back" onclick="goToStep(2)">Back</button>
-          <button class="step-continue" onclick="goToStep(4)">Continue</button>
+          <button class="step-continue" onclick="handleStep3Continue()">Continue</button>
         </div>
       </div>
 
@@ -2646,13 +2647,14 @@ body { padding-top: 52px; }
             </div>
             <div class="form-field">
               <label class="form-label">Confirm Password</label>
-              <input type="password" class="form-input" placeholder="Confirm password">
+              <input type="password" class="form-input" id="join-confirm-password" placeholder="Confirm password">
             </div>
+            <div class="join-field-error" id="join-step4-error" style="display:none;color:var(--terra,#b5543a);font-size:12px;margin-top:4px;"></div>
           </div>
         </div>
         <div class="step-nav space-between">
           <button class="step-back" onclick="goToStep(3)">Back</button>
-          <button class="step-continue" onclick="goToStep(5)">Create Account</button>
+          <button class="step-continue" id="join-create-btn" onclick="handleCreateAccount()">Create Account</button>
         </div>
       </div>
 
@@ -2663,10 +2665,11 @@ body { padding-top: 52px; }
           <span class="envelope-mark">&#9993;</span>
           <div class="join-step-heading">Check your inbox.</div>
           <div class="join-step-body">We sent a verification link to your email. Click it to activate your account.</div>
-          <div class="resend-line">Didn't get it? <span class="resend-link">Resend email</span></div>
+          <div class="resend-line">Didn't get it? <span class="resend-link" onclick="resendVerificationEmail()">Resend email</span></div>
+          <div class="join-field-error" id="join-step5-status" style="display:none;font-size:12px;margin-top:8px;"></div>
         </div>
         <div class="step-nav">
-          <button class="step-continue" onclick="goToStep(6)">I have verified my email</button>
+          <button class="step-continue" id="join-verify-btn" onclick="checkVerificationAndContinue()">I have verified my email</button>
         </div>
       </div>
 
@@ -2680,13 +2683,13 @@ body { padding-top: 52px; }
           <div class="profile-preview">
             <div class="preview-img">Your photo</div>
             <div class="preview-body">
-              <div class="preview-name">Your Name</div>
-              <div class="preview-role">Creative</div>
+              <div class="preview-name" id="join-preview-name">Your Name</div>
+              <div class="preview-role" id="join-preview-role">Creative</div>
             </div>
           </div>
 
           <div class="final-btns">
-            <button class="btn-outline-parchment">Set up my profile</button>
+            <button class="btn-outline-parchment" onclick="window.location.href='muses-portal.html'">Set up my profile</button>
             <button class="step-continue" onclick="window.location.href='muses-portal.html'">Go to portal</button>
           </div>
         </div>
@@ -2905,12 +2908,14 @@ function injectFooters() {
 }
 
 // ─── JOIN FLOW ─────────────────────────────────────────
-// TODO (2026-08-25 review): this whole 6-step flow is UI mockup only —
-// goToStep() just toggles DOM visibility, nothing here ever calls
-// sb.auth.signUp() or writes a profile row. Also two dead buttons in the
-// steps below: "Skip" (step 2) and "Set up my profile" (step 6, next to
-// the working "Go to portal") have no onclick at all. Needs real
-// signup + profile creation before this join flow does anything.
+// 2026-10-01: wired to real Supabase auth. Create Account (step 4) calls
+// sb.auth.signUp() with tier/toggles/name stashed in user_metadata, since
+// email confirmation reloads this page fresh and wipes any in-memory
+// state — user_metadata is the only thing guaranteed to survive that
+// round trip. completeSignupSetup() (below) creates the profiles +
+// career_toggles rows the first time we see a confirmed session, whether
+// that's via the "I have verified" button or the auto-detect on page
+// load after the visitor clicks the email link and lands back on #/join.
 let currentStep = 1;
 const totalSteps = 6;
 const stepProgress = [0, 0, 16, 33, 50, 83, 100];
@@ -2979,6 +2984,183 @@ function selectTier(card) {
 // ─── TOGGLE PILLS ──────────────────────────────────────
 function togglePill(pill) {
   pill.classList.toggle('selected');
+}
+
+// ─── JOIN FLOW: real signup ─────────────────────────────
+function getSelectedTier() {
+  const card = document.querySelector('.tier-card.selected');
+  return card ? card.dataset.tier : 'creative';
+}
+
+// Pills carry their role name as plain text; "+ Add your own" is excluded
+// since it's not a real role (no free-text input wired to it yet).
+function getSelectedToggles() {
+  return [...document.querySelectorAll('.toggle-pill.selected')]
+    .filter(p => !p.classList.contains('toggle-add'))
+    .map(p => p.textContent.trim());
+}
+
+function slugify(str) {
+  return String(str).toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'muse';
+}
+
+function showStepError(stepId, message) {
+  const el = document.getElementById(stepId);
+  if (!el) return;
+  el.textContent = message;
+  el.style.display = message ? 'block' : 'none';
+}
+
+function handleStep3Continue() {
+  const first = document.getElementById('join-first').value.trim();
+  const last = document.getElementById('join-last').value.trim();
+  const email = document.getElementById('join-email').value.trim();
+  showStepError('join-step3-error', '');
+  if (!first || !last) { showStepError('join-step3-error', 'First and last name are required.'); return; }
+  if (!email || !email.includes('@')) { showStepError('join-step3-error', 'Enter a valid email.'); return; }
+  goToStep(4);
+}
+
+async function handleCreateAccount() {
+  const errId = 'join-step4-error';
+  showStepError(errId, '');
+
+  const first = document.getElementById('join-first').value.trim();
+  const last = document.getElementById('join-last').value.trim();
+  const email = document.getElementById('join-email').value.trim();
+  const password = document.getElementById('passwordInput').value;
+  const confirm = document.getElementById('join-confirm-password').value;
+
+  if (password.length < 8) { showStepError(errId, 'Password needs to be at least 8 characters.'); return; }
+  if (password !== confirm) { showStepError(errId, 'Passwords do not match.'); return; }
+
+  const btn = document.getElementById('join-create-btn');
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.textContent = 'Creating…';
+
+  const redirectTo = window.location.origin + window.location.pathname + '#/join';
+  const { error } = await sb.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: redirectTo,
+      data: {
+        first_name: first,
+        last_name: last,
+        tier: getSelectedTier(),
+        toggles: getSelectedToggles(),
+      },
+    },
+  });
+
+  btn.disabled = false;
+  btn.textContent = originalLabel;
+
+  if (error) {
+    showStepError(errId, error.message || 'Could not create your account. Please try again.');
+    return;
+  }
+
+  goToStep(5);
+}
+
+async function resendVerificationEmail() {
+  const email = document.getElementById('join-email').value.trim();
+  const statusEl = document.getElementById('join-step5-status');
+  if (!email) return;
+  const { error } = await sb.auth.resend({ type: 'signup', email });
+  statusEl.style.display = 'block';
+  statusEl.style.color = error ? 'var(--terra, #b5543a)' : 'var(--success, #4a7c59)';
+  statusEl.textContent = error ? (error.message || 'Could not resend — try again shortly.') : 'Sent. Check your inbox.';
+}
+
+async function checkVerificationAndContinue() {
+  const statusEl = document.getElementById('join-step5-status');
+  const btn = document.getElementById('join-verify-btn');
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.textContent = 'Checking…';
+
+  const { data: { user } } = await sb.auth.getUser();
+
+  btn.disabled = false;
+  btn.textContent = originalLabel;
+
+  if (!user) {
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--terra, #b5543a)';
+    statusEl.textContent = "We haven't seen that confirmation yet. Check your inbox, then try again.";
+    return;
+  }
+
+  await completeSignupSetup(user);
+}
+
+// Creates the profiles + career_toggles rows the first time we see a
+// confirmed account. Guarded on an existing profiles row so this is safe
+// to call more than once (manual "I have verified" click, and the
+// auto-detect below both funnel through here).
+async function completeSignupSetup(user) {
+  const meta = user.user_metadata || {};
+  const first = meta.first_name || '';
+  const last = meta.last_name || '';
+  const fullName = (first + ' ' + last).trim() || 'New Muse';
+
+  const { data: existing } = await sb.from('profiles').select('id, handle').eq('id', user.id).maybeSingle();
+
+  if (!existing) {
+    let handle = slugify(fullName);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const candidate = attempt === 0 ? handle : handle + '-' + (attempt + 1);
+      const { data: taken } = await sb.from('profiles').select('id').eq('handle', candidate).maybeSingle();
+      if (!taken) { handle = candidate; break; }
+      if (attempt === 4) handle = handle + '-' + Math.random().toString(36).slice(2, 6);
+    }
+
+    await sb.from('profiles').insert({
+      id: user.id,
+      handle,
+      display_name: fullName,
+      email_contact: user.email,
+    });
+
+    const toggles = meta.toggles || [];
+    if (toggles.length) {
+      await sb.from('career_toggles').insert(
+        toggles.map((label, i) => ({
+          user_id: user.id,
+          role_key: slugify(label),
+          role_name: label,
+          sort_order: i,
+        }))
+      );
+    }
+  }
+
+  const nameEl = document.getElementById('join-preview-name');
+  const roleEl = document.getElementById('join-preview-role');
+  if (nameEl) nameEl.textContent = fullName;
+  if (roleEl) {
+    const tierLabels = { personal: 'Personal', creative: 'Creative', business: 'Business' };
+    roleEl.textContent = tierLabels[meta.tier] || 'Creative';
+  }
+
+  goToStep(6);
+}
+
+// Auto-detect: a visitor who clicked the confirmation link in their email
+// lands back here with a fresh session (Supabase JS auto-detects the
+// #access_token in the URL on load). If we're on /join with a verified
+// session and no profile yet, skip straight to step 6 instead of making
+// them click "I have verified" on a page they never actually filled out.
+async function checkJoinAutoReturn() {
+  if (getRouteFromHash() !== '/join') return;
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+  await completeSignupSetup(user);
 }
 
 // ─── PASSWORD STRENGTH ─────────────────────────────────
@@ -3142,6 +3324,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setMastheadDate();
   const route = getRouteFromHash();
   showPage(route);
+  checkJoinAutoReturn();
 });
 </script>
 </body>
