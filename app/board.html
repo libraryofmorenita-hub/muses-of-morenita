@@ -174,16 +174,19 @@ body.tpl-archive .canvas-col {
    default is left as-is (it reads fine as a plain studio floor behind the
    crate), it just doesn't pan/zoom. */
 body.tpl-vinyl .canvas-col { cursor: default; }
+/* gallery is also static — a wall, not a pan/zoom surface or a crate. */
+body.tpl-gallery .canvas-col { cursor: default; }
 
 /* #canvas-inner is the bulletin template's 4000px pan/zoom surface; the
-   archive and vinyl templates only ever need a static, viewport-sized one. */
+   archive, vinyl, and gallery templates only ever need a static,
+   viewport-sized one. */
 #canvas-inner { position: absolute; }
 body.tpl-bulletin #canvas-inner {
   width: 4000px; height: 4000px; transform-origin: top left;
   transform: translate(-1600px, -1200px) scale(1);
 }
 body.tpl-bulletin #canvas-inner.smooth { transition: transform 0.05s ease-out; }
-body.tpl-archive #canvas-inner, body.tpl-vinyl #canvas-inner { width: 100%; height: 100%; }
+body.tpl-archive #canvas-inner, body.tpl-vinyl #canvas-inner, body.tpl-gallery #canvas-inner { width: 100%; height: 100%; }
 
 /* ── BULLETIN CARDS ───────────────────────────────
    Same visual system as the old bulletin-board.html — nothing here changed,
@@ -310,6 +313,50 @@ body.tpl-archive #canvas-inner, body.tpl-vinyl #canvas-inner { width: 100%; heig
 .vinyl-nav:hover { background: var(--gray-faint); }
 .vinyl-nav-prev { left: 40px; }
 .vinyl-nav-next { right: 40px; }
+
+/* ── GALLERY WALL ───────────────────────────────────
+   Fourth card family: a salon-style hang of varied-size frames, each
+   mounted with a small CSS-only stagger (vertical lift + jitter rotation)
+   computed from the item's position in the list — see renderGalleryWall().
+   Frame size itself (item.width/height) reuses the same SIZE_PRESETS the
+   designer already offers bulletin cards. */
+.gallery-wall {
+  position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-wrap: wrap; align-items: flex-end; align-content: center; justify-content: center;
+  gap: 30px 36px; padding: 70px 60px;
+}
+.gallery-frame-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+.gallery-frame {
+  position: relative; background: var(--pure-white); border: 10px solid var(--pure-white);
+  box-shadow: 2px 4px 18px rgba(0,0,0,0.14); transition: box-shadow 0.2s, transform 0.2s;
+}
+.gallery-frame-wrap:hover .gallery-frame { box-shadow: 3px 6px 26px rgba(0,0,0,0.22); transform: scale(1.015); }
+.gallery-frame::after { content: ''; position: absolute; inset: 0; border: 1px solid var(--gray-light); pointer-events: none; }
+.gallery-frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.gallery-frame-empty { width: 100%; height: 100%; background: var(--gray-faint); display: flex; align-items: center; justify-content: center; padding: 10px; text-align: center; }
+.gallery-frame-empty span { font-family: var(--font-display); font-weight: 300; font-size: 13px; color: var(--gray-mid); }
+.gallery-placard { margin-top: 10px; text-align: center; max-width: 220px; }
+.gallery-placard-title { font-family: var(--font-display); font-weight: 400; font-size: 13px; color: var(--black); }
+.gallery-placard-body { font-family: var(--font-body); font-weight: 300; font-size: 9px; letter-spacing: 0.03em; color: var(--gray-mid); margin-top: 3px; }
+
+/* ── GALLERY LIGHTBOX ───────────────────────────────── */
+#gallery-lightbox { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 95; }
+#gallery-lightbox.visible { display: flex; }
+.lightbox-backdrop { position: absolute; inset: 0; background: rgba(10,10,10,0.75); }
+.lightbox-content {
+  position: relative; max-width: min(860px, 88vw); max-height: 86vh; background: var(--pure-white);
+  padding: 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+}
+.lightbox-content img { display: block; max-width: 100%; max-height: 62vh; object-fit: contain; }
+.lightbox-placard { margin-top: 16px; text-align: center; max-width: 480px; }
+.lightbox-title { font-family: var(--font-display); font-weight: 400; font-size: 20px; color: var(--black); }
+.lightbox-body { font-family: var(--font-body); font-weight: 300; font-size: 12px; color: var(--gray-dark); line-height: 1.7; margin-top: 8px; }
+.lightbox-placard .card-project-view { margin-top: 12px; }
+.lightbox-close {
+  position: absolute; top: -16px; right: -16px; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--black); color: var(--white); border: none; font-size: 18px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
 
 /* ── EMPTY STATE ────────────────────────────────── */
 #empty-state { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1; }
@@ -439,6 +486,19 @@ body.tpl-archive #canvas-inner, body.tpl-vinyl #canvas-inner { width: 100%; heig
   </div>
 </div>
 
+<div id="gallery-lightbox">
+  <div class="lightbox-backdrop" onclick="closeLightbox()"></div>
+  <div class="lightbox-content">
+    <img id="lightbox-img" alt="">
+    <div class="lightbox-placard">
+      <div class="lightbox-title" id="lightbox-title"></div>
+      <div class="lightbox-body" id="lightbox-body"></div>
+      <div class="card-project-view" id="lightbox-link" style="display:none;">View Project</div>
+    </div>
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
+  </div>
+</div>
+
 <script>
 // One pinboard editor, two visual templates (?template=bulletin|archive,
 // default bulletin) — replaces bulletin-board.html + archive-stack.html,
@@ -453,8 +513,21 @@ body.tpl-archive #canvas-inner, body.tpl-vinyl #canvas-inner { width: 100%; heig
 
 const params = new URLSearchParams(window.location.search);
 const templateParam = params.get('template');
-const template = templateParam === 'archive' ? 'archive' : (templateParam === 'vinyl' ? 'vinyl' : 'bulletin');
+const template = templateParam === 'archive' ? 'archive'
+  : templateParam === 'vinyl' ? 'vinyl'
+  : templateParam === 'gallery' ? 'gallery'
+  : 'bulletin';
 document.body.classList.add('tpl-' + template);
+
+// board_items normally stores a full Supabase-storage URL (card-images
+// bucket) for image_url, but the gallery template's seeded paintings store
+// a path relative to the repo root (e.g. 'paintings/archives-countryside.jpg')
+// — same convention, same '../' fix-up, as amelia-arabe-portfolio.html's
+// resolveImageUrl(): board.html lives one level down from the repo root too.
+function resolveImageUrl(url) {
+  if (!url) return '';
+  return /^https?:\/\//.test(url) ? url : '../' + url;
+}
 
 // slug -> case-study / portfolio destination for PROJECT items. Amelia's
 // own catalog — a second Muse's board pointing at her own projects is a
@@ -475,8 +548,10 @@ const TYPES = template === 'archive'
   ? ['photo', 'document', 'sketch', 'ticket', 'note']
   : template === 'vinyl'
   ? ['record']
+  : template === 'gallery'
+  ? ['artwork']
   : ['image', 'text', 'project', 'link', 'color', 'audio'];
-const TYPE_LABELS = { image: 'Image', text: 'Text', project: 'Project', link: 'Link', color: 'Color', audio: 'Audio', photo: 'Photo', document: 'Document', sketch: 'Sketch', ticket: 'Ticket', note: 'Note', record: 'Record' };
+const TYPE_LABELS = { image: 'Image', text: 'Text', project: 'Project', link: 'Link', color: 'Color', audio: 'Audio', photo: 'Photo', document: 'Document', sketch: 'Sketch', ticket: 'Ticket', note: 'Note', record: 'Record', artwork: 'Artwork' };
 
 // ── STATE ──────────────────────────────────────────────
 let ownerProfile = null;
@@ -511,7 +586,7 @@ function handleParam(handle) {
 function applyProfileToShell(p) {
   const name = p.display_name || 'Muse';
   const hp = handleParam(p.handle);
-  document.title = `${template === 'archive' ? 'Archive' : template === 'vinyl' ? 'Vinyl Crate' : 'Bulletin Board'} — ${name}`;
+  document.title = `${template === 'archive' ? 'Archive' : template === 'vinyl' ? 'Vinyl Crate' : template === 'gallery' ? 'Gallery Wall' : 'Bulletin Board'} — ${name}`;
   document.getElementById('nav-logo').textContent = name;
   document.getElementById('nav-logo').onclick = () => window.location.href = 'amelia-arabe-portfolio.html' + hp;
   document.getElementById('nav-portfolio').onclick = () => window.location.href = 'amelia-arabe-portfolio.html' + hp;
@@ -520,7 +595,7 @@ function applyProfileToShell(p) {
   document.getElementById('sidebar-mobile-name').textContent = name;
   document.getElementById('sidebar-quote').textContent = p.quote || 'Building tools, systems, and platforms at the intersection of engineering and culture.';
   document.getElementById('footer-contact').textContent = [name, p.email_contact, p.phone].filter(Boolean).join(' · ');
-  document.getElementById('empty-title').textContent = template === 'archive' ? 'This archive is empty.' : template === 'vinyl' ? 'This crate is empty.' : 'This board is empty.';
+  document.getElementById('empty-title').textContent = template === 'archive' ? 'This archive is empty.' : template === 'vinyl' ? 'This crate is empty.' : template === 'gallery' ? 'This wall is empty.' : 'This board is empty.';
   document.getElementById('nav-profile').textContent = name.charAt(0).toUpperCase();
 }
 
@@ -585,10 +660,11 @@ function toggleStudioMode() {
 
 function openCardDesigner() { window.location.href = `card-designer.html?template=${template}`; }
 function openAddItemModal() {
-  // vinyl only ever has one item type (record) — skip the type-picker modal
-  // entirely and go straight to the designer, same shortcut a single-type
-  // "+ Add" button would take.
+  // vinyl and gallery only ever have one item type each (record / artwork)
+  // — skip the type-picker modal entirely and go straight to the designer,
+  // same shortcut a single-type "+ Add" button would take.
   if (template === 'vinyl') { addItemOfType('record'); return; }
+  if (template === 'gallery') { addItemOfType('artwork'); return; }
   document.getElementById('add-item-title').textContent = template === 'archive' ? 'Add Object' : 'Add Card';
   document.getElementById('add-item-grid').innerHTML = TYPES.map(t =>
     `<button class="aim-type-btn" onclick="addItemOfType('${t}')">${TYPE_LABELS[t]}</button>`).join('');
@@ -617,6 +693,7 @@ function updateEmptyState() {
 
 function renderItems() {
   if (template === 'vinyl') { renderVinylCrate(); return; }
+  if (template === 'gallery') { renderGalleryWall(); return; }
   canvasInner.innerHTML = '';
   itemEls.clear();
   items.forEach(item => {
@@ -988,7 +1065,7 @@ function vinylGoTo(i) {
 }
 
 // Keeps the crate's visual order in sync with z_index after a context-menu
-// "Bring to Front" / "Send to Back" — those two are shared across all three
+// "Bring to Front" / "Send to Back" — those two are shared across all four
 // templates, but only vinyl's layout is order-driven, so only it needs to
 // re-sort + re-render here; bulletin/archive restack via plain CSS z-index.
 function resortVinylAfterZChange() {
@@ -1002,6 +1079,117 @@ function resortVinylAfterZChange() {
   }
   renderVinylCrate();
 }
+
+// Same deal for the gallery wall — its hang order (and stagger pattern,
+// which is keyed off array index) is also order-driven, not CSS z-index.
+function resortGalleryAfterZChange() {
+  if (template !== 'gallery') return;
+  items.sort((a, b) => (a.z_index || 1) - (b.z_index || 1));
+  renderGalleryWall();
+}
+
+// ── GALLERY WALL RENDERING ─────────────────────────────────
+// Fourth card family, also its own layout mechanic (not free-placed like
+// bulletin, not sequential like vinyl) — a salon-style hang where frame
+// size comes from item.width/height (same SIZE_PRESETS the designer
+// reuses) but POSITION is an auto-arranged stagger computed from each
+// item's position in the (z_index-sorted) list, same spirit as vinyl's
+// z_index-driven order. x/y/rotation columns are never read or written;
+// the rotation you see is a deterministic per-id jitter, recomputed on
+// every render, not stored.
+const WALL_LIFT_PATTERN = [0, 30, -18, 14, -26, 8];
+
+function wallJitter(id, range) {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return ((h % 2000) / 2000 - 0.5) * 2 * range;
+}
+
+function renderGalleryWall() {
+  canvasInner.innerHTML = '';
+  itemEls.clear();
+  const wall = document.createElement('div');
+  wall.className = 'gallery-wall';
+  items.forEach((item, i) => {
+    const el = createFrameEl(item, i);
+    wall.appendChild(el);
+    itemEls.set(item.id, el);
+  });
+  canvasInner.appendChild(wall);
+}
+
+function createFrameEl(item, index) {
+  const w = item.width || 240;
+  const h = item.height || 180;
+  const rot = wallJitter(item.id, 2.2);
+  const lift = WALL_LIFT_PATTERN[index % WALL_LIFT_PATTERN.length];
+
+  const wrap = document.createElement('div');
+  wrap.className = 'gallery-frame-wrap' + (studioMode ? ' studio-drag' : '');
+  wrap.dataset.id = item.id;
+  wrap.style.transform = `translateY(${lift}px) rotate(${rot}deg)`;
+
+  const frame = document.createElement('div');
+  frame.className = 'gallery-frame';
+  frame.style.width = w + 'px';
+  frame.style.height = h + 'px';
+  // No cover-art placeholder the way vinyl has one — an artwork with no
+  // image_url yet gets a plain empty mat with its title, never a faked image.
+  frame.innerHTML = item.image_url
+    ? `<img src="${esc(resolveImageUrl(item.image_url))}" alt="">`
+    : `<div class="gallery-frame-empty"><span>${esc(item.title || 'Untitled')}</span></div>`;
+  wrap.appendChild(frame);
+
+  if (item.title || item.body) {
+    const placard = document.createElement('div');
+    placard.className = 'gallery-placard';
+    placard.innerHTML = `
+      ${item.title ? `<div class="gallery-placard-title">${esc(item.title)}</div>` : ''}
+      ${item.body ? `<div class="gallery-placard-body">${esc(item.body)}</div>` : ''}
+    `;
+    wrap.appendChild(placard);
+  }
+
+  wrap.addEventListener('click', () => openLightbox(item));
+  wrap.addEventListener('contextmenu', (e) => {
+    if (!studioMode) return;
+    e.preventDefault();
+    showContextMenu(e, item, wrap);
+  });
+
+  return wrap;
+}
+
+function openLightbox(item) {
+  const img = document.getElementById('lightbox-img');
+  if (item.image_url) {
+    img.src = resolveImageUrl(item.image_url);
+    img.style.display = '';
+  } else {
+    img.removeAttribute('src');
+    img.style.display = 'none';
+  }
+  // textContent, not innerHTML — no esc() needed, the browser never parses this as markup.
+  document.getElementById('lightbox-title').textContent = item.title || '';
+  const bodyEl = document.getElementById('lightbox-body');
+  bodyEl.textContent = item.body || '';
+  bodyEl.style.display = item.body ? '' : 'none';
+
+  const linkEl = document.getElementById('lightbox-link');
+  const projectLink = item.project_id && PROJECT_LINKS[item.project_id];
+  if (projectLink || item.link_url) {
+    linkEl.style.display = '';
+    linkEl.onclick = () => {
+      if (projectLink) window.location.href = projectLink.url;
+      else window.open(item.link_url, '_blank', 'noopener');
+    };
+  } else {
+    linkEl.style.display = 'none';
+    linkEl.onclick = null;
+  }
+  document.getElementById('gallery-lightbox').classList.add('visible');
+}
+function closeLightbox() { document.getElementById('gallery-lightbox').classList.remove('visible'); }
 
 // ── CONTEXT MENU (shared) ────────────────────────────────
 function showContextMenu(e, item, el) {
@@ -1044,6 +1232,8 @@ async function ctxDelete() {
   itemEls.delete(item.id);
   if (template === 'vinyl') {
     renderVinylCrate();
+  } else if (template === 'gallery') {
+    renderGalleryWall();
   } else {
     el.remove();
   }
@@ -1057,6 +1247,7 @@ async function ctxBringFront() {
   item.z_index = maxZ + 1;
   el.style.zIndex = item.z_index;
   resortVinylAfterZChange();
+  resortGalleryAfterZChange();
   await sb.from('board_items').update({ z_index: item.z_index, updated_at: new Date() }).eq('id', item.id);
 }
 async function ctxSendBack() {
@@ -1066,6 +1257,7 @@ async function ctxSendBack() {
   item.z_index = 1;
   el.style.zIndex = 1;
   resortVinylAfterZChange();
+  resortGalleryAfterZChange();
   await sb.from('board_items').update({ z_index: 1, updated_at: new Date() }).eq('id', item.id);
 }
 async function ctxRotateLeft() {

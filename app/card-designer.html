@@ -260,6 +260,18 @@ body {
     radial-gradient(circle at center, var(--black-soft) 0 5%, transparent 5.5%);
 }
 .sleeve-placeholder-title { position: relative; z-index: 2; padding: 24px; font-family: var(--font-display); font-weight: 400; font-size: 22px; color: var(--black); line-height: 1.3; }
+
+/* ── PREVIEW FRAME (gallery) — same visual rules as board.html's gallery
+   template; the designer only ever shows a single frame, no wall stagger ── */
+.gallery-frame-wrap { display: flex; flex-direction: column; align-items: center; }
+.gallery-frame { position: relative; background: var(--pure-white); border: 10px solid var(--pure-white); box-shadow: 2px 4px 18px rgba(0,0,0,0.14); }
+.gallery-frame::after { content: ''; position: absolute; inset: 0; border: 1px solid var(--gray-light); pointer-events: none; }
+.gallery-frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.gallery-frame-empty { width: 100%; height: 100%; background: var(--gray-faint); display: flex; align-items: center; justify-content: center; padding: 10px; text-align: center; }
+.gallery-frame-empty span { font-family: var(--font-display); font-weight: 300; font-size: 13px; color: var(--gray-mid); }
+.gallery-placard { margin-top: 10px; text-align: center; max-width: 220px; }
+.gallery-placard-title { font-family: var(--font-display); font-weight: 400; font-size: 13px; color: var(--black); }
+.gallery-placard-body { font-family: var(--font-body); font-weight: 300; font-size: 9px; letter-spacing: 0.03em; color: var(--gray-mid); margin-top: 3px; }
 </style>
 </head>
 <body>
@@ -288,15 +300,32 @@ body {
 
 const params = new URLSearchParams(window.location.search);
 const templateParam = params.get('template');
-const template = templateParam === 'archive' ? 'archive' : (templateParam === 'vinyl' ? 'vinyl' : 'bulletin');
+const template = templateParam === 'archive' ? 'archive'
+  : templateParam === 'vinyl' ? 'vinyl'
+  : templateParam === 'gallery' ? 'gallery'
+  : 'bulletin';
 const ARCHIVE_TYPES = ['photo', 'document', 'sketch', 'ticket', 'note'];
-let cardType = params.get('type') || (template === 'archive' ? 'photo' : (template === 'vinyl' ? 'record' : 'text'));
+let cardType = params.get('type') || (template === 'archive' ? 'photo' : template === 'vinyl' ? 'record' : template === 'gallery' ? 'artwork' : 'text');
 const editId = params.get('id');
 const isArchive = ARCHIVE_TYPES.includes(cardType);
 // vinyl only ever has the one type (record) — its own branch, distinct
 // from both the bulletin (free-placed, resizable) and archive (rotatable,
 // orientable) sizing/rotation controls below.
 const isVinyl = template === 'vinyl';
+// gallery's one type (artwork) deliberately reuses bulletin's sizing +
+// orientation controls as-is (see buildBaseData()/renderControls() below)
+// — a salon frame benefits from the same portrait/landscape choice a
+// painting's own aspect ratio calls for, same SIZE_PRESETS scale.
+const isGallery = template === 'gallery';
+
+// Matches amelia-arabe-portfolio.html's resolveImageUrl(): board_items
+// normally stores a full Supabase-storage URL (card-images bucket), but the
+// gallery template's seeded paintings store a path relative to the repo
+// root — this designer lives one level down from it too (app/card-designer.html).
+function resolveImageUrl(url) {
+  if (!url) return '';
+  return /^https?:\/\//.test(url) ? url : '../' + url;
+}
 // One shared table (board_items, discriminated by `template`) replacing the
 // old per-template table switch — see the "structural rebuild" plan, Phase
 // 3. Editing requires real auth now: RLS is owner-write, so `currentUser`
@@ -322,7 +351,7 @@ const SIZE_PRESETS = {
   wide: { label: 'Wide',   width: 360, height: 160 },
 };
 
-const TYPE_LABELS = { image: 'Image', text: 'Text', project: 'Project', link: 'Link', color: 'Color', audio: 'Audio', photo: 'Photo', document: 'Document', sketch: 'Sketch', ticket: 'Ticket', note: 'Note', record: 'Record' };
+const TYPE_LABELS = { image: 'Image', text: 'Text', project: 'Project', link: 'Link', color: 'Color', audio: 'Audio', photo: 'Photo', document: 'Document', sketch: 'Sketch', ticket: 'Ticket', note: 'Note', record: 'Record', artwork: 'Artwork' };
 
 // which fields apply per type
 const TYPE_CONFIG = {
@@ -340,6 +369,12 @@ const TYPE_CONFIG = {
   // fixed-size sleeve — no fontSize (not user-resizable text) and no
   // SIZE_PRESETS branch at all (see the isVinyl guards below).
   record:   { title: true,  body: true,  link: true,  fontSize: false, image: true },
+  // salon frame — title + optional body (the placard's medium/description
+  // line) + optional link + image; reuses the bulletin Size/Orientation
+  // controls below (see the isGallery note above) for the frame's own
+  // width/height, so no fontSize and no `style` (no bg/text color — a
+  // museum mat is always plain white, not a user-pickable color).
+  artwork:  { title: true,  body: true,  link: true,  fontSize: false, image: true },
 };
 
 // ── STATE ──────────────────────────────────────────────
@@ -623,7 +658,10 @@ function onFileChosen(e) {
 // ── PREVIEW RENDERING ────────────────────────────────────
 function updatePreview() {
   const stage = document.getElementById('preview-stage');
-  const displayImage = state.imageFileDataUrl || state.imageUrl;
+  // A freshly-chosen file is already a data: URL (leave it alone); a URL
+  // loaded from an existing row or pasted into the URL field goes through
+  // resolveImageUrl() in case it's a gallery item's repo-relative path.
+  const displayImage = state.imageFileDataUrl || resolveImageUrl(state.imageUrl);
 
   if (isArchive) {
     const el = document.createElement('div');
@@ -637,6 +675,21 @@ function updatePreview() {
     const el = document.createElement('div');
     el.className = 'vinyl-sleeve active preview-item';
     el.innerHTML = `<div class="sleeve-inner"><div class="sleeve-face sleeve-front">${renderVinylPreviewFront(displayImage)}</div></div>`;
+    stage.innerHTML = '';
+    stage.appendChild(el);
+  } else if (isGallery) {
+    const preset = SIZE_PRESETS[state.sizePreset];
+    const [w, h] = state.orientation === 'portrait' ? [preset.height, preset.width] : [preset.width, preset.height];
+    const el = document.createElement('div');
+    el.className = 'gallery-frame-wrap preview-item';
+    el.innerHTML = `
+      <div class="gallery-frame" style="width:${w}px;height:${h}px;">${renderGalleryPreviewFrame(displayImage)}</div>
+      ${(state.title || state.body) ? `
+        <div class="gallery-placard">
+          ${state.title ? `<div class="gallery-placard-title">${esc(state.title)}</div>` : ''}
+          ${state.body ? `<div class="gallery-placard-body">${esc(state.body)}</div>` : ''}
+        </div>` : ''}
+    `;
     stage.innerHTML = '';
     stage.appendChild(el);
   } else {
@@ -744,6 +797,16 @@ function renderVinylPreviewFront(displayImage) {
   `;
 }
 
+// No cover-art placeholder the way vinyl has one — matches board.html's
+// gallery frame rendering: no image yet is a plain empty mat with the
+// title, never a faked image.
+function renderGalleryPreviewFrame(displayImage) {
+  if (displayImage) {
+    return `<img src="${esc(displayImage)}" alt="">`;
+  }
+  return `<div class="gallery-frame-empty"><span>${esc(state.title || 'Untitled')}</span></div>`;
+}
+
 // ── SAVE ───────────────────────────────────────────────
 async function uploadImage(file, cardId) {
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
@@ -772,6 +835,11 @@ function buildBaseData() {
     // Fixed-size sleeve — no bulletin width/height/text_color/font_size,
     // no archive orientation. Just the shared base fields above.
   } else if (!isArchive) {
+    // Bulletin AND gallery land here — a salon frame's width/height comes
+    // from the exact same SIZE_PRESETS + orientation choice as a bulletin
+    // card (see the isGallery note up top). text_color/font_size end up
+    // unused by gallery's frame rendering, same harmless leftover vinyl's
+    // bg_color already is.
     const preset = SIZE_PRESETS[state.sizePreset];
     const [w, h] = state.orientation === 'portrait' ? [preset.height, preset.width] : [preset.width, preset.height];
     data.width = w;
