@@ -343,7 +343,7 @@ create index if not exists client_contacts_user_id_idx on client_contacts(user_i
 --  STUDIO — CLIENT PROJECTS
 --  One row per project engagement with a client.
 --  portal_token is the uuid used in the shareable status link:
---    portal.html?token=<portal_token>
+--    (client status link; the standalone portal page no longer exists in this repo)
 --  A client never gets an account — the link is read entirely through
 --  get_portal_project() below, which is the only thing anon can call.
 -- ═══════════════════════════════════════════════════════
@@ -442,7 +442,7 @@ create policy "project_milestones: owner only"
   with check (auth.uid() = (select user_id from client_projects where id = project_id));
 
 -- The one, deliberately narrow, way a client (no account) reads their
--- project — see portal.html.
+-- project (the client status link).
 create or replace function public.get_portal_project(p_token uuid)
 returns table (
   project_name text,
@@ -473,7 +473,7 @@ grant execute on function public.get_portal_project(uuid) to anon, authenticated
 
 -- ═══════════════════════════════════════════════════════
 --  PIPELINE — JOB APPLICATIONS
---  The live data source for job-tracker.html. LIVE in the new dedicated
+--  The live data source for the job tracker (now in morenita-dashboard). LIVE in the new dedicated
 --  project (kebmscbmfzpvcqrvvpul) as of 2026-09-09, with its 67 real rows
 --  migrated verbatim. NOTE: no user_id column — this table was never
 --  per-user in the live database, unlike its older declaration (kept

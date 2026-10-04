@@ -832,7 +832,7 @@ body { padding-top: 52px; }
   border-color: var(--espresso);
 }
 
-/* min-height keeps the footer below the fold even when few search results collapse the grid.
+/* min-height keeps the footer below the fold even when few cards remain after filtering.
    align-content: start prevents remaining cards from stretching to fill the empty space. */
 .muse-grid {
   display: grid;
@@ -896,50 +896,6 @@ body { padding-top: 52px; }
   padding: 2px 7px;
 }
 
-/* sticky sits 10px off the viewport bottom. #footer-muses gets 72px padding-top so the
-   footer content always clears the bar at full scroll — sticky + in-flow siblings overlap otherwise. */
-.muses-search {
-  position: sticky;
-  bottom: 10px;
-  left: 48px;
-  right: 48px;
-  z-index: 50;
-  margin: 0 auto;
-  max-width: calc(100% - 96px);
-  background: rgba(15, 9, 4, 0.55);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 0.5px solid rgba(255, 255, 255, 0.08);
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
-}
-
-.search-icon {
-  font-size: 16px;
-  color: var(--parchment-dim);
-  flex-shrink: 0;
-}
-
-.search-input {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: 18px;
-  color: var(--parchment);
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  caret-color: var(--parchment);
-  min-width: 0;
-}
-
-.search-input::placeholder {
-  color: var(--parchment-dim);
-}
-
 .muses-no-results {
   padding: 48px;
   text-align: center;
@@ -951,20 +907,6 @@ body { padding-top: 52px; }
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--parchment-dim);
-}
-
-.search-filters-btn {
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #CCCCCC;
-  border: 0.5px solid #555555;
-  padding: 7px 16px;
-  cursor: pointer;
-  background: transparent;
-  flex-shrink: 0;
 }
 
 /* ═══════════════════════════════════════
@@ -1961,7 +1903,6 @@ body { padding-top: 52px; }
   /* Muses */
   .muses-header { padding: 32px 20px 24px; }
   .muse-grid { grid-template-columns: 1fr 1fr; padding: 24px 20px 24px; gap: 16px; }
-  .muses-search { max-width: calc(100% - 32px); left: 16px; right: 16px; bottom: 10px; }
 
   /* Archive */
   .archive-hero { grid-template-columns: 1fr; gap: 32px; padding: 48px 20px; }
@@ -2275,19 +2216,12 @@ body { padding-top: 52px; }
 
   </div>
 
-  <!-- Floating search bar -->
-  <div class="muses-search">
-    <span class="search-icon">&#9906;</span>
-    <input type="text" class="search-input" id="muses-search-input" placeholder="Search by name, discipline, or skill..." oninput="applyMusesFilters()" autocomplete="off" spellcheck="false">
-    <button class="search-filters-btn" onclick="clearMusesSearch()">Clear</button>
-  </div>
-
   <!-- No-results state -->
   <div class="muses-no-results" id="muses-no-results" style="display:none;">
-    <div class="muses-no-results-text">No muses match your search.</div>
+    <div class="muses-no-results-text">No muses match this filter.</div>
   </div>
 
-  <div id="footer-muses" style="padding-top: 72px;"></div>
+  <div id="footer-muses"></div>
 </div>
 
 <!-- ═══════════════════════════════════════
@@ -3184,31 +3118,25 @@ function updateStrength(val) {
   }
 }
 
-// ─── MUSES FILTER + SEARCH ─────────────────────────────
+// ─── MUSES FILTER ─────────────────────────────
 let musesActiveFilter = 'all';
 
 function applyMusesFilters() {
-  const q = (document.getElementById('muses-search-input')?.value || '').trim().toLowerCase();
   const f = musesActiveFilter;
   const cards = document.querySelectorAll('#page-muses .muse-card');
   let visibleCount = 0;
 
   cards.forEach(card => {
-    const name = card.querySelector('.muse-name')?.textContent.toLowerCase() || '';
-    const role = card.querySelector('.muse-role')?.textContent.toLowerCase() || '';
     const tagEls = Array.from(card.querySelectorAll('.muse-tag'));
-    const tagText = tagEls.map(t => t.textContent.toLowerCase()).join(' ');
-
-    const matchesSearch = !q || name.includes(q) || role.includes(q) || tagText.includes(q);
     const matchesFilter = f === 'all' || tagEls.some(t => t.textContent === f);
 
-    const visible = matchesSearch && matchesFilter;
+    const visible = matchesFilter;
     card.style.display = visible ? '' : 'none';
     if (visible) visibleCount++;
   });
 
   const noResults = document.getElementById('muses-no-results');
-  if (noResults) noResults.style.display = visibleCount === 0 && (q || f !== 'all') ? 'block' : 'none';
+  if (noResults) noResults.style.display = visibleCount === 0 && f !== 'all' ? 'block' : 'none';
 }
 
 function musesFilterClick(el) {
@@ -3216,11 +3144,6 @@ function musesFilterClick(el) {
   el.classList.add('active');
   musesActiveFilter = el.dataset.filter;
   applyMusesFilters();
-}
-
-function clearMusesSearch() {
-  const input = document.getElementById('muses-search-input');
-  if (input) { input.value = ''; applyMusesFilters(); input.focus(); }
 }
 
 // ─── ARCHIVE PRODUCTS ──────────────────────────────────

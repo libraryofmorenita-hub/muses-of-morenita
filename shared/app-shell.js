@@ -37,8 +37,8 @@
 
   // Server-verified auth guard. Always sb.auth.getUser() (asks Supabase to
   // validate the session), never getSession() alone (only reads the locally
-  // stored JWT without verifying it) — see portal.html's older pattern for
-  // the weaker version this replaces. Redirects to loginPath if there's no
+  // stored JWT without verifying it) — the weaker getSession()-only
+  // pattern is what this replaces. Redirects to loginPath if there's no
   // verified session; otherwise resolves with the user.
   window.requireAuth = async function requireAuth(loginPath) {
     const { data: { user }, error } = await sb.auth.getUser();
