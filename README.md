@@ -2,7 +2,9 @@
 
 Amelia Arabe's personal platform: a portfolio and the early build-out of Muses of Morenita — a directory/platform for multi-hyphenate creatives to hold every career under one roof.
 
-This repo is public and deployed via GitHub Pages at **https://libraryofmorenita-hub.github.io/muses-of-morenita/**, which redirects to the platform site (`app/morenita-institute-public.html`). Amelia's own portfolio lives at `app/amelia-arabe-portfolio.html` and is linked from there. `index.html` at the repo root is a legacy build kept for reference — not part of the live site.
+This repo is public and deployed via GitHub Pages at **https://libraryofmorenita-hub.github.io/muses-of-morenita/**. The root `index.html` is the platform's public site. Amelia's own portfolio lives at `/portfolio/` and is linked from there.
+
+**Pretty paths (Oct 2026):** every page is a folder with an `index.html`, so URLs have no `.html` and no `/app/`. The old addresses (`app/*.html`, `app/templates/*.html`) remain as tiny redirect stubs that keep `?query` and `#hash`, so shared links and old sign-in emails still work.
 
 ## Stack
 
@@ -11,22 +13,19 @@ Static HTML/CSS/JS pages (no build step) backed by [Supabase](https://supabase.c
 ## Structure
 
 ```
-app/
-  amelia-arabe-portfolio.html   The live portfolio template — role toggles (engineer/inventor/painter/cellist/visual),
-                                 project grid, services, wishlist/inquiry flow. Resolves whose portfolio via
-                                 ?u=<handle> (default 'amelia-arabe'), not a hardcoded email — any Muse's
-                                 portfolio renders from this one file.
-  templates/                    case-study.html / artwork.html / collection.html — one shared case-study
-                                 template (parameterized by ?from=<role>) plus the Fine Art artwork/collection
-                                 pair. Each fetches its own row by ?id= and joins the owning profile.
-  muses-portal.html             Auth-gated member portal (formerly dashboard.html, renamed to avoid
-                                 colliding with Morenita Technology's own internal dashboard) — CRUD for
-                                 profile, career toggles, projects, services, links, and products.
-  morenita-institute-public.html   The platform's public marketing/directory SPA (hash-routed).
-  board.html                    One pinboard editor, two visual templates (?template=bulletin|archive) —
-                                 replaces the old bulletin-board.html/archive-stack.html fork. Editing requires
-                                 being signed in as the board's owner (real RLS, not a shared password).
-  card-designer.html            Shared sub-editor board.html redirects to for adding/editing a single item.
+index.html            The platform's public marketing/directory SPA (hash-routed). Served at /.
+portfolio/            The live portfolio template — role toggles (engineer/inventor/painter/cellist/visual),
+                       project grid, services, wishlist/inquiry flow. Resolves whose portfolio via
+                       ?u=<handle> (default 'amelia-arabe'), not a hardcoded email.
+case-study/           One shared case-study template (parameterized by ?from=<role>), plus
+artwork/ collection/   the Fine Art artwork/collection pair, and
+model-gallery/         the swipeable photo-gallery variant. Each fetches its own row by ?id=.
+portal/               Auth-gated member portal (formerly dashboard.html) — CRUD for profile, career
+                       toggles, projects, services, links, and products.
+board/                One pinboard editor, four visual templates (?template=bulletin|archive|vinyl|gallery).
+                       Editing requires being signed in as the board's owner (real RLS).
+designer/             Shared sub-editor board/ sends you to for adding/editing a single item.
+app/                  Redirect stubs only (old .html addresses). Safe to delete once nobody links to them.
 
 shared/
   app-shell.js         The one Supabase client + esc()/requireAuth()/getProfileByHandle() helper, loaded by
@@ -38,8 +37,6 @@ supabase/
   seed-pipeline.sql     Seeds job-application pipeline data.
   seed-portfolio.sql    Seeds career_toggles + projects for the portfolio.
 legal/                Cookie notice, privacy policy, terms of service (PDFs).
-index.html             Redirects to app/morenita-institute-public.html — the actual legacy build this used
-                        to be lives in git history, not the current file (see the 2026-09-08 commit).
 morenita-pitch-deck.html   Pitch deck for Muses of Morenita as a product.
 ```
 
@@ -47,7 +44,7 @@ Not in this repo: a separate Next.js prototype lives alongside this folder local
 
 ## Deploying the portfolio
 
-The public portfolio site is a trimmed export of `app/amelia-arabe-portfolio.html` + `app/templates/` + the handful of image assets it references, pushed to the `amelia-arabe` repo's `main` branch and served via GitHub Pages from `/`. It is **not** a mirror of this repo — client files, resumes, the job tracker, and the Supabase schema stay out of the public repo entirely.
+The public portfolio site is a trimmed export of `portfolio/` + `case-study/` + `artwork/` + `collection/` + `model-gallery/` + the handful of image assets it references, pushed to the `amelia-arabe` repo's `main` branch and served via GitHub Pages from `/`. It is **not** a mirror of this repo — client files, resumes, the job tracker, and the Supabase schema stay out of the public repo entirely.
 
 ## Database
 
