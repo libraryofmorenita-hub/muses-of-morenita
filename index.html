@@ -3,8 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Muses of Morenita</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpolygon%20fill%3D%22%23F5B942%22%20points%3D%2216.00%2C2.00%2018.30%2C10.46%2025.90%2C6.10%2021.54%2C13.70%2030.00%2C16.00%2021.54%2C18.30%2025.90%2C25.90%2018.30%2C21.54%2016.00%2C30.00%2013.70%2C21.54%206.10%2C25.90%2010.46%2C18.30%202.00%2C16.00%2010.46%2C13.70%206.10%2C6.10%2013.70%2C10.46%22/%3E%3C/svg%3E">
+<title>Morenita Technology | Inventions, stories and the people behind them</title>
+<meta name="description" content="Morenita Technology is a creative technology studio in Los Angeles building modular tech, sustainable energy and functional fashion. Founded by engineer Amelia Arabe.">
+<meta name="theme-color" content="#a8503f">
+<meta property="og:site_name" content="Morenita Technology">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Morenita Technology">
+<meta property="og:description" content="Morenita Technology is a creative technology studio in Los Angeles building modular tech, sustainable energy and functional fashion. Founded by engineer Amelia Arabe.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpolygon%20fill%3D%22%23a8503f%22%20points%3D%2216.00%2C2.00%2018.30%2C10.46%2025.90%2C6.10%2021.54%2C13.70%2030.00%2C16.00%2021.54%2C18.30%2025.90%2C25.90%2018.30%2C21.54%2016.00%2C30.00%2013.70%2C21.54%206.10%2C25.90%2010.46%2C18.30%202.00%2C16.00%2010.46%2C13.70%206.10%2C6.10%2013.70%2C10.46%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -18,13 +24,15 @@
   /* Light text for dark sections */
   --parchment: #EEEEEE;
   --parchment-dim: #AAAAAA;
-  /* Accent — mid gray, ~4:1 contrast on both white and #111 */
-  --gold: #888888;
-  --gold-dim: rgba(120,120,120,0.2);
-  --gold-faint: rgba(120,120,120,0.08);
+  /* Accent: wine, matching Morenita Internal (--wine #a8503f). ~5.4:1 on white.
+     --gold-on-dark is the lighter tint used on near-black sections (~5.5:1 on #111). */
+  --gold: #a8503f;
+  --gold-on-dark: #d08a76;
+  --gold-dim: rgba(168,80,63,0.2);
+  --gold-faint: rgba(168,80,63,0.08);
   /* CTA button */
-  --terra: #222222;
-  --terra-light: #444444;
+  --terra: #a8503f;
+  --terra-light: #bd6350;
   /* Light section backgrounds */
   --white: #FFFFFF;
   --gray-light: #F5F5F5;
@@ -1947,6 +1955,26 @@ body { padding-top: 52px; }
   .footer-row1 { grid-template-columns: 1fr; }
   .name-row { grid-template-columns: 1fr; }
 }
+
+/* ─── Wine accent on dark sections ─── */
+#footer, .platform-band, .archive-hero, .contact-band, .join-cta-box, .login-page, .join-page { --gold: var(--gold-on-dark); }
+
+/* ─── Dynamic Archive ─── */
+.facet-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:7px; background: var(--dot, var(--gold)); vertical-align:middle; }
+.archive-facet-label { font-family: var(--font-body); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-dark); margin-right: 8px; align-self:center; }
+.archive-filter-bar { flex-wrap: wrap; align-items: center; }
+.archive-count { padding: 16px 48px 0; font-family: var(--font-body); font-size: 11px; color: var(--gray-dark); letter-spacing: 0.04em; }
+.product-card[data-href] { cursor: pointer; transition: border-color .15s ease; }
+.product-card[data-href]:hover { border-color: var(--gold); }
+.product-title a { color: inherit; text-decoration: none; }
+.product-title a:hover { color: var(--gold); }
+.product-tags { font-family: var(--font-body); font-size: 11px; color: var(--gray-dark); margin-top: 10px; line-height: 1.5; }
+.product-bar { height: 3px; background: var(--bar, var(--gold)); }
+.home-const { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.home-const .filter-pill { text-decoration:none; }
+.mission-cta { display:flex; gap:12px; flex-wrap:wrap; margin-top:22px; }
+@media (max-width: 768px) { .archive-count { padding: 14px 20px 0; } }
+.product-consts { font-family: var(--font-body); font-size: 11px; color: var(--gray-dark); margin-top: 10px; display:flex; flex-wrap:wrap; gap:4px 12px; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js"></script>
 <script src="shared/app-shell.js"></script>
@@ -1957,13 +1985,11 @@ body { padding-top: 52px; }
 <nav id="nav">
   <a class="nav-logo" onclick="navigate('/')">Morenita Technology</a>
   <div class="nav-center">
-    <a data-route="/muses" onclick="navigate('/muses')">The Muses</a>
-    <a data-route="/archive" onclick="navigate('/archive')">The Archive</a>
+    <a data-route="/archive" onclick="navigate('/archive')">Archive</a>
+    <a data-route="/mission" onclick="navigate('/mission')">Mission</a>
     <a data-route="/about" onclick="navigate('/about')">About</a>
   </div>
   <div class="nav-right">
-    <a class="nav-signin" onclick="navigate('/login')">Sign In</a>
-    <a class="nav-join" onclick="navigate('/join')">Join</a>
     <div class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburger">
       <span></span><span></span><span></span>
     </div>
@@ -1972,11 +1998,10 @@ body { padding-top: 52px; }
 
 <!-- Mobile menu -->
 <div class="nav-mobile-menu" id="mobileMenu">
-  <a onclick="navigate('/muses'); closeMobileMenu()">The Muses</a>
-  <a onclick="navigate('/archive'); closeMobileMenu()">The Archive</a>
+  <a onclick="navigate('/'); closeMobileMenu()">Home</a>
+  <a onclick="navigate('/archive'); closeMobileMenu()">Archive</a>
+  <a onclick="navigate('/mission'); closeMobileMenu()">Mission</a>
   <a onclick="navigate('/about'); closeMobileMenu()">About</a>
-  <a onclick="navigate('/login'); closeMobileMenu()">Sign In</a>
-  <a onclick="navigate('/join'); closeMobileMenu()">Join</a>
 </div>
 
 <!-- ═══════════════════════════════════════
@@ -1987,8 +2012,8 @@ body { padding-top: 52px; }
   <!-- Masthead date strip -->
   <div class="masthead-strip" id="mastheadStrip">
     <span id="mastheadDate"></span>
-    <span>Los Angeles, CA &mdash; Creative Technology</span>
-    <span>Established 2025 &mdash; Morenita Technology</span>
+    <span>Modular Tech &middot; Sustainable Energy &middot; Functional Fashion</span>
+    <span>Los Angeles, CA &mdash; Established 2025</span>
   </div>
 
   <!-- Above fold: three column grid -->
@@ -2039,33 +2064,31 @@ body { padding-top: 52px; }
     <div class="landing-sidebar">
       <div class="sidebar-section-label">From the Archive</div>
       <div class="archive-card">
-        <div class="img-ph archive-img">Archive Image</div>
-        <div class="archive-card-title">Multi-Hyphenate Job Kit</div>
-        <div class="archive-card-meta">Digital Product &middot; $47</div>
-        <div class="archive-card-body">ATS resume template, cover letter framework, and role targeting worksheet. For creatives who cannot fit into one box.</div>
-        <a class="ghost-link" onclick="navigate('/archive')">Get in The Archive</a>
+        <div class="archive-card-title">Browse by constellation</div>
+        <div class="archive-card-body">Every story, invention and product is tagged into a constellation, so you can follow one thread across everything we make.</div>
+        <div class="home-const" id="home-constellations"></div>
+        <a class="ghost-link" style="display:inline-block;margin-top:14px;" onclick="navigate('/archive')">Open the Archive</a>
       </div>
 
       <div class="join-cta-box">
-        <div class="join-cta-head">Your career deserves a home.</div>
-        <div class="join-cta-body">Muses of Morenita is where multi-hyphenate creatives organize every version of themselves. Free to join.</div>
-        <button class="join-cta-btn" onclick="navigate('/join')">Join the Muses</button>
-        <div class="join-cta-sub">Free to start. No credit card.</div>
+        <div class="join-cta-head">Technology for people.</div>
+        <div class="join-cta-body">We build technology that fosters community and preserves charisma: modular tech, sustainable energy and functional fashion.</div>
+        <button class="join-cta-btn" onclick="navigate('/mission')">Read the mission</button>
       </div>
     </div>
   </div>
 
   <!-- Section divider strip -->
   <div class="divider-strip">
-    <span>More from the Muses</span>
+    <span>More Stories</span>
   </div>
 
   <!-- Below fold: four column grid -->
   <div class="below-fold">
     <div class="below-card" style="cursor:pointer;" onclick="window.location.href='case-study/?id=1e0d380d-f859-43f6-9795-3d8b406cb436&from=engineer'">
       <div class="img-ph below-img">Case Study</div>
-      <div class="below-category">Case Study</div>
-      <div class="below-title">Meet Madeline: The First Muse on the Platform</div>
+      <div class="below-category">Collaborator</div>
+      <div class="below-title">Meet Madeline Abiera, Film Director</div>
       <div class="below-meta">Amelia Arabe &nbsp;&middot;&nbsp; 4 min read</div>
     </div>
     <div class="below-card" style="cursor:pointer;" onclick="window.location.href='case-study/?id=f6229ff2-b5a7-4887-ae16-e283c2f66b0d&from=inventor'">
@@ -2091,36 +2114,36 @@ body { padding-top: 52px; }
   <!-- Platform intro band -->
   <div class="platform-band">
     <div>
-      <div class="platform-eyebrow">Muses of Morenita</div>
-      <div class="platform-heading">Where multi-hyphenate creatives build their world.</div>
+      <div class="platform-eyebrow">Morenita Technology</div>
+      <div class="platform-heading">Technology for people, built to foster community and preserve charisma.</div>
     </div>
     <div>
-      <div class="platform-body">A platform for creatives who refuse to be one thing. Organize every version of your career in one place. Publish your work. Run your business. Discover your people.</div>
+      <div class="platform-body">A creative technology studio in Los Angeles. We make modular tech, sustainable energy systems and functional fashion, and we write about how each one is made.</div>
       <div class="platform-btns">
-        <button class="btn-terra" onclick="navigate('/join')">Join the Muses</button>
-        <button class="btn-outline-light" onclick="navigate('/muses')">Browse the Muses</button>
+        <button class="btn-terra" onclick="navigate('/mission')">Read the mission</button>
+        <button class="btn-outline-light" onclick="navigate('/archive')">Explore the archive</button>
       </div>
     </div>
   </div>
 
   <!-- Feature tiles -->
   <div class="feature-section">
-    <div class="feature-eyebrow">What you get</div>
+    <div class="feature-eyebrow">What we build</div>
     <div class="feature-tiles">
       <div class="feature-tile">
         <div class="diamond"></div>
-        <div class="tile-title">Your professional home.</div>
-        <div class="tile-body">One place for every version of you. Engineer, painter, cellist, filmmaker. Career toggles let visitors choose how they see you.</div>
+        <div class="tile-title">Modular tech.</div>
+        <div class="tile-body">Open, adaptable hardware and software that people can build on, like MAXINE, our open-source recovery companion.</div>
       </div>
       <div class="feature-tile">
         <div class="diamond"></div>
-        <div class="tile-title">Publish your work.</div>
-        <div class="tile-body">Long-form essays, videos, articles, and project case studies. Your ideas live here and reach the people who need to find them.</div>
+        <div class="tile-title">Sustainable energy.</div>
+        <div class="tile-body">Solar power and photovoltaic textiles designed for net-zero living and working.</div>
       </div>
       <div class="feature-tile">
         <div class="diamond"></div>
-        <div class="tile-title">Run your business.</div>
-        <div class="tile-body">Invoices, contracts, appointments, and client tools built for creatives. Everything you need, nothing you do not.</div>
+        <div class="tile-title">Functional fashion.</div>
+        <div class="tile-body">Textiles and wearables where form and function are designed together.</div>
       </div>
     </div>
   </div>
@@ -2232,40 +2255,37 @@ body { padding-top: 52px; }
   <!-- Hero -->
   <div class="archive-hero">
     <div>
-      <div class="archive-hero-eyebrow">Muses of Morenita</div>
+      <div class="archive-hero-eyebrow">Morenita Technology</div>
       <div class="archive-hero-title">The Archive</div>
-      <div class="archive-hero-body">Curriculum, digital products, and tools for multi-hyphenate creatives. Everything built by Morenita Technology to help you scale your work and your income.</div>
+      <div class="archive-hero-body">Everything Morenita Technology writes and builds, organized by what it is made of. Follow a constellation across stories, inventions and products, or filter by kind.</div>
     </div>
     <div>
       <div class="archive-stats">
         <div>
-          <div class="archive-stat-num" id="archive-stat-total">—</div>
-          <div class="archive-stat-label">Products</div>
+          <div class="archive-stat-num" id="archive-stat-total">&mdash;</div>
+          <div class="archive-stat-label">Pieces</div>
         </div>
         <div>
-          <div class="archive-stat-num" id="archive-stat-free">—</div>
-          <div class="archive-stat-label">Free</div>
+          <div class="archive-stat-num" id="archive-stat-const">&mdash;</div>
+          <div class="archive-stat-label">Constellations</div>
         </div>
         <div>
-          <div class="archive-stat-num">Free</div>
-          <div class="archive-stat-label">To Browse</div>
+          <div class="archive-stat-num" id="archive-stat-tags">&mdash;</div>
+          <div class="archive-stat-label">Tags</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Filter bar -->
-  <div class="archive-filter-bar" id="archive-filter-strip">
-    <div class="filter-pill active" data-filter="all" onclick="archiveFilterClick(this)">All</div>
-    <div class="filter-pill" data-filter="Digital Products" onclick="archiveFilterClick(this)">Digital Products</div>
-    <div class="filter-pill" data-filter="Curriculum" onclick="archiveFilterClick(this)">Curriculum</div>
-    <div class="filter-pill" data-filter="Residencies" onclick="archiveFilterClick(this)">Residencies</div>
-    <div class="filter-pill" data-filter="Free" onclick="archiveFilterClick(this)">Free</div>
-  </div>
+  <!-- Facets: kind, constellation, tag (all rendered from the database) -->
+  <div class="archive-filter-bar" id="archive-kind-strip"></div>
+  <div class="archive-filter-bar" id="archive-const-strip"></div>
+  <div class="archive-filter-bar" id="archive-tag-strip" style="display:none;"></div>
+  <div class="archive-count" id="archive-count"></div>
 
-  <!-- Product grid — populated from Supabase on first visit -->
+  <!-- Grid — populated from Supabase on first visit -->
   <div class="archive-product-grid" id="archive-grid">
-    <div class="archive-loading">Loading products…</div>
+    <div class="archive-loading">Loading the archive&hellip;</div>
   </div>
 
   <div id="footer-archive"></div>
@@ -2279,51 +2299,23 @@ body { padding-top: 52px; }
   <!-- Hero -->
   <div class="about-hero">
     <div>
-      <div class="about-eyebrow">Morenita Technology</div>
-      <div class="about-heading">Built by creatives, for creatives.</div>
+      <div class="about-eyebrow">Founder, Morenita Technology</div>
+      <div class="about-heading">Amelia Arabe</div>
     </div>
     <div>
-      <div class="about-body">Muses of Morenita exists so multi-hyphenate creatives never have to pick one version of themselves to be taken seriously. We believe the same rigor that makes an engineer good is the same rigor that makes an artist good, and we build the tools, and the community, where both can live in the same place. This is a home for the people who refuse to choose a lane, built by one of them.</div>
-      <button class="btn-terra">Work with us</button>
-    </div>
-  </div>
-
-  <!-- Values -->
-  <div class="values-section">
-    <div class="values-eyebrow">What we believe</div>
-    <div class="values-grid">
-      <div class="value-block">
-        <div class="value-title">Synchronicity over speed.</div>
-        <div class="value-body">The best work happens when the conditions for collaboration are right, not when things move fastest.</div>
-      </div>
-      <div class="value-block">
-        <div class="value-title">Art and engineering are the same discipline.</div>
-        <div class="value-body">Tools built without beauty are incomplete. Beauty without function is decorative. We do not choose.</div>
-      </div>
-      <div class="value-block">
-        <div class="value-title">Technology should expand human capacity.</div>
-        <div class="value-body">Not replace it, not simplify it, not optimize it. Expand it. Give people more room to be human.</div>
-      </div>
-      <div class="value-block">
-        <div class="value-title">Community before commerce.</div>
-        <div class="value-body">Muses of Morenita exists to serve a community first. Revenue is what makes that possible, not the point.</div>
+      <div class="about-body">Amelia Arabe is a computer and electrical engineer, inventor, painter, cellist and actress, and the founder of Morenita Technology, a creative technology studio in Los Angeles. She studied computer and electrical engineering at Loyola University Maryland and now builds modular tech, sustainable energy systems and functional fashion, guided by one idea: the best work happens when the people making it feel safe to explore.</div>
+      <div class="mission-cta">
+        <button class="btn-terra" onclick="window.location.href='portfolio/'">View Amelia&rsquo;s portfolio</button>
+        <button class="btn-outline-light" style="color:var(--espresso);border-color:var(--gray-mid);" onclick="navigate('/mission')">Read the mission</button>
       </div>
     </div>
   </div>
 
-  <!-- Team -->
+  <!-- Collaborators -->
   <div class="team-section">
-    <div class="team-eyebrow">The Founding Muses</div>
-    <div class="team-heading">The people behind the platform.</div>
+    <div class="team-eyebrow">Collaborators</div>
+    <div class="team-heading">The people Amelia builds with.</div>
     <div class="team-grid">
-      <div class="team-card linked" onclick="window.location.href='portfolio/'">
-        <div class="img-ph team-img">Amelia Arabe</div>
-        <div class="team-body">
-          <div class="team-name">Amelia Arabe</div>
-          <div class="team-title-label">CEO &middot; Creative Technology Engineer</div>
-          <div class="team-bio">Computer and electrical engineer. Founder of Morenita Technology. Engineer, inventor, painter, cellist, actress.</div>
-        </div>
-      </div>
       <div class="team-card">
         <div class="img-ph team-img">Vega Robinson</div>
         <div class="team-body">
@@ -2355,7 +2347,7 @@ body { padding-top: 52px; }
   <div class="contact-band">
     <div>
       <div class="contact-heading">Start a conversation.</div>
-      <div class="contact-body">Every project starts with a free discovery call. We respond within 48 hours.</div>
+      <div class="contact-body">Press, partnerships, collaborations and project inquiries are all welcome.</div>
     </div>
     <div>
       <div class="contact-info-row">
@@ -2370,11 +2362,55 @@ body { padding-top: 52px; }
         <div class="contact-info-label">Response</div>
         <div class="contact-info-value">Within 48 hours</div>
       </div>
-      <a href="mailto:missameliava@gmail.com?subject=Hello%20from%20your%20website&body=Hi%20Amelia%2C%0A%0AI%20came%20across%20Morenita%20Institute%20and%20wanted%20to%20reach%20out%20about%3A%0A%0A" class="btn-terra" style="margin-top:8px;">Send a Message</a>
+      <a href="mailto:missameliava@gmail.com?subject=Hello%20from%20your%20website&body=Hi%20Amelia%2C%0A%0AI%20came%20across%20Morenita%20Technology%20and%20wanted%20to%20reach%20out%20about%3A%0A%0A" class="btn-terra" style="margin-top:8px;">Send a Message</a>
     </div>
   </div>
 
   <div id="footer-about"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 04b — MISSION
+═══════════════════════════════════════ -->
+<div id="page-mission" class="page">
+
+  <div class="about-hero">
+    <div>
+      <div class="about-eyebrow">Our mission</div>
+      <div class="about-heading">Technology for people.</div>
+    </div>
+    <div>
+      <div class="about-body">Morenita Technology builds technology intended to foster community and preserve charisma. We work in modular tech, sustainable energy and functional fashion, and we build the way a cellist tunes an orchestra: by setting the tempo and the tone so that everyone can do their best work together.</div>
+      <div class="mission-cta">
+        <button class="btn-terra" onclick="window.location.href='case-study/?id=6a2941dc-8a1a-4e69-98d6-482b45900bb3&amp;from=engineer'">Read: This Is Us</button>
+        <button class="btn-outline-light" style="color:var(--espresso);border-color:var(--gray-mid);" onclick="navigate('/archive')">Explore the archive</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="values-section">
+    <div class="values-eyebrow">What we believe</div>
+    <div class="values-grid">
+      <div class="value-block">
+        <div class="value-title">Synchronicity over speed.</div>
+        <div class="value-body">The best work happens when the conditions for collaboration are right, not when things move fastest.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">Art and engineering are the same discipline.</div>
+        <div class="value-body">Tools built without beauty are incomplete. Beauty without function is decorative. We do not choose.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">Technology should expand human capacity.</div>
+        <div class="value-body">Not replace it, not simplify it, not optimize it. Expand it. Give people more room to be human.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">Community before commerce.</div>
+        <div class="value-body">Morenita Technology exists to serve a community first. Revenue is what makes that possible, not the point.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-mission"></div>
 </div>
 
 <!-- ═══════════════════════════════════════
@@ -2640,21 +2676,16 @@ body { padding-top: 52px; }
   <footer id="footer">
     <div class="footer-row1">
       <div>
-        <div class="footer-col-title">Muses of Morenita</div>
-        <div class="footer-sub">Morenita Technology</div>
+        <div class="footer-col-title">Morenita Technology</div>
+        <div class="footer-sub">Modular tech &middot; Sustainable energy &middot; Functional fashion</div>
         <div class="footer-info">missameliava@gmail.com<br>Los Angeles, CA</div>
       </div>
       <div>
-        <div class="footer-col-label">Platform</div>
-        <a class="footer-link" onclick="navigate('/muses')">The Muses</a>
-        <a class="footer-link" onclick="navigate('/archive')">The Archive</a>
+        <div class="footer-col-label">Explore</div>
+        <a class="footer-link" onclick="navigate('/')">Home</a>
+        <a class="footer-link" onclick="navigate('/archive')">Archive</a>
+        <a class="footer-link" onclick="navigate('/mission')">Mission</a>
         <a class="footer-link" onclick="navigate('/about')">About</a>
-      </div>
-      <div>
-        <div class="footer-col-label">Join</div>
-        <a class="footer-link" onclick="navigate('/join')">Personal</a>
-        <a class="footer-link" onclick="navigate('/join')">Creative</a>
-        <a class="footer-link" onclick="navigate('/join')">Business</a>
       </div>
       <div>
         <div class="footer-col-label">Connect</div>
@@ -2689,6 +2720,7 @@ const routes = {
   '/muses': 'page-muses',
   '/archive': 'page-archive',
   '/about': 'page-about',
+  '/mission': 'page-mission',
   '/login': 'page-login',
   '/join': 'page-join',
 };
@@ -2717,6 +2749,27 @@ function showPage(route) {
 
   // Load archive products on first visit
   if (route === '/archive' && !archiveLoaded) loadArchiveProducts();
+
+
+  // Per-route title, and noindex on routes that are hidden from navigation
+  const ROUTE_TITLES = {
+    '/': 'Morenita Technology | Inventions, stories and the people behind them',
+    '/archive': 'The Archive | Morenita Technology',
+    '/mission': 'Mission | Morenita Technology',
+    '/about': 'Amelia Arabe, Founder of Morenita Technology',
+    '/muses': 'The Muses | Morenita Technology',
+    '/login': 'Sign in | Morenita Technology',
+    '/join': 'Join | Morenita Technology'
+  };
+  document.title = ROUTE_TITLES[route] || ROUTE_TITLES['/'];
+  const HIDDEN_ROUTES = ['/muses', '/login', '/join'];
+  let robotsMeta = document.querySelector('meta[name="robots"]');
+  if (HIDDEN_ROUTES.includes(route)) {
+    if (!robotsMeta) { robotsMeta = document.createElement('meta'); robotsMeta.name = 'robots'; document.head.appendChild(robotsMeta); }
+    robotsMeta.content = 'noindex, nofollow';
+  } else if (robotsMeta) {
+    robotsMeta.remove();
+  }
 
   // Scroll to top
   window.scrollTo(0, 0);
@@ -2832,7 +2885,7 @@ function setMastheadDate() {
 // ─── FOOTER INJECTION ──────────────────────────────────
 function injectFooters() {
   const template = document.getElementById('footerTemplate');
-  const targets = ['footer-landing', 'footer-muses', 'footer-archive', 'footer-about'];
+  const targets = ['footer-landing', 'footer-muses', 'footer-archive', 'footer-about', 'footer-mission'];
   targets.forEach(id => {
     const el = document.getElementById(id);
     if (el && template) {
@@ -3146,92 +3199,180 @@ function musesFilterClick(el) {
   applyMusesFilters();
 }
 
-// ─── ARCHIVE PRODUCTS ──────────────────────────────────
-async function loadArchiveProducts() {
-  const { data, error } = await sb
-    .from('archive_products')
-    .select('*, profiles(display_name, username)')
-    .eq('published', true)
-    .order('is_featured', { ascending: false })
-    .order('sort_order')
-    .order('created_at');
+// ─── ARCHIVE (dynamic: kind, constellation and tag facets) ─────────────
+// Data comes from archive_products + archive_constellations + archive_tags.
+const KIND_LABELS  = { story: 'Story', invention: 'Invention', product: 'Product', issue: 'Issue', collection: 'Collection' };
+const KIND_PLURALS = { story: 'Stories', invention: 'Inventions', product: 'Products', issue: 'Issues', collection: 'Collections' };
+const archiveState = { kind: 'all', constellation: 'all', tag: 'all' };
+let archiveData = null;
+let archivePromise = null;
 
-  archiveLoaded = true;
-  renderArchiveProducts(error ? [] : (data || []));
+function ensureArchiveData() {
+  if (archivePromise) return archivePromise;
+  archivePromise = Promise.all([
+    sb.from('archive_products').select('*').eq('published', true)
+      .order('is_featured', { ascending: false }).order('sort_order').order('created_at'),
+    sb.from('archive_constellations').select('*').order('sort_order'),
+    sb.from('archive_tags').select('*').order('sort_order')
+  ]).then(([p, c, t]) => {
+    archiveData = {
+      items: p.error ? [] : (p.data || []),
+      constellations: c.error ? [] : (c.data || []),
+      tags: t.error ? [] : (t.data || []),
+      failed: !!p.error
+    };
+    return archiveData;
+  }).catch(() => {
+    archiveData = { items: [], constellations: [], tags: [], failed: true };
+    return archiveData;
+  });
+  return archivePromise;
 }
 
-function renderArchiveProducts(products) {
+async function loadArchiveProducts() {
+  await ensureArchiveData();
+  archiveLoaded = true;
+  renderArchive();
+}
+
+// Safe link targets only: relative paths or http(s)
+function safeUrl(u) {
+  if (!u) return '';
+  const t = String(u).trim();
+  if (/^[a-z][a-z0-9+.-]*:/i.test(t)) return /^https?:/i.test(t) ? t : '';
+  return t;
+}
+
+function archivePill(facet, value, label, active, color) {
+  const dot = color ? `<span class="facet-dot" style="--dot:${esc(color)}"></span>` : '';
+  return `<div class="filter-pill${active ? ' active' : ''}" data-facet="${facet}" data-value="${esc(value)}">${dot}${esc(label)}</div>`;
+}
+
+function archiveVisible() {
+  return archiveData.items.filter(i =>
+    (archiveState.kind === 'all' || i.kind === archiveState.kind) &&
+    (archiveState.constellation === 'all' || (i.constellations || []).includes(archiveState.constellation)) &&
+    (archiveState.tag === 'all' || (i.tags || []).includes(archiveState.tag)));
+}
+
+function renderArchive() {
+  const d = archiveData;
   const grid = document.getElementById('archive-grid');
-  const totalEl = document.getElementById('archive-stat-total');
-  const freeEl  = document.getElementById('archive-stat-free');
+  const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-  if (totalEl) totalEl.textContent = products.length || '0';
-  if (freeEl)  freeEl.textContent  = products.filter(p => p.is_free).length || '0';
+  const usedConst = new Set(d.items.flatMap(i => i.constellations || []));
+  const usedTags = new Set(d.items.flatMap(i => i.tags || []));
+  setText('archive-stat-total', d.items.length);
+  setText('archive-stat-const', usedConst.size);
+  setText('archive-stat-tags', usedTags.size);
 
-  if (!products.length) {
-    grid.innerHTML = '<div class="archive-empty">No products yet — check back soon.</div>';
+  if (!d.items.length) {
+    ['archive-kind-strip', 'archive-const-strip', 'archive-tag-strip'].forEach(id => { document.getElementById(id).style.display = 'none'; });
+    grid.innerHTML = '<div class="archive-empty">' + (d.failed ? 'The archive could not be loaded right now. Please try again shortly.' : 'New pieces are on the way.') + '</div>';
     return;
   }
 
-  // first featured product gets the wide card; the rest are standard cards
-  const [featured, ...rest] = products;
+  // Kind facet
+  const kinds = [...new Set(d.items.map(i => i.kind))];
+  const kindStrip = document.getElementById('archive-kind-strip');
+  kindStrip.style.display = '';
+  kindStrip.innerHTML = '<span class="archive-facet-label">Kind</span>' +
+    archivePill('kind', 'all', 'All', archiveState.kind === 'all') +
+    kinds.map(k => archivePill('kind', k, KIND_PLURALS[k] || k, archiveState.kind === k)).join('');
 
-  const featuredHTML = `
-    <div class="archive-featured" data-type="${featured.type}" data-price="${featured.is_free ? 'Free' : (featured.price_display || '')}">
-      ${featured.image_url
-        ? `<div class="archive-featured-img" style="background:url('${featured.image_url}') center/cover;"></div>`
-        : `<div class="img-ph archive-featured-img">${featured.title}</div>`}
-      <div class="archive-featured-body">
-        <div>
-          <div class="archive-feat-type">${featured.type} &mdash; Featured</div>
-          <div class="archive-feat-title">${featured.title}</div>
-          ${featured.description ? `<div class="archive-feat-body">${featured.description}</div>` : ''}
-        </div>
-        <div class="archive-feat-bottom">
-          <span class="archive-price">${featured.price_display || (featured.is_free ? 'Free' : '')}</span>
-          ${featured.purchase_url
-            ? `<a href="${featured.purchase_url}" target="_blank" rel="noopener"><button class="btn-terra-sm">${featured.is_free ? 'Download' : 'Get it'}</button></a>`
-            : ''}
-        </div>
+  // Constellation facet
+  const constStrip = document.getElementById('archive-const-strip');
+  const consts = d.constellations.filter(c => usedConst.has(c.slug));
+  constStrip.style.display = consts.length ? '' : 'none';
+  constStrip.innerHTML = '<span class="archive-facet-label">Constellation</span>' +
+    archivePill('constellation', 'all', 'All', archiveState.constellation === 'all') +
+    consts.map(c => archivePill('constellation', c.slug, c.label, archiveState.constellation === c.slug, c.color)).join('');
+
+  // Tag facet: only the used tags of the selected constellation
+  const tagStrip = document.getElementById('archive-tag-strip');
+  if (archiveState.constellation !== 'all') {
+    const tags = d.tags.filter(t => t.constellation_slug === archiveState.constellation && usedTags.has(t.slug));
+    tagStrip.style.display = tags.length ? '' : 'none';
+    tagStrip.innerHTML = '<span class="archive-facet-label">Tag</span>' +
+      archivePill('tag', 'all', 'All', archiveState.tag === 'all') +
+      tags.map(t => archivePill('tag', t.slug, t.label, archiveState.tag === t.slug)).join('');
+  } else {
+    tagStrip.style.display = 'none';
+    tagStrip.innerHTML = '';
+  }
+
+  const items = archiveVisible();
+  setText('archive-count', items.length + (items.length === 1 ? ' piece' : ' pieces'));
+
+  if (!items.length) {
+    grid.innerHTML = '<div class="archive-empty">Nothing matches that combination. Try another filter.</div>';
+    return;
+  }
+
+  const constBySlug = Object.fromEntries(d.constellations.map(c => [c.slug, c]));
+  const tagBySlug = Object.fromEntries(d.tags.map(t => [t.slug, t]));
+
+  grid.innerHTML = items.map(p => {
+    const href = safeUrl(p.internal_url) || safeUrl(p.purchase_url);
+    const firstConst = constBySlug[(p.constellations || [])[0]];
+    const constChips = (p.constellations || []).filter(c => constBySlug[c]).map(c =>
+      `<span><span class="facet-dot" style="--dot:${esc(constBySlug[c].color)}"></span>${esc(constBySlug[c].label)}</span>`).join('');
+    const tagLabels = (p.tags || []).map(t => tagBySlug[t] ? tagBySlug[t].label : '').filter(Boolean).join(' · ');
+    const kindLabel = KIND_LABELS[p.kind] || 'Piece';
+    const formatLabel = p.format ? ({ digital: 'Digital', physical: 'Physical', 'open-source': 'Open source' }[p.format] || '') : '';
+    const blurb = p.summary || p.description || '';
+    const img = p.image_url
+      ? `<div class="product-img" role="img" aria-label="${esc(p.image_alt || p.title)}" style="background:url('${esc(safeUrl(p.image_url))}') center/cover;"></div>`
+      : `<div class="product-bar" style="--bar:${esc(firstConst ? firstConst.color : '')}"></div>`;
+    const title = href ? `<a href="${esc(href)}">${esc(p.title)}</a>` : esc(p.title);
+    return `
+    <div class="product-card"${href ? ` data-href="${esc(href)}"` : ''}>
+      ${img}
+      <div class="product-body">
+        <div class="product-type">${esc(kindLabel)}${formatLabel ? ' &middot; ' + esc(formatLabel) : ''}</div>
+        <div class="product-title">${title}</div>
+        ${blurb ? `<div class="product-desc">${esc(blurb)}</div>` : ''}
+        ${constChips ? `<div class="product-consts">${constChips}</div>` : ''}
+        ${tagLabels ? `<div class="product-tags">${esc(tagLabels)}</div>` : ''}
+        ${p.price_display ? `<div class="product-bottom"><span class="product-price">${esc(p.price_display)}</span></div>` : ''}
       </div>
     </div>`;
-
-  const cardsHTML = rest.map(p => `
-    <div class="product-card" data-type="${p.type}" data-price="${p.is_free ? 'Free' : (p.price_display || '')}">
-      ${p.image_url
-        ? `<div class="product-img" style="background:url('${p.image_url}') center/cover;"></div>`
-        : `<div class="img-ph product-img">${p.title}</div>`}
-      <div class="product-body">
-        <div class="product-type">${p.type}</div>
-        <div class="product-title">${p.title}</div>
-        ${p.description ? `<div class="product-desc">${p.description}</div>` : ''}
-        <div class="product-bottom">
-          <span class="product-price">${p.price_display || (p.is_free ? 'Free' : '')}</span>
-          ${p.purchase_url
-            ? `<a href="${p.purchase_url}" target="_blank" rel="noopener"><button class="${p.is_free ? 'btn-outline-sm' : 'btn-terra-sm'}">${p.is_free ? 'Download' : 'Get it'}</button></a>`
-            : ''}
-        </div>
-      </div>
-    </div>`).join('');
-
-  grid.innerHTML = featuredHTML + cardsHTML;
-
-  // reset filter to All so newly rendered cards are all visible
-  document.querySelectorAll('#archive-filter-strip .filter-pill').forEach(p => p.classList.remove('active'));
-  const allPill = document.querySelector('#archive-filter-strip [data-filter="all"]');
-  if (allPill) allPill.classList.add('active');
+  }).join('');
 }
 
-// ─── ARCHIVE FILTER ────────────────────────────────────
-function archiveFilterClick(el) {
-  document.querySelectorAll('#archive-filter-strip .filter-pill').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  const f = el.dataset.filter;
-  const items = document.querySelectorAll('#page-archive .archive-featured, #page-archive .product-card');
-  items.forEach(item => {
-    if (f === 'all') { item.style.display = ''; return; }
-    if (f === 'Free') { item.style.display = item.dataset.price === 'Free' ? '' : 'none'; return; }
-    item.style.display = item.dataset.type === f ? '' : 'none';
+// One delegated handler for every facet pill and card click
+document.addEventListener('click', (e) => {
+  const pill = e.target.closest('[data-facet]');
+  if (pill && archiveData) {
+    const facet = pill.dataset.facet;
+    const value = pill.dataset.value;
+    archiveState[facet] = (archiveState[facet] === value && value !== 'all') ? 'all' : value;
+    if (facet === 'constellation') archiveState.tag = 'all';
+    renderArchive();
+    return;
+  }
+  const card = e.target.closest('.product-card[data-href]');
+  if (card && !e.target.closest('a')) window.location.href = card.dataset.href;
+});
+
+// Home page: constellation chips that open the Archive already filtered
+async function loadHomeConstellations() {
+  const el = document.getElementById('home-constellations');
+  if (!el) return;
+  const d = await ensureArchiveData();
+  const used = new Set(d.items.flatMap(i => i.constellations || []));
+  const consts = d.constellations.filter(c => used.has(c.slug));
+  if (!consts.length) { el.closest('.archive-card').style.display = 'none'; return; }
+  el.innerHTML = consts.map(c =>
+    `<div class="filter-pill" role="link" tabindex="0" data-open-const="${esc(c.slug)}"><span class="facet-dot" style="--dot:${esc(c.color)}"></span>${esc(c.label)}</div>`).join('');
+  el.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-open-const]');
+    if (!chip) return;
+    archiveState.kind = 'all';
+    archiveState.constellation = chip.dataset.openConst;
+    archiveState.tag = 'all';
+    if (archiveLoaded) renderArchive();
+    navigate('/archive');
   });
 }
 
@@ -3245,6 +3386,7 @@ window.addEventListener('hashchange', () => {
 document.addEventListener('DOMContentLoaded', () => {
   injectFooters();
   setMastheadDate();
+  loadHomeConstellations();
   const route = getRouteFromHash();
   showPage(route);
   checkJoinAutoReturn();
