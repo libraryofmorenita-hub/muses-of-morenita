@@ -1970,10 +1970,42 @@ body { padding-top: 52px; }
 .product-title a:hover { color: var(--gold); }
 .product-tags { font-family: var(--font-body); font-size: 11px; color: var(--gray-dark); margin-top: 10px; line-height: 1.5; }
 .product-bar { height: 3px; background: var(--bar, var(--gold)); }
-.home-const { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
-.home-const .filter-pill { text-decoration:none; }
+.home-latest { margin-top: 10px; }
+.home-latest a { display:block; padding: 10px 0; border-top: 0.5px solid var(--gray-mid); text-decoration:none; color: var(--espresso); font-family: var(--font-display); font-size: 17px; line-height: 1.25; }
+.home-latest a span { display:block; font-family: var(--font-body); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 3px; }
+.home-latest a:hover { color: var(--gold); }
 .mission-cta { display:flex; gap:12px; flex-wrap:wrap; margin-top:22px; }
 @media (max-width: 768px) { .archive-count { padding: 14px 20px 0; } }
+/* ─── Long-form sections (About, Mission) ─── */
+.prose-section { display:grid; grid-template-columns: 1fr 1.5fr; gap:64px; padding:80px 48px; border-top:0.5px solid var(--gray-mid); background: var(--white); }
+.prose-section.tint { background: var(--gray-light); }
+.prose-title { font-family: var(--font-display); font-weight:300; font-size:38px; line-height:1.1; color: var(--espresso); }
+.prose p { font-family: var(--font-body); font-weight:300; font-size:16px; line-height:1.9; color: var(--gray-dark); margin-bottom:22px; max-width:680px; }
+.prose p:last-child { margin-bottom:0; }
+.prose p.lead { font-family: var(--font-display); font-size:26px; line-height:1.4; color: var(--espresso); }
+.manifesto-hero { background: var(--espresso-deep); padding: 120px 48px 110px; }
+.manifesto-hero .about-eyebrow { color: var(--gold); }
+.manifesto-title { font-family: var(--font-display); font-weight:300; font-size:76px; line-height:1.02; color: var(--parchment); max-width: 980px; margin: 18px 0 32px; }
+.manifesto-body { font-family: var(--font-body); font-weight:300; font-size:18px; line-height:1.85; color: var(--parchment-dim); max-width: 720px; }
+.manifesto-hero .mission-cta { margin-top: 36px; }
+.star-list { padding: 80px 48px; background: var(--white); }
+.star-row { display:grid; grid-template-columns: 90px 1fr 1.2fr; gap:32px; align-items:baseline; padding: 30px 0; border-top: 0.5px solid var(--gray-mid); }
+.star-row:last-child { border-bottom: 0.5px solid var(--gray-mid); }
+.star-num { font-family: var(--font-display); font-weight:300; font-size:40px; color: var(--gold); line-height:1; }
+.star-head { font-family: var(--font-display); font-weight:300; font-size:34px; line-height:1.1; color: var(--espresso); }
+.star-text { font-family: var(--font-body); font-weight:300; font-size:15px; line-height:1.8; color: var(--gray-dark); }
+.legal-note { padding: 28px 48px 40px; font-family: var(--font-body); font-size: 11px; line-height: 1.7; color: var(--gray-dark); border-top: 0.5px solid var(--gray-mid); background: var(--white); }
+.legal-note p { max-width: 900px; }
+@media (max-width: 900px) {
+  .prose-section { grid-template-columns: 1fr; gap: 24px; padding: 56px 20px; }
+  .manifesto-hero { padding: 80px 20px 72px; }
+  .manifesto-title { font-size: 44px; }
+  .manifesto-body { font-size: 16px; }
+  .star-list { padding: 56px 20px; }
+  .star-row { grid-template-columns: 1fr; gap: 8px; }
+  .legal-note { padding: 24px 20px 32px; }
+}
+
 .product-consts { font-family: var(--font-body); font-size: 11px; color: var(--gray-dark); margin-top: 10px; display:flex; flex-wrap:wrap; gap:4px 12px; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.min.js"></script>
@@ -2064,9 +2096,8 @@ body { padding-top: 52px; }
     <div class="landing-sidebar">
       <div class="sidebar-section-label">From the Archive</div>
       <div class="archive-card">
-        <div class="archive-card-title">Browse by constellation</div>
-        <div class="archive-card-body">Every story, invention and product is tagged into a constellation, so you can follow one thread across everything we make.</div>
-        <div class="home-const" id="home-constellations"></div>
+        <div class="archive-card-title">Latest in the Archive</div>
+        <div class="home-latest" id="home-latest"></div>
         <a class="ghost-link" style="display:inline-block;margin-top:14px;" onclick="navigate('/archive')">Open the Archive</a>
       </div>
 
@@ -2257,7 +2288,7 @@ body { padding-top: 52px; }
     <div>
       <div class="archive-hero-eyebrow">Morenita Technology</div>
       <div class="archive-hero-title">The Archive</div>
-      <div class="archive-hero-body">Everything Morenita Technology writes and builds, organized by what it is made of. Follow a constellation across stories, inventions and products, or filter by kind.</div>
+      <div class="archive-hero-body">Everything Morenita Technology writes and builds, in one place. Filter by kind to find a story, an invention or a product.</div>
     </div>
     <div>
       <div class="archive-stats">
@@ -2266,21 +2297,19 @@ body { padding-top: 52px; }
           <div class="archive-stat-label">Pieces</div>
         </div>
         <div>
-          <div class="archive-stat-num" id="archive-stat-const">&mdash;</div>
-          <div class="archive-stat-label">Constellations</div>
+          <div class="archive-stat-num" id="archive-stat-inv">&mdash;</div>
+          <div class="archive-stat-label">Inventions</div>
         </div>
         <div>
-          <div class="archive-stat-num" id="archive-stat-tags">&mdash;</div>
-          <div class="archive-stat-label">Tags</div>
+          <div class="archive-stat-num" id="archive-stat-story">&mdash;</div>
+          <div class="archive-stat-label">Stories</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Facets: kind, constellation, tag (all rendered from the database) -->
+  <!-- Kind filter (rendered from the database) -->
   <div class="archive-filter-bar" id="archive-kind-strip"></div>
-  <div class="archive-filter-bar" id="archive-const-strip"></div>
-  <div class="archive-filter-bar" id="archive-tag-strip" style="display:none;"></div>
   <div class="archive-count" id="archive-count"></div>
 
   <!-- Grid — populated from Supabase on first visit -->
@@ -2303,11 +2332,91 @@ body { padding-top: 52px; }
       <div class="about-heading">Amelia Arabe</div>
     </div>
     <div>
-      <div class="about-body">Amelia Arabe is a computer and electrical engineer, inventor, painter, cellist and actress, and the founder of Morenita Technology, a creative technology studio in Los Angeles. She studied computer and electrical engineering at Loyola University Maryland and now builds modular tech, sustainable energy systems and functional fashion, guided by one idea: the best work happens when the people making it feel safe to explore.</div>
+      <div class="about-body">Amelia Arabe is an engineer, cellist and painter who founded Morenita Technology in 2025 to build technology for people. She studied computer and electrical engineering at Loyola University Maryland and works from Los Angeles on biomedical devices, materials research and the software that holds them together. She believes the best work happens when the people making it feel safe to be fully themselves.</div>
       <div class="mission-cta">
         <button class="btn-terra" onclick="window.location.href='portfolio/'">View Amelia&rsquo;s portfolio</button>
         <button class="btn-outline-light" style="color:var(--espresso);border-color:var(--gray-mid);" onclick="navigate('/mission')">Read the mission</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Origin -->
+  <div class="prose-section">
+    <div class="prose-title">Where Morenita began.</div>
+    <div class="prose">
+      <p class="lead">Amelia grew up in Southern California in a house that refused to pick one lane for her.</p>
+      <p>Her parents expected a sharp mind, a strong body and a creative life to travel together, so schoolwork always ran beside a sport and an instrument. Piano and dance became cello and orchestra. Math pulled her toward engineering, and the music and the painting never let go. She learned early that rigor and beauty were never opposites.</p>
+      <p>She carried that conviction into engineering school and saw what it cost to hold it there. Brilliant people split themselves across a dozen platforms and personas just to be seen. Most of the technology around them was built to hold attention rather than to build anything real. And she rarely heard a voice like her own explaining hard technical ideas to the girls who needed to hear one.</p>
+      <p>The projects that followed gave her direction. A university capstone team set out to build a voice-activated hospital bed, and that work grew into MAXINE, an open-source and modular recovery companion. In a campus arboretum she built ARNOLD, a rover that hunts the spotted lanternfly, and in field validation it helped protect 2,200 trees. Every project taught the same lesson. The machines mattered, and the people around them and the way they worked together mattered more.</p>
+      <p>In 2025 she founded Morenita Technology to bring all of it under one roof. The studio designs and builds modular hardware, software and materials, first for its own projects and then as open, adaptable products that anyone can build on.</p>
+    </div>
+  </div>
+
+  <!-- What Morenita Technology is -->
+  <div class="prose-section tint">
+    <div class="prose-title">What Morenita Technology is.</div>
+    <div class="prose">
+      <p class="lead">A creative technology studio in Los Angeles, built to prove that technology can foster community and preserve charisma instead of draining them.</p>
+      <p>The studio works in modular tech, sustainable energy and functional fashion. Its teams stay small and specific, and the infrastructure underneath is built to carry whatever the studio grows into next.</p>
+    </div>
+  </div>
+  <div class="values-section" style="padding-top:0;">
+    <div class="values-grid">
+      <div class="value-block">
+        <div class="value-title">Biomedical devices.</div>
+        <div class="value-body">MAXINE is an open-source, modular system for tracking vital signs and supporting recovery. It is an engineering and research project, and it is not a cleared medical device.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">Materials and energy.</div>
+        <div class="value-body">Our research looks at photovoltaic textiles and natural fibers, so the things people wear and use can quietly make power of their own.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">Field robotics.</div>
+        <div class="value-body">ARNOLD began as a pest-management rover in an arboretum and shows how autonomy can protect living systems instead of straining them.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">Stories and learning.</div>
+        <div class="value-body">The archive and the newsletter explain how each thing gets made, in plain and respectful language, so more people can learn to make things too.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- North stars -->
+  <div class="star-list">
+    <div class="values-eyebrow" style="margin-bottom:28px;">The north stars</div>
+    <div class="star-row">
+      <div class="star-num">01</div>
+      <div class="star-head">Green energy for everyone.</div>
+      <div class="star-text">Clean power should reach every community that needs it. The studio designs toward net-zero and shares what it learns along the way.</div>
+    </div>
+    <div class="star-row">
+      <div class="star-num">02</div>
+      <div class="star-head">Education as liberation.</div>
+      <div class="star-text">A hard idea explained with respect can change a life. Amelia writes, teaches and builds in public so that more people can do this work.</div>
+    </div>
+    <div class="star-row">
+      <div class="star-num">03</div>
+      <div class="star-head">Technology that centers people.</div>
+      <div class="star-text">Every device starts with the person who will use it, with a human in the loop and with accessibility from the first sketch.</div>
+    </div>
+    <div class="star-row">
+      <div class="star-num">04</div>
+      <div class="star-head">Infrastructure for community.</div>
+      <div class="star-text">Makers, artists and engineers do their best work side by side. The studio builds the quiet, steady structure that lets them.</div>
+    </div>
+    <div class="star-row">
+      <div class="star-num">05</div>
+      <div class="star-head">A seat in endurance racing.</div>
+      <div class="star-text">This one belongs to Amelia alone. The research in energy, materials and engineering all points down the same long road.</div>
+    </div>
+  </div>
+
+  <!-- How she leads -->
+  <div class="prose-section tint">
+    <div class="prose-title">How Amelia leads.</div>
+    <div class="prose">
+      <p class="lead">She leads the way a cellist tunes an orchestra.</p>
+      <p>Infrastructure should never be the loud part. It sets the tempo and the tone so that everyone else can play. Amelia builds teams where people feel safe to explore themselves, their ambitions and each other, free of judgment and free of competition, because she believes beautiful things come from healthy human connection. She also believes the pursuit of knowledge and the pursuit of happiness belong together, and that a team built on both makes healthier futures.</p>
     </div>
   </div>
 
@@ -2366,6 +2475,10 @@ body { padding-top: 52px; }
     </div>
   </div>
 
+  <div class="legal-note">
+    <p>Morenita Technology is an early-stage studio. MAXINE and the studio&rsquo;s other research projects are not cleared medical devices, and nothing on this site is medical advice. Descriptions of products and research describe goals and work in progress, not guarantees of performance or availability, and nothing on this site is an offer to sell securities.</p>
+  </div>
+
   <div id="footer-about"></div>
 </div>
 
@@ -2374,16 +2487,66 @@ body { padding-top: 52px; }
 ═══════════════════════════════════════ -->
 <div id="page-mission" class="page">
 
-  <div class="about-hero">
-    <div>
-      <div class="about-eyebrow">Our mission</div>
-      <div class="about-heading">Technology for people.</div>
+  <div class="manifesto-hero">
+    <div class="about-eyebrow">Our mission</div>
+    <div class="manifesto-title">Build technology that gives people more room to be human.</div>
+    <div class="manifesto-body">Morenita Technology exists to build technology that fosters community and preserves charisma. We refuse the idea that engineering and art, rigor and beauty, or ambition and kindness have to compete. We build modular tech, sustainable energy and functional fashion that prove they belong together.</div>
+    <div class="mission-cta">
+      <button class="btn-terra" onclick="navigate('/about')">Read the origin story</button>
+      <button class="btn-outline-light" onclick="navigate('/archive')">Explore the archive</button>
     </div>
-    <div>
-      <div class="about-body">Morenita Technology builds technology intended to foster community and preserve charisma. We work in modular tech, sustainable energy and functional fashion, and we build the way a cellist tunes an orchestra: by setting the tempo and the tone so that everyone can do their best work together.</div>
-      <div class="mission-cta">
-        <button class="btn-terra" onclick="window.location.href='case-study/?id=6a2941dc-8a1a-4e69-98d6-482b45900bb3&amp;from=engineer'">Read: This Is Us</button>
-        <button class="btn-outline-light" style="color:var(--espresso);border-color:var(--gray-mid);" onclick="navigate('/archive')">Explore the archive</button>
+  </div>
+
+  <div class="prose-section">
+    <div class="prose-title">The world we decided not to accept.</div>
+    <div class="prose">
+      <p class="lead">Most technology is built to extract attention, not to build anything real.</p>
+      <p>It rewards the loudest voice. It splits brilliant, many-sided people across a dozen platforms and asks them to be one thing at a time. And it leaves the physical world, the one with hospital beds, power grids and the fabric on our backs, waiting for someone to care enough to rebuild it.</p>
+      <p>We decided to care. We decided that technology should hand people their time, their health, their power and their stories back. We decided the work would start now, small and specific, and that we would build it in the open so anyone could see how it is done and join in.</p>
+    </div>
+  </div>
+
+  <div class="star-list" style="background:var(--gray-light);">
+    <div class="values-eyebrow" style="margin-bottom:28px;">What we will not stop building toward</div>
+    <div class="star-row">
+      <div class="star-num">01</div>
+      <div class="star-head">Power for everyone.</div>
+      <div class="star-text">We design toward net-zero energy, and we share what we learn so that clean power reaches the communities that need it most.</div>
+    </div>
+    <div class="star-row">
+      <div class="star-num">02</div>
+      <div class="star-head">Knowledge without gates.</div>
+      <div class="star-text">Education is liberation. We explain hard ideas in plain, respectful language, and we open our work so that more people can build.</div>
+    </div>
+    <div class="star-row">
+      <div class="star-num">03</div>
+      <div class="star-head">Technology that serves the person.</div>
+      <div class="star-text">Every device and tool we make starts with a human in the loop and with accessibility from the first sketch.</div>
+    </div>
+    <div class="star-row">
+      <div class="star-num">04</div>
+      <div class="star-head">Places and tools to build together.</div>
+      <div class="star-text">We build the quiet, steady infrastructure that lets makers, artists and engineers do their best work side by side.</div>
+    </div>
+  </div>
+
+  <div class="feature-section">
+    <div class="feature-eyebrow">How we do it</div>
+    <div class="feature-tiles">
+      <div class="feature-tile">
+        <div class="diamond"></div>
+        <div class="tile-title">Modular tech.</div>
+        <div class="tile-body">We build open, adaptable hardware and software that people can take apart, improve and make their own.</div>
+      </div>
+      <div class="feature-tile">
+        <div class="diamond"></div>
+        <div class="tile-title">Sustainable energy.</div>
+        <div class="tile-body">We research solar power and photovoltaic textiles so that clean energy becomes part of how people live and work.</div>
+      </div>
+      <div class="feature-tile">
+        <div class="diamond"></div>
+        <div class="tile-title">Functional fashion.</div>
+        <div class="tile-body">We design textiles and wearables where form and function arrive together, and where nothing beautiful is wasted.</div>
       </div>
     </div>
   </div>
@@ -2406,6 +2569,42 @@ body { padding-top: 52px; }
       <div class="value-block">
         <div class="value-title">Community before commerce.</div>
         <div class="value-body">Morenita Technology exists to serve a community first. Revenue is what makes that possible, not the point.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="values-section" style="background:var(--white);">
+    <div class="values-eyebrow">What we promise</div>
+    <div class="values-grid">
+      <div class="value-block">
+        <div class="value-title">We tell the truth about our work.</div>
+        <div class="value-body">Research is called research. We never claim a product does what it has not been proven to do.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">We open what we can.</div>
+        <div class="value-body">Good tools should spread. Where we can, we publish how things are built so others can build further.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">We protect the people who build with us.</div>
+        <div class="value-body">Every collaborator gets credit, care and a place where they feel safe to explore.</div>
+      </div>
+      <div class="value-block">
+        <div class="value-title">We measure ourselves by people.</div>
+        <div class="value-body">The question we ask of every project is whether the people it touches have more room to live, make and rest.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="platform-band">
+    <div>
+      <div class="platform-eyebrow">Join the work</div>
+      <div class="platform-heading">If you believe technology should serve people, build with us.</div>
+    </div>
+    <div>
+      <div class="platform-body">Engineers, artists, researchers, writers and curious people are all welcome here. Read the stories, follow the work, and tell us what you want to make.</div>
+      <div class="platform-btns">
+        <a href="mailto:missameliava@gmail.com?subject=Hello%20from%20the%20Morenita%20Technology%20mission%20page"><button class="btn-terra">Start a conversation</button></a>
+        <button class="btn-outline-light" onclick="navigate('/archive')">Explore the archive</button>
       </div>
     </div>
   </div>
@@ -3199,11 +3398,11 @@ function musesFilterClick(el) {
   applyMusesFilters();
 }
 
-// ─── ARCHIVE (dynamic: kind, constellation and tag facets) ─────────────
-// Data comes from archive_products + archive_constellations + archive_tags.
+// ─── ARCHIVE (dynamic, from archive_products; kind filter) ─────────────
+// Constellations and tags stay in the database for a future Map view but are not filters.
 const KIND_LABELS  = { story: 'Story', invention: 'Invention', product: 'Product', issue: 'Issue', collection: 'Collection' };
 const KIND_PLURALS = { story: 'Stories', invention: 'Inventions', product: 'Products', issue: 'Issues', collection: 'Collections' };
-const archiveState = { kind: 'all', constellation: 'all', tag: 'all' };
+const archiveState = { kind: 'all' };
 let archiveData = null;
 let archivePromise = null;
 
@@ -3212,18 +3411,16 @@ function ensureArchiveData() {
   archivePromise = Promise.all([
     sb.from('archive_products').select('*').eq('published', true)
       .order('is_featured', { ascending: false }).order('sort_order').order('created_at'),
-    sb.from('archive_constellations').select('*').order('sort_order'),
-    sb.from('archive_tags').select('*').order('sort_order')
-  ]).then(([p, c, t]) => {
+    sb.from('archive_constellations').select('*').order('sort_order')
+  ]).then(([p, c]) => {
     archiveData = {
       items: p.error ? [] : (p.data || []),
       constellations: c.error ? [] : (c.data || []),
-      tags: t.error ? [] : (t.data || []),
       failed: !!p.error
     };
     return archiveData;
   }).catch(() => {
-    archiveData = { items: [], constellations: [], tags: [], failed: true };
+    archiveData = { items: [], constellations: [], failed: true };
     return archiveData;
   });
   return archivePromise;
@@ -3243,16 +3440,12 @@ function safeUrl(u) {
   return t;
 }
 
-function archivePill(facet, value, label, active, color) {
-  const dot = color ? `<span class="facet-dot" style="--dot:${esc(color)}"></span>` : '';
-  return `<div class="filter-pill${active ? ' active' : ''}" data-facet="${facet}" data-value="${esc(value)}">${dot}${esc(label)}</div>`;
+function archivePill(facet, value, label, active) {
+  return `<div class="filter-pill${active ? ' active' : ''}" data-facet="${facet}" data-value="${esc(value)}">${esc(label)}</div>`;
 }
 
 function archiveVisible() {
-  return archiveData.items.filter(i =>
-    (archiveState.kind === 'all' || i.kind === archiveState.kind) &&
-    (archiveState.constellation === 'all' || (i.constellations || []).includes(archiveState.constellation)) &&
-    (archiveState.tag === 'all' || (i.tags || []).includes(archiveState.tag)));
+  return archiveData.items.filter(i => archiveState.kind === 'all' || i.kind === archiveState.kind);
 }
 
 function renderArchive() {
@@ -3260,64 +3453,34 @@ function renderArchive() {
   const grid = document.getElementById('archive-grid');
   const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-  const usedConst = new Set(d.items.flatMap(i => i.constellations || []));
-  const usedTags = new Set(d.items.flatMap(i => i.tags || []));
   setText('archive-stat-total', d.items.length);
-  setText('archive-stat-const', usedConst.size);
-  setText('archive-stat-tags', usedTags.size);
+  setText('archive-stat-inv', d.items.filter(i => i.kind === 'invention').length);
+  setText('archive-stat-story', d.items.filter(i => i.kind === 'story').length);
 
+  const kindStrip = document.getElementById('archive-kind-strip');
   if (!d.items.length) {
-    ['archive-kind-strip', 'archive-const-strip', 'archive-tag-strip'].forEach(id => { document.getElementById(id).style.display = 'none'; });
+    kindStrip.style.display = 'none';
     grid.innerHTML = '<div class="archive-empty">' + (d.failed ? 'The archive could not be loaded right now. Please try again shortly.' : 'New pieces are on the way.') + '</div>';
     return;
   }
 
-  // Kind facet
   const kinds = [...new Set(d.items.map(i => i.kind))];
-  const kindStrip = document.getElementById('archive-kind-strip');
   kindStrip.style.display = '';
   kindStrip.innerHTML = '<span class="archive-facet-label">Kind</span>' +
     archivePill('kind', 'all', 'All', archiveState.kind === 'all') +
     kinds.map(k => archivePill('kind', k, KIND_PLURALS[k] || k, archiveState.kind === k)).join('');
 
-  // Constellation facet
-  const constStrip = document.getElementById('archive-const-strip');
-  const consts = d.constellations.filter(c => usedConst.has(c.slug));
-  constStrip.style.display = consts.length ? '' : 'none';
-  constStrip.innerHTML = '<span class="archive-facet-label">Constellation</span>' +
-    archivePill('constellation', 'all', 'All', archiveState.constellation === 'all') +
-    consts.map(c => archivePill('constellation', c.slug, c.label, archiveState.constellation === c.slug, c.color)).join('');
-
-  // Tag facet: only the used tags of the selected constellation
-  const tagStrip = document.getElementById('archive-tag-strip');
-  if (archiveState.constellation !== 'all') {
-    const tags = d.tags.filter(t => t.constellation_slug === archiveState.constellation && usedTags.has(t.slug));
-    tagStrip.style.display = tags.length ? '' : 'none';
-    tagStrip.innerHTML = '<span class="archive-facet-label">Tag</span>' +
-      archivePill('tag', 'all', 'All', archiveState.tag === 'all') +
-      tags.map(t => archivePill('tag', t.slug, t.label, archiveState.tag === t.slug)).join('');
-  } else {
-    tagStrip.style.display = 'none';
-    tagStrip.innerHTML = '';
-  }
-
   const items = archiveVisible();
-  setText('archive-count', items.length + (items.length === 1 ? ' piece' : ' pieces'));
-
-  if (!items.length) {
-    grid.innerHTML = '<div class="archive-empty">Nothing matches that combination. Try another filter.</div>';
-    return;
-  }
+  const countEl = document.getElementById('archive-count');
+  if (countEl) countEl.textContent = items.length + (items.length === 1 ? ' piece' : ' pieces');
 
   const constBySlug = Object.fromEntries(d.constellations.map(c => [c.slug, c]));
-  const tagBySlug = Object.fromEntries(d.tags.map(t => [t.slug, t]));
 
   grid.innerHTML = items.map(p => {
     const href = safeUrl(p.internal_url) || safeUrl(p.purchase_url);
     const firstConst = constBySlug[(p.constellations || [])[0]];
     const constChips = (p.constellations || []).filter(c => constBySlug[c]).map(c =>
       `<span><span class="facet-dot" style="--dot:${esc(constBySlug[c].color)}"></span>${esc(constBySlug[c].label)}</span>`).join('');
-    const tagLabels = (p.tags || []).map(t => tagBySlug[t] ? tagBySlug[t].label : '').filter(Boolean).join(' · ');
     const kindLabel = KIND_LABELS[p.kind] || 'Piece';
     const formatLabel = p.format ? ({ digital: 'Digital', physical: 'Physical', 'open-source': 'Open source' }[p.format] || '') : '';
     const blurb = p.summary || p.description || '';
@@ -3333,21 +3496,18 @@ function renderArchive() {
         <div class="product-title">${title}</div>
         ${blurb ? `<div class="product-desc">${esc(blurb)}</div>` : ''}
         ${constChips ? `<div class="product-consts">${constChips}</div>` : ''}
-        ${tagLabels ? `<div class="product-tags">${esc(tagLabels)}</div>` : ''}
         ${p.price_display ? `<div class="product-bottom"><span class="product-price">${esc(p.price_display)}</span></div>` : ''}
       </div>
     </div>`;
   }).join('');
 }
 
-// One delegated handler for every facet pill and card click
+// One delegated handler for the kind filter and card clicks
 document.addEventListener('click', (e) => {
-  const pill = e.target.closest('[data-facet]');
+  const pill = e.target.closest('[data-facet="kind"]');
   if (pill && archiveData) {
-    const facet = pill.dataset.facet;
     const value = pill.dataset.value;
-    archiveState[facet] = (archiveState[facet] === value && value !== 'all') ? 'all' : value;
-    if (facet === 'constellation') archiveState.tag = 'all';
+    archiveState.kind = (archiveState.kind === value && value !== 'all') ? 'all' : value;
     renderArchive();
     return;
   }
@@ -3355,25 +3515,18 @@ document.addEventListener('click', (e) => {
   if (card && !e.target.closest('a')) window.location.href = card.dataset.href;
 });
 
-// Home page: constellation chips that open the Archive already filtered
-async function loadHomeConstellations() {
-  const el = document.getElementById('home-constellations');
+// Home page: the latest pieces in the Archive
+async function loadHomeArchive() {
+  const el = document.getElementById('home-latest');
   if (!el) return;
   const d = await ensureArchiveData();
-  const used = new Set(d.items.flatMap(i => i.constellations || []));
-  const consts = d.constellations.filter(c => used.has(c.slug));
-  if (!consts.length) { el.closest('.archive-card').style.display = 'none'; return; }
-  el.innerHTML = consts.map(c =>
-    `<div class="filter-pill" role="link" tabindex="0" data-open-const="${esc(c.slug)}"><span class="facet-dot" style="--dot:${esc(c.color)}"></span>${esc(c.label)}</div>`).join('');
-  el.addEventListener('click', (e) => {
-    const chip = e.target.closest('[data-open-const]');
-    if (!chip) return;
-    archiveState.kind = 'all';
-    archiveState.constellation = chip.dataset.openConst;
-    archiveState.tag = 'all';
-    if (archiveLoaded) renderArchive();
-    navigate('/archive');
-  });
+  const latest = d.items.slice(0, 4);
+  if (!latest.length) { el.closest('.archive-card').style.display = 'none'; return; }
+  el.innerHTML = latest.map(p => {
+    const href = safeUrl(p.internal_url) || safeUrl(p.purchase_url);
+    const inner = `<span>${esc(KIND_LABELS[p.kind] || 'Piece')}</span>${esc(p.title)}`;
+    return href ? `<a href="${esc(href)}">${inner}</a>` : `<a onclick="navigate('/archive')">${inner}</a>`;
+  }).join('');
 }
 
 // ─── HASH ROUTING LISTENER ─────────────────────────────
@@ -3386,7 +3539,7 @@ window.addEventListener('hashchange', () => {
 document.addEventListener('DOMContentLoaded', () => {
   injectFooters();
   setMastheadDate();
-  loadHomeConstellations();
+  loadHomeArchive();
   const route = getRouteFromHash();
   showPage(route);
   checkJoinAutoReturn();
