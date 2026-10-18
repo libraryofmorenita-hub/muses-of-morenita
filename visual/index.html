@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Amelia A. — Visual</title>
+<meta name="description" content="Selected photographs, collections and motion.">
+<!-- STANDALONE PAGE. Nothing here links to the rest of the portfolio, to
+     Morenita Technology, or to any engineering profile: the only outbound
+     link is the booking mailto below. It loads no Supabase, no shared
+     app-shell, no analytics. noindex stays on until you decide this page
+     should be findable (delete the next line to let search engines in). -->
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0A0A'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' fill='%23FAFAFA'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+:root {
+  --black: #0A0A0A;
+  --ink: #141414;
+  --gray-dark: #555555;
+  --gray-mid: #8f8f8f;
+  --gray-light: #CCCCCC;
+  --white: #FAFAFA;
+  --board: #ECEAE6;
+  --dot: #cdcac3;
+  --pencil: #D2432F;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* --q is the board's unit: 1% of the board width on a laptop (so the whole
+     collage scales as one picture), a fixed phone-sized step on small screens. */
+  --q: 1cqw;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; overflow-x: clip; background: var(--board); color: var(--black); font-family: var(--font-body);
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.3px); background-size: 22px 22px;
+  min-height: 100vh;
+}
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--black); outline-offset: 3px; }
+
+/* ── HEADER ─────────────────────────────────────── */
+.top {
+  position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 14px clamp(16px, 3.2vw, 44px);
+  background: rgba(236,234,230,0.86); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(10,10,10,0.08);
+}
+.brand { font-family: var(--font-display); font-weight: 400; font-size: 24px; letter-spacing: 0.01em; line-height: 1; }
+.brand small { font-family: var(--font-body); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gray-dark); margin-left: 12px; vertical-align: middle; }
+.top-right { display: flex; align-items: center; gap: 18px; }
+.seg { display: inline-flex; border: 1px solid var(--black); border-radius: 999px; overflow: hidden; }
+.seg button { background: transparent; border: 0; padding: 7px 16px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--black); color: var(--white); }
+.book { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid var(--black); padding-bottom: 2px; white-space: nowrap; }
+
+/* ── INTRO ─────────────────────────────────────── */
+.intro { padding: clamp(28px, 5vw, 64px) clamp(16px, 3.2vw, 44px) 0; max-width: 1500px; margin: 0 auto; }
+.intro .eyebrow { font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gray-dark); }
+.intro h1 { font-family: var(--font-display); font-weight: 300; font-size: clamp(44px, 7vw, 96px); line-height: 0.95; margin: 8px 0 0; letter-spacing: -0.01em; }
+.intro h1 em { font-style: italic; font-weight: 400; }
+.intro p { margin: 14px 0 0; font-size: 13px; line-height: 1.7; color: var(--gray-dark); max-width: 46ch; }
+
+main { max-width: 1500px; margin: 0 auto; padding: 0 clamp(8px, 2vw, 32px) 40px; }
+[hidden] { display: none !important; }
+
+/* ── BOARD (laptop: one absolutely placed collage that scales with its width) ── */
+.board-wrap { container-type: inline-size; }
+.board { position: relative; height: calc(var(--H, 1740) * 0.1cqw); margin-top: 2cqw; }
+.item { position: absolute; left: calc(var(--x) * 0.1cqw); top: calc(var(--y) * 0.1cqw); width: calc(var(--w) * 0.1cqw); margin: 0; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; z-index: var(--z, 1);
+  --r: var(--rot, 0deg); --s: 1;
+  transform: translate(calc(var(--px, 0) * var(--d, 0) * 1px), calc(var(--py, 0) * var(--d, 0) * 1px)) rotate(var(--r)) scale(var(--s));
+  transition: transform 450ms cubic-bezier(.2,.7,.2,1), box-shadow 450ms, opacity 700ms;
+  will-change: transform;
+}
+.js .item { opacity: 0; --s: 0.97; }
+.js .item.in { opacity: 1; --s: 1; }
+.item:hover, .item:focus-visible { --r: 0deg; --s: 1.035; z-index: 9; }
+.item:focus-visible { outline-offset: 6px; }
+.item.strip:hover { --r: var(--rot, 0deg); --s: 1; z-index: 1; }
+
+/* a printed photo */
+.print { background: #fff; padding: calc(var(--q) * 1.25); box-shadow: 0 calc(var(--q) * .15) calc(var(--q) * .5) rgba(0,0,0,.14), 0 calc(var(--q) * 1.1) calc(var(--q) * 2.4) rgba(0,0,0,.13); }
+.item:hover.print, .item:hover .print { box-shadow: 0 calc(var(--q) * .3) calc(var(--q) * .8) rgba(0,0,0,.16), 0 calc(var(--q) * 2.2) calc(var(--q) * 4) rgba(0,0,0,.2); }
+.cap { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding-top: calc(var(--q) * 1); font-family: var(--font-display); font-size: clamp(13px, calc(var(--q) * 1.6), 19px); color: var(--ink); line-height: 1.15; }
+.cap i { font-family: var(--mono); font-style: normal; font-size: clamp(8.5px, calc(var(--q) * .85), 11px); letter-spacing: .08em; color: var(--gray-mid); text-transform: uppercase; white-space: nowrap; }
+.tape { position: absolute; top: calc(var(--q) * -1.5); left: 50%; width: calc(var(--q) * 7.5); height: calc(var(--q) * 2.7); margin-left: calc(var(--q) * -3.75); transform: rotate(var(--tape, -3deg));
+  background: rgba(236, 231, 212, .78); box-shadow: 0 1px 2px rgba(0,0,0,.12); backdrop-filter: blur(1px); pointer-events: none; z-index: 2; }
+.pin { position: absolute; top: calc(var(--q) * -1.1); left: 50%; width: calc(var(--q) * 2); height: calc(var(--q) * 2); margin-left: calc(var(--q) * -1); border-radius: 50%; pointer-events: none; z-index: 2;
+  background: radial-gradient(circle at 35% 30%, #5a5a5a 0 12%, #151515 48%, #000 100%); box-shadow: 0 calc(var(--q) * .5) calc(var(--q) * .7) rgba(0,0,0,.35); }
+
+/* the crop: one photo, framed and zoomed on a focal point */
+.crop { position: relative; width: 100%; aspect-ratio: var(--ar, 3/2); overflow: hidden; background: #d8d5ce; }
+.crop > img, .crop > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); transform: scale(var(--z, 1)); transform-origin: var(--pos, 50% 50%); display: block; user-select: none; -webkit-user-drag: none; }
+.crop > video { opacity: 0; transition: opacity 400ms; }
+.item:hover .crop > video, .item.playing .crop > video { opacity: 1; }
+
+.badge { position: absolute; left: calc(var(--q) * 1.2); bottom: calc(var(--q) * 1.2); z-index: 3; display: inline-flex; align-items: center; gap: .55em; padding: .45em .8em .45em .65em;
+  background: rgba(10,10,10,.82); color: #fff; font-family: var(--mono); font-size: clamp(8.5px, calc(var(--q) * .95), 11px); letter-spacing: .12em; text-transform: uppercase; border-radius: 2px; }
+.badge::before { content: ""; width: 0; height: 0; border-left: .85em solid #fff; border-top: .5em solid transparent; border-bottom: .5em solid transparent; }
+.badge.count::before { display: none; }
+
+/* a contact-sheet strip (collection) */
+.strip { cursor: default; }
+.strip-label { display: flex; justify-content: space-between; padding: 0 calc(var(--q) * .4) calc(var(--q) * .7); font-family: var(--mono); font-size: clamp(8.5px, calc(var(--q) * .9), 11px); letter-spacing: .14em; text-transform: uppercase; color: var(--gray-dark); }
+.strip-base { background: #0b0b0a; border-radius: calc(var(--q) * .3); padding: calc(var(--q) * .75) calc(var(--q) * .9); box-shadow: 0 calc(var(--q) * 1.1) calc(var(--q) * 2.4) rgba(0,0,0,.28); }
+.holes { height: calc(var(--q) * .75); margin: 0 0 calc(var(--q) * .75); background: repeating-linear-gradient(90deg, var(--board) 0 calc(var(--q) * 1.05), transparent calc(var(--q) * 1.05) calc(var(--q) * 2.3)); border-radius: 1px; opacity: .92; }
+.holes.b { margin: calc(var(--q) * .75) 0 0; }
+.cells { display: flex; gap: calc(var(--q) * .7); }
+.cell { position: relative; flex: 1 1 0; min-width: 0; padding: 0; border: 0; background: none; cursor: pointer; text-align: left; }
+.cell .crop { aspect-ratio: 3 / 2; display: grid; place-items: center; background: #1b1b19; }
+.cell .crop .inner { position: relative; height: 100%; aspect-ratio: var(--ar, 3/2); max-width: 100%; overflow: hidden; }
+.cell .crop .inner.wide, .sheet-cell .well .inner.wide { height: auto; width: 100%; }
+.cell .crop .inner > img, .cell .crop .inner > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); transform: scale(var(--z, 1)); transform-origin: var(--pos, 50% 50%); }
+.cell .fn { display: block; padding-top: calc(var(--q) * .5); font-family: var(--mono); font-size: clamp(8px, calc(var(--q) * .85), 11px); letter-spacing: .1em; color: #bdb9ae; }
+.cell:hover .crop, .cell:focus-visible .crop { outline: 1px solid #fff; outline-offset: 1px; }
+.pencil { position: absolute; left: -7%; top: -14%; width: 114%; height: 76%; overflow: visible; pointer-events: none; z-index: 2; }
+.pencil path { fill: none; stroke: var(--pencil); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; opacity: .92; }
+
+/* a stack (collection) */
+.stack { padding: 0; }
+.stack .layer { position: absolute; inset: 0; background: #fff; box-shadow: 0 calc(var(--q) * .2) calc(var(--q) * .6) rgba(0,0,0,.14); }
+.stack .l1 { transform: rotate(-5deg) translate(calc(var(--q) * -.6), calc(var(--q) * .5)); }
+.stack .l2 { transform: rotate(4deg) translate(calc(var(--q) * .8), calc(var(--q) * .3)); }
+.stack .top { position: relative; display: block; }
+
+/* booking tag */
+.tag { background: #f7f5ef; padding: calc(var(--q) * 1.6) calc(var(--q) * 1.8) calc(var(--q) * 1.8); text-decoration: none; display: block; color: var(--ink);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 12% 100%, 0 86%); box-shadow: none; filter: drop-shadow(0 calc(var(--q) * .6) calc(var(--q) * .9) rgba(0,0,0,.2)); }
+.tag .hole { display: block; width: calc(var(--q) * 1.4); height: calc(var(--q) * 1.4); border-radius: 50%; background: var(--board); border: 1px solid #d3cfc4; margin-bottom: calc(var(--q) * 1.2); }
+.tag b { display: block; font-family: var(--mono); font-weight: 400; font-size: clamp(8.5px, calc(var(--q) * .9), 11px); letter-spacing: .16em; text-transform: uppercase; color: var(--gray-dark); }
+.tag span { display: block; font-family: var(--font-display); font-size: clamp(14px, calc(var(--q) * 1.75), 22px); line-height: 1.1; margin-top: calc(var(--q) * .6); word-break: break-word; }
+
+/* ── CONTACT SHEET VIEW ─────────────────────────── */
+.sheet { margin: 2.5vw auto 0; background: #0b0b0a; padding: clamp(14px, 2vw, 28px); border-radius: 3px; box-shadow: 0 24px 60px rgba(0,0,0,.28); }
+.sheet-head { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #8e8a80; padding-bottom: 14px; }
+.sheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 17vw, 220px), 1fr)); gap: clamp(14px, 1.6vw, 24px) clamp(10px, 1.2vw, 18px); }
+.sheet-cell { position: relative; border: 0; background: none; padding: 0; cursor: pointer; text-align: left; color: #bdb9ae; }
+.sheet-cell .well { position: relative; aspect-ratio: 3 / 2; background: #1b1b19; display: grid; place-items: center; }
+.sheet-cell .well .inner { position: relative; height: 100%; aspect-ratio: var(--ar, 3/2); max-width: 100%; overflow: hidden; }
+.sheet-cell .inner > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); transform: scale(var(--z, 1)); transform-origin: var(--pos, 50% 50%); }
+.sheet-cell:hover .well, .sheet-cell:focus-visible .well { outline: 1px solid #fff; outline-offset: 2px; }
+.sheet-cell .lab { display: flex; justify-content: space-between; gap: 6px; padding-top: 6px; font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; }
+.sheet-cell .mo { position: absolute; right: 6px; top: 6px; z-index: 3; font-family: var(--mono); font-size: 9px; letter-spacing: .12em; color: #fff; background: rgba(0,0,0,.65); padding: 3px 6px; border-radius: 2px; }
+.sheet .pencil { left: -6%; top: -12%; width: 112%; height: 80%; }
+
+/* ── FOOTER ─────────────────────────────────────── */
+footer { max-width: 1500px; margin: 0 auto; padding: 8px clamp(16px, 3.2vw, 44px) 44px; text-align: center; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; }
+footer a { color: var(--gray-dark); text-decoration: none; }
+footer a:hover { color: var(--black); text-decoration: underline; text-underline-offset: 4px; }
+
+/* ── LIGHTBOX ───────────────────────────────────── */
+.lb { position: fixed; inset: 0; z-index: 100; background: #080808; color: #f2f0ea; display: flex; flex-direction: column; opacity: 0; transition: opacity 250ms; touch-action: pan-y pinch-zoom; }
+.lb.open { opacity: 1; }
+.lb-close { position: absolute; top: max(12px, env(safe-area-inset-top)); right: 14px; z-index: 3; width: 44px; height: 44px; border: 0; background: none; font-size: 30px; line-height: 1; cursor: pointer; color: #f2f0ea; }
+.lb-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 56px 8px 0; }
+.lb-nav { flex: none; width: 48px; height: 64px; border: 0; background: none; font-size: 34px; cursor: pointer; color: #f2f0ea; opacity: .75; }
+.lb-nav:hover { opacity: 1; }
+.lb-nav[disabled] { opacity: .15; cursor: default; }
+.lb-media { display: flex; align-items: center; justify-content: center; min-width: 0; }
+.lb-media .crop, .lb-media video { box-shadow: 0 20px 60px rgba(0,0,0,.6); background: #111; }
+.lb-media video { display: block; }
+.lb-meta { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 12px clamp(16px, 4vw, 56px) 4px; font-family: var(--font-display); font-size: 20px; }
+.lb-text { min-width: 0; }
+.lb-title { font-size: 20px; line-height: 1.15; }
+.lb-desc { margin: 5px 0 0; font-family: var(--font-body); font-size: 13px; line-height: 1.55; letter-spacing: 0; color: #bdb9ae; max-width: 62ch; }
+.lb-desc:empty { display: none; }
+.lb-meta .lb-count { flex: none; text-align: right; line-height: 1.7; font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; color: #9b978c; }
+.lb-thumbs { display: flex; gap: 8px; justify-content: safe center; scroll-behavior: smooth; padding: 8px 12px max(16px, env(safe-area-inset-bottom)); overflow-x: auto; }
+.lb-thumbs button { flex: none; width: 54px; height: 54px; padding: 0; border: 1px solid transparent; background: #1b1b19; cursor: pointer; overflow: hidden; opacity: .55; position: relative; }
+.lb-thumbs button[aria-current="true"] { opacity: 1; border-color: #fff; }
+.lb-thumbs img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); transform: scale(var(--z, 1)); transform-origin: var(--pos, 50% 50%); }
+
+/* ── PHONE: the board becomes a scrolling pinboard ──── */
+@media (max-width: 819px) {
+  :root { --q: min(2.1vw, 8.5px); }
+  .top { padding: 10px 16px; }
+  .brand { font-size: 21px; }
+  .brand small { display: none; }
+  .book { display: none; }
+  .seg button { padding: 7px 12px; font-size: 10px; }
+  .board-wrap { container-type: normal; }
+  .board { height: auto; display: flex; flex-direction: column; gap: 46px; padding: 18px 14px 40px; overflow-x: clip; }
+  .item { position: relative; left: auto; top: auto; width: calc(var(--mw, 80) * 1%); margin-left: var(--ml, 0); transform: rotate(var(--r)) scale(var(--s)); --d: 0; }
+  .item:hover, .item:focus-visible { --r: var(--rot, 0deg); --s: 1; }
+  .item.strip { width: calc(100% + 28px); margin-left: -14px; --r: 0deg; }
+  .strip-label { padding-left: 14px; padding-right: 14px; }
+  .strip-base { border-radius: 0; padding-left: 0; padding-right: 0; }
+  .strip-base .holes { margin-left: 0; }
+  .cells { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding: 0 14px; scrollbar-width: none; gap: 10px; }
+  .cells::-webkit-scrollbar { display: none; }
+  .cell { flex: 0 0 62vw; scroll-snap-align: center; }
+  .cell .fn { font-size: 10px; padding-top: 6px; }
+  .cap { font-size: 15px; }
+  .cap i { font-size: 9px; }
+  .badge { font-size: 9px; }
+  .tag { width: 100%; }
+  .tag b { font-size: 9.5px; }
+  .tag span { font-size: 21px; }
+  .tape { width: 64px; height: 22px; margin-left: -32px; top: -11px; }
+  .pin { width: 16px; height: 16px; margin-left: -8px; top: -8px; }
+  .holes { height: 7px; background: repeating-linear-gradient(90deg, var(--board) 0 10px, transparent 10px 22px); margin-bottom: 8px; }
+  .holes.b { margin-top: 8px; }
+  .strip-base .holes { margin-bottom: 8px; }
+  .sheet-grid { grid-template-columns: repeat(2, 1fr); }
+  .lb-nav { display: none; }
+  .lb-stage { padding-top: 52px; }
+  .lb-thumbs button { width: 44px; height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .item { transition: opacity 300ms; }
+  .js .item { --s: 1; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand" id="brand">Amelia A.<small>Visual</small></div>
+  <div class="top-right">
+    <div class="seg" role="group" aria-label="View">
+      <button type="button" id="v-board" aria-pressed="true">Board</button>
+      <button type="button" id="v-sheet" aria-pressed="false">Contact sheet</button>
+    </div>
+    <a class="book" id="book" href="#">Book</a>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="eyebrow">Selects &middot; Autumn 2026</div>
+  <h1>Stills, <em>strips</em><br>&amp; motion.</h1>
+  <p>Single frames, collections, and a few pictures that move. Tap anything to open it.</p>
+</section>
+
+<main>
+  <div class="board-wrap" id="board-wrap">
+    <div class="board" id="board" aria-label="Photo board"></div>
+  </div>
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-head"><span>Proof sheet &middot; all frames</span><span id="sheet-count"></span></div>
+    <div class="sheet-grid" id="sheet-grid"></div>
+  </div>
+</main>
+
+<footer><a href="../">Morenita Technology</a></footer>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="lb-close" id="lb-close" type="button" aria-label="Close">&times;</button>
+  <div class="lb-stage">
+    <button class="lb-nav" id="lb-prev" type="button" aria-label="Previous frame">&#8249;</button>
+    <div class="lb-media" id="lb-media"></div>
+    <button class="lb-nav" id="lb-next" type="button" aria-label="Next frame">&#8250;</button>
+  </div>
+  <div class="lb-meta"><div class="lb-text"><div id="lb-title" class="lb-title"></div><p id="lb-desc" class="lb-desc"></p></div><span class="lb-count" id="lb-count"></span></div>
+  <div class="lb-thumbs" id="lb-thumbs"></div>
+</div>
+
+<script>
+// ══ EDIT HERE ═══════════════════════════════════════════════════════════
+// Everything on the page is driven by this block. When real photos arrive:
+// swap `src`, drop the `pos`/`z` crop (or keep them as a focal point), set
+// `pick: true` on the frames you'd circle in grease pencil, and point `video`
+// at the real clip. The two clips below are STAND-INS (a slow push-in made
+// from your two stills) so the hidden-video behaviour can be judged now.
+const CONFIG = {
+  name: 'Amelia A.',
+  email: 'missameliava@gmail.com',   // booking address — change if modeling should use another inbox
+};
+const CHARCOAL = '../models/headshot.jpg';      // 1600 × 1066, landscape
+const WHITE    = '../models/miss-amelia-1.jpg'; // 1067 × 1600, portrait
+
+// f() builds a frame: source, aspect ratio, focal point (pos), zoom (z).
+const f = (src, ar, pos, z = 1, extra = {}) => ({ src, ar, pos, z, ...extra });
+
+// type: photo | strip | stack | motion | tag
+// Board placement (laptop) is in a 1000-wide grid: x, y, w, rot (degrees),
+// d (parallax depth). Phone placement: mw (% width), ml (left margin %).
+const ITEMS = [
+  { id: 'charcoal-full', type: 'photo', title: 'Charcoal', note: 'Studio · 01',
+    frames: [ f(CHARCOAL, 3/2, '50% 50%', 1, { desc: 'Studio portrait on a charcoal backdrop, in a striped collared shirt with one hand on the hip.' }) ],
+    x: 40, y: 40, w: 470, rot: -1.6, d: 6, tape: -4, mw: 100, ml: 0 },
+
+  { id: 'white-full', type: 'photo', title: 'White', note: 'Studio · 02',
+    frames: [ f(WHITE, 2/3, '50% 50%', 1, { desc: 'Full-length studio frame in a white beaded corset dress against a white seamless.' }) ],
+    x: 610, y: 18, w: 320, rot: 2.1, d: 10, pin: true, mw: 74, ml: 24 },
+
+  { id: 'motion-charcoal', type: 'motion', title: 'Held', note: 'Motion',
+    frames: [ f(CHARCOAL, 1, '54% 32%', 2.1, { desc: 'A slow push-in toward the face from the charcoal session.' }) ],
+    video: 'media/motion-charcoal-standin.mp4', vAr: 3/2,
+    x: 70, y: 470, w: 250, rot: -2.6, d: 12, tape: 3, mw: 66, ml: 0 },
+
+  { id: 'eyes', type: 'photo', title: 'Eyes', note: 'Crop',
+    frames: [ f(CHARCOAL, 3/1, '54% 31%', 2.7, { desc: 'A tight crop on the eyes from the charcoal session.' }) ],
+    x: 345, y: 548, w: 290, rot: 1.3, d: 8, tape: -2, mw: 92, ml: 8 },
+
+  { id: 'motion-white', type: 'motion', title: 'Turn', note: 'Motion',
+    frames: [ f(WHITE, 4/5, '50% 24%', 1.6, { desc: 'A slow drift down the white-dress frame, from the face to the waist.' }) ],
+    video: 'media/motion-white-standin.mp4', vAr: 2/3,
+    x: 672, y: 615, w: 255, rot: -1.8, d: 14, pin: true, mw: 66, ml: 30 },
+
+  { id: 'charcoal-strip', type: 'strip', title: 'Charcoal studio', note: '5 frames',
+    frames: [
+      f(CHARCOAL, 3/2, '50% 50%', 1, { label: 'Full', desc: 'The charcoal session, uncropped.' }),
+      f(CHARCOAL, 4/5, '54% 33%', 1.9, { label: 'Portrait', pick: true, desc: 'Closer on the face and collar. This is the frame circled in pencil.' }),
+      f(CHARCOAL, 3/1, '54% 31%', 2.7, { label: 'Eyes', desc: 'A tight crop on the eyes.' }),
+      f(CHARCOAL, 1,   '55% 88%', 1.6, { label: 'Texture', desc: 'Shirt stripes and collar, framed on the torso.' }),
+      f(CHARCOAL, 4/5, '88% 90%', 1.5, { label: 'Hand on hip', desc: 'The hand on the hip, cropped to the edge of the frame.' }),
+    ],
+    x: 50, y: 1010, w: 900, rot: -0.7, d: 3 },
+
+  { id: 'white-stack', type: 'stack', title: 'White studio', note: '4 frames',
+    frames: [
+      f(WHITE, 2/3, '50% 50%', 1, { label: 'Full length', desc: 'The white session, uncropped.' }),
+      f(WHITE, 4/5, '50% 15%', 2.3, { label: 'Portrait', pick: true, desc: 'Face and shoulders above the beaded neckline. This is the frame circled in pencil.' }),
+      f(WHITE, 1,   '50% 52%', 2.1, { label: 'Beading', desc: 'The beaded bodice and belt up close.' }),
+      f(WHITE, 4/5, '38% 40%', 1.8, { label: 'Arms', desc: 'Crossed arms against the beaded bodice.' }),
+    ],
+    x: 170, y: 1265, w: 255, rot: -1.2, d: 9, mw: 76, ml: 6 },
+
+  { id: 'beading', type: 'photo', title: 'Detail', note: 'Beading',
+    frames: [ f(WHITE, 1, '50% 52%', 2.1, { desc: 'Detail of the beaded bodice and belt.' }) ],
+    x: 395, y: 735, w: 225, rot: 2.4, d: 11, tape: 4, mw: 62, ml: 36 },
+
+  { id: 'book', type: 'tag', title: 'Booking & enquiries',
+    x: 640, y: 1330, w: 235, rot: 2.6, d: 7, mw: 80, ml: 10 },
+];
+// ═════════════════════════════════════════════════════════════════════════
+
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, attrs = {}, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'style') el.setAttribute('style', v);
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat()) if (kid != null) el.append(kid.nodeType ? kid : document.createTextNode(kid));
+  return el;
+}
+const cropVars = fr => `--ar:${fr.ar};--pos:${fr.pos};--z:${fr.z}`;
+const alt = (it, fr, i) => `${it.title}${fr.label ? ' — ' + fr.label : ''}${it.frames.length > 1 ? ` (${i + 1} of ${it.frames.length})` : ''}`;
+function cropEl(it, fr, i, extra) {
+  const c = h('div', { class: 'crop', style: cropVars(fr) }, h('img', { src: fr.src, alt: alt(it, fr, i), loading: 'lazy', decoding: 'async', draggable: 'false' }));
+  if (extra) c.append(extra);
+  return c;
+}
+// A hand-drawn loop around a "pick" — a couple of slightly different paths so circles don't look stamped.
+const LOOPS = [
+  'M10 40C6 18 36 5 62 8c26 3 38 18 32 37-5 16-31 23-54 19C20 61 8 54 10 40Z M60 9c-3-3-6-4-9-4',
+  'M13 44C5 24 30 6 58 7c27 1 40 20 33 38-6 15-34 24-55 17C21 57 12 52 13 44Z M56 7c3-3 8-4 12-3',
+  'M9 36C9 16 40 4 66 10c22 5 33 22 26 38-8 17-36 21-56 14C18 56 8 47 9 36Z M64 9c4-4 9-4 13-2',
+];
+let loopN = 0;
+const pencil = () => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('class', 'pencil'); s.setAttribute('viewBox', '0 0 100 70'); s.setAttribute('preserveAspectRatio', 'none'); s.setAttribute('aria-hidden', 'true'); const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', LOOPS[loopN++ % LOOPS.length]); s.append(p); return s; };
+
+// ── numbering for the proof sheet: every frame gets a running number ──
+let n = 0;
+const ALL = [];                       // [{item, frameIndex, no}]
+ITEMS.forEach(it => (it.frames || []).forEach((fr, i) => ALL.push({ it, i, fr, no: ++n })));
+const pad = v => String(v).padStart(2, '0');
+
+// ── BOARD ──
+const board = $('#board');
+function placement(it) {
+  return `--x:${it.x};--y:${it.y};--w:${it.w};--rot:${it.rot || 0}deg;--d:${it.d || 0};--tape:${it.tape || -3}deg;--mw:${it.mw || 80};--ml:${it.ml || 0}%`;
+}
+function build() {
+  for (const it of ITEMS) {
+    let el;
+    if (it.type === 'photo' || it.type === 'motion') {
+      const fr = it.frames[0];
+      const vid = it.type === 'motion' ? h('video', { src: it.video, muted: true, loop: true, playsinline: true, preload: 'none', 'aria-hidden': 'true', tabindex: '-1' }) : null;
+      if (vid) { vid.muted = true; vid.setAttribute('muted', ''); }
+      const crop = cropEl(it, fr, 0, vid);
+      if (it.type === 'motion') crop.append(h('span', { class: 'badge' }, 'Motion'));
+      el = h('button', { class: 'item print', type: 'button', style: placement(it), 'data-id': it.id, 'aria-label': `Open ${it.title}${it.type === 'motion' ? ' (video)' : ''}` },
+        it.pin ? h('span', { class: 'pin' }) : h('span', { class: 'tape' }),
+        crop,
+        h('span', { class: 'cap' }, h('span', {}, it.title), h('i', {}, it.note)));
+      el.addEventListener('click', () => openLb(it, 0, el));
+    } else if (it.type === 'strip') {
+      const cells = it.frames.map((fr, i) => {
+        const no = ALL.find(a => a.it === it && a.i === i).no;
+        const inner = h('span', { class: 'inner' + (fr.ar > 1.6 ? ' wide' : ''), style: cropVars(fr) }, h('img', { src: fr.src, alt: alt(it, fr, i), loading: 'lazy', decoding: 'async', draggable: 'false' }));
+        const c = h('button', { class: 'cell', type: 'button', 'aria-label': `Open ${alt(it, fr, i)}` },
+          h('span', { class: 'crop' }, inner, fr.pick ? pencil() : null),
+          h('span', { class: 'fn' }, `${pad(no)}${fr.pick ? ' ◂' : ''}`));
+        c.addEventListener('click', () => openLb(it, i, c));
+        return c;
+      });
+      el = h('div', { class: 'item strip', style: placement(it), role: 'group', 'aria-label': `${it.title}, ${it.frames.length} frames` },
+        h('div', { class: 'strip-label' }, h('span', {}, it.title), h('span', {}, it.note)),
+        h('div', { class: 'strip-base' }, h('div', { class: 'holes' }), h('div', { class: 'cells' }, cells), h('div', { class: 'holes b' })));
+    } else if (it.type === 'stack') {
+      const fr = it.frames[0];
+      el = h('button', { class: 'item stack', type: 'button', style: placement(it), 'aria-label': `Open ${it.title}, ${it.frames.length} frames` },
+        h('span', { class: 'layer l1' }), h('span', { class: 'layer l2' }),
+        h('span', { class: 'print top' },
+          h('span', { class: 'tape' }),
+          cropEl(it, fr, 0, h('span', { class: 'badge count' }, `${it.frames.length} frames`)),
+          h('span', { class: 'cap' }, h('span', {}, it.title), h('i', {}, it.note))));
+      el.addEventListener('click', () => openLb(it, 0, el));
+    } else if (it.type === 'tag') {
+      el = h('a', { class: 'item tag', href: `mailto:${CONFIG.email}`, style: placement(it) },
+        h('span', { class: 'hole' }), h('b', {}, it.title), h('span', {}, CONFIG.email));
+    }
+    board.append(el);
+  }
+}
+
+// ── PROOF SHEET ──
+function buildSheet() {
+  const grid = $('#sheet-grid');
+  ALL.forEach(({ it, i, fr, no }) => {
+    const b = h('button', { class: 'sheet-cell', type: 'button', 'aria-label': `Open ${alt(it, fr, i)}` },
+      it.type === 'motion' ? h('span', { class: 'mo' }, '▶ MOTION') : null,
+      h('span', { class: 'well' },
+        h('span', { class: 'inner' + (fr.ar > 1.6 ? ' wide' : ''), style: cropVars(fr) }, h('img', { src: fr.src, alt: '', loading: 'lazy', decoding: 'async' })),
+        fr.pick ? pencil() : null),
+      h('span', { class: 'lab' }, h('span', {}, `${pad(no)}${fr.pick ? ' ◂' : ''}`), h('span', {}, fr.label || it.title)));
+    b.addEventListener('click', () => openLb(it, i, b));
+    grid.append(b);
+  });
+  $('#sheet-count').textContent = `${ALL.length} frames`;
+}
+
+// ── VIEW TOGGLE (#sheet deep-links straight to the proof sheet) ──
+function setView(v) {
+  const sheet = v === 'sheet';
+  $('#board-wrap').hidden = sheet; $('#sheet').hidden = !sheet;
+  $('#v-board').setAttribute('aria-pressed', String(!sheet)); $('#v-sheet').setAttribute('aria-pressed', String(sheet));
+  history.replaceState(null, '', sheet ? '#sheet' : location.pathname + location.search);
+  if (!sheet) requestAnimationFrame(reveal);
+}
+$('#v-board').addEventListener('click', () => setView('board'));
+$('#v-sheet').addEventListener('click', () => setView('sheet'));
+
+// ── LIGHTBOX — one viewer for the whole page: ← → (or swipe) walk every frame in order ──
+const lb = $('#lb'), media = $('#lb-media'), thumbs = $('#lb-thumbs');
+let cur = { k: 0, opener: null };
+const entry = () => ALL[cur.k];
+function fit() {
+  const el = media.firstElementChild; if (!el) return;
+  const { it, fr } = entry();
+  const ar = el.tagName === 'VIDEO' ? it.vAr : fr.ar;
+  const wide = innerWidth > 819;
+  const maxW = Math.min(innerWidth - (wide ? 140 : 24), 1200);
+  const maxH = innerHeight - (wide ? 220 : 210);
+  const w = Math.min(maxW, maxH * ar);
+  el.style.width = w + 'px'; el.style.height = (w / ar) + 'px';
+}
+function buildThumbs() {
+  ALL.forEach((a, k) => {
+    const t = h('button', { type: 'button', 'aria-label': `Frame ${pad(a.no)}: ${a.fr.label || a.it.title}`, style: cropVars(a.fr) }, h('img', { src: a.fr.src, alt: '', loading: 'lazy' }));
+    t.addEventListener('click', () => { cur.k = k; show(); });
+    thumbs.append(t);
+  });
+}
+function show() {
+  const { it, i, fr, no } = entry();
+  media.querySelector('video')?.pause();
+  media.replaceChildren();
+  if (it.type === 'motion' && it.video) {
+    const v = h('video', { src: it.video, controls: true, playsinline: true, autoplay: true, loop: true, preload: 'auto', 'aria-label': it.title + ' (video)' });
+    v.muted = true;  // autoplay needs muted; the controls unmute
+    media.append(v);
+  } else {
+    media.append(cropEl(it, fr, i));
+  }
+  fit();
+  $('#lb-title').textContent = fr.label ? `${it.title} — ${fr.label}` : it.title;
+  $('#lb-desc').textContent = fr.desc || it.desc || '';
+  $('#lb-count').textContent = `${cur.k + 1} / ${ALL.length}\n${it.type === 'motion' ? 'MOTION' : 'FRAME ' + pad(no)}`;
+  $('#lb-count').style.whiteSpace = 'pre-line';
+  [...thumbs.children].forEach((t, k) => t.setAttribute('aria-current', String(k === cur.k)));
+  const t = thumbs.children[cur.k];
+  if (t) thumbs.scrollTo({ left: t.offsetLeft - thumbs.clientWidth / 2 + t.offsetWidth / 2, behavior: lb.classList.contains('open') ? 'smooth' : 'auto' });
+}
+function openLb(it, i, opener) {
+  cur = { k: ALL.findIndex(a => a.it === it && a.i === i), opener };
+  lb.hidden = false; show();
+  requestAnimationFrame(() => { lb.classList.add('open'); show(); });
+  document.body.style.overflow = 'hidden';
+  $('#lb-close').focus({ preventScroll: true });
+}
+function closeLb() {
+  lb.classList.remove('open');
+  media.querySelector('video')?.pause();
+  setTimeout(() => { lb.hidden = true; media.replaceChildren(); }, 220);
+  document.body.style.overflow = '';
+  if (cur.opener) cur.opener.focus({ preventScroll: true });
+}
+const step = d => { cur.k = (cur.k + d + ALL.length) % ALL.length; show(); };   // wraps at both ends
+$('#lb-close').addEventListener('click', closeLb);
+$('#lb-prev').addEventListener('click', () => step(-1));
+$('#lb-next').addEventListener('click', () => step(1));
+lb.addEventListener('click', e => { if (e.target === lb || e.target.classList.contains('lb-stage')) closeLb(); });
+addEventListener('keydown', e => {
+  if (lb.hidden) return;
+  if (e.key === 'Escape') closeLb();
+  else if (e.key === 'ArrowLeft') step(-1);
+  else if (e.key === 'ArrowRight') step(1);
+  else if (e.key === 'Home') { cur.k = 0; show(); }
+  else if (e.key === 'End') { cur.k = ALL.length - 1; show(); }
+  else if (e.key === 'Tab') {   // keep focus inside the viewer
+    const f = [...lb.querySelectorAll('button:not([disabled]), video')].filter(x => x.offsetParent !== null && getComputedStyle(x).visibility !== 'hidden');
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+});
+let tx = null;
+lb.addEventListener('touchstart', e => { tx = e.touches.length === 1 ? e.touches[0].clientX : null; }, { passive: true });
+lb.addEventListener('touchend', e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 55) step(dx < 0 ? 1 : -1); }, { passive: true });
+addEventListener('resize', fit);
+
+// ── MOTION PRINTS: wake on hover / focus (laptop); tap opens the viewer ──
+const canHover = matchMedia('(hover: hover)').matches;
+function wireMotion() {
+  board.querySelectorAll('.item').forEach(el => {
+    const v = el.querySelector('video'); if (!v || !canHover) return;
+    const play = () => { v.play().catch(() => {}); };
+    const stop = () => { v.pause(); v.currentTime = 0; };
+    el.addEventListener('mouseenter', play); el.addEventListener('mouseleave', stop);
+    el.addEventListener('focus', play); el.addEventListener('blur', stop);
+  });
+}
+
+// ── REVEAL ON SCROLL + a little parallax (laptop only, off for reduced motion) ──
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let io;
+function reveal() {
+  if (!('IntersectionObserver' in window)) { board.querySelectorAll('.item').forEach(e => e.classList.add('in')); return; }
+  if (!io) io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  board.querySelectorAll('.item:not(.in)').forEach(e => io.observe(e));
+}
+if (!reduce && matchMedia('(min-width: 820px) and (hover: hover)').matches) {
+  const wrap = $('#board-wrap'); let raf = 0;
+  addEventListener('pointermove', e => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => { board.style.setProperty('--px', ((e.clientX / innerWidth) - .5).toFixed(3)); board.style.setProperty('--py', ((e.clientY / innerHeight) - .5).toFixed(3)); });
+  }, { passive: true });
+}
+
+// ── INIT ──
+$('#book').href = `mailto:${CONFIG.email}`;
+$('#brand').firstChild.textContent = CONFIG.name;
+build(); buildSheet(); buildThumbs(); wireMotion(); reveal();
+if (location.hash === '#sheet') setView('sheet');
+</script>
+</body>
+</html>

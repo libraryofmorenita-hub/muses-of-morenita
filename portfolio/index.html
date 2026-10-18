@@ -319,6 +319,9 @@ html.route-pending #about-view { visibility: hidden; }
    below. */
 html.isolated-share .toggle-list,
 html.isolated-share #mobile-toggle-strip { display: none !important; }
+/* Music and Fine Art are hidden for now — remove the next rule and the HIDDEN_TOGGLES line to bring them back. */
+.career-toggle[data-toggle="cellist"],
+.career-toggle[data-toggle="painter"] { display: none !important; }
 html.isolated-share .nav-logo { cursor: default; }
 
 /* Default "About" view */
@@ -1402,7 +1405,7 @@ html.isolated-share .nav-logo { cursor: default; }
           <div class="about-inner">
             <div class="about-name">Portfolio not found</div>
             <p class="about-bio">There's no Muse at this link. Check the URL, or head back to the platform.</p>
-            <a class="about-location" href="../" style="text-decoration:underline;">← Return to Morenita Technology</a>
+            <a class="about-location" href="../" style="text-decoration:underline;">Morenita Technology</a>
           </div>
         </div>
 
@@ -1635,7 +1638,7 @@ html.isolated-share .nav-logo { cursor: default; }
       <a href="../legal/terms-of-service.pdf" target="_blank">Terms</a>
       <a href="../legal/cookie-notice.pdf" target="_blank">Cookies</a>
     </span>
-    <a class="footer-tag" href="../">Return to Morenita Technology</a>
+    <a class="footer-tag" href="../">Morenita Technology</a>
   </footer>
 
   <!-- Mobile tab bar -->
@@ -1934,7 +1937,9 @@ function navLogoClick() {
 }
 
 // ── TOGGLE LOGIC ───────────────────────────────────────
+const HIDDEN_TOGGLES = new Set(['cellist', 'painter']);
 function setToggle(id) {
+  if (HIDDEN_TOGGLES.has(id)) return;
   if (state.activeToggle === id) {
     // Deactivate
     state.activeToggle = null;
@@ -2257,7 +2262,7 @@ function applyShareParam() {
   state.isolated = true;
   document.documentElement.classList.add('isolated-share');
   dataReady.then(() => {
-    if (TOGGLE_DATA[role]) {
+    if (TOGGLE_DATA[role] && !HIDDEN_TOGGLES.has(role)) {
       setToggle(role);
     } else {
       // Unknown/removed role — fail into the normal full profile rather
