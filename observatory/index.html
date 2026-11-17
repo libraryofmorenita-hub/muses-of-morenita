@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observatory | Morenita Technology</title>
+<meta name="description" content="Every Morenita Technology invention, story and product, mapped across seven constellations.">
+<link rel="icon" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────────
+   OBSERVATORY — skin: the collected workshop
+   Stone, ink, wine and brass. Ported in spirit from the Library of
+   Morenita observatory: constellations are clusters of their tags,
+   and every piece hangs from the tags it uses.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --ink: #1C1A18;
+  --ink-soft: #5E5852;
+  --stone: #E4E1DA;
+  --paper: #F7F6F3;
+  --wine: #a8503f;
+  --wine-light: #d08a76;
+  --brass: #A88A4E;
+  --line: rgba(28,26,24,.16);
+  --gutter: clamp(16px, 3.5vw, 48px);
+  --grotesk: "Schibsted Grotesk", system-ui, sans-serif;
+  --serif: "Newsreader", Georgia, serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--stone); color: var(--ink); font: 16px/1.5 var(--grotesk); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--wine); outline-offset: 2px; }
+
+header.top {
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  padding: 16px var(--gutter); border-bottom: 1px solid var(--line);
+}
+.brand { font-weight: 600; font-size: 17px; text-decoration: none; letter-spacing: -.01em; }
+.top nav { display: flex; gap: 22px; font-size: 14px; }
+.top nav a { text-decoration: none; color: var(--ink-soft); }
+.top nav a[aria-current] { color: var(--ink); }
+
+.intro {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--gutter);
+  align-items: end; padding: clamp(28px, 5vw, 64px) var(--gutter) 22px;
+}
+.intro h1 { font-weight: 600; font-size: clamp(44px, 7vw, 104px); line-height: .9; letter-spacing: -.035em; }
+.intro p { font-family: var(--serif); font-size: clamp(17px, 1.5vw, 20px); max-width: 44ch; }
+.intro .count { font-family: var(--grotesk); color: var(--ink-soft); font-size: 14px; margin-top: 10px; }
+@media (max-width: 760px) { .intro { grid-template-columns: 1fr; } }
+
+/* controls */
+.controls {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+  padding: 12px var(--gutter); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--stone) 92%, transparent); backdrop-filter: blur(6px);
+}
+.seg { display: inline-flex; border: 1px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.seg button { background: none; border: 0; padding: 6px 14px; font-size: 14px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 5px 12px; font-size: 13px; cursor: pointer; }
+.chip[aria-pressed="false"] { background: transparent; color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--line); }
+.search { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.search input { border: 1px solid var(--line); background: var(--paper); padding: 7px 12px; border-radius: 999px; font: inherit; font-size: 14px; width: min(240px, 50vw); }
+.toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-soft); cursor: pointer; }
+
+/* stage */
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 340px; min-height: 72vh; }
+@media (max-width: 900px) { .stage { grid-template-columns: 1fr; } }
+.view { position: relative; min-height: 72vh; }
+.view[hidden] { display: none; }
+#sky { width: 100%; height: 100%; min-height: 72vh; display: block; touch-action: manipulation; }
+
+.panel { border-left: 1px solid var(--line); padding: 24px; background: var(--paper); }
+@media (max-width: 900px) { .panel { border-left: 0; border-top: 1px solid var(--line); } }
+.panel h2 { font-weight: 600; font-size: 26px; line-height: 1.05; letter-spacing: -.02em; margin-bottom: 10px; }
+.panel .kind { font-size: 13px; color: var(--wine); margin-bottom: 8px; }
+.panel p { font-family: var(--serif); font-size: 17px; margin-bottom: 14px; }
+.panel .hint { font-family: var(--grotesk); font-size: 14px; color: var(--ink-soft); }
+.panel ul { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.panel li { font-size: 12.5px; border: 1px solid var(--line); padding: 3px 9px; border-radius: 999px; }
+.panel .open { display: inline-block; background: var(--ink); color: var(--paper); text-decoration: none; padding: 9px 16px; border-radius: 999px; font-size: 14px; }
+.panel .legend { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-soft); display: grid; gap: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend i { display: inline-block; }
+
+/* sky marks */
+.c-ring { fill: none; stroke: var(--line); stroke-dasharray: 2 4; }
+.c-glyph { fill: none; stroke: var(--brass); stroke-width: 1.4; }
+.c-label { font: 600 15px var(--grotesk); fill: var(--ink); letter-spacing: -.01em; cursor: pointer; }
+.c-blurb { font: 400 11.5px var(--grotesk); fill: var(--ink-soft); }
+.tag-star { fill: var(--ink); }
+.tag-star.unused { fill: none; stroke: var(--ink-soft); stroke-width: .8; opacity: .55; }
+.tag-label { font: 400 10.5px var(--grotesk); fill: var(--ink-soft); pointer-events: none; }
+.edge { stroke: var(--ink); stroke-opacity: .18; stroke-width: 1; }
+.piece circle { stroke: var(--paper); stroke-width: 2; cursor: pointer; }
+.piece text { font: 500 12.5px var(--grotesk); fill: var(--ink); pointer-events: none; paint-order: stroke; stroke: var(--stone); stroke-width: 4px; stroke-linejoin: round; }
+.dim { opacity: .12; transition: opacity .2s; }
+.hot { opacity: 1 !important; }
+.edge.hot { stroke: var(--wine); stroke-opacity: .9; stroke-width: 1.6; }
+.tag-star.hot { fill: var(--wine); }
+.tag-label.hot { fill: var(--ink); font-weight: 500; }
+
+/* grid view */
+.grid-wrap { overflow-x: auto; padding: 20px var(--gutter) 40px; }
+table.matrix { border-collapse: collapse; min-width: 560px; width: 100%; }
+.matrix th, .matrix td { border-bottom: 1px solid var(--line); padding: 10px 8px; text-align: center; font-size: 14px; }
+.matrix th { font-weight: 500; vertical-align: bottom; }
+.matrix th.piece-name, .matrix td.piece-name { text-align: left; }
+.matrix td.piece-name button { background: none; border: 0; cursor: pointer; text-align: left; font-weight: 500; }
+.matrix td.piece-name small { display: block; color: var(--wine); font-size: 12px; font-weight: 400; }
+.matrix .dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: var(--ink); }
+.matrix tr:hover td, .matrix td.colhot { background: rgba(168,80,63,.07); }
+.matrix tfoot td { color: var(--ink-soft); font-size: 13px; border-bottom: 0; }
+
+footer { padding: 28px var(--gutter) 40px; font-size: 14px; color: var(--ink-soft); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../">Morenita Technology</a>
+  <nav aria-label="Main">
+    <a href="../#/archive">Archive</a>
+    <a href="./" aria-current="page">Observatory</a>
+    <a href="../#/mission">Mission</a>
+    <a href="../#/about">About</a>
+  </nav>
+</header>
+
+<section class="intro">
+  <h1>Observatory</h1>
+  <div>
+    <p>Everything Morenita Technology builds and writes, mapped across seven constellations. Each piece hangs from the ideas it uses, so you can see what connects and where the work goes next.</p>
+    <p class="count" id="count"></p>
+  </div>
+</section>
+
+<div class="controls" role="toolbar" aria-label="Observatory controls">
+  <div class="seg" role="group" aria-label="View">
+    <button type="button" data-view="sky" aria-pressed="true">Sky</button>
+    <button type="button" data-view="grid" aria-pressed="false">Grid</button>
+  </div>
+  <div class="chips" role="group" aria-label="Show kinds" id="kinds"></div>
+  <label class="toggle"><input type="checkbox" id="labels" checked> Idea names</label>
+  <div class="search">
+    <label class="sr" for="q">Search the Observatory</label>
+    <input id="q" type="search" placeholder="Search pieces and ideas" autocomplete="off">
+  </div>
+</div>
+
+<div class="stage">
+  <div class="view" id="view-sky">
+    <svg id="sky" role="img" aria-label="Map of the seven constellations, their ideas, and the pieces that use them"></svg>
+  </div>
+  <div class="view" id="view-grid" hidden>
+    <div class="grid-wrap"><table class="matrix" id="matrix"></table></div>
+  </div>
+  <aside class="panel" id="panel" aria-live="polite"></aside>
+</div>
+
+<footer>
+  <span>Data from the Morenita Technology archive, snapshot of Nov 10 2026.</span>
+  <a href="../">Morenita Technology</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+/* Snapshot of web.archive_constellations, web.archive_tags and the published
+   rows of web.archive_products. When the site reads from the web schema, swap
+   this for a fetch. */
+const CONSTELLATIONS = [
+  { slug: 'energy', label: 'Energy', blurb: 'Power generation, storage and net-zero systems' },
+  { slug: 'materials', label: 'Materials', blurb: 'Textiles, composites, fibers' },
+  { slug: 'body', label: 'Body', blurb: 'Biomedical and wearable work' },
+  { slug: 'craft', label: 'Craft', blurb: 'Fashion, hardware, fabrication' },
+  { slug: 'mind', label: 'Mind', blurb: 'Software, embedded systems and data' },
+  { slug: 'story', label: 'Story', blurb: 'Newsletter, writing, art and ideas' },
+  { slug: 'commons', label: 'Commons', blurb: 'Open source, policy, learning' },
+];
+const TAGS = [
+  ['solar','Solar','energy'],['photovoltaics','Photovoltaics','energy'],['net-zero','Net-zero','energy'],['energy-storage','Energy storage','energy'],['off-grid','Off-grid','energy'],['solar-mobility','Solar mobility','energy'],['energy-harvesting','Energy harvesting','energy'],
+  ['solar-textiles','Solar textiles','materials'],['pina-fiber','Piña fiber','materials'],['carbon-composites','Carbon composites','materials'],['natural-dye','Natural dye','materials'],['vegan-leather','Vegan leather','materials'],['zero-waste','Zero waste','materials'],['biomaterials','Biomaterials','materials'],
+  ['vital-signs','Vital signs','body'],['wearables','Wearables','body'],['biosensing','Biosensing','body'],['recovery','Recovery','body'],['human-factors','Human factors','body'],['accessibility','Accessibility','body'],
+  ['functional-fashion','Functional fashion','craft'],['prototyping','Prototyping','craft'],['fabrication','Fabrication','craft'],['modular-design','Modular design','craft'],['enclosures','Enclosures','craft'],['circuit-design','Circuit design','craft'],
+  ['embedded-systems','Embedded systems','mind'],['machine-learning','Machine learning','mind'],['recommendation','Recommendation','mind'],['brain-decoding','Brain decoding','mind'],['firmware','Firmware','mind'],['data','Data','mind'],
+  ['newsletter','Newsletter','story'],['essays','Essays','story'],['case-studies','Case studies','story'],['philosophy','Philosophy','story'],['art','Art','story'],['reading','Reading','story'],
+  ['open-source','Open source','commons'],['policy','Policy','commons'],['environment','Environment','commons'],['education','Education','commons'],['community','Community','commons'],['standards','Standards','commons'],
+].map(([slug, label, c]) => ({ slug, label, c }));
+const PIECES = [
+  { slug: 'maxine', title: 'MAXINE', full: 'MAXINE: An Open-Source Recovery Companion for Hospital Beds', kind: 'invention', summary: 'An open-source, modular recovery companion for hospital beds.', cons: ['body','mind','craft','commons'], tags: ['vital-signs','recovery','embedded-systems','modular-design','open-source'], url: '../case-study/?id=ca751097-74f1-48ea-a7db-a455387639df&from=inventor' },
+  { slug: 'arnold-rover', title: 'ARNOLD', full: "ARNOLD: The Rover Engineered to Save America's Trees", kind: 'invention', summary: 'An autonomous rover built to detect and eliminate the Spotted Lanternfly. Field-validated at Loyola Maryland Arboretum. 2,200 trees protected.', cons: ['mind','craft','commons'], tags: ['embedded-systems','prototyping','environment'], url: '../case-study/?id=73b0104a-519a-479d-bade-42941be1b378&from=inventor' },
+  { slug: 'neurosect', title: 'Neurosect', full: 'Neurosect: Minority Report, Grounded in Engineering', kind: 'invention', summary: 'A speculative multimodal imaging system. fMRI, EEG, MEG, and PPG in Bayesian consensus.', cons: ['body','mind'], tags: ['biosensing','brain-decoding','machine-learning','data'], url: '../case-study/?id=c4d5c967-09ef-4041-bd65-79e891075b4b&from=inventor' },
+  { slug: 'ballmecca', title: 'Ballmecca', full: 'Youth Sports Needs Better Infrastructure. Ballmecca is Building It.', kind: 'product', summary: '68% of youth coaches are unpaid volunteers. A platform connecting athletes with verified coaching through video feedback.', cons: ['mind','commons'], tags: ['data','community','education'], url: '../case-study/?id=9dba7d9b-d12e-447c-a944-e58a8f5c1e6d&from=engineer' },
+  { slug: 'this-is-us', title: 'This Is Us', full: 'This Is Us: Why Morenita Technology Exists', kind: 'story', summary: 'Green energy, education, and creative infrastructure, built the way a cellist tunes an orchestra.', cons: ['story','commons'], tags: ['essays','philosophy','education','environment'], url: '../case-study/?id=6a2941dc-8a1a-4e69-98d6-482b45900bb3&from=engineer' },
+  { slug: 'meet-madeline', title: 'Meet Madeline Abiera', full: 'Meet Madeline Abiera, Film Director', kind: 'story', summary: 'Film director and production lead who assembles crews and manages production from concept to delivery.', cons: ['story','commons'], tags: ['case-studies','community','art'], url: '../case-study/?id=1e0d380d-f859-43f6-9795-3d8b406cb436&from=engineer' },
+];
+const KINDS = [['invention', 'Inventions'], ['story', 'Stories'], ['product', 'Products']];
+const KIND_COLOR = { invention: '#a8503f', story: '#A88A4E', product: '#1C1A18' };
+const KIND_WORD = { invention: 'Invention', story: 'Story', product: 'Product' };
+
+/* Seven small line glyphs, one per constellation, built from simple geometry. */
+function glyph(i, r) {
+  const n = i + 3; // triangle, square, pentagon … nonagon
+  const pts = d3.range(n).map(k => {
+    const a = -Math.PI / 2 + k * 2 * Math.PI / n;
+    return [Math.cos(a) * r, Math.sin(a) * r];
+  });
+  const poly = 'M' + pts.map(p => p.join(',')).join('L') + 'Z';
+  const spokes = pts.map(p => `M0,0L${p[0] * .45},${p[1] * .45}`).join('');
+  return poly + spokes;
+}
+
+const state = { kinds: new Set(KINDS.map(k => k[0])), q: '', selected: null, labels: true };
+const tagBy = Object.fromEntries(TAGS.map(t => [t.slug, t]));
+const usedTags = new Set(PIECES.flatMap(p => p.tags));
+
+/* ── Panel ── */
+const panel = document.getElementById('panel');
+const legendHtml = `<div class="legend">
+  ${KINDS.map(([k, w]) => `<span><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="${KIND_COLOR[k]}"/></svg>${w}</span>`).join('')}
+  <span><svg width="14" height="14"><circle cx="7" cy="7" r="3" fill="#1C1A18"/></svg>An idea in use</span>
+  <span><svg width="14" height="14"><circle cx="7" cy="7" r="3" fill="none" stroke="#5E5852"/></svg>An idea waiting for its first piece</span>
+</div>`;
+function showIntro() {
+  const empty = CONSTELLATIONS.filter(c => !PIECES.some(p => p.cons.includes(c.slug))).map(c => c.label);
+  panel.innerHTML = `<h2>Choose a star</h2>
+    <p class="hint">Hover or tap a piece to see the ideas it draws on. Tap a constellation name to light up everything in it.</p>
+    ${empty.length ? `<p class="hint">${empty.join(' and ')} ${empty.length > 1 ? 'have' : 'has'} no published pieces yet. That's where the materials and energy research will land.</p>` : ''}
+    ${legendHtml}`;
+}
+function showPiece(p) {
+  panel.innerHTML = `<div class="kind">${KIND_WORD[p.kind]}</div>
+    <h2>${p.full}</h2>
+    <p>${p.summary}</p>
+    <ul aria-label="Ideas">${p.tags.map(t => `<li>${tagBy[t].label}</li>`).join('')}</ul>
+    <a class="open" href="${p.url}">Read the ${p.kind === 'story' ? 'story' : 'case study'}</a>
+    ${legendHtml}`;
+}
+function showConstellation(c) {
+  const ps = PIECES.filter(p => p.cons.includes(c.slug));
+  panel.innerHTML = `<div class="kind">Constellation</div><h2>${c.label}</h2><p>${c.blurb}.</p>
+    <p class="hint">${ps.length ? `${ps.length} piece${ps.length > 1 ? 's' : ''}: ${ps.map(p => p.title).join(', ')}.` : 'No published pieces yet.'}</p>
+    <ul aria-label="Ideas">${TAGS.filter(t => t.c === c.slug).map(t => `<li>${t.label}${usedTags.has(t.slug) ? '' : ' (waiting)'}</li>`).join('')}</ul>
+    ${legendHtml}`;
+}
+
+/* ── Sky ── */
+const svg = d3.select('#sky');
+let W = 0, H = 0;
+const gRoot = svg.append('g');
+const gCons = gRoot.append('g'), gEdges = gRoot.append('g'), gTags = gRoot.append('g'), gPieces = gRoot.append('g');
+svg.call(d3.zoom().scaleExtent([.6, 3]).on('zoom', e => gRoot.attr('transform', e.transform)));
+
+let sim;
+function layout() {
+  const box = document.getElementById('view-sky').getBoundingClientRect();
+  W = box.width; H = Math.max(560, box.height);
+  svg.attr('viewBox', `0 0 ${W} ${H}`);
+  const R = Math.min(W, H) * .31, cx = W / 2, cy = H / 2 + 18;
+  const cr = Math.max(46, Math.min(W, H) * .085);
+  CONSTELLATIONS.forEach((c, i) => {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / CONSTELLATIONS.length;
+    c.x = cx + Math.cos(a) * R; c.y = cy + Math.sin(a) * R; c.r = cr;
+  });
+  TAGS.forEach(t => {
+    const c = CONSTELLATIONS.find(k => k.slug === t.c);
+    const sibs = TAGS.filter(x => x.c === t.c), k = sibs.indexOf(t);
+    const a = k * 2 * Math.PI / sibs.length + (CONSTELLATIONS.indexOf(c) * .7);
+    const rr = c.r * (k % 2 ? .78 : 1.05);
+    t.x = c.x + Math.cos(a) * rr; t.y = c.y + Math.sin(a) * rr;
+  });
+  PIECES.forEach(p => {
+    const ts = p.tags.map(s => tagBy[s]);
+    p.tx = d3.mean(ts, t => t.x) * .7 + cx * .3; p.ty = d3.mean(ts, t => t.y) * .7 + cy * .3;
+    if (p.x == null) { p.x = p.tx; p.y = p.ty; }
+  });
+}
+
+function drawSky() {
+  layout();
+  gCons.selectAll('*').remove(); gTags.selectAll('*').remove(); gEdges.selectAll('*').remove(); gPieces.selectAll('*').remove();
+
+  const cg = gCons.selectAll('g').data(CONSTELLATIONS).join('g').attr('transform', c => `translate(${c.x},${c.y})`);
+  cg.append('circle').attr('class', 'c-ring').attr('r', c => c.r * 1.25);
+  cg.append('path').attr('class', 'c-glyph').attr('d', (c, i) => glyph(i, 11));
+  cg.append('text').attr('class', 'c-label').attr('text-anchor', 'middle').attr('y', c => -c.r * 1.25 - 12).text(c => c.label)
+    .attr('tabindex', 0).attr('role', 'button')
+    .on('click keydown', (e, c) => { if (e.type === 'keydown' && e.key !== 'Enter') return; state.selected = { c }; highlight(); showConstellation(c); });
+
+  gEdges.selectAll('line').data(PIECES.flatMap(p => p.tags.map(t => ({ p, t: tagBy[t] })))).join('line').attr('class', 'edge');
+
+  const tg = gTags.selectAll('g').data(TAGS).join('g').attr('transform', t => `translate(${t.x},${t.y})`);
+  tg.append('circle').attr('class', t => 'tag-star' + (usedTags.has(t.slug) ? '' : ' unused')).attr('r', t => usedTags.has(t.slug) ? 3.2 : 2.4);
+  tg.append('text').attr('class', 'tag-label').attr('x', 6).attr('y', 3.5).text(t => t.label).style('display', state.labels ? null : 'none');
+
+  const pg = gPieces.selectAll('g').data(PIECES).join('g').attr('class', 'piece').attr('tabindex', 0).attr('role', 'button')
+    .attr('aria-label', p => `${KIND_WORD[p.kind]}: ${p.full}`);
+  pg.append('circle').attr('r', p => 7 + p.tags.length * 1.6).attr('fill', p => KIND_COLOR[p.kind]);
+  pg.append('text').attr('x', p => 10 + p.tags.length * 1.6).attr('y', 4).text(p => p.title);
+  pg.on('mouseenter focus', (e, p) => { if (!state.selected || state.selected.p !== p) { hover(p); } })
+    .on('mouseleave blur', () => highlight())
+    .on('click keydown', (e, p) => { if (e.type === 'keydown' && e.key !== 'Enter') return; state.selected = { p }; highlight(); showPiece(p); });
+
+  if (sim) sim.stop();
+  sim = d3.forceSimulation(PIECES)
+    .force('x', d3.forceX(p => p.tx).strength(.18))
+    .force('y', d3.forceY(p => p.ty).strength(.18))
+    .force('collide', d3.forceCollide(p => 30 + p.tags.length * 2))
+    .on('tick', tick);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { sim.stop(); for (let i = 0; i < 200; i++) sim.tick(); tick(); }
+  highlight();
+}
+function tick() {
+  gPieces.selectAll('g').attr('transform', p => `translate(${p.x},${p.y})`);
+  gEdges.selectAll('line').attr('x1', d => d.p.x).attr('y1', d => d.p.y).attr('x2', d => d.t.x).attr('y2', d => d.t.y);
+}
+
+function visible(p) {
+  if (!state.kinds.has(p.kind)) return false;
+  if (!state.q) return true;
+  const hay = (p.full + ' ' + p.summary + ' ' + p.tags.map(t => tagBy[t].label).join(' ')).toLowerCase();
+  return hay.includes(state.q);
+}
+function hover(p) { applyHot(new Set([p]), new Set(p.tags), null); }
+function highlight() {
+  const sel = state.selected;
+  if (sel && sel.p) return applyHot(new Set([sel.p]), new Set(sel.p.tags), null);
+  if (sel && sel.c) {
+    const ps = new Set(PIECES.filter(p => p.cons.includes(sel.c.slug) && visible(p)));
+    return applyHot(ps, new Set(TAGS.filter(t => t.c === sel.c.slug).map(t => t.slug)), sel.c);
+  }
+  if (state.q) {
+    const ps = new Set(PIECES.filter(visible));
+    const ts = new Set(TAGS.filter(t => t.label.toLowerCase().includes(state.q)).map(t => t.slug));
+    ps.forEach(p => p.tags.forEach(t => ts.add(t)));
+    return applyHot(ps, ts, null);
+  }
+  applyHot(null, null, null);
+}
+function applyHot(ps, ts, c) {
+  const on = ps !== null;
+  gPieces.selectAll('g').classed('dim', p => (on && !ps.has(p)) || !visible(p)).classed('hot', p => on && ps.has(p));
+  gEdges.selectAll('line').classed('dim', d => (on && !(ps.has(d.p) && ts.has(d.t.slug))) || !visible(d.p))
+    .classed('hot', d => on && ps.has(d.p) && ts.has(d.t.slug));
+  gTags.selectAll('circle').classed('hot', t => on && ts.has(t.slug)).classed('dim', t => on && !ts.has(t.slug));
+  gTags.selectAll('text').classed('hot', t => on && ts.has(t.slug)).classed('dim', t => on && !ts.has(t.slug));
+  gCons.selectAll('g').classed('dim', k => c ? k !== c : false);
+}
+svg.on('click', e => { if (e.target === svg.node()) { state.selected = null; highlight(); showIntro(); } });
+
+/* ── Grid ── */
+function drawGrid() {
+  const rows = PIECES.filter(visible);
+  const t = document.getElementById('matrix');
+  t.innerHTML = `<caption class="sr">Pieces by constellation</caption>
+    <thead><tr><th class="piece-name" scope="col">Piece</th>${CONSTELLATIONS.map((c, i) => `<th scope="col" data-col="${i}"><svg width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><path d="${glyph(i, 10)}" fill="none" stroke="#A88A4E" stroke-width="1.3"/></svg><br>${c.label}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(p => `<tr><td class="piece-name"><button type="button" data-slug="${p.slug}">${p.title}<small>${KIND_WORD[p.kind]}</small></button></td>${CONSTELLATIONS.map((c, i) => `<td data-col="${i}">${p.cons.includes(c.slug) ? `<span class="dot" style="background:${KIND_COLOR[p.kind]}" title="${p.title} in ${c.label}"></span><span class="sr">yes</span>` : ''}</td>`).join('')}</tr>`).join('')}</tbody>
+    <tfoot><tr><td class="piece-name">Pieces</td>${CONSTELLATIONS.map((c, i) => `<td data-col="${i}">${rows.filter(p => p.cons.includes(c.slug)).length}</td>`).join('')}</tr></tfoot>`;
+  t.querySelectorAll('button[data-slug]').forEach(b => b.onclick = () => showPiece(PIECES.find(p => p.slug === b.dataset.slug)));
+  t.querySelectorAll('[data-col]').forEach(cell => {
+    cell.addEventListener('mouseenter', () => t.querySelectorAll(`[data-col="${cell.dataset.col}"]`).forEach(x => x.classList.add('colhot')));
+    cell.addEventListener('mouseleave', () => t.querySelectorAll('.colhot').forEach(x => x.classList.remove('colhot')));
+  });
+}
+
+/* ── Controls ── */
+const kindsEl = document.getElementById('kinds');
+KINDS.forEach(([k, w]) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'chip'; b.textContent = w; b.setAttribute('aria-pressed', 'true');
+  b.onclick = () => {
+    state.kinds.has(k) ? state.kinds.delete(k) : state.kinds.add(k);
+    if (!state.kinds.size) state.kinds.add(k);
+    b.setAttribute('aria-pressed', state.kinds.has(k));
+    kindsEl.querySelectorAll('.chip').forEach((c, i) => c.setAttribute('aria-pressed', state.kinds.has(KINDS[i][0])));
+    refresh();
+  };
+  kindsEl.appendChild(b);
+});
+document.getElementById('q').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); state.selected = null; refresh(); });
+document.getElementById('labels').addEventListener('change', e => { state.labels = e.target.checked; gTags.selectAll('text').style('display', state.labels ? null : 'none'); });
+document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[data-view]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  document.getElementById('view-sky').hidden = b.dataset.view !== 'sky';
+  document.getElementById('view-grid').hidden = b.dataset.view !== 'grid';
+  if (b.dataset.view === 'sky') drawSky(); else drawGrid();
+});
+function refresh() {
+  highlight(); drawGrid();
+  const n = PIECES.filter(visible).length;
+  document.getElementById('count').textContent = `${n} of ${PIECES.length} pieces shown, across ${CONSTELLATIONS.length} constellations and ${TAGS.length} ideas.`;
+}
+addEventListener('resize', () => { if (!document.getElementById('view-sky').hidden) drawSky(); });
+
+drawSky(); showIntro(); refresh();
+</script>
+</body>
+</html>

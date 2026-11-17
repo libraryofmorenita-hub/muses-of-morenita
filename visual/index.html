@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Amelia A. — Visual</title>
+<title>Amelia Arabe — Visual</title>
 <meta name="description" content="Selected photographs, collections and motion.">
 <!-- STANDALONE PAGE. Nothing here links to the rest of the portfolio, to
      Morenita Technology, or to any engineering profile: the only outbound
@@ -178,6 +178,172 @@ footer a:hover { color: var(--black); text-decoration: underline; text-underline
 .lb-thumbs img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); transform: scale(var(--z, 1)); transform-origin: var(--pos, 50% 50%); }
 
 /* ── PHONE: the board becomes a scrolling pinboard ──── */
+
+/* ── ISSUE (phone-first magazine: swipe any direction and the page slides sideways) ── */
+:root { --paper: #EFEAE0; --paper-2: #E6DFD0; --ink-bg: #0C0C0B; --cream-ink: #F2EFE7; --red: #D2432F;
+  --grain-d: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --grain-l: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+html.reel-on, html.reel-on body { overflow: hidden; overscroll-behavior: none; background: var(--ink-bg); background-image: none; }
+html.reel-on .top { position: fixed; left: 0; right: 0; top: 0; background: transparent; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; color: var(--hc, #fff); z-index: 30; transition: color .35s; }
+html.reel-on { --hc: #fff; --hb: #000; }
+html.reel-on[data-tone="dark"] { --hc: #141414; --hb: #fff; }
+html.reel-on .brand small { color: var(--hc); }
+html.reel-on .seg { border-color: var(--hc); }
+html.reel-on .seg button { color: var(--hc); }
+html.reel-on .seg button[aria-pressed="true"] { background: var(--hc); color: var(--hb); }
+html.reel-on .book { border-bottom-color: var(--hc); color: var(--hc); }
+.seg .short { display: none; }
+
+.reel { position: fixed; inset: 0; z-index: 10; height: 100vh; height: 100dvh; background: var(--ink-bg); overflow: hidden; touch-action: none; overscroll-behavior: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+.reel.grabbing { cursor: grabbing; }
+.pg { position: absolute; inset: 0; overflow: hidden; visibility: hidden; will-change: transform; --d: 0; color: var(--ink-c, #141414); background: var(--pg-bg, var(--paper)); font-family: var(--font-body); }
+.pg.cream { --pg-bg: linear-gradient(180deg, #F3EFE6, var(--paper-2)); --ink-c: #141414; --mut: #6a665c; }
+.pg.ink { --pg-bg: var(--ink-bg); --ink-c: var(--cream-ink); --mut: #9b978c; }
+.pg.snow { --pg-bg: #EDEDEC; --ink-c: #141414; --mut: #66645f; }
+.pg::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 5; background-image: var(--grain-d); opacity: .13; mix-blend-mode: multiply; }
+.pg.ink::after { background-image: var(--grain-l); opacity: .07; mix-blend-mode: screen; }
+.pg > * { position: relative; z-index: 2; }
+.pg .bg { position: absolute; z-index: 1; inset: 0 -14%; translate: calc(var(--d) * -9%) 0; }
+.pg .bg img, .pg .bg video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); display: block; }
+.pg.on .bg img.kb { animation: kb 14s ease-out both; }
+@keyframes kb { from { transform: scale(1); } to { transform: scale(1.07); } }
+.shade { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(to top, rgba(8,8,8,.86) 0%, rgba(8,8,8,.35) 34%, rgba(8,8,8,0) 58%); }
+.shade.top { background: linear-gradient(to bottom, rgba(8,8,8,.55), rgba(8,8,8,0) 26%), linear-gradient(to top, rgba(8,8,8,.86) 0%, rgba(8,8,8,.3) 32%, rgba(8,8,8,0) 56%); }
+
+/* text that rises in, and drifts at its own speed as the page moves */
+.rise { opacity: 0; transform: translate3d(0, 20px, 0); transition: opacity .8s ease, transform 1s cubic-bezier(.2,.7,.2,1); transition-delay: calc(var(--i, 0) * 90ms + 120ms); }
+.pg.on .rise { opacity: 1; transform: none; }
+[data-s] { translate: calc(var(--d) * var(--s, 0) * 1px) 0; }
+.kick { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: var(--mut); }
+.disp { font-family: var(--font-display); font-weight: 300; line-height: .88; letter-spacing: -.02em; margin: 0; }
+.disp em { font-style: italic; font-weight: 400; }
+.cap-t { font-size: 13px; line-height: 1.6; color: var(--mut); max-width: 34ch; margin: 10px 0 0; }
+.cap-t:empty { display: none; }
+.pad { position: absolute; left: 22px; right: 22px; bottom: calc(64px + env(safe-area-inset-bottom)); }
+
+/* cover */
+.pg.t-cover .masthead { position: absolute; left: 22px; right: 18px; bottom: calc(74px + env(safe-area-inset-bottom)); z-index: 3; }
+.pg.t-cover h1 { font-size: clamp(76px, 25vw, 190px); }
+.pg.t-cover .lines { position: absolute; z-index: 3; right: 18px; top: 84px; text-align: right; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; line-height: 2; color: #e9e5da; }
+.pg.t-cover .rule { height: 1px; background: rgba(242,239,231,.5); margin: 16px 0 12px; transform-origin: left; }
+.pg.t-cover .issue { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: #e9e5da; }
+
+/* contents */
+.pg.t-toc .wrap { position: absolute; left: 22px; right: 22px; top: 96px; bottom: calc(70px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
+.pg.t-toc h2 { font-size: clamp(48px, 15vw, 88px); }
+.toc-list { margin: 22px 0 0; padding: 0; list-style: none; flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+.toc-list button { all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: flex; align-items: baseline; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(20,20,20,.18); }
+.toc-list button span.t { font-family: var(--font-display); font-size: 21px; line-height: 1.05; }
+.toc-list button span.k { flex: none; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--mut); min-width: 5.2em; }
+.toc-list button span.n { margin-left: auto; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--red); }
+.toc-list button:focus-visible { outline: 2px solid #141414; outline-offset: 2px; }
+
+/* photo with a headline laid across it */
+.pg.t-held .crop-b { position: absolute; right: 0; top: 92px; width: 82vw; max-width: 560px; aspect-ratio: var(--ar); overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+.cropbox { position: relative; overflow: hidden; aspect-ratio: var(--ar); }
+.cropbox img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); transform: scale(var(--z, 1)); transform-origin: var(--pos, 50% 50%); display: block; }
+.pg.t-held .big { position: absolute; left: 18px; bottom: calc(150px + env(safe-area-inset-bottom)); font-size: min(38vw, calc(88vw / var(--k, 2))); z-index: 4; color: var(--ink-c); white-space: nowrap; }
+.pg.t-held .pad { z-index: 4; }
+
+/* painted plates */
+.plate-wrap { position: absolute; left: 0; right: 0; top: 84px; bottom: calc(176px + env(safe-area-inset-bottom)); display: flex; align-items: flex-end; justify-content: center; }
+.bignum { position: absolute; left: 14px; top: 78px; z-index: 1; font-family: var(--font-display); font-style: italic; font-weight: 300; font-size: 46vw; line-height: .85; color: currentColor; opacity: .08; pointer-events: none; }
+.plate { --h: min(100%, calc(88vw / var(--ar))); position: relative; height: var(--h); aspect-ratio: var(--ar); max-width: 90vw; box-shadow: 0 2px 3px rgba(0,0,0,.25), 0 24px 50px rgba(30,22,10,.35); background: #222; }
+.plate img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.weave::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; mix-blend-mode: multiply; opacity: .55;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.07) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 1px, transparent 1px 3px); }
+.weave::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; mix-blend-mode: soft-light;
+  background: linear-gradient(105deg, transparent calc(38% + var(--d) * 70%), rgba(255,255,255,.55) calc(50% + var(--d) * 70%), transparent calc(62% + var(--d) * 70%)); }
+.plate-t { position: absolute; left: 22px; right: 22px; bottom: calc(60px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: auto 1fr; column-gap: 14px; align-items: end; }
+.plate-t .no { font-family: var(--font-display); font-style: italic; font-size: 52px; line-height: .8; color: var(--red); }
+.plate-t h3 { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 1; margin: 0; }
+.plate-t .cap-t { grid-column: 1 / -1; margin-top: 8px; }
+
+/* full-bleed painting with the title over it */
+.pg.t-bleed .over { position: absolute; z-index: 4; left: 22px; right: 22px; bottom: calc(64px + env(safe-area-inset-bottom)); color: #f2efe7; }
+.pg.t-bleed .over h3 { font-family: var(--font-display); font-weight: 300; font-size: clamp(54px, 17vw, 120px); line-height: .9; letter-spacing: -.02em; margin: 6px 0 0; }
+.pg.t-bleed .over .cap-t { color: #d9d5c9; }
+.pg.t-bleed .over .kick { color: #e5e0d3; }
+.pg.t-bleed .plate-no { position: absolute; z-index: 4; right: 20px; top: 92px; font-family: var(--font-display); font-style: italic; font-size: 64px; color: #f2efe7; opacity: .9; text-shadow: 0 1px 14px rgba(0,0,0,.45); }
+
+/* pull quote */
+.pg.t-quote .q { position: absolute; left: 24px; right: 24px; top: 50%; transform: translateY(-52%); }
+.pg.t-quote .mark { font-family: var(--font-display); font-size: 150px; line-height: .5; color: var(--red); height: 60px; }
+.pg.t-quote blockquote { margin: 0; font-family: var(--font-display); font-weight: 300; font-style: italic; font-size: clamp(36px, 11vw, 76px); line-height: 1.04; letter-spacing: -.01em; }
+.pg.t-quote .by { margin-top: 22px; }
+
+/* two small plates stacked, one left and one right */
+.pair { position: absolute; left: 22px; right: 22px; top: 90px; bottom: calc(66px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
+.pair .one { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.pair .one:nth-child(2) { align-items: flex-end; text-align: right; }
+.pair .plate { --h: auto; height: auto; width: min(72%, calc((50dvh - 112px) * var(--ar))); aspect-ratio: var(--ar); }
+.pair .t { display: flex; align-items: baseline; gap: 10px; }
+.pair .one:nth-child(2) .t { flex-direction: row-reverse; }
+.pair .t h3 { font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 1; margin: 0; }
+
+/* strip */
+.pg.t-eyes .strip { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); aspect-ratio: 3 / 1; }
+.pg.t-eyes .strip .cropbox { width: 100%; height: 100%; }
+.pg.t-eyes .big { position: absolute; left: 20px; top: 108px; font-size: min(38vw, calc(88vw / var(--k, 2))); }
+
+/* video */
+.pg.t-mov video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pg.t-mov .bg { inset: 0 -6%; }
+
+/* closing */
+.pg.t-end { text-align: center; }
+.pg.t-end .c { position: absolute; left: 24px; right: 24px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.pg.t-end h2 { font-size: clamp(54px, 17vw, 120px); }
+.pg.t-end a.mail { font-family: var(--font-display); font-size: clamp(22px, 6.6vw, 40px); color: inherit; text-decoration: none; border-bottom: 1px solid rgba(20,20,20,.5); padding-bottom: 3px; word-break: break-word; }
+.pg.t-end .sub { display: flex; gap: 22px; margin-top: 14px; font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; }
+.pg.t-end .sub a, .pg.t-end .sub button { color: var(--mut); background: none; border: 0; padding: 6px 0; text-decoration: none; cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; }
+
+/* folio: running foot like a printed page, readable on any page */
+.folio { position: absolute; z-index: 25; left: 0; right: 0; bottom: 0; padding: 0 22px calc(16px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: baseline; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--hc, #fff); transition: color .35s; pointer-events: none; }
+.folio .num { font-family: var(--mono); letter-spacing: .14em; }
+.folio::before { content: ""; position: absolute; left: 22px; right: 22px; top: -10px; height: 1px; background: currentColor; opacity: .3; }
+.folio i { position: absolute; left: 22px; top: -10px; height: 1px; width: calc((100% - 44px) * var(--prog, 0)); background: currentColor; }
+.reel-nav { position: absolute; top: 50%; z-index: 26; width: 52px; height: 72px; margin-top: -36px; border: 0; background: none; color: var(--hc, #fff); font-size: 38px; opacity: 0; transition: opacity 200ms; cursor: pointer; display: none; }
+.reel-nav.prev { left: 8px; } .reel-nav.next { right: 8px; }
+.reel-hint { position: absolute; left: 50%; top: 78px; transform: translateX(-50%); z-index: 26; padding: 7px 14px; border: 1px solid rgba(255,255,255,.85); border-radius: 999px; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: #fff; background: rgba(0,0,0,.25); pointer-events: none; animation: nudge 1.6s ease-in-out infinite; transition: opacity 400ms; }
+.reel-hint.gone { opacity: 0; animation: none; }
+@keyframes nudge { 0%,100% { translate: 0 0; } 50% { translate: 10px 0; } }
+.reel-nav[disabled] { visibility: hidden; }
+
+@media (hover: hover) and (min-width: 820px) { .reel-nav { display: block; } .reel:hover .reel-nav { opacity: .75; } .reel .reel-nav:hover { opacity: 1; } .reel-hint { display: none; } }
+@media (max-width: 819px) { .seg .long { display: none; } .seg .short { display: inline; } html.reel-on .top { padding: 12px 18px; } }
+
+/* wide screens: text beside the picture, as in a spread */
+@media (min-width: 820px) and (orientation: landscape) {
+  .pg.t-cover h1 { font-size: clamp(90px, 13vw, 210px); }
+  .pg.t-cover .masthead { left: 6vw; right: 6vw; }
+  .pg.t-toc .wrap { left: 8vw; right: 8vw; top: 110px; flex-direction: row; gap: 7vw; }
+  .pg.t-toc h2 { font-size: clamp(56px, 7vw, 120px); flex: 1; }
+  .toc-list { margin: 8px 0 0; flex: 1.2; }
+  .pg.t-held .crop-b { right: 8vw; top: 90px; height: calc(100vh - 170px); width: auto; max-width: none; }
+  .pg.t-held .big { left: 6vw; bottom: 170px; font-size: min(20vw, calc(46vw / var(--k, 2))); }
+  .bignum { display: none; }
+  .pg.t-eyes .strip { left: auto; right: 0; width: 66vw; }
+  .pg.t-eyes .pad { bottom: 84px; }
+  .pg.t-held .pad { right: auto; left: 6vw; width: 28vw; bottom: 84px; }
+  .plate-wrap { left: 6vw; right: 40vw; top: 90px; bottom: 80px; }
+  .plate-t { left: auto; right: 6vw; width: 28vw; bottom: auto; top: 50%; transform: translateY(-50%); grid-template-columns: 1fr; row-gap: 12px; }
+  .plate-t .no { font-size: 90px; }
+  .plate-t h3 { font-size: 52px; }
+  .pg.t-bleed .over { left: 6vw; right: auto; width: 46vw; }
+  .pg.t-quote .q { left: 12vw; right: 12vw; }
+  .pair { left: 8vw; right: 8vw; flex-direction: row; top: 100px; bottom: 80px; gap: 5vw; }
+  .pair .one, .pair .one:nth-child(2) { align-items: flex-start; text-align: left; justify-content: flex-end; }
+  .pair .one:nth-child(2) .t { flex-direction: row; }
+  .pair .plate { width: min(100%, calc((100dvh - 250px) * var(--ar))); }
+  .pg.t-eyes .big { left: 6vw; top: 120px; font-size: min(20vw, calc(50vw / var(--k, 2))); }
+  .pg.t-cover .lines { right: 6vw; }
+  .pad { left: 6vw; right: auto; width: 40vw; }
+}
+@media (prefers-reduced-motion: reduce) { .rise { transition: opacity .3s; transform: none; } .pg.on .bg img.kb { animation: none; } .reel-hint { animation: none; } }
+
+.shade.light { background: linear-gradient(to top, rgba(237,237,236,.96) 0%, rgba(237,237,236,.55) 24%, rgba(237,237,236,0) 46%); }
+.shade.top-d { background: linear-gradient(to bottom, rgba(8,8,8,.5), rgba(8,8,8,0) 22%), linear-gradient(to top, rgba(8,8,8,.86) 0%, rgba(8,8,8,.35) 34%, rgba(8,8,8,0) 58%); }
 @media (max-width: 819px) {
   :root { --q: min(2.1vw, 8.5px); }
   .top { padding: 10px 16px; }
@@ -222,17 +388,25 @@ footer a:hover { color: var(--black); text-decoration: underline; text-underline
 <body>
 
 <header class="top">
-  <div class="brand" id="brand">Amelia A.<small>Visual</small></div>
+  <div class="brand" id="brand">Amelia Arabe<small>Visual</small></div>
   <div class="top-right">
     <div class="seg" role="group" aria-label="View">
-      <button type="button" id="v-board" aria-pressed="true">Board</button>
-      <button type="button" id="v-sheet" aria-pressed="false">Contact sheet</button>
+      <button type="button" id="v-reel" aria-pressed="false">Issue</button>
+      <button type="button" id="v-board" aria-pressed="false">Board</button>
+      <button type="button" id="v-sheet" aria-pressed="false"><span class="long">Contact sheet</span><span class="short">Sheet</span></button>
     </div>
-    <a class="book" id="book" href="#">Book</a>
+    <a class="book" id="book" href="#">Contact</a>
   </div>
 </header>
 
-<section class="intro">
+<div class="reel" id="reel" hidden role="region" aria-roledescription="carousel" aria-label="Photo issue">
+  <div class="folio" id="reel-folio"><span>Amelia Arabe &middot; Visual</span><i></i><span class="num" id="reel-count" aria-live="polite"></span></div>
+  <button class="reel-nav prev" id="reel-prev" type="button" aria-label="Previous page">&#8249;</button>
+  <button class="reel-nav next" id="reel-next" type="button" aria-label="Next page">&#8250;</button>
+  <div class="reel-hint" id="reel-hint">Swipe</div>
+</div>
+
+<section class="intro" id="intro">
   <div class="eyebrow">Selects &middot; Autumn 2026</div>
   <h1>Stills, <em>strips</em><br>&amp; motion.</h1>
   <p>Single frames, collections, and a few pictures that move. Tap anything to open it.</p>
@@ -248,7 +422,7 @@ footer a:hover { color: var(--black); text-decoration: underline; text-underline
   </div>
 </main>
 
-<footer><a href="../">Morenita Technology</a></footer>
+<footer id="foot"><a href="../">Morenita Technology</a></footer>
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
   <button class="lb-close" id="lb-close" type="button" aria-label="Close">&times;</button>
@@ -269,7 +443,7 @@ footer a:hover { color: var(--black); text-decoration: underline; text-underline
 // at the real clip. The two clips below are STAND-INS (a slow push-in made
 // from your two stills) so the hidden-video behaviour can be judged now.
 const CONFIG = {
-  name: 'Amelia A.',
+  name: 'Amelia Arabe',
   email: 'missameliava@gmail.com',   // booking address — change if modeling should use another inbox
 };
 const CHARCOAL = '../models/headshot.jpg';      // 1600 × 1066, landscape
@@ -327,7 +501,7 @@ const ITEMS = [
     frames: [ f(WHITE, 1, '50% 52%', 2.1, { desc: 'Detail of the beaded bodice and belt.' }) ],
     x: 395, y: 735, w: 225, rot: 2.4, d: 11, tape: 4, mw: 62, ml: 36 },
 
-  { id: 'book', type: 'tag', title: 'Booking & enquiries',
+  { id: 'book', type: 'tag', title: 'Get in touch',
     x: 640, y: 1330, w: 235, rot: 2.6, d: 7, mw: 80, ml: 10 },
 ];
 // ═════════════════════════════════════════════════════════════════════════
@@ -432,16 +606,20 @@ function buildSheet() {
   $('#sheet-count').textContent = `${ALL.length} frames`;
 }
 
-// ── VIEW TOGGLE (#sheet deep-links straight to the proof sheet) ──
-function setView(v) {
-  const sheet = v === 'sheet';
-  $('#board-wrap').hidden = sheet; $('#sheet').hidden = !sheet;
-  $('#v-board').setAttribute('aria-pressed', String(!sheet)); $('#v-sheet').setAttribute('aria-pressed', String(sheet));
-  history.replaceState(null, '', sheet ? '#sheet' : location.pathname + location.search);
-  if (!sheet) requestAnimationFrame(reveal);
+// ── VIEW TOGGLE: issue (phones), board (laptop), proof sheet. #issue / #board / #sheet deep-link. ──
+function setView(v, fromUser) {
+  const reelOn = v === 'reel', sheet = v === 'sheet';
+  $('#reel').hidden = !reelOn;
+  $('#board-wrap').hidden = reelOn || sheet; $('#sheet').hidden = !sheet;
+  $('#intro').hidden = reelOn; $('#foot').hidden = reelOn;
+  document.documentElement.classList.toggle('reel-on', reelOn);
+  for (const k of ['reel', 'board', 'sheet']) $('#v-' + k).setAttribute('aria-pressed', String(k === v));
+  if (fromUser) history.replaceState(null, '', location.pathname + location.search + (v === 'board' ? '' : '#' + (v === 'reel' ? 'issue' : v)));
+  if (reelOn) { sizeReel(); hydrate(ri); onPage(); go(ri, false); } else { pauseReel(); requestAnimationFrame(reveal); }
 }
-$('#v-board').addEventListener('click', () => setView('board'));
-$('#v-sheet').addEventListener('click', () => setView('sheet'));
+$('#v-reel').addEventListener('click', () => setView('reel', true));
+$('#v-board').addEventListener('click', () => setView('board', true));
+$('#v-sheet').addEventListener('click', () => setView('sheet', true));
 
 // ── LIGHTBOX — one viewer for the whole page: ← → (or swipe) walk every frame in order ──
 const lb = $('#lb'), media = $('#lb-media'), thumbs = $('#lb-thumbs');
@@ -551,11 +729,266 @@ if (!reduce && matchMedia('(min-width: 820px) and (hover: hover)').matches) {
   }, { passive: true });
 }
 
+
+// ══ ISSUE ════════════════════════════════════════════════════════════════
+// A one-handed magazine. Swipe in any direction (up, down, left or right) or
+// scroll or press an arrow key, and the page slides sideways. Photos drift
+// slower than the page, text drifts at its own speed, and a band of light
+// crosses each painting as it moves, like light on wet paint. Every word and
+// every file on the pages is in ISSUE below, so it is easy to edit.
+const ISSUE = {
+  no: '01', season: 'Autumn 2026',
+  coverLines: ['Portraits', 'Paintings', 'Motion'],
+  quote: 'Bright light, turned into gentle, colorful intrigue.',   // CHECK: placeholder wording taken from your own notes on your art. Edit or replace.
+  quoteBy: 'Amelia Arabe',
+  contactLabel: 'Get in touch',
+};
+const MEDIA = 'media/';
+const PLATES = {
+  oro:        { src: MEDIA + 'plate-oro-vista.jpg',          ar: 1461 / 1500, title: 'Oro Vista',   series: 'Oro Vista collection',  desc: 'A stained-glass window, painted. After a window in her grandmother’s home in Manila.' },
+  atonement:  { src: MEDIA + 'plate-florals-atonement.jpg',  ar: 1500 / 1125, title: 'Atonement',   series: 'Florals',               desc: '' },
+  flames:     { src: MEDIA + 'plate-florals-flames.jpg',     ar: 1290 / 1240, title: 'Flames',      series: 'Florals',               desc: '' },
+  countryside:{ src: MEDIA + 'plate-archives-countryside.jpg', ar: 1335 / 1340, title: 'Countryside', series: 'Archives',              desc: '' },
+  greenhouse: { src: MEDIA + 'plate-avatar-greenhouse.jpg',  ar: 1155 / 1170, title: 'Greenhouse',  series: 'Avatar architecture study', desc: '' },
+  icepalace:  { src: MEDIA + 'plate-avatar-ice-palace.jpg',  ar: 1095 / 1100, title: 'Ice Palace',  series: 'Avatar architecture study', desc: '' },
+};
+let plateNo = 0;
+for (const k of ['oro', 'atonement', 'flames', 'countryside', 'greenhouse', 'icepalace']) PLATES[k].no = pad(++plateNo);
+
+// Order of the issue. `toc` puts a page in the contents.
+const PAGES = [
+  { t: 'cover', theme: 'ink' },
+  { t: 'toc', theme: 'cream' },
+  { t: 'held', theme: 'ink', toc: 'Texture', kind: 'Detail', src: CHARCOAL, ar: 1, pos: '55% 100%', z: 2.4, kicker: 'Studio · Charcoal', desc: 'Shirt stripes and collar, framed on the torso.' },
+  { t: 'bleed', theme: 'ink', toc: 'Oro Vista', kind: 'Painting', plate: 'oro', pos: '50% 50%' },
+  { t: 'quote', theme: 'cream' },
+  { t: 'mov', theme: 'snow', toc: 'Turn', kind: 'Motion', video: 'media/motion-white-standin.mp4', poster: WHITE, kicker: 'Studio · White', title: 'Turn', desc: 'A slow drift down the white-dress frame, from the face to the waist.' },
+  { t: 'plate', theme: 'cream', toc: 'Atonement', kind: 'Painting', plate: 'atonement' },
+  { t: 'held', theme: 'snow', toc: 'Beading', kind: 'Detail', src: WHITE, ar: 1, pos: '50% 52%', z: 2.1, kicker: 'Studio · White', desc: 'Detail of the beaded bodice and belt.' },
+  { t: 'bleed', theme: 'ink', toc: 'Flames', kind: 'Painting', plate: 'flames', pos: '50% 50%' },
+  { t: 'pair', theme: 'ink', toc: 'Greenhouse & Ice Palace', kind: 'Paintings', plates: ['greenhouse', 'icepalace'] },
+  { t: 'plate', theme: 'cream', toc: 'Countryside', kind: 'Painting', plate: 'countryside' },
+  { t: 'eyes', theme: 'ink', toc: 'Eyes', kind: 'Crop', src: CHARCOAL, ar: 3 / 1, pos: '54% 31%', z: 2.7, kicker: 'Studio · Charcoal', desc: 'A tight crop on the eyes from the charcoal session.' },
+  { t: 'end', theme: 'cream' },
+];
+let ri = 0;           // the page we are on
+const reelEl = $('#reel');
+const pageEls = [];
+const imgAttr = (src, alt, cls) => h('img', { 'data-src': src, alt: alt || '', class: cls || null, draggable: 'false', decoding: 'async' });
+const rise = (el, i) => { el.classList.add('rise'); el.style.setProperty('--i', i); return el; };
+function textBlock(kick, title, desc) { return [h('div', { class: 'kick' }, kick), title, desc ? h('p', { class: 'cap-t' }, desc) : null]; }
+
+function plateEl(p) {
+  return h('div', { class: 'plate weave', style: `--ar:${p.ar}` }, imgAttr(p.src, `${p.title} — ${p.series}`));
+}
+
+const BUILD = {
+  cover() {
+    return [
+      h('div', { class: 'bg', 'data-s': 0 }, imgAttr(CHARCOAL, 'Amelia Arabe', 'kb')),
+      h('div', { class: 'shade top' }),
+      rise(h('div', { class: 'lines', 'data-s': 70 }, ISSUE.coverLines.map(l => h('div', {}, l))), 3),
+      h('div', { class: 'masthead', 'data-s': 36 },
+        rise(h('h1', { class: 'disp' }, 'Amelia', h('br'), h('em', {}, 'Arabe')), 0),
+        rise(h('div', { class: 'rule' }), 2),
+        rise(h('div', { class: 'issue' }, h('span', {}, `Visual · Issue ${ISSUE.no}`), h('span', {}, ISSUE.season)), 3)),
+    ];
+  },
+  toc() {
+    const rows = PAGES.map((p, i) => p.toc ? h('li', {}, h('button', { type: 'button', 'data-go': i }, h('span', { class: 'k' }, p.kind), h('span', { class: 't' }, p.toc), h('span', { class: 'n' }, pad(i + 1)))) : null);
+    return [h('div', { class: 'wrap' },
+      rise(h('div', { class: 'kick' }, 'In this issue'), 0),
+      rise(h('h2', { class: 'disp', 'data-s': 26 }, 'Selects,', h('br'), h('em', {}, 'in order.')), 1),
+      rise(h('ul', { class: 'toc-list' }, rows), 2))];
+  },
+  held(p) {
+    return [
+      h('div', { class: 'crop-b', style: `--ar:${p.ar}`, 'data-s': -20 }, h('div', { class: 'cropbox', style: `--ar:${p.ar};--pos:${p.pos};--z:${p.z}` }, imgAttr(p.src, p.toc))),
+      rise(h('div', { class: 'big disp', 'data-s': 60, style: `--k:${(p.toc.length * 0.46).toFixed(2)}` }, h('em', {}, p.toc)), 1),
+      h('div', { class: 'pad' }, ...textBlock(p.kicker, null, p.desc).map((e, i) => e && rise(e, i + 2))),
+    ];
+  },
+  bleed(p) {
+    const pl = PLATES[p.plate];
+    return [
+      h('div', { class: 'bg', 'data-s': 0, style: `--pos:${p.pos}` }, imgAttr(pl.src, `${pl.title} — ${pl.series}`, 'kb')),
+      h('div', { class: 'shade top-d' }),
+      rise(h('div', { class: 'plate-no', 'data-s': 50 }, pl.no), 1),
+      h('div', { class: 'over', 'data-s': 28 },
+        rise(h('div', { class: 'kick' }, `Plate ${pl.no} · ${pl.series}`), 0),
+        rise(h('h3', {}, pl.title), 1),
+        pl.desc ? rise(h('p', { class: 'cap-t' }, pl.desc), 2) : null),
+    ];
+  },
+  plate(p) {
+    const pl = PLATES[p.plate];
+    return [
+      h('div', { class: 'bignum', 'data-s': 90 }, pl.no),
+      h('div', { class: 'plate-wrap', 'data-s': -14 }, plateEl(pl)),
+      h('div', { class: 'plate-t', 'data-s': 26 },
+        rise(h('div', { class: 'no' }, pl.no), 0),
+        rise(h('div', {}, h('div', { class: 'kick' }, pl.series), h('h3', {}, pl.title)), 1),
+        pl.desc ? rise(h('p', { class: 'cap-t' }, pl.desc), 2) : null),
+    ];
+  },
+  pair(p) {
+    return [h('div', { class: 'pair' }, p.plates.map((k, i) => {
+      const pl = PLATES[k];
+      return h('div', { class: 'one', 'data-s': i ? -22 : 22 }, plateEl(pl),
+        rise(h('div', { class: 't' }, h('h3', {}, pl.title), h('div', { class: 'kick' }, `Plate ${pl.no} · ${pl.series}`)), i + 1));
+    }))];
+  },
+  quote() {
+    return [h('div', { class: 'q', 'data-s': 30 },
+      rise(h('div', { class: 'mark' }, '“'), 0),
+      rise(h('blockquote', {}, ISSUE.quote), 1),
+      rise(h('div', { class: 'kick by' }, `— ${ISSUE.quoteBy}`), 2))];
+  },
+  mov(p) {
+    return [
+      h('div', { class: 'bg', 'data-s': 0 }, h('video', { src: p.video, poster: p.poster, muted: true, loop: true, playsinline: true, preload: 'metadata', 'aria-label': p.title + ' (video)' })),
+      h('div', { class: 'shade light' }),
+      h('div', { style: 'position:absolute;left:22px;right:22px;bottom:calc(64px + env(safe-area-inset-bottom));z-index:4', 'data-s': 28 },
+        rise(h('div', { class: 'kick' }, p.kicker), 0),
+        rise(h('h3', { class: 'disp', style: 'font-size:clamp(64px,22vw,150px);margin-top:6px' }, h('em', {}, p.title)), 1),
+        rise(h('p', { class: 'cap-t' }, p.desc), 2)),
+    ];
+  },
+  eyes(p) {
+    return [
+      rise(h('div', { class: 'big disp', 'data-s': 60, style: `--k:${(p.toc.length * 0.46).toFixed(2)}` }, h('em', {}, p.toc)), 1),
+      h('div', { class: 'strip', 'data-s': -30 }, h('div', { class: 'cropbox', style: `--ar:${p.ar};--pos:${p.pos};--z:${p.z}` }, imgAttr(p.src, p.toc))),
+      h('div', { class: 'pad', 'data-s': 28 }, rise(h('div', { class: 'kick' }, p.kicker), 0), rise(h('p', { class: 'cap-t' }, p.desc), 1)),
+    ];
+  },
+  end() {
+    return [h('div', { class: 'c', 'data-s': 24 },
+      rise(h('div', { class: 'kick' }, 'The last page'), 0),
+      rise(h('h2', { class: 'disp' }, h('em', {}, ISSUE.contactLabel)), 1),
+      rise(h('a', { class: 'mail', href: `mailto:${CONFIG.email}` }, CONFIG.email), 2),
+      rise(h('div', { class: 'sub' }, h('button', { type: 'button', id: 'reel-again' }, 'Back to the cover'), h('a', { href: '../' }, 'Morenita Technology')), 3))];
+  },
+};
+
+function buildReel() {
+  PAGES.forEach((p, i) => {
+    const el = h('section', { class: `pg t-${p.t} ${p.theme}`, role: 'group', 'aria-roledescription': 'page', 'aria-label': `Page ${i + 1} of ${PAGES.length}` }, BUILD[p.t](p));
+    el.hidden = false; pageEls.push(el); reelEl.insertBefore(el, $('#reel-folio'));
+  });
+  $('#reel-count').textContent = pad(1);
+  $('#reel-again').addEventListener('click', () => go(0));
+  reelEl.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(+b.dataset.go)));
+}
+
+let pos = 0, target = 0, dragging = false, raf = 0;
+function W() { return reelEl.clientWidth || 1; }
+function hydrate(k) {
+  for (const d of [-1, 0, 1, 2]) {
+    const el = pageEls[k + d]; if (!el) continue;
+    el.querySelectorAll('img[data-src]').forEach(im => { im.src = im.dataset.src; im.removeAttribute('data-src'); });
+  }
+}
+function render() {
+  pageEls.forEach((el, i) => {
+    const d = i - pos;
+    if (Math.abs(d) > 1.35) { if (el.style.visibility !== 'hidden') el.style.visibility = 'hidden'; return; }
+    el.style.visibility = 'visible';
+    el.style.transform = `translate3d(${(d * 100).toFixed(3)}%,0,0)`;
+    el.style.setProperty('--d', d.toFixed(4));
+  });
+  $('#reel-folio').style.setProperty('--prog', (pos / (PAGES.length - 1)).toFixed(4));
+  const k = Math.max(0, Math.min(PAGES.length - 1, Math.round(pos)));
+  if (k !== ri) { ri = k; onPage(); }
+}
+function onPage() {
+  pageEls.forEach((el, i) => el.classList.toggle('on', i === ri));
+  document.documentElement.dataset.tone = PAGES[ri].theme === 'ink' ? 'light' : 'dark';
+  if (ri > 0) $('#reel-hint').classList.add('gone');
+  $('#reel-count').textContent = pad(ri + 1);
+  $('#reel-prev').disabled = ri === 0; $('#reel-next').disabled = ri === PAGES.length - 1;
+  pauseReel();
+  const v = pageEls[ri].querySelector('video'); if (v) v.play().catch(() => {});
+  hydrate(ri);
+}
+function loop() {
+  if (!dragging) { pos += (target - pos) * 0.15; if (Math.abs(target - pos) < 0.0007) pos = target; }
+  render();
+  raf = (dragging || pos !== target) ? requestAnimationFrame(loop) : 0;
+}
+function kick() { if (!raf) raf = requestAnimationFrame(loop); }
+function go(k, animate = true) {
+  target = Math.max(0, Math.min(PAGES.length - 1, k));
+  if (!animate || reduce) { pos = target; }
+  kick(); if (pos === target) render();
+}
+function sizeReel() { document.documentElement.style.setProperty('--hh', $('.top').offsetHeight + 'px'); }
+function pauseReel() { reelEl.querySelectorAll('video').forEach(v => v.pause()); }
+$('#reel-prev').addEventListener('click', () => go(ri - 1));
+$('#reel-next').addEventListener('click', () => go(ri + 1));
+
+// Gestures: pointer events cover touch, pen and mouse drag. Whatever axis moves
+// the most drives the sideways travel; the swipe commits on distance or flick speed.
+(function () {
+  let sx = 0, sy = 0, st = 0, axis = null, off = 0, down = false, moved = 0, base = 0, pid = 0;
+  let swiped = false;
+  reelEl.addEventListener('click', e => { if (swiped) { e.stopPropagation(); e.preventDefault(); } }, true);
+  const hide = () => $('#reel-hint').classList.add('gone');
+  reelEl.addEventListener('pointerdown', e => {
+    down = true; axis = null; off = 0; moved = 0; sx = e.clientX; sy = e.clientY; st = performance.now(); base = pos; pid = e.pointerId;
+  });
+  reelEl.addEventListener('pointermove', e => {
+    if (!down) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    moved = Math.max(moved, Math.abs(dx), Math.abs(dy));
+    if (!axis && moved > 8) {
+      axis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y'; dragging = true; kick();
+      reelEl.setPointerCapture?.(pid); reelEl.classList.add('grabbing');   // only once it is a swipe, so taps on links and buttons still work
+    }
+    if (!axis) return;
+    off = axis === 'x' ? dx : dy;
+    let p = base - off / W();
+    const last = PAGES.length - 1;
+    if (p < 0) p *= 0.28; else if (p > last) p = last + (p - last) * 0.28;
+    pos = p;
+  });
+  const end = () => {
+    if (!down) return; down = false; reelEl.classList.remove('grabbing');
+    if (!axis) return;
+    dragging = false; hide(); swiped = true; setTimeout(() => { swiped = false; }, 60);
+    const v = off / Math.max(1, performance.now() - st);   // px per ms, negative = forward
+    const from = Math.round(base);
+    if (Math.abs(off) > W() * 0.16 || Math.abs(v) > 0.45) go(from + (off < 0 ? 1 : -1)); else go(from);
+  };
+  reelEl.addEventListener('pointerup', end); reelEl.addEventListener('pointercancel', end);
+
+  // Wheel / trackpad: one step per gesture, however long the inertia runs.
+  let busy = false, t;
+  reelEl.addEventListener('wheel', e => {
+    e.preventDefault(); clearTimeout(t); t = setTimeout(() => { busy = false; }, 150);
+    const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    if (busy || Math.abs(d) < 8) return;
+    busy = true; hide(); go(ri + (d > 0 ? 1 : -1));
+  }, { passive: false });
+  addEventListener('keydown', e => {
+    if (reelEl.hidden || !lb.hidden) return;
+    const f = { ArrowRight: 1, ArrowDown: 1, PageDown: 1, ' ': 1, ArrowLeft: -1, ArrowUp: -1, PageUp: -1 }[e.key];
+    if (f) { e.preventDefault(); hide(); go(ri + f); }
+    else if (e.key === 'Home') go(0); else if (e.key === 'End') go(PAGES.length - 1);
+  });
+  addEventListener('resize', () => { if (!reelEl.hidden) { sizeReel(); render(); } });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pauseReel(); else if (!reelEl.hidden) onPage(); });
+})();
+
 // ── INIT ──
 $('#book').href = `mailto:${CONFIG.email}`;
 $('#brand').firstChild.textContent = CONFIG.name;
-build(); buildSheet(); buildThumbs(); wireMotion(); reveal();
-if (location.hash === '#sheet') setView('sheet');
+build(); buildSheet(); buildReel(); buildThumbs(); wireMotion(); reveal();
+// Phones and touch screens open on the issue; laptops open on the board. A #issue, #board or #sheet link overrides.
+{
+  const h0 = location.hash.slice(1).replace('issue', 'reel');
+  const touchy = matchMedia('(max-width: 819px)').matches || matchMedia('(pointer: coarse)').matches;
+  setView(['reel', 'board', 'sheet'].includes(h0) ? h0 : touchy ? 'reel' : 'board', false);
+}
 </script>
 </body>
 </html>
