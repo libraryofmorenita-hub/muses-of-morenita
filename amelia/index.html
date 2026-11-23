@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amelia Arabe</title>
-<meta name="description" content="Amelia Arabe, commercial and lifestyle model in Los Angeles. Electrical engineer.">
+<title>Viktoria Arabe</title>
+<meta name="description" content="Viktoria Arabe, commercial and lifestyle model in Los Angeles. Electrical engineer.">
 <link rel="icon" href="../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +13,7 @@
 /* ─────────────────────────────────────────────────────────────
    AMELIA ARABE — the proof sheet
    A photographer's contact sheet on a lightbox. Selects are
-   circled in grease pencil; paintings are the endpapers.
+   starred in red; paintings are the endpapers.
    ───────────────────────────────────────────────────────────── */
 :root {
   --lightbox: #EEF0EE;   /* cool backlit white */
@@ -162,22 +162,20 @@ a { color: inherit; }
 .rebate b { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
 .motion-tag { color: var(--pencil); }
 
-/* casting desk: circle a frame */
+/* casting desk: star a frame. The star appears on hover and stays once chosen. */
 .pick {
-  position: absolute; top: 14px; right: 14px; z-index: 2;
-  width: 34px; height: 34px; border-radius: 50%;
-  border: 2px solid #fff; background: rgba(31,26,23,.28);
-  cursor: pointer; opacity: 0; transition: opacity .2s, background .2s;
+  position: absolute; top: 12px; right: 12px; z-index: 3;
+  width: 46px; height: 46px; padding: 2px; border: 0; background: none;
+  cursor: pointer; opacity: 0; transform: scale(.8) rotate(-8deg);
+  transition: opacity .2s, transform .25s cubic-bezier(.3,1.6,.5,1);
 }
-.frame:hover .pick, .pick:focus-visible, .frame.picked .pick { opacity: 1; }
-@media (hover: none) { .pick { opacity: .9; } }
-.frame.picked .pick { background: var(--pencil); border-color: var(--pencil); }
-.frame.picked::after {
-  content: ""; position: absolute; inset: -9px -7px; pointer-events: none;
-  border: 2.5px solid var(--pencil); opacity: .9;
-  border-radius: 48% 52% 46% 54% / 4% 5% 4% 6%;
-  transform: rotate(-.8deg);
-}
+.pick svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.pick path { fill: rgba(194,31,44,.25); stroke: none; transition: fill .2s; }
+.frame:hover .pick, .pick:focus-visible { opacity: 1; transform: scale(1) rotate(-8deg); }
+.frame.picked .pick { opacity: 1; transform: scale(1) rotate(-8deg); }
+.frame.picked .pick path { fill: var(--pencil); }
+@media (hover: none) { .pick { opacity: .85; transform: scale(.9) rotate(-8deg); } }
+@media (prefers-reduced-motion: reduce) { .pick { transition: opacity .2s; } }
 
 /* engineer view: camera data and colour under each frame */
 .meta { display: none; padding: 0 2px 10px; font-size: 12px; color: var(--graphite); font-variant-numeric: tabular-nums; }
@@ -193,6 +191,7 @@ body.eng {
 }
 body.eng .frame { box-shadow: 0 0 0 1px rgba(40,90,140,.35); }
 .eng-toggle {
+  display: inline-block; text-decoration: none;
   border: 1px solid currentColor; background: none; color: inherit;
   font: 500 13px var(--sans); padding: 5px 12px; border-radius: 999px; cursor: pointer;
 }
@@ -335,18 +334,17 @@ footer a { text-decoration: none; border-bottom: 1px solid currentColor; }
 <body>
 
 <header class="bar" id="bar">
-  <a class="bar-name" href="#top">Amelia Arabe</a>
+  <a class="bar-name" href="#top">Viktoria Arabe</a>
   <div class="bar-right">
   <nav aria-label="Sections">
     <a href="#commercial">Commercial</a>
-    <a href="#life">Life</a>
-    <a href="#tech">Tech</a>
+    <a href="#life">Lifestyle</a>
     <a href="#runway">Runway</a>
     <a href="#editorial">Editorial</a>
-    <a href="#digitals">Digitals</a>
+    <a href="#digitals">Fit</a>
     <a href="#contact">Contact</a>
   </nav>
-  <button class="eng-toggle" type="button" aria-pressed="false">Engineer view</button>
+  <a class="eng-toggle" href="../#/about">Meet the engineer</a>
   </div>
 </header>
 
@@ -354,19 +352,19 @@ footer a { text-decoration: none; border-bottom: 1px solid currentColor; }
   <div class="picks-banner" id="picksBanner"></div>
   <section class="open">
     <div class="open-photo">
-      <video class="reel" src="media/reel.mp4" poster="media/reel-poster.jpg" muted loop playsinline autoplay preload="auto" aria-label="Motion reel of Amelia Arabe: desert walk, runway, studio, swim stage and cello"></video>
+      <video class="reel" src="media/reel.mp4" poster="media/reel-poster.jpg" muted loop playsinline autoplay preload="auto" aria-label="Motion reel of Viktoria Arabe: desert walk, runway, studio, swim stage and cello"></video>
     </div>
     <div class="open-text">
-      <h1>Amelia <span>Arabe</span></h1>
-      <p>Commercial and lifestyle model in Los Angeles.</p>
-      <p>Also an electrical engineer, so tech sets feel like home.</p>
+      <h1>Viktoria <span>Arabe</span></h1>
+      <p>Commercial, print and fit model in Los Angeles.</p>
+      <p>Also an electrical engineer and the founder of Morenita Technology.</p>
       <div class="open-jump">
         <a href="#commercial">See the work</a>
-        <a href="#digitals">Digitals</a>
+        <a href="#digitals">Fit and digitals</a>
         <a href="#contact">Contact</a>
-        <button class="eng-toggle" type="button" aria-pressed="false">Engineer view</button>
+        <a class="eng-toggle" href="../#/about">Meet the engineer</a>
       </div>
-      <p class="open-hint">Casting? Tap the circle on any frame to build a selects list you can share or print as a comp card.</p>
+      <p class="open-hint">Casting? Tap the star on any frame to build a selects list you can share or print as a comp card.</p>
     </div>
   </section>
 
@@ -375,33 +373,25 @@ footer a { text-decoration: none; border-bottom: 1px solid currentColor; }
   <section class="roll" id="commercial">
     <div class="roll-head">
       <h2>Commercial</h2>
-      <p>Clean, warm and easy to cast. Headshots and studio work.</p>
+      <p>Clean, warm and easy to cast. Studio work on white, and a night out with friends.</p>
     </div>
     <div class="sheet" data-roll></div>
   </section>
 
   <section class="roll" id="life">
     <div class="roll-head">
-      <h2>Life</h2>
-      <p>Cello, tennis, skiing, getting ready with friends. The things I actually do, on camera.</p>
+      <h2>Lifestyle and swim</h2>
+      <p>Cello, tennis, skiing, the beach and the open road. The things I actually do, on camera.</p>
     </div>
     <div class="sheet" data-roll></div>
   </section>
 
   <div class="endpaper" style="background-image:url('../paintings/avatar-greenhouse.jpg')" role="presentation"></div>
 
-  <section class="roll" id="tech">
-    <div class="roll-head">
-      <h2>Tech</h2>
-      <p>I build hardware for a living, which makes me a believable person to put next to it.</p>
-    </div>
-    <div class="tech-grid" data-roll></div>
-  </section>
-
   <section class="roll" id="runway">
     <div class="roll-head">
       <h2>Runway and stage</h2>
-      <p>Pageant stages, runway shows, a speech at the mic and a red carpet.</p>
+      <p>Runway shows, evening gowns, swim on stage, a speech at the mic and a red carpet.</p>
     </div>
     <div class="sheet wide" data-roll></div>
   </section>
@@ -410,15 +400,15 @@ footer a { text-decoration: none; border-bottom: 1px solid currentColor; }
 
   <section class="roll" id="editorial">
     <div class="roll-head">
-      <h2>Swim and editorial</h2>
-      <p>Joshua Tree, Pioneertown, the beach and the desert at dusk.</p>
+      <h2>Editorial</h2>
+      <p>Studio portraits with Vince Truspin, then Joshua Tree, Pioneertown and the desert at dusk.</p>
     </div>
     <div class="sheet" data-roll></div>
   </section>
 
   <section class="roll" id="digitals">
     <div class="roll-head">
-      <h2>Digitals</h2>
+      <h2>Fit and digitals</h2>
       <p>No makeup, natural light, unretouched. Plus a fitting, so you can see how clothes move on me.</p>
     </div>
     <div class="sheet" data-roll></div>
@@ -428,7 +418,7 @@ footer a { text-decoration: none; border-bottom: 1px solid currentColor; }
     <div>
       <h2>Contact</h2>
       <p class="contact-line"><a href="mailto:missameliava@gmail.com?subject=Booking%20inquiry">missameliava@gmail.com</a></p>
-      <p class="small">Based in Los Angeles. Open to commercial, lifestyle and tech campaigns.</p>
+      <p class="small">Based in Los Angeles. Open to commercial, print and fit work.</p>
     </div>
     <!-- Fill these in and remove the hidden attribute to show the card. -->
     <dl class="stats" id="stats" hidden>
@@ -445,12 +435,12 @@ footer a { text-decoration: none; border-bottom: 1px solid currentColor; }
 </main>
 
 <footer>
-  <p class="colophon" id="colophon">Designed and built by hand by Amelia Arabe. Plain HTML, CSS and JavaScript, no framework and no tracking. Clips play only while you can see them.</p>
+  <p class="colophon" id="colophon">Designed and built by hand by Viktoria Arabe. Plain HTML, CSS and JavaScript, no framework and no tracking. Clips play only while you can see them.</p>
   <span><a href="https://github.com/libraryofmorenita-hub/muses-of-morenita" rel="noopener">Source code</a>&ensp;&ensp;<a href="../">Morenita Technology</a></span>
 </footer>
 
 <div class="tray" id="tray" role="region" aria-label="Your selects">
-  <span class="count" id="trayCount">0 circled</span>
+  <span class="count" id="trayCount">0 starred</span>
   <button type="button" class="primary" id="btnShare">Share picks</button>
   <button type="button" id="btnComp">Comp card</button>
   <button type="button" id="btnClear">Clear</button>
@@ -481,65 +471,58 @@ footer a { text-decoration: none; border-bottom: 1px solid currentColor; }
 const VINCE = 'Vince Truspin', AMY = 'Amy Carson';
 const ROLLS = {
   commercial: [
-    { f: 'studio-white-motion', c: 'Studio, white, behind the scenes', video: true },
-    { f: 'studio-smile', c: 'Commercial headshot', credit: VINCE },
-    { f: 'court-hair', c: 'Outdoor court', video: true },
-    { f: 'studio-hands', c: 'Studio portrait', credit: VINCE },
-    { f: 'headshot-stripe', c: 'Commercial headshot' },
-    { f: 'studio-white-2', c: 'Studio, white', credit: VINCE },
-    { f: 'beauty-closeup', c: 'Beauty close-up' },
-    { f: 'studio-white-3', c: 'Beauty', credit: VINCE },
-    { f: 'studio-white-1', c: 'Studio, white' },
+    { f: 'studio-white-motion', c: 'Studio on white, in motion', video: true },
+    { f: 'girls-night-3', c: 'Girls night', credit: AMY },
+    { f: 'studio-white-2', c: 'Studio on white, full length', credit: VINCE },
+    { f: 'girls-night-1', c: 'Girls night, laughing', credit: AMY },
+    { f: 'studio-white-3', c: 'Studio on white, beauty', credit: VINCE },
+    { f: 'girls-night-4', c: 'Girls night, rollers in', credit: AMY },
+    { f: 'studio-white-1', c: 'Studio on white, three quarter' },
+    { f: 'girls-night-2', c: 'Girls night, the spread', credit: AMY },
   ],
   life: [
     { f: 'cello-home', c: 'Cello at home', video: true, sound: true },
     { f: 'tennis-1', c: 'Tennis' },
-    { f: 'girls-night-3', c: 'Girls night', credit: AMY },
+    { f: 'beach-swim', c: 'Beach, swim', video: true },
     { f: 'ski', c: 'Skiing' },
-    { f: 'runway-cello', c: 'Cello on the runway' },
-    { f: 'girls-night-1', c: 'Girls night', credit: AMY },
+    { f: 'court-hair', c: 'After the match', video: true },
     { f: 'vanity', c: 'Getting ready' },
-    { f: 'girls-night-4', c: 'Girls night', credit: AMY },
+    { f: 'rivian-drive', c: 'Behind the wheel, EV test drive', video: true },
     { f: 'tennis-2', c: 'Tennis club' },
-    { f: 'girls-night-2', c: 'Girls night', credit: AMY },
-  ],
-  tech: [
-    { f: 'rivian-drive', c: 'EV test drive', video: true },
     { f: 'reading-room', c: 'Reading room' },
   ],
   runway: [
-    { f: 'runway-halter', c: 'Runway walk', video: true },
-    { f: 'runway-pink-motion', c: 'Pageant runway', video: true },
-    { f: 'swim-stage-motion', c: 'Swim, pageant stage', video: true },
+    { f: 'runway-halter', c: 'Runway walk, black halter', video: true },
+    { f: 'runway-pink-motion', c: 'Runway, pink gown', video: true },
+    { f: 'swim-stage-motion', c: 'Swim on stage', video: true },
     { f: 'pageant-speech', c: 'Speech at the mic', video: true, sound: true },
-    { f: 'runway-gold', c: 'Evening gown', video: true },
-    { f: 'runway-flares', c: 'Runway walk', video: true },
+    { f: 'runway-gold', c: 'Evening gown, gold', video: true },
+    { f: 'runway-flares', c: 'Runway walk, flares', video: true },
     { f: 'backstage-walk', c: 'Backstage', video: true },
-    { f: 'swim-stage-1', c: 'Swim, pageant stage' },
-    { f: 'runway-pink', c: 'Runway' },
-    { f: 'runway-stripe', c: 'Runway' },
-    { f: 'film-festival', c: 'Asian World Film Festival' },
-    { f: 'swim-stage-2', c: 'Swim, pageant stage' },
-    { f: 'pink-gown', c: 'Evening' },
+    { f: 'runway-cello', c: 'Cello on the runway' },
+    { f: 'swim-stage-1', c: 'Swim on stage, blue light' },
+    { f: 'runway-pink', c: 'Runway, pink gown, still' },
+    { f: 'runway-stripe', c: 'Runway, stripes' },
+    { f: 'film-festival', c: 'Red carpet, Asian World Film Festival' },
+    { f: 'pink-gown', c: 'Evening gown, pink' },
   ],
   editorial: [
+    { f: 'studio-smile', c: 'Studio portrait', credit: VINCE },
     { f: 'desert-walk', c: 'Desert walk', video: true },
+    { f: 'studio-hands', c: 'Studio portrait, hands', credit: VINCE },
     { f: 'joshua-tree-1', c: 'Joshua Tree' },
-    { f: 'beach-swim', c: 'Beach, swim', video: true },
-    { f: 'dusk-4', c: 'Desert at dusk' },
+    { f: 'headshot-stripe', c: 'Portrait, stripes' },
     { f: 'leather', c: 'Leather' },
-    { f: 'joshua-tree-3', c: 'Joshua Tree' },
+    { f: 'beauty-closeup', c: 'Beauty close-up' },
+    { f: 'dusk-4', c: 'Desert at dusk, blue hour' },
     { f: 'denim', c: 'Denim' },
-    { f: 'dusk-1', c: 'Desert at dusk' },
-    { f: 'joshua-tree-2', c: 'Joshua Tree' },
+    { f: 'joshua-tree-3', c: 'Joshua Tree, boulders' },
     { f: 'pioneertown', c: 'Pioneertown' },
-    { f: 'dusk-3', c: 'Desert at dusk' },
-    { f: 'joshua-tree-detail', c: 'Detail' },
-    { f: 'dusk-2', c: 'Desert at dusk' },
-    { f: 'joshua-tree-4', c: 'Joshua Tree' },
+    { f: 'dusk-1', c: 'Desert at dusk, silhouette' },
+    { f: 'joshua-tree-detail', c: 'Joshua Tree, detail' },
   ],
   digitals: [
-    { f: 'fitting-white', c: 'Fitting', video: true },
+    { f: 'fitting-white', c: 'Fitting, in motion', video: true },
     { f: 'digital-headshot', c: 'Digital, headshot' },
     { f: 'digital-profile', c: 'Digital, profile' },
     { f: 'digital-waist', c: 'Digital, waist up' },
@@ -587,13 +570,13 @@ document.querySelectorAll('[data-roll]').forEach(sheet => {
     if (item.video) {
       pic = `<video src="media/${item.f}.mp4" poster="media/${item.f}-poster.jpg" muted loop playsinline preload="none"></video>`;
     } else {
-      pic = `<img src="media/${item.f}-sm.jpg" srcset="media/${item.f}-sm.jpg 800w, media/${item.f}.jpg 1600w" sizes="(max-width: 720px) 100vw, 33vw" alt="${esc(item.c)}" loading="lazy">`;
+      pic = `<img src="media/${item.f}-sm.jpg" srcset="media/${item.f}-sm.jpg 700w, media/${item.f}.jpg 1400w" sizes="(max-width: 720px) 100vw, 33vw" alt="${esc(item.c)}" loading="lazy">`;
       if (item.motion) pic += `<video class="hover" src="media/${item.motion}.mp4" muted loop playsinline preload="none"></video>`;
     }
     const right = item.credit ? item.credit : (item.motion || item.video ? `<span class="motion-tag">${item.sound ? 'sound on' : 'motion'}</span>` : '');
     fr.innerHTML = `
       <button type="button" class="frame-open" aria-label="Open frame ${pad(frameNo)}, ${esc(item.c)}"><div class="pic">${pic}</div></button>
-      <button type="button" class="pick" aria-pressed="false" aria-label="Circle frame ${pad(frameNo)}"></button>
+      <button type="button" class="pick" aria-pressed="false" aria-label="Star frame ${pad(frameNo)}"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M42.4 39.7Q43.1 24.5 41.1 4.9Q41.9 2.5 43.5 4.4Q47.8 24.5 53.4 40.1Q64.6 33.9 77.4 23.6Q79.8 23.1 79.0 25.4Q67.5 37.0 60.0 47.2Q74.3 53.6 92.8 59.9Q94.7 61.7 92.3 62.3Q73.3 57.9 57.7 57.2Q55.9 68.2 57.4 82.3Q56.7 84.5 55.1 82.6Q50.9 69.7 45.9 61.2Q33.8 70.0 19.3 82.8Q16.9 83.6 17.5 81.2Q31.0 66.6 39.8 53.2Q29.7 46.1 15.3 40.4Q13.6 38.6 16.0 38.1Q30.9 40.6 42.4 39.7Z"/></svg></button>
       <div class="rebate"><span><b>${pad(frameNo)}</b>&ensp;${esc(item.c)}</span><span>${right}</span></div>
       <div class="meta">${metaLine(item)}</div>`;
     rec.el = fr;
@@ -607,15 +590,6 @@ document.querySelectorAll('[data-roll]').forEach(sheet => {
     }
     sheet.appendChild(fr);
   });
-  if (id === 'tech') {
-    const copy = document.createElement('div');
-    copy.className = 'tech-copy';
-    copy.innerHTML = `
-      <p>I studied computer and electrical engineering and build wearable medical devices. Circuits, sensors and dashboards are my day job, not a prop.</p>
-      <p>Good fit for consumer tech, EV and automotive, wearables, and brands that want a real engineer on camera.</p>
-      <p class="note">studio shoot at the bench, coming soon</p>`;
-    sheet.appendChild(copy);
-  }
 });
 
 /* ── Casting desk ── */
@@ -629,7 +603,7 @@ function syncPicks() {
     r.el.classList.toggle('picked', on);
     r.el.querySelector('.pick').setAttribute('aria-pressed', on);
   });
-  document.getElementById('trayCount').textContent = `${picks.size} circled`;
+  document.getElementById('trayCount').textContent = `${picks.size} starred`;
   tray.classList.toggle('show', picks.size > 0);
   document.querySelectorAll('.roll').forEach(r => r.classList.toggle('empty', !r.querySelector('.frame.picked')));
 }
@@ -639,19 +613,19 @@ function picksUrl() {
 }
 document.getElementById('btnShare').onclick = async () => {
   const url = picksUrl();
-  if (navigator.share) { try { await navigator.share({ title: 'Amelia Arabe, selects', url }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  if (navigator.share) { try { await navigator.share({ title: 'Viktoria Arabe, selects', url }); return; } catch (e) { if (e.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(url); say('Link copied. It opens to just these frames.'); }
   catch { prompt('Copy this link', url); }
 };
 document.getElementById('btnClear').onclick = () => { picks.clear(); syncPicks(); document.body.classList.remove('picks-only'); };
 
-/* A shared link opens straight to the circled frames. */
+/* A shared link opens straight to the starred frames. */
 const shared = (new URLSearchParams(location.search).get('picks') || '').split(',').map(Number).filter(n => n >= 1 && n <= ALL.length);
 if (shared.length) {
   shared.forEach(n => picks.add(n));
   document.body.classList.add('picks-only');
   const banner = document.getElementById('picksBanner');
-  banner.innerHTML = `Showing ${shared.length} circled frame${shared.length > 1 ? 's' : ''}.<button type="button">Show all work</button>`;
+  banner.innerHTML = `Showing ${shared.length} starred frame${shared.length > 1 ? 's' : ''}.<button type="button">Show all work</button>`;
   banner.querySelector('button').onclick = () => { document.body.classList.remove('picks-only'); history.replaceState(null, '', location.pathname); };
 }
 syncPicks();
@@ -668,7 +642,7 @@ document.getElementById('btnComp').onclick = () => {
     <div class="comp-side">
       <div class="comp-grid">${rest.map(r => `<img src="${stillOf(r)}" alt="">`).join('')}</div>
       <div>
-        <div class="comp-name">Amelia Arabe</div>
+        <div class="comp-name">Viktoria Arabe</div>
         <div class="comp-line">${stats.map(([k, v]) => `${k} ${esc(v)}`).join('&ensp; ')}</div>
         <div class="comp-line">Los Angeles&ensp; missameliava@gmail.com</div>
       </div>
@@ -680,21 +654,13 @@ document.getElementById('btnPrint').onclick = () => window.print();
 document.getElementById('btnCompClose').onclick = () => compWrap.classList.remove('open');
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && compWrap.classList.contains('open')) compWrap.classList.remove('open'); });
 
-/* ── Engineer view ── */
-const engButtons = document.querySelectorAll('.eng-toggle');
-function setEng(on) {
-  document.body.classList.toggle('eng', on);
-  engButtons.forEach(b => { b.setAttribute('aria-pressed', on); b.textContent = on ? 'Photographer view' : 'Engineer view'; });
-}
-engButtons.forEach(b => b.addEventListener('click', () => setEng(!document.body.classList.contains('eng'))));
-
 /* ── Colophon: what this visit actually loaded ── */
 function updateColophon() {
   const bytes = performance.getEntriesByType('resource').reduce((t, r) => t + (r.transferSize || 0), 0)
     + ((performance.getEntriesByType('navigation')[0] || {}).transferSize || 0);
   const photos = ALL.filter(r => !r.video).length, clips = ALL.filter(r => r.video).length;
   document.getElementById('colophon').textContent =
-    `Designed and built by hand by Amelia Arabe. Plain HTML, CSS and JavaScript, no framework and no tracking. ${photos} photos and ${clips} clips, and clips play only while you can see them, so this visit has loaded ${(bytes / 1048576).toFixed(1)} MB so far.`;
+    `Designed and built by hand by Viktoria Arabe. Plain HTML, CSS and JavaScript, no framework and no tracking. ${photos} photos and ${clips} clips, and clips play only while you can see them, so this visit has loaded ${(bytes / 1048576).toFixed(1)} MB so far.`;
 }
 new IntersectionObserver(([e]) => { if (e.isIntersecting) updateColophon(); }).observe(document.querySelector('footer'));
 
