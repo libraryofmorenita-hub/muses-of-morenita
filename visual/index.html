@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Amelia Arabe — Visual</title>
+<title>Amelia-Viktoria Arabe — Visual</title>
 <meta name="description" content="Selected photographs, collections and motion.">
 <!-- STANDALONE PAGE. Nothing here links to the rest of the portfolio, to
      Morenita Technology, or to any engineering profile: the only outbound
@@ -388,7 +388,7 @@ html.reel-on .book { border-bottom-color: var(--hc); color: var(--hc); }
 <body>
 
 <header class="top">
-  <div class="brand" id="brand">Amelia Arabe<small>Visual</small></div>
+  <div class="brand" id="brand">Amelia-Viktoria Arabe<small>Visual</small></div>
   <div class="top-right">
     <div class="seg" role="group" aria-label="View">
       <button type="button" id="v-reel" aria-pressed="false">Issue</button>
@@ -400,7 +400,7 @@ html.reel-on .book { border-bottom-color: var(--hc); color: var(--hc); }
 </header>
 
 <div class="reel" id="reel" hidden role="region" aria-roledescription="carousel" aria-label="Photo issue">
-  <div class="folio" id="reel-folio"><span>Amelia Arabe &middot; Visual</span><i></i><span class="num" id="reel-count" aria-live="polite"></span></div>
+  <div class="folio" id="reel-folio"><span>Amelia-Viktoria Arabe &middot; Visual</span><i></i><span class="num" id="reel-count" aria-live="polite"></span></div>
   <button class="reel-nav prev" id="reel-prev" type="button" aria-label="Previous page">&#8249;</button>
   <button class="reel-nav next" id="reel-next" type="button" aria-label="Next page">&#8250;</button>
   <div class="reel-hint" id="reel-hint">Swipe</div>
@@ -443,7 +443,7 @@ html.reel-on .book { border-bottom-color: var(--hc); color: var(--hc); }
 // at the real clip. The two clips below are STAND-INS (a slow push-in made
 // from your two stills) so the hidden-video behaviour can be judged now.
 const CONFIG = {
-  name: 'Amelia Arabe',
+  name: 'Amelia-Viktoria Arabe',
   email: 'missameliava@gmail.com',   // booking address — change if modeling should use another inbox
 };
 const CHARCOAL = '../models/headshot.jpg';      // 1600 × 1066, landscape
@@ -740,7 +740,7 @@ const ISSUE = {
   no: '01', season: 'Autumn 2026',
   coverLines: ['Portraits', 'Paintings', 'Motion'],
   quote: 'Bright light, turned into gentle, colorful intrigue.',   // CHECK: placeholder wording taken from your own notes on your art. Edit or replace.
-  quoteBy: 'Amelia Arabe',
+  quoteBy: 'Amelia-Viktoria Arabe',
   contactLabel: 'Get in touch',
 };
 const MEDIA = 'media/';
@@ -785,7 +785,7 @@ function plateEl(p) {
 const BUILD = {
   cover() {
     return [
-      h('div', { class: 'bg', 'data-s': 0 }, imgAttr(CHARCOAL, 'Amelia Arabe', 'kb')),
+      h('div', { class: 'bg', 'data-s': 0 }, imgAttr(CHARCOAL, 'Amelia-Viktoria Arabe', 'kb')),
       h('div', { class: 'shade top' }),
       rise(h('div', { class: 'lines', 'data-s': 70 }, ISSUE.coverLines.map(l => h('div', {}, l))), 3),
       h('div', { class: 'masthead', 'data-s': 36 },

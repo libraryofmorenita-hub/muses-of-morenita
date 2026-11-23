@@ -335,7 +335,7 @@ const track = document.getElementById('track');
 
 function render(project) {
   const owner = project.profiles || {};
-  document.title = (project.title || 'Gallery') + ' — ' + (owner.display_name || 'Amelia Arabe');
+  document.title = (project.title || 'Gallery') + ' — ' + (owner.display_name || 'Amelia-Viktoria Arabe');
   document.getElementById('back-link').href = backHrefWithHandle(owner.handle);
   document.getElementById('back-link-desktop').href = backHrefWithHandle(owner.handle);
   document.getElementById('back-link-desktop').innerHTML = '&larr;';
